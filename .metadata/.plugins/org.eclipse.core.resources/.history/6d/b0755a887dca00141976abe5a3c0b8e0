@@ -82,28 +82,3 @@ While ! lResult
 EndDo             
 
 Return( NIL )
-
-// ---------------------------------------------------------------------------
-
-User Function xEmailProduto( xCodigo, xDesc )
- 
- Local _cHTML := ""
- _cHTML:= '<HTML><HEAD><TITLE></TITLE>'
- _cHTML+= '<META http-equiv=Content-Type content="text/html; charset=windows-1252">'
- _cHTML+= '<META content="MSHTML 6.00.6000.16735" name=GENERATOR></HEAD>'
- _cHTML+= '<BODY>'
- _cHTML+= '<H1><FONT color=#ff0000>UM NOVO PRODUTO FOI CADASTRADO</FONT></H1>'
- _cHTML+= '<TABLE cellSpacing=0 cellPadding=0 width="100%" bgColor=#afeeee background="" '
- _cHTML+= 'border=1>'
- _cHTML+= '  <TBODY>'
- _cHTML+= '  <TR><TD>Código: ' + xCodigo + '</TD><td>' + xDesc +'</td></TR></TBODY></TABLE>'
- _cHTML+= '<P>&nbsp;</P>'
- _cHTML+= '</BODY></HTML>'
- 
- U_EnvMail("Resultado do exercicio 6", _cHTML, GetMv("XX_ENG"),"","", Nil, Nil)
- 
-Return( NIL )
-
-
-
-

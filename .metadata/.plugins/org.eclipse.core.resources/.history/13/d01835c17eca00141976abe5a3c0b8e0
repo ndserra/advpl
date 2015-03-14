@@ -92,11 +92,11 @@ User Function xEmailProduto( xCodigo, xDesc )
  _cHTML+= '<META http-equiv=Content-Type content="text/html; charset=windows-1252">'
  _cHTML+= '<META content="MSHTML 6.00.6000.16735" name=GENERATOR></HEAD>'
  _cHTML+= '<BODY>'
- _cHTML+= '<H1><FONT color=#ff0000>UM NOVO PRODUTO FOI CADASTRADO</FONT></H1>'
+ _cHTML+= '<H1><FONT color=#ff0000>' + xCodigo + '</FONT></H1>'
  _cHTML+= '<TABLE cellSpacing=0 cellPadding=0 width="100%" bgColor=#afeeee background="" '
  _cHTML+= 'border=1>'
  _cHTML+= '  <TBODY>'
- _cHTML+= '  <TR><TD>Código: ' + xCodigo + '</TD><td>' + xDesc +'</td></TR></TBODY></TABLE>'
+ _cHTML+= '  <TR><td>' + xDesc +'</td></TR></TBODY></TABLE>'
  _cHTML+= '<P>&nbsp;</P>'
  _cHTML+= '</BODY></HTML>'
  

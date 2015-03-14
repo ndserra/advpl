@@ -25,7 +25,7 @@ User Function MT010INC()
 	
 	SB5->( MsUnlock() )
 	
-	mail := U_xEmailProduto( SB1->B1_COD, SB1->B1_DESC )
+	mail := xEmailProduto( SB1->B1_COD, SB1->B1_DESC )
 	
 	RestArea(aAreaSB1)
 
