@@ -97,3 +97,5 @@ exercicio 6:
 	XX_ENG("ndserra@gmail.com")
 	
 
+O GETAREA() DEVE SER UTILIZADO 
+	
