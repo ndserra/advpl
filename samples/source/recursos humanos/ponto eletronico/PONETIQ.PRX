@@ -1,0 +1,246 @@
+#IFNDEF WINDOWS
+	#Translate PSAY => SAY
+#ENDIF
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ PONETIQ  ³ Autor ³ J.Ricardo              ³ Data ³ 03.05.96 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Programa de Impressao de etiquetas de codigo de barra       ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Ponto Eletronico                                            ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis                                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cRodaTxt := ""
+nCntImpr := 0
+Tamanho  := "N"
+titulo   := ""
+cDesc1   := "O objetivo deste Programa e emitir as etiquetas de codigo de Barra"
+cDesc2   := "para o cracha."
+cDesc3   := ""
+cString  := "SRA"
+nTipo    := 0
+cPerg    := "PONETI"
+lPrimeira:= .T.
+aOrd      :={"Matricula","Centro de Custo","Nome","Turno"}
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para Impressao do Cabecalho e Rodape    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cbtxt := SPACE(10)
+cbcont:= 0
+
+aReturn := { "Zebrado", 1,"Administracao", 1, 2, 1, "",1 }
+nomeprog:="PONETI"
+aLinha  := {}
+nLastKey:= 0
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para Impressao do Cabecalho e Rodape    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cbtxt    := SPACE(10)
+cbcont   := 0
+m_pag    := 1
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Monta os Cabecalhos                                          ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+titulo := "Imprime a etiqueta para o cracha"
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+pergunte("PONETI",.F.)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros                         ³
+//³ mv_par01        //  Filial  De                               ³
+//³ mv_par02        //  Filial  Ate                              ³
+//³ mv_par03        //  Centro de Custo De                       ³
+//³ mv_par04        //  Centro de Custo Ate                      ³
+//³ mv_par05        //  Turno De                                 ³
+//³ mv_par06        //  Turno Ate                                ³
+//³ mv_par07        //  Matricula De                             ³
+//³ mv_par08        //  Matricula Ate                            ³
+//³ mv_par09        //  Nome De                                  ³
+//³ mv_par10        //  Nome Ate                                 ³
+//³ mv_par11        //  Admissao De                              ³
+//³ mv_par12        //  Admissao Ate                             ³
+//³ mv_par13        //  Situacao na Folha                        ³
+//³ mv_par14        //  Categoria Funcional                      ³
+//³ mv_par15        //  tipo da impressora 1 - Matricial         ³
+//³                                        2 - DeskJet           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a funcao SETPRINT                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+wnrel:="PONETIQ"            //Nome Default do relatorio em Disco
+wnrel:=SetPrint(cString,wnrel,cPerg,@Titulo,cDesc1,cDesc2,cDesc3,.F.,aOrd,.T.,Tamanho)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Carregando variaveis mv_par?? para Variaveis do Sistema.     ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nOrdem   := aReturn[8]
+FilialDe := mv_par01
+FilialAte:= mv_par02
+CcDe     := mv_par03
+CcAte    := mv_par04
+TurDe    := mv_par05
+TurAte   := mv_par06
+MatDe    := mv_par07
+MatAte   := mv_par08
+NomDe    := mv_par09
+NomAte   := mv_par10
+dDe      := mv_par11
+dAte     := mv_par12
+cSit     := mv_par13
+cCat     := mv_par14
+nTipoImp := mv_par15
+aTeste   := {"A","B","C"}
+
+If  nLastKey == 27
+	Return
+Endif
+
+SetDefault(aReturn,cString)
+
+If nLastKey == 27
+    Return
+Endif
+
+#IFDEF WINDOWS
+RptStatus({|| Execute(RptDetail)})
+Return
+
+Function RptDetail
+#ENDIF
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica se deve comprimir ou nao                            ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nTipo  := IIF(aReturn[4]==1,15,18)
+
+dbSelectArea("SRA")
+dbGotop()
+
+SetRegua(RecCount())
+
+DbSetOrder(nOrdem)
+If nOrdem == 1
+	dbSeek(FilialDe + MatDe,.T.)
+	cInicio  := "SRA->RA_FILIAL + SRA->RA_MAT"
+	cFim     := FilialAte + MatAte
+ElseIf nOrdem == 2
+	dbSeek(FilialDe + CcDe + MatDe,.T.)
+	cInicio  := "SRA->RA_FILIAL + SRA->RA_CC + SRA->RA_MAT"
+	cFim     := FilialAte + CcAte + MatAte
+ElseIf nOrdem == 3
+	dbSeek(FilialDe + NomDe + MatDe,.T.)
+	cInicio  := "SRA->RA_FILIAL + SRA->RA_NOME + SRA->RA_MAT"
+	cFim     := FilialAte + NomAte + MatAte
+ElseIf nOrdem == 4
+    dbSeek(FilialDe + TurDe,.T.)
+    cInicio  := "SRA->RA_FILIAL + SRA->RA_TNOTRAB"
+    cFim     := FilialAte + TurAte
+Endif
+
+While !Eof() .AND. &cInicio <= cFim
+    IncRegua()
+	Inkey()
+	#IFNDEF WINDOWS
+		IF LastKey()==286
+			lAbortPrint := .t.
+		Else
+			lAbortPrint := .f.
+		Endif
+	#ENDIF
+	IF lAbortPrint
+       @ Prow()+1,001 PSAY "CANCELADO PELO OPERADOR"
+       Exit
+	EndIF
+
+    //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+    //³ Consiste Parametrizacao do Intervalo de Impressao            ³
+    //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+    If (Sra->Ra_Nome < NomDe) .Or. (Sra->Ra_Nome > NomAte) .Or. ;
+       (Sra->Ra_Mat < MatDe)  .Or. (Sra->Ra_Mat > MatAte)  .Or. ;
+       (Sra->Ra_CC < CcDe)    .Or. (Sra->Ra_CC > CCAte) .OR. ;
+       (Sra->RA_TNOTRAB < TurDe) .Or. (SRA->RA_TNOTRAB > TurAte) .OR.;
+       (Sra->RA_ADMISSA < dDe ) .Or. (Sra->RA_ADMISSA > dAte )
+       dbSkip()
+       Loop
+    Endif
+
+
+    If !(SRA->RA_SitFolh $ cSit) .Or. !(SRA->RA_CatFunc $ cCat)
+       DbSkip()
+       Loop           // Testa Categoria e Situacao
+    Endif
+
+    cCodigo := AllTrim(SRA->RA_CRACHA)
+    If nTipoImp == 1
+       If lPrimeira == .T.
+          TWINIC()              //Inicializa
+          TWDEFCODE(TWC25)      //Define o padrao do codigo
+          TWDEFLBARS(2,5)      //Define a largura das barras
+          TWDEFPRINT(TWEPSON)   //Define o Driver da Epson Matricial
+          lPrimeira := .F.
+       Endif
+       @ PROW()+1, 0 PSAY " "
+       TWDEFALT(8)
+       TWDEFSALTO(12)
+       TWIMPCOD(cCodigo)
+       TWDEFSALTO(8)
+       @ PROW()+1,0 PSAY " "
+       TWIMPCOD(cCodigo)
+       TWDEFSALTO(8)
+       TWDEFALT(4)
+       @ PROW()+1,0 PSAY " "
+       TWIMPCOD(cCodigo)
+       TWDEFSALTO(4)
+       @PROW()+1, 1 PSAY cCodigo
+       TWDEFSALTO(16)
+   ElseIf nTipoImp == 2
+       If lPrimeira == .T.
+          TWINIC()              //Inicializa
+          TWDEFCODE(TWC25)      //Define o padrao do codigo
+          TWDEFLBARS(6,15)      //Define a largura das barras
+          TWDEFALT(80)
+          TWDEFPRINT(TWDESKJ)   //Define o Driver da DeskJet
+          lPrimeira := .F.
+       Endif
+       @PROW(), 2 PSAY " "
+       TWIMPCOD(cCodigo)
+       TWDJAVANCO(25)
+       @PROW()+1, 4 PSAY cCodigo
+       TWDJAVANCO(75)
+   Endif
+
+   DbSelectArea("SRA")
+   dbSkip()
+End
+If nTipoImp == 1
+   @ PROW()+1,PCOL() PSAY " "
+Else
+   @ PROW(),PCOL() PSAY CHR(12)
+Endif
+Set Device To Screen
+dbSelectArea("SRA")
+DbSetOrder(1)
+If aReturn[5] == 1
+   Set Printer TO 
+   dbCommitall()
+   ourspool(wnrel)
+Endif
+FT_PFLUSH()
+
+
+

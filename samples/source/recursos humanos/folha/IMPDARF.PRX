@@ -1,0 +1,371 @@
+#Include "rwmake.ch"        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+#INCLUDE "IMPDARF.CH"
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+ฑฑฺฤฤฤฤฤฤฤฤฤฤยฤฤฤฤฤฤฤฤฤฤยฤฤฤฤฤฤฤยฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤยฤฤฤฤฤฤยฤฤฤฤฤฤฤฤฤฤฟฑฑ
+ฑฑณRdMake    ณ ImpDARF  ณ Autor ณ R.H. - Aldo               ณ Data ณ 22.10.97 ณฑฑ
+ฑฑรฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤมฤฤฤฤฤฤฤมฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤมฤฤฤฤฤฤมฤฤฤฤฤฤฤฤฤฤดฑฑ
+ฑฑณDescri…o ณ Impressao da DARF em Formulario Continuo                       ณฑฑ
+ฑฑรฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤดฑฑ
+ฑฑณSintaxe e ณ Impdarf                                                        ณฑฑ
+ฑฑรฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤดฑฑ
+ฑฑณ Uso      ณ RdMake                                                         ณฑฑ
+ฑฑรฤฤฤฤฤฤฤฤฤฤมฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤดฑฑ
+ฑฑณ         ATUALIZACOES SOFRIDAS DESDE A CONSTRU€AO INICIAL.                 ณฑฑ
+ฑฑรฤฤฤฤฤฤฤฤฤฤฤฤยฤฤฤฤฤฤฤฤยฤฤฤฤฤฤฤฤฤฤยฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤดฑฑ
+ฑฑณProgramador ณ Data   ณ   BOPS   ณ  Motivo da Alteracao                     ณฑฑ
+ฑฑรฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤดฑฑ
+ฑฑณMarina      ณ30/08/00ณ----------ณRetirada da parte DOS.                    ณฑฑ
+ฑฑณNatie       ณ29/08/01ณ0000009963ณPrnFlush-Descarrega spool impressao teste ณฑฑ
+ฑฑณNatie       ณ12/12/01ณ0000009963ณAcerto na impressao teste                 ณฑฑ
+ฑฑณ------------ณ13/01/03ณ----------ณRotina de Impressao Grafica               ณฑฑ
+ฑฑณ------------ณ16/03/04ณ    MelhorณAcerto impressao Zebrada                  ณฑฑ
+ฑฑณ------------ณ08/04/04ณ----------ณAcerto no Driver p/Impressao              ณฑฑ
+ฑฑณRenata Elenaณ06/08/07ณ0000129577ณAjuste na emissao grafica para SPOOL      ณฑฑ
+ฑฑ|Natie       |03/01/11|0001952012|Impressao por Centro de custo (ch TEGZZK) ณฑฑ
+ฑฑภฤฤฤฤฤฤฤฤฤฤฤฤมฤฤฤฤฤฤฤฤมฤฤฤฤฤฤฤฤฤฤมฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤูฑฑ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿/*/
+
+User Function Impdarf()        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+
+//ฺฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฟ
+//ณ Declaracao de variaveis utilizadas no programa atraves da funcao    ณ
+//ณ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ณ
+//ณ identificando as variaveis publicas do sistema utilizadas no codigo ณ
+//ณ Incluido pelo assistente de conversao do AP5 IDE                    ณ
+//ภฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤู
+SetPrvt("CCGC,LI,CSAVEMENUH,NOPCA,NVEZ,")
+
+If aInfo[15] == 1
+   cCgc:=aInfo[8]
+Else
+   cCgc:=Transform(aInfo[8],"@R ##.###.###/####-##") // CGC
+Endif
+
+If nTipImp == 2
+	fImpDpre()
+
+Elseif nTipImp == 3
+	//Rotina de Impressao Grafica
+	fImpGraf()
+
+Endif
+
+Return        
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
+ฑฑบPrograma  ณfImpDpre  บAutor  ณRecursos Humanos    บ Data ณ  11/12/01   บฑฑ
+ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
+ฑฑบDesc.     ณ Imprime Formulario Pre-impresso                            บฑฑ
+ฑฑบ          ณ                                                            บฑฑ
+ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
+ฑฑบUso       ณ AP5                                                        บฑฑ
+ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿
+*/
+Static Function  fImpDpre()
+
+//--Setar impressora
+@ Li , 0 PSAY AvalImp(080)
+
+While .T.
+ 	@ Li , 58 PSAY Subs(Dtos(dDataAte),7,2)+"/"+Subs (Dtos(dDataAte),5,2)+"/"+Subs(Dtos(dDataAte),1,4)      
+	li := li + 2
+	@ li , 57 PSAY cCgc
+	li := li + 2
+	@ li , 57 PSAY If(cOldRet==Space(4),"0561",cOldRet)
+	li := li + 2
+	@ li , 57 PSAY cNumRef
+	li := li + 1
+	@ li , 1  PSAY Left(aInfo[3],37)
+	li := li + 1
+	@ li , 1  PSAY aInfo[10]
+	@ li , 58 PSAY Subs(Dtos(dVencto),7,2)+"/"+Subs (Dtos(dVencto),5,2)+"/"+Subs(Dtos(dVencto),1,4)
+	li := li + 2	
+	@ li , 57  PSAY Transform(aFolIR[2]+aAdiIR[2]+aFerIR[2]+a13IR[2],"@E 9,999,999,999.99")
+	li := li + 6
+	@ li , 57  PSAY Transform(aFolIR[2]+aAdiIR[2]+aFerIR[2]+a13IR[2],"@E 9,999,999,999.99")
+	li := li + 8 
+	@ li, 0 PSAY " "
+	
+		//ฺฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฟ
+		//ณ Descarrega teste de impressao                                ณ 
+		//ภฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤู
+	If nVez == 0   .and. aReturn[5] # 1           
+		fImpTeste("SRA")
+
+		If nOpca == 2 
+			nVez 	:= 0 
+			Set Device to Print
+			Loop
+		Else
+			nVez	:= 1
+		Endif	
+		
+	Endif
+	Exit
+Enddo
+
+Return(nil)        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
+ฑฑบPrograma  ณfImpTeste บAutor  ณRecursos Humanos    บ Data ณ  11/29/01   บฑฑ
+ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
+ฑฑบDesc.     ณTesta impressao de Formulario Teste                         บฑฑ
+ฑฑบ          ณ                                                            บฑฑ
+ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
+ฑฑบUso       ณ AP5                                                        บฑฑ
+ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿*/
+Static function fImpTeste(cStrin)
+Local cString	:= If(cStrin = nil,"SRA",cStrin)
+
+//ฺฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฟ
+//ณ Descarrega teste de impressao                                ณ 
+//ภฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤู
+MS_Flush()
+fInicia(cString)
+
+Pergunte("GPR30A",.T.)
+nOpca  	:= If(mv_par01 = 1 ,1, 2)
+
+Return nOpca
+
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
+ฑฑบPrograma  ณfInicia   บAutor  ณMicrosiga-Natie     บ Data ณ  11/12/01   บฑฑ
+ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
+ฑฑบDesc.     ณ                                                            บฑฑ
+ฑฑบ          ณ                                                            บฑฑ
+ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
+ฑฑบUso       ณ AP5                                                        บฑฑ
+ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿
+*/
+Static Function  fInicia(cString)
+
+
+If	nLastKey == 27
+	Return .F. 
+Endif
+
+If !(Mv_par13 = 3)
+	SetDefault(aReturn,cString)
+Endif
+
+If	nLastKey == 27
+	Return  .F.
+Endif
+
+Return  .T. 
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
+ฑฑบPrograma  ณfImpGraf  บAutor  ณRecursos Humanos    บ Data ณ  13/01/03   บฑฑ
+ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
+ฑฑบDesc.     ณImpressao da DARF modo Grafico.                             บฑฑ
+ฑฑบ          ณ                                                            บฑฑ
+ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
+ฑฑบUso       ณ AP6                                                        บฑฑ
+ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿
+*/
+Static Function  fImpGraf()
+Local cBmp 		 := ""
+Local cStartPath := GetSrvProfString("StartPath","")
+Local nLin      := 030   
+
+oPrint:StartPage()  //Inicio da Pแgina
+
+cBmp := cStartPath + "Receita.BMP" //Logo da Receita Federal
+
+//1a Impressao
+//Box do Formulario
+oPrint:Box( nLin,0030,nLin+1100,2350)  		// box
+                                       
+If File(cBmp)
+	oPrint:SayBitmap(nLin + 10,040,cBmp,200,180)
+Endif
+
+oPrint:say(nLin +  20,250 ,STR0002,oFont15n)  //Ministerio da Fazenda
+oPrint:say(nLin +  70,250 ,STR0003,oFont10n)  //Secretaria da Receita Federal do Brasil
+oPrint:say(nLin + 120,250 ,STR0004,oFont10n)  //Documento de Arrecadacao ......
+oPrint:say(nLin + 170,250 ,STR0005,oFont21n)  //DARF
+oPrint:Line(nLin,1300,nLin + 1100,1300)   
+oPrint:Line(nLin,1800,nLin + 810,1800)
+
+oPrint:Line(nLin + 270,030,nLin + 270,1300) 
+oPrint:say(nLin + 280,040 ,"01",oFont15n)
+oPrint:say(nLin + 290,110 ,STR0006,oFont10)   //Nome/Telefone
+oPrint:say(nLin + 350,110 , Left(aInfo[3],37),oFont10)  
+oPrint:say(nLin + 380,110 , aInfo[10],oFont10) 
+
+oPrint:Line(nLin + 490,030,nLin + 490,1300)  
+oPrint:Line(nLin + 650,030,nLin + 650,1300)
+
+If IsInCallStack( "GPER055") .and. nQuebraCC ==1 .and. Empty(cCentra)  
+	oPrint:say(nLin + 540,110 ,If(!Empty(cCEI),STR0026 + cCEI, STR0025 + cCCusto ) ,oFont10)  
+Endif 
+
+oPrint:say(nLin + 20,1305 ,"02",oFont15n)
+oPrint:say(nLin + 30,1370 ,STR0013,oFont08)   //Periodo de Apuracao
+oPrint:say( nLin + 30,2090 , Subs(Dtos(dDataAte),7,2)+"/"+Subs (Dtos(dDataAte),5,2)+"/"+Subs(Dtos(dDataAte),1,4), oFont10) 
+
+oPrint:Line(nLin + 90, 1300, nLin + 90,2350)
+oPrint:say(nLin + 120,1305 ,"03",oFont15n)
+oPrint:say(nLin + 130,1370 ,STR0014,oFont08)   //Numero de CGG ou  CPF
+oPrint:say(nLin + 130,1910 , cCgc,oFont10)  
+
+oPrint:Line(nLin + 180, 1300, nLin + 180,2350)
+oPrint:say(nLin + 200,1305 ,"04",oFont15n)
+oPrint:say(nLin + 210,1370 ,STR0015,oFont08)   //Codigo da Receita
+oPrint:say(nLin + 210,2145 ,If(cOldRet==Space(4),"0561",cOldRet),oFont10)
+
+oPrint:Line(nLin + 270, 1300, nLin + 270,2350)
+oPrint:say(nLin + 290,1305 ,"05",oFont15n)
+oPrint:say(nLin + 300,1370 ,STR0016,oFont08)   //Numero de Referencia
+oPrint:say(nLin + 300,1935 , cNumRef,oFont10)  
+
+oPrint:Line(nLin + 360, 1300, nLin + 360,2350)
+oPrint:say(nLin + 380,1305 ,"06",oFont15n)
+oPrint:say(nLin + 390,1370 ,STR0017,oFont08)   //Data do Vencimento
+oPrint:say( nLin + 390,2090 , Subs(Dtos(dVencto),7,2)+"/"+Subs (Dtos(dVencto),5,2)+"/"+Subs(Dtos(dVencto),1,4), oFont10)   
+ 
+
+oPrint:Line(nLin + 450, 1300, nLin + 450,2350)
+oPrint:say(nLin + 470,1305 ,"07",oFont15n)
+oPrint:say(nLin + 480,1370 ,STR0018,oFont08)   //Valor Principal
+oPrint:say(nLin + 480,2000 , Transform(aFolIR[2]+aAdiIR[2]+aFerIR[2]+a13IR[2],"@E 9,999,999,999.99"),oFont10)  
+
+oPrint:Line(nLin + 540, 1300, nLin + 540,2350)
+oPrint:say(nLin + 560,1305 ,"08",oFont15n)
+oPrint:say(nLin + 570,1370 ,STR0019,oFont08)   //Valor da Multa
+
+oPrint:Line(nLin + 630, 1300, nLin + 630,2350)
+oPrint:say(nLin + 650,1305 ,"09",oFont15n)
+oPrint:say(nLin + 640,1370 ,STR0020,oFont08)   //Valor dos Juros e/ou
+oPrint:say(nLin + 670,1370 ,STR0021,oFont08)   //Encargos DL 10225/69
+
+oPrint:Line(nLin + 720, 1300, nLin + 720,2350)
+oPrint:say(nLin + 740,1305 ,"10",oFont15n)
+oPrint:say(nLin + 750,1370 ,STR0022,oFont08)   //Valor Total
+oPrint:say(nLin + 750,2000 , Transform(aFolIR[2]+aAdiIR[2]+aFerIR[2]+a13IR[2],"@E 9,999,999,999.99"),oFont10)                                                                                                                        
+
+oPrint:Line(nLin + 810, 1300, nLin + 810,2350)
+oPrint:say(nLin + 830,1305 ,"11",oFont15n)
+oPrint:say(nLin + 830,1370 ,STR0023,oFont08)   //Autenticacao Bancaria
+oPrint:say(nLin + 830,1805 ,STR0024,oFont07)   //Somente nas 1 e 2 vias)
+
+oPrint:say(nLin + 710,600 ,STR0007,oFont08)   //Atencao
+oPrint:say(nLin + 770,040 ,STR0008,oFont08)    //ษ Vedado o ...
+oPrint:say(nLin + 800,040 ,STR0009,oFont08)    //   .
+oPrint:say(nLin + 830,040 ,STR0010,oFont08)    //   .
+oPrint:say(nLin + 860,040 ,STR0011,oFont08)    //   .
+                                               
+oPrint:say(nlin + 1250, 000,Replicate("-",132),oFont11) 
+ 
+nLin := 1480
+
+//2a Impressao
+//Box do Formulario
+oPrint:Box(nLin,0030,nLin+1100,2350)  		// box
+                                       
+If File(cBmp)
+	oPrint:SayBitmap(nLin + 10,040,cBmp,200,180)
+Endif
+
+oPrint:say(nLin +  20,250 ,STR0002,oFont15n)  //Ministerio da Fazenda
+oPrint:say(nLin +  70,250 ,STR0003,oFont10n)  //Secretaria da Receita Federal do Brasil
+oPrint:say(nLin + 120,250 ,STR0004,oFont10n)  //Documento de Arrecadacao ......
+oPrint:say(nLin + 170,250 ,STR0005,oFont21n)  //DARF
+oPrint:Line(nLin,1300,nLin + 1100,1300)   
+oPrint:Line(nLin,1800,nLin + 810,1800)
+
+oPrint:Line(nLin + 270,030,nLin + 270,1300) 
+oPrint:say(nLin + 280,040 ,"01",oFont15n)
+oPrint:say(nLin + 290,110 ,STR0006,oFont10)   //Nome/Telefone
+oPrint:say(nLin + 350,110 , Left(aInfo[3],37),oFont10)  
+oPrint:say(nLin + 380,110 , aInfo[10],oFont10) 
+
+oPrint:Line(nLin + 490,030,nLin + 490,1300)  
+oPrint:Line(nLin + 650,030,nLin + 650,1300)
+
+If IsInCallStack( "GPER055") .and. nQuebraCC ==1 .and. Empty(cCentra) 
+	oPrint:say(nLin + 540,110 ,If(!Empty(cCEI),STR0026 + cCEI, STR0025 + cCCusto ) ,oFont10)  
+Endif          
+
+oPrint:say(nLin + 20,1305 ,"02",oFont15n)
+oPrint:say(nLin + 30,1370 ,STR0013,oFont08)   //Periodo de Apuracao
+oPrint:say( nLin + 30,2090 , Subs(Dtos(dDataAte),7,2)+"/"+Subs (Dtos(dDataAte),5,2)+"/"+Subs(Dtos(dDataAte),1,4), oFont10)  
+
+oPrint:Line(nLin + 90, 1300, nLin + 90,2350)
+oPrint:say(nLin + 120,1305 ,"03",oFont15n)
+oPrint:say(nLin + 130,1370 ,STR0014,oFont08)   //Numero de CGG ou  CPF
+oPrint:say(nLin + 130,1910 , cCgc,oFont10)  
+
+oPrint:Line(nLin + 180, 1300, nLin + 180,2350)
+oPrint:say(nLin + 200,1305 ,"04",oFont15n)
+oPrint:say(nLin + 210,1370 ,STR0015,oFont08)   //Codigo da Receita
+oPrint:say(nLin + 210,2145 ,If(cOldRet==Space(4),"0561",cOldRet),oFont10)
+
+oPrint:Line(nLin + 270, 1300, nLin + 270,2350)
+oPrint:say(nLin + 290,1305 ,"05",oFont15n)
+oPrint:say(nLin + 300,1370 ,STR0016,oFont08)   //Numero de Referencia
+oPrint:say(nLin + 300,1935 , cNumRef,oFont10)  
+
+oPrint:Line(nLin + 360, 1300, nLin + 360,2350)
+oPrint:say(nLin + 380,1305 ,"06",oFont15n)
+oPrint:say(nLin + 390,1370 ,STR0017,oFont08)   //Data do Vencimento
+oPrint:say( nLin + 390,2090 , Subs(Dtos(dVencto),7,2)+"/"+Subs (Dtos(dVencto),5,2)+"/"+Subs(Dtos(dVencto),1,4), oFont10)  
+
+oPrint:Line(nLin + 450, 1300, nLin + 450,2350)
+oPrint:say(nLin + 470,1305 ,"07",oFont15n)
+oPrint:say(nLin + 480,1370 ,STR0018,oFont08)   //Valor Principal
+oPrint:say(nLin + 480,2000 , Transform(aFolIR[2]+aAdiIR[2]+aFerIR[2]+a13IR[2],"@E 9,999,999,999.99"),oFont10)  
+
+oPrint:Line(nLin + 540, 1300, nLin + 540,2350)
+oPrint:say(nLin + 560,1305 ,"08",oFont15n)
+oPrint:say(nLin + 570,1370 ,STR0019,oFont08)   //Valor da Multa
+
+oPrint:Line(nLin + 630, 1300, nLin + 630,2350)
+oPrint:say(nLin + 650,1305 ,"09",oFont15n)
+oPrint:say(nLin + 640,1370 ,STR0020,oFont08)   //Valor dos Juros e/ou
+oPrint:say(nLin + 670,1370 ,STR0021,oFont08)   //Encargos DL 10225/69
+
+oPrint:Line(nLin + 720, 1300, nLin + 720,2350)
+oPrint:say(nLin + 740,1305 ,"10",oFont15n)
+oPrint:say(nLin + 750,1370 ,STR0022,oFont08)   //Valor Total
+oPrint:say(nLin + 750,2000 , Transform(aFolIR[2]+aAdiIR[2]+aFerIR[2]+a13IR[2],"@E 9,999,999,999.99"),oFont10)                                                                                                                        
+
+oPrint:Line(nLin + 810, 1300, nLin + 810,2350)
+oPrint:say(nLin + 830,1305 ,"11",oFont15n)
+oPrint:say(nLin + 830,1370 ,STR0023,oFont08)   //Autenticacao Bancaria
+oPrint:say(nLin + 830,1805 ,STR0024,oFont07)   //Somente nas 1 e 2 vias)
+
+oPrint:say(nLin + 710,600 ,STR0007,oFont08)   //Atencao
+oPrint:say(nLin + 770,040 ,STR0008,oFont08)    //ษ Vedado o ...
+oPrint:say(nLin + 800,040 ,STR0009,oFont08)    //   .
+oPrint:say(nLin + 830,040 ,STR0010,oFont08)    //   .
+oPrint:say(nLin + 860,040 ,STR0011,oFont08)    //   .
+
+oPrint:EndPage()  //Finaliza a Impressใo
+  
+Return

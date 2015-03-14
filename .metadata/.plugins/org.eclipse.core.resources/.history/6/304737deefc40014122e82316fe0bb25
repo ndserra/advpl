@@ -1,0 +1,55 @@
+#Include "PROTHEUS.CH"
+//--------------------------------------------------------------
+/*/{Protheus.doc} MyFunction
+Description                                                     
+                                                                
+@param xParam Parameter Description                             
+@return xRet Return Description                                 
+@author  -                                               
+@since 07/03/2015                                                   
+/*/                                                             
+//--------------------------------------------------------------
+User Function MyFunction()                        
+Local btAlterar
+Local btExcluir
+Local btIncluir
+Local cCliente
+Local oFont1 := TFont():New("MS Sans Serif",,016,,.F.,,,,,.F.,.F.)
+Local oFont1Ob := TFont():New("Arial Narrow",,018,,.T.,,,,,.F.,.F.)
+Local ogCodigo
+Local cgCodigo := "Define variable value"
+Local ogFantasia
+Local cgFantasia := "Define variable value"
+Local ogLoja
+Local cgLoja := "Define variable value"
+Local ogNome
+Local cgNome := "Define variable value"
+Local ogRadio
+Local ngRadio := 1
+Local oGroup1
+Local oGroup2
+Local oLoja
+Local oNome
+Local oSay1
+Static oDlg
+
+  DEFINE MSDIALOG oDlg TITLE "Cliente" FROM 000, 000  TO 250, 600 COLORS 0, 16777215 PIXEL
+
+    @ 005, 009 GROUP oGroup2 TO 099, 290 PROMPT "Clientes" OF oDlg COLOR 128, 16777215 PIXEL
+    @ 044, 207 GROUP oGroup1 TO 080, 275 PROMPT "Bloqueado" OF oDlg COLOR 128, 16777215 PIXEL
+    @ 027, 022 SAY cCliente PROMPT "Cliente:" SIZE 025, 007 OF oDlg FONT oFont1Ob COLORS 128, 16777215 PIXEL
+    @ 027, 048 MSGET ogCodigo VAR cgCodigo SIZE 048, 010 OF oDlg COLORS 0, 16777215 F3 "SB1" PIXEL
+    @ 026, 127 MSGET ogLoja VAR cgLoja SIZE 052, 010 OF oDlg COLORS 0, 16777215 PIXEL
+    @ 027, 108 SAY oLoja PROMPT "Loja:" SIZE 017, 008 OF oDlg FONT oFont1Ob COLORS 128, 16777215 PIXEL
+    @ 048, 025 SAY oNome PROMPT "Nome:" SIZE 017, 008 OF oDlg FONT oFont1Ob COLORS 128, 16777215 PIXEL
+    @ 047, 048 MSGET ogNome VAR cgNome SIZE 141, 010 OF oDlg COLORS 0, 16777215 PIXEL
+    @ 068, 048 MSGET ogFantasia VAR cgFantasia SIZE 141, 010 OF oDlg COLORS 0, 16777215 PIXEL
+    @ 069, 018 SAY oSay1 PROMPT "Fantasia:" SIZE 027, 008 OF oDlg FONT oFont1Ob COLORS 128, 16777215 PIXEL
+    @ 056, 217 RADIO ogRadio VAR ngRadio ITEMS "SIM","NÃO" SIZE 028, 018 OF oDlg COLOR 0, 16777215 PIXEL
+    @ 104, 057 BUTTON btIncluir PROMPT "Incluir" SIZE 041, 016 OF oDlg PIXEL
+    @ 103, 130 BUTTON btAlterar PROMPT "Alterar" SIZE 041, 016 OF oDlg PIXEL
+    @ 104, 204 BUTTON btExcluir PROMPT "Excluir" SIZE 041, 016 OF oDlg PIXEL
+
+  ACTIVATE MSDIALOG oDlg CENTERED
+
+Return

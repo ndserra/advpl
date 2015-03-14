@@ -1,0 +1,172 @@
+#INCLUDE "PROTHEUS.CH"
+#INCLUDE "APWEBSRV.CH"
+
+/* ===============================================================================
+WSDL Location    http://emerson-rocha/ws/RHUSUARIO.apw?WSDL
+Gerado em        01/27/06 10:44:35
+Observações      Código-Fonte gerado por ADVPL WSDL Client 1.050921
+                 Alterações neste arquivo podem causar funcionamento incorreto
+                 e serão perdidas caso o código-fonte seja gerado novamente.
+=============================================================================== */
+
+User Function _OVXLKVJ ; Return  // "dummy" function - Internal Use 
+
+/* -------------------------------------------------------------------------------
+WSDL Service WSRHUSUARIO
+------------------------------------------------------------------------------- */
+
+WSCLIENT WSRHUSUARIO
+
+	WSMETHOD NEW
+	WSMETHOD INIT
+	WSMETHOD RESET
+	WSMETHOD CLONE
+	WSMETHOD BRWHCM
+
+	WSDATA   _URL                      AS String
+	WSDATA   cUSERCODE                 AS string
+	WSDATA   cPARTICIPANTID            AS string
+	WSDATA   oWSBRWHCMRESULT           AS RHUSUARIO_ARRAYOFHCMLIST
+
+ENDWSCLIENT
+
+WSMETHOD NEW WSCLIENT WSRHUSUARIO
+::Init()
+If !FindFunction("XMLCHILDEX")
+	UserException("O Código-Fonte Client atual requer os executáveis do Protheus Build [7.00.051130P] ou superior. Atualize o Protheus ou gere o Código-Fonte novamente utilizando o Build atual.")
+EndIf
+Return Self
+
+WSMETHOD INIT WSCLIENT WSRHUSUARIO
+	::oWSBRWHCMRESULT    := RHUSUARIO_ARRAYOFHCMLIST():New()
+Return
+
+WSMETHOD RESET WSCLIENT WSRHUSUARIO
+	::cUSERCODE          := NIL 
+	::cPARTICIPANTID     := NIL 
+	::oWSBRWHCMRESULT    := NIL 
+	::Init()
+Return
+
+WSMETHOD CLONE WSCLIENT WSRHUSUARIO
+Local oClone := WSRHUSUARIO():New()
+	oClone:_URL          := ::_URL 
+	oClone:cUSERCODE     := ::cUSERCODE
+	oClone:cPARTICIPANTID := ::cPARTICIPANTID
+	oClone:oWSBRWHCMRESULT :=  IIF(::oWSBRWHCMRESULT = NIL , NIL ,::oWSBRWHCMRESULT:Clone() )
+Return oClone
+
+/* -------------------------------------------------------------------------------
+WSDL Method BRWHCM of Service WSRHUSUARIO
+------------------------------------------------------------------------------- */
+
+WSMETHOD BRWHCM WSSEND cUSERCODE,cPARTICIPANTID WSRECEIVE oWSBRWHCMRESULT WSCLIENT WSRHUSUARIO
+Local cSoap := "" , oXmlRet
+
+BEGIN WSMETHOD
+
+cSoap += '<BRWHCM xmlns="http://emerson-rocha/">'
+cSoap += WSSoapValue("USERCODE", ::cUSERCODE, cUSERCODE , "string", .T. , .F., 0 ) 
+cSoap += WSSoapValue("PARTICIPANTID", ::cPARTICIPANTID, cPARTICIPANTID , "string", .T. , .F., 0 ) 
+cSoap += "</BRWHCM>"
+
+oXmlRet := SvcSoapCall(	Self,cSoap,; 
+	"http://emerson-rocha/BRWHCM",; 
+	"DOCUMENT","http://emerson-rocha/",,"1.031217",; 
+	"http://emerson-rocha/ws/RHUSUARIO.apw")
+
+::Init()
+::oWSBRWHCMRESULT:SoapRecv( WSAdvValue( oXmlRet,"_BRWHCMRESPONSE:_BRWHCMRESULT","ARRAYOFHCMLIST",NIL,NIL,NIL,NIL,NIL) )
+
+END WSMETHOD
+
+oXmlRet := NIL
+Return .T.
+
+
+/* -------------------------------------------------------------------------------
+WSDL Data Structure ARRAYOFHCMLIST
+------------------------------------------------------------------------------- */
+
+WSSTRUCT RHUSUARIO_ARRAYOFHCMLIST
+	WSDATA   oWSHCMLIST                AS RHUSUARIO_HCMLIST OPTIONAL
+	WSMETHOD NEW
+	WSMETHOD INIT
+	WSMETHOD CLONE
+	WSMETHOD SOAPRECV
+ENDWSSTRUCT
+
+WSMETHOD NEW WSCLIENT RHUSUARIO_ARRAYOFHCMLIST
+	::Init()
+Return Self
+
+WSMETHOD INIT WSCLIENT RHUSUARIO_ARRAYOFHCMLIST
+	::oWSHCMLIST           := {} // Array Of  RHUSUARIO_HCMLIST():New()
+Return
+
+WSMETHOD CLONE WSCLIENT RHUSUARIO_ARRAYOFHCMLIST
+	Local oClone := RHUSUARIO_ARRAYOFHCMLIST():NEW()
+	oClone:oWSHCMLIST := NIL
+	If ::oWSHCMLIST <> NIL 
+		oClone:oWSHCMLIST := {}
+		aEval( ::oWSHCMLIST , { |x| aadd( oClone:oWSHCMLIST , x:Clone() ) } )
+	Endif 
+Return oClone
+
+WSMETHOD SOAPRECV WSSEND oResponse WSCLIENT RHUSUARIO_ARRAYOFHCMLIST
+	Local nRElem1, oNodes1, nTElem1
+	::Init()
+	If oResponse = NIL ; Return ; Endif 
+	oNodes1 :=  WSAdvValue( oResponse,"_HCMLIST","HCMLIST",{},NIL,.T.,"O",NIL) 
+	nTElem1 := len(oNodes1)
+	For nRElem1 := 1 to nTElem1 
+		If !WSIsNilNode( oNodes1[nRElem1] )
+			aadd(::oWSHCMLIST , RHUSUARIO_HCMLIST():New() )
+			::oWSHCMLIST[len(::oWSHCMLIST)]:SoapRecv(oNodes1[nRElem1])
+		Endif
+	Next
+Return
+
+/* -------------------------------------------------------------------------------
+WSDL Data Structure HCMLIST
+------------------------------------------------------------------------------- */
+
+WSSTRUCT RHUSUARIO_HCMLIST
+	WSDATA   cCERTIFICATION            AS string OPTIONAL
+	WSDATA   dDATEFROM                 AS date OPTIONAL
+	WSDATA   dDATETO                   AS date OPTIONAL
+	WSDATA   cFAMILY                   AS string OPTIONAL
+	WSDATA   cVERSION                  AS string OPTIONAL
+	WSMETHOD NEW
+	WSMETHOD INIT
+	WSMETHOD CLONE
+	WSMETHOD SOAPRECV
+ENDWSSTRUCT
+
+WSMETHOD NEW WSCLIENT RHUSUARIO_HCMLIST
+	::Init()
+Return Self
+
+WSMETHOD INIT WSCLIENT RHUSUARIO_HCMLIST
+Return
+
+WSMETHOD CLONE WSCLIENT RHUSUARIO_HCMLIST
+	Local oClone := RHUSUARIO_HCMLIST():NEW()
+	oClone:cCERTIFICATION       := ::cCERTIFICATION
+	oClone:dDATEFROM            := ::dDATEFROM
+	oClone:dDATETO              := ::dDATETO
+	oClone:cFAMILY              := ::cFAMILY
+	oClone:cVERSION             := ::cVERSION
+Return oClone
+
+WSMETHOD SOAPRECV WSSEND oResponse WSCLIENT RHUSUARIO_HCMLIST
+	::Init()
+	If oResponse = NIL ; Return ; Endif 
+	::cCERTIFICATION     :=  WSAdvValue( oResponse,"_CERTIFICATION","string",NIL,NIL,NIL,"S",NIL) 
+	::dDATEFROM          :=  WSAdvValue( oResponse,"_DATEFROM","date",NIL,NIL,NIL,"D",NIL) 
+	::dDATETO            :=  WSAdvValue( oResponse,"_DATETO","date",NIL,NIL,NIL,"D",NIL) 
+	::cFAMILY            :=  WSAdvValue( oResponse,"_FAMILY","string",NIL,NIL,NIL,"S",NIL) 
+	::cVERSION           :=  WSAdvValue( oResponse,"_VERSION","string",NIL,NIL,NIL,"S",NIL) 
+Return
+
+

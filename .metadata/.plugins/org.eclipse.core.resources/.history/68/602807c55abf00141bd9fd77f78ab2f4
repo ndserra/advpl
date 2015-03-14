@@ -1,0 +1,155 @@
+#include 'protheus.ch'
+#include 'parmtype.ch'
+
+User Function OpString2()
+
+	Local cTexto1 := "123456789ABCDEF"
+	Local cTexto2 := "Texto 02"
+	Local cDiv		:= "|"
+	Local nRet 	:= 0
+	Local cVar 	:= "A" 
+	
+	MsgInfo( Replicate("*",20) ) // Repetindo caracteres
+	
+	MsgInfo( Left(cTexto1,3) , "Left" ) // Pega 3 char a esquerda
+	
+	MsgInfo( Right(cTexto1 , 6) , "Right" ) // Pega 6 chars a direita
+	
+	MsgInfo( SubStr(cTexto1,7,5) , "Substring" ) // Pega 5 chars a partir da Posição 7
+	
+	
+
+
+Return ( NIL )
+
+//********************************************************************
+
+User Function OpString1()
+
+	Local cTexto1 := "Maria Silva                           "
+	Local cTexto2 := "Texto 02"
+	Local cDiv		:= "|"
+	Local nRet 	:= 0
+	Local cVar 	:= "A" 
+	
+	MsgInfo( cTexto1 + cDiv + cTexto2, "Exemplo" )
+	
+	MsgInfo( Trim(cTexto1) + cDiv + cTexto2 , "TRIM" ) // Remove Espaços a diretira
+	
+	MsgInfo( RTrim(cTexto1) + cDiv + cTexto2 , "RTRIM" ) // Remove Espaços a direita
+	
+	cTexto2 := Space(10) + cTexto2 // Add espaços
+	
+	MsgInfo( cTexto1 + cDiv + cTexto2, "Espaços" )
+	
+	MsgInfo( cTexto1 + cDiv + LTrim(ctexto2) , "LTRIM" ) // Remove Espaços a esquerda
+	
+	MsgInfo( AllTrim(ctexto1) + cDiv + AllTrim(cTexto2) , "ALLTRIM" ) // Remove de ambos os lados
+
+
+Return ( NIL )
+
+//********************************************************************
+
+User Function OpString()
+
+	Local cTexto1 := "Marina Silva"
+	Local cTexto2 := "Texto 02"
+    Local cVar := "r" 
+	//MsgInfo(cTexto1 - cTexto2)
+	//MsgInfo(cTexto1 + cTexto2)
+
+
+	If cVar $ cTexto1 // Contido
+		//nRet := At("r",cTexto1) // Retorna
+		MsgInfo( "Verdadeiro" + Chr(13) + "Posição: " + cValToChar(nRet) )
+	Else 
+		MsgInfo("Falso")
+	EndIf
+
+
+		Return( NIL )
+
+//********************************************************************
+
+
+	User Function xEscopo()
+//
+		Static 	cStatic 	:= "Pode ser vista em outras funtions mas não pode alterar valores. Utilizada para objetos"
+//
+		Local 		cLocal 	:= "Só pode ser vista na propria functions"
+//
+		Private 	cPrivate 	:= "Pode ser vista e editada em outras functions"
+// Variaveis que não devem ser utilziadas com frequencia e pode ser substituida pela Private que tb funciona como uma Global
+		Public   	_cPublica 	:= "Pode ser vista em qualquer parte do projeto"
+
+		xSTEscopo()
+
+		Return( NIL )
+
+//********************************************************************
+	Static Function xSTEscopo()
+
+		MsgInfo(cStatic,"Static")
+//MsgAlert(cLocal,"Local")
+		MsgAlert("cPrivate")
+		MsgStop(_cPublica,"Publica")
+		Alert("ajdskljdkljsd")
+
+		Return( NIL )
+
+	User function ADVPL()
+// Comentario de Linha 
+
+/* 
+ * Comentario
+ * de 
+ * Bloco
+ */
+
+		nValor  := 0 // Numerico
+		cVar    := "" // ' ' // Caracter
+		lVar    := .T. // Logico
+		dVar    := Data()  // Data
+		bVar    := { || }  // Bloco
+		aVar    := {}     // Array Vetor
+		oVar    := Nil    // objeto
+      
+		Return( NIL )
+
+
+//----------------------------------------------------
+
+
+	User Function xVar()
+
+		Local xVar
+
+		xVar := "Agora a variavel é caracter..."
+
+		MsgInfo(xVar)
+
+		xVar := 22 + 10  // Agora é numerico
+
+		MsgInfo(xVar)
+
+		xVar := .T. // Agora é Logico
+ 
+		If xVar    // Não é necessario colocar operador ex : If xVar == .T.
+			MsgInfo("Verdadeiro")
+		Else
+			MsgInfo("Falso")
+		EndIf
+
+		xVar := Date() + 2 // Agora é Data
+
+		MsgInfo("Hoje é :" + Dtoc(xVar))
+
+		xVar := Nil
+
+		MsgInfo("Valor nulo" + CValTochar(xVar) + "..." )
+
+		Return( NIL )
+//----------------------------------------------------
+
+

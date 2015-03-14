@@ -1,0 +1,618 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP5 IDE em 19/11/99
+#INCLUDE 'SEGDES.CH'
+
+User Function Segdes()        // incluido pelo assistente de conversao do AP5 IDE em 19/11/99
+
+//ฺฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฟ
+//ณ Declaracao de variaveis utilizadas no programa atraves da funcao    ณ
+//ณ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ณ
+//ณ identificando as variaveis publicas do sistema utilizadas no codigo ณ
+//ณ Incluido pelo assistente de conversao do AP5 IDE                    ณ
+//ภฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤู
+Private NSALARIO	:=0,NSALHORA	:=0,NORDEM		:=0
+Private NSALMES		:=0,NSALDIA		:=0,NLUGAR		:=0
+Private NVALULT		:=0,NVALPEN		:=0,NVALANT		:=0
+Private NVALULTSAL	:=0,NVALPENSAL	:=0,NVALANTSAL	:=0,NX		:=0
+
+SetPrvt("CTIT,CDESC1,CDESC2,CDESC3,CSTRING,CALIAS")
+SetPrvt("AORD,WNREL,CPERG,CFILANTE,LEND,LFIRST")
+SetPrvt("ARETURN,AINFO,NLASTKEY")
+SetPrvt("CFILDE,CFILATE,CMATDE,CMATATE")
+SetPrvt("CCCDE,CCCATE,NVIAS,DDTBASE,CVERBAS,DDEMIDE,DDEMIATE")
+SetPrvt("CNOME,CEND,CCEP,CUF,CFONE,CMAE,CTPINSC")
+SetPrvt("CCGC,CCNAE,CPIS,CCTPS,CCTSERIE,CCTUF")
+SetPrvt("CCBO,COCUP,DADMISSAO,DDEMISSAO,CSEXO,CGRINSTRU")
+SetPrvt("DNASCIM,CHRSEMANA,CMAT,CFIL,CCC,CNMESES")
+SetPrvt("C6SALARIOS,CINDENIZ,DDTULTSAL,DDTPENSAL,DDTANTSAL,CTIPO")
+SetPrvt("CVALOR,AVALSAL")
+
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
+ฑฑบPrograma  ณSEGDES    บAutor  ณMicrosiga           บ Data ณ  10-01-02   บฑฑ
+ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
+ฑฑบDesc.     ณ Requerimento de Seguro-Desemprego - S.D.					  บฑฑ
+ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
+ฑฑบUso       ณ AP6                                                        บฑฑ
+ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
+ฑฑบ			    		 ATUALIZACOES OCORRIDAS							  บฑฑ
+ฑฑรฤฤฤฤฤฤฤฤฤฤฤฤยฤฤฤฤฤฤฤฤยฤฤฤฤฤฤยฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤดฑฑ
+ฑฑณProgramador ณ Data   ณ BOPS ณ  Motivo da Alteracao                     ณฑฑ
+ฑฑรฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤลฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤดฑฑ
+ฑฑณPriscila    ณ30/09/02ณ015780ณAjuste p/ Impressao, qdo Cal.Resc. mes se ณฑฑ
+ฑฑณ            ณ        ณ      ณguinte e nao foi feito o Fechamento Atual.ณฑฑ
+ฑฑณ            ณ        ณ------ณAjuste no salto de pagina.                ณฑฑ
+ฑฑณ            ณ	    ณ------ณAcerto nos Valores dos 3 Ultimos Salarios.ณฑฑ
+ฑฑณ            ณ	    ณ------ณAjuste para posicionar correto no SRA.    ณฑฑ
+ฑฑณ            ณ        ณ------ณAjuste na impressao em Disco.             ณฑฑ
+ฑฑณ            ณ        ณ------ณValidacao Impr.Rescisao somente Efetiva.  ณฑฑ
+ฑฑณEmerson     ณ06/01/03ณ------ณBuscar o codigo CBO no cadastro de funcoesณฑฑ
+ฑฑณ            ณ        ณ------ณde acordo com os novos codigos CBO/2002.  ณฑฑ
+ฑฑณPriscila    ณ15/05/03ณ063264ณAjuste p/ trazer correto os valores dos 3 ณฑฑ
+ฑฑณ            ณ        ณ      ณultimos salarios.                         ณฑฑ
+ฑฑณSilvia      ณ30/09/03ณ066800ณAjuste no calculo dos 3 ult.salario       ณฑฑ
+ฑฑณPedro Eloy  ณ12/02/04ณ069232|Definicao das variaveis atribuindo o :=0  ณฑฑ
+ฑฑณPedro Eloy  ณ02/06/04ณ068748|Foi tratado os valores AntPen. e Penul.   ณฑฑ 
+ฑฑณ            ณ17/08/04ณ073442ณTroca da fSomaAcl por fBuscaAcm- verifica ณฑฑ
+ฑฑณ            ณ        ณ------ณas transf. do funcionario                 ณฑฑ
+ฑฑศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿*/
+
+//+--------------------------------------------------------------+
+//ฆ Define Variaveis Locais (Basicas)                            ฆ
+//+--------------------------------------------------------------+
+cTit     := STR0001 // ' REQUERIMENTO DE SEGURO-DESEMPREGO - S.D. '
+cDesc1   := STR0002 // 'Requerimento de Seguro-Desemprego - S.D.'
+cDesc2   := STR0003 // 'Serแ impresso de acordo com os parametros solicitados pelo'
+cDesc3   := STR0004 // 'usuario.'
+cString  := 'SRA'
+cAlias   := 'SRA'
+aOrd     := {STR0005,STR0006}	// 'Matricula'###'Centro de Custo'
+WnRel    := 'SEGDES'
+cPerg    := 'SEGDES'                    
+cFilAnte := 'ทท'
+lEnd     := .F.
+lFirst   := .T.
+aReturn  := { STR0007,1,STR0008,2,2,1,'',1 }	// 'Zebrado'###'Administra็ไo'	
+aInfo    := {}
+nLastKey := 0
+nLinha	 := 0
+aRegs    := {}
+
+/*
+ฺฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฟ
+ณ Variaveis de Acesso do Usuario                               ณ
+ภฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤู*/
+cAcessaSRA	:= &( " { || " + ChkRH( "SEGDES" , "SRA" , "2" ) + " } " )
+
+//+--------------------------------------------------------------+                      
+//ฆ Verifica as perguntas selecionadas                           ฆ
+//+--------------------------------------------------------------+
+pergunte('SEGDES',.F.)
+   
+//+--------------------------------------------------------------+
+//ฆ Variaveis utilizadas para parametros                         ฆ
+//ฆ mv_par01        //  FiLial De                                ฆ
+//ฆ mv_par02        //  FiLial Ate                               ฆ
+//ฆ mv_par03        //  Matricula De                             ฆ
+//ฆ mv_par04        //  Matricula Ate                            ฆ
+//ฆ mv_par05        //  Centro De Custo De                       ฆ
+//ฆ mv_par06        //  Centro De Custo Ate                      ฆ
+//ฆ mv_par07        //  Nบ de Vias                               ฆ
+//ฆ mv_par08        //  Data Base                                ฆ
+//ฆ mv_par09        //  Verbas a serem somadas ao Salario        ฆ
+//ฆ mv_par10        //  Compl.Verbas a somar ao Salario          ฆ
+//ฆ mv_par11        //  Data Demissao De                         ฆ
+//ฆ mv_par12        //  Data Demissao Ate                        ฆ
+//+--------------------------------------------------------------+
+   
+//+--------------------------------------------------------------+
+//ฆ Envia controle para a funcao SETPRINT                        ฆ
+//+--------------------------------------------------------------+
+WnRel :=SetPrint(cString,WnRel,cPerg,cTit,cDesc1,cDesc2,cDesc3,.F.,aOrd,.F.,'P')
+
+//+--------------------------------------------------------------+
+//ฆ Carregando variaveis mv_par?? para Variaveis do Sistema.     ฆ
+//+--------------------------------------------------------------+
+nOrdem  := aReturn[8]
+cFilDe  := If(!Empty(mv_par01), mv_par01 ,'00')
+cFilAte := If(!Empty(mv_par02), mv_par02 ,'99')
+cMatDe  := If(!Empty(mv_par03), mv_par03,'00000')
+cMatAte := If(!Empty(mv_par04), mv_par04,'99999')
+cCCDe   := If(!Empty(mv_par05), mv_par05,'0        ')
+cCCAte  := If(!Empty(mv_par06), mv_par06,'999999999')
+nVias   := If(!Empty(mv_par07), If(mv_par07<=0,1,mv_par07),1)
+dDtBase := If(!Empty(mv_par08), If(Empty(mv_par08),dDataBase,mv_par08),dDataBase)
+cVerbas := ALLTRIM(mv_par09)
+cVerbas += ALLTRIM(mv_par10)
+dDemiDe  := mv_par11
+dDemiAte := mv_par12
+   
+//ฺฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฟ
+//ณ                                                              ณ
+//ภฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤู
+fTransVerba()
+
+//ฺฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฟ
+//ณ Inicializa Impressao                                         ณ
+//ภฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤู
+If ! fInicia(cString)
+	Return
+Endif     
+
+//If aReturn[5] = 1
+//	SetPrc(0,0)
+//EndIf
+
+nLinha	:= 6
+
+RptStatus({|| fSegDes()})// Substituido pelo assistente de conversao do AP5 IDE em 19/11/99 ==> 	RptStatus({|| Execute(fSegDes)})
+Return
+
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
+ฑฑบPrograma  ณFSEGDES   บAutor  ณMicrosiga           บ Data ณ  10-01-02   บฑฑ
+ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
+ฑฑบDesc.     ณ                                                            บฑฑ
+ฑฑบ          ณ                                                            บฑฑ
+ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
+ฑฑบUso       ณ AP6                                                        บฑฑ
+ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿*/
+Static Function fSegDes()
+
+Local nCont := 0
+Local nX
+
+dbSelectArea('SRA')
+dbSetOrder(nOrdem)
+SetRegua(RecCount())
+dbSeek(cFilDe + cMatDe,.T.)
+
+Do While !Eof()	
+	//+------------------------------------------- -----------------+
+	//ฆ Incrementa Regua de Processamento.                           ฆ
+	//+--------------------------------------------------------------+
+	IncRegua()
+
+	//+--------------------------------------------------------------+
+	//ฆ Processa Quebra de Filial.                                   ฆ
+	//+--------------------------------------------------------------+
+	If SRA->RA_FILIAL #cFilAnte
+		If	!fInfo(@aInfo,SRA->RA_FILIAL)
+			dbSkip()
+			Loop
+		Endif		
+		cFilAnte := SRA->RA_FILIAL		
+	Endif		
+	
+	//+--------------------------------------------------------------+
+	//ฆ Cancela Impresฆo ao se pressionar <ALT> + <A>.               ฆ
+	//+--------------------------------------------------------------+
+	If lEnd
+		@ pRow()+ 1, 00 PSAY STR0009 // ' CANCELADO PELO OPERADOR . . . '
+		Exit
+	EndIF
+	
+	//+--------------------------------------------------------------+
+	//ฆ Consiste Parametriza็ฆo do Intervalo de Impressฆo.           ฆ
+	//+--------------------------------------------------------------+
+	If 	(SRA->RA_Filial < cFilDe)	.Or. (SRA->RA_FILIAL > cFilAte)	.Or.;
+		(SRA->RA_MAT < cMatDe)		.Or. (SRA->RA_MAT > cMatAte)	.Or.;
+		(SRA->RA_CC < cCcDe)		.Or. (SRA->RA_CC > cCCAte) 
+        SRA->(dbSkip())
+		Loop
+	EndIf
+	
+	//+--------------------------------------------------------------+
+	//ฆ Pesquisando o Tipo de Rescisao ( Indenizada ou nao )         ฆ
+	//+--------------------------------------------------------------+
+	cAlias := Alias()                                                            
+	lAchouSrg := .F.
+	dbSelectArea('SRG')     
+	If dbSeek(SRA->RA_FILIAL+SRA->RA_MAT)
+		While ! EOF() .And. SRA->RA_FILIAL+SRA->RA_MAT == SRG->RG_FILIAL+SRG->RG_MAT
+			If (SRG->RG_DATADEM < dDemiDe) .Or. (SRG->RG_DATADEM > dDemiAte) .Or. SRG->RG_EFETIVA == "N"
+				SRG->(dbSkip())
+				Loop
+			EndIf
+			lAchouSrg := .T.
+			Exit
+		Enddo
+	EndIf    
+		/*
+	ฺฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฟ
+	ณCaso nao encontre o funcionario no SRG, le o proximo funcionario no SRAณ
+	ภฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤู
+	*/	
+	If ! lAchouSrg .OR.(SRG->RG_DATADEM < dDemiDe) .Or. (SRG->RG_DATADEM > dDemiAte) .Or. SRG->RG_EFETIVA == "N"
+		dbSelectArea("SRA")
+		dbSkip()
+		Loop
+	Endif
+	
+
+  	/*
+	ฺฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฟ
+	ณConsiste Filiais e Acessos                                             ณ
+	ภฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤู
+	*/
+	IF !( SRA->RA_FILIAL $ fValidFil() .and. Eval( cAcessaSRA ) )
+		dbSelectArea("SRA")
+   		dbSkip()
+  		Loop
+	EndIF
+
+
+	//--Carregar a descricao do tipo da rescisao		
+	cIndeniz   := fPHist82(SRG->RG_Filial,'32',SRG->RG_TipoRes,32,1)
+	
+	//+--------------------------------------------------------------+
+	//ฆ Variaveis utilizadas na impressao.                           ฆ
+	//+--------------------------------------------------------------+
+	cNome      := Left(SRA->RA_Nome,30)
+	cEnd       := AllTrim(Left(SRA->RA_Endereco,30)) + ' ' + AllTrim(Left(SRA->RA_Complem,15)) + ' , ' + AllTrim(Left(SRA->RA_Bairro,15))
+	cEnd       := cEnd + Space(60-Len(cEnd))				  
+	cCep       := Transform(Left(SRA->RA_Cep,8),'@R #####-###')	
+	cUF        := Left(SRA->RA_Estado,2)
+	cFone      := Left(SRA->RA_Telefon,8)
+	cMae       := Left(SRA->RA_Mae,40)
+	cTpInsc    := If(aInfo[15]==1,'2','1') //-- 1=C.G.C. 2=C.E.I.
+	cCgc       := Transform(Left(aInfo[8],14),If(cTpInsc=='1','@R ##.###.###/####-##','@R '))
+	cCNAE      := Left(aInfo[16],5)
+	cPis       := Left(SRA->RA_Pis,11)
+	cCTPS      := Left(SRA->RA_NumCp,7)
+	cCTSerie   := Left(SRA->RA_SerCp,5)		
+	cCTUF      := Left(SRA->RA_UFCP,2)
+	cCBO       := fCodCBO(SRA->RA_FILIAL,SRA->RA_CODFUNC,dDtBase)
+	cOcup      := DescFun(SRA->RA_CodFunc,SRA->RA_Filial)
+	dAdmissao  := SRA->RA_Admissa
+	dDemissao  := SRG->RG_DATADEM
+	cSexo      := If(Sra->RA_Sexo=='M','1','2')
+	dNascim    := SRA->RA_Nasc
+	cHrSemana  := StrZero(Int(SRA->RA_HrSeman),2)
+	cMat       := Left(SRA->RA_Mat,6)
+	cFil       := Left(SRA->RA_Filial,2)
+	cCC        := Left(SRA->RA_CC,9)
+	If Val(SRA->RA_MesTrab)> 0
+		cNMeses    := If(Val(SRA->RA_MesTrab)<=36,Left(SRA->RA_MesTrab,2),'36')
+	Else
+		//-- Calculo do numero de meses trabalhados. 
+		cNMeses    := fMesesTrab (SRA->RA_ADMISSA,SRG->RG_DATADEM)
+		cNMeses    := If(cNMeses<=36,StrZero(cNMeses,2),'36')
+	Endif
+	c6Salarios := If(Val(cNMeses)+SRA->RA_MesesAnt>=6,'1','2')
+	
+	//+--------------------------------------------------------------+
+	//ฆ Pesquisando o Tipo de Rescisao ( Indenizada ou nao )         ฆ
+	//+--------------------------------------------------------------+
+	cAlias := Alias()
+	dbSelectArea('SRG')
+	If dbSeek(SRA->RA_Filial+SRA->RA_Mat,.F.)
+		cIndeniz   := fPHist82(SRA->RA_Filial,'32',SRG->RG_TipoRes,32,1)
+	Else
+		cIndeniz   := ' '	
+	EndIf
+	dbSelectArea(cAlias)
+
+	If cIndeniz == "I"
+	   cIndeniz := "1"
+	Else
+	   cIndeniz := "2"
+	Endif
+	
+	//
+	cGrInstru := "1"
+	If SRA->RA_GRINRAI == "10"
+		cGrInstru := "1"
+	Elseif SRA->RA_GRINRAI == "20"
+		cGrInstru := "2"					
+	Elseif SRA->RA_GRINRAI == "25"
+		cGrInstru := "3"					
+	Elseif SRA->RA_GRINRAI == "30"
+		cGrInstru := "4"					
+	Elseif SRA->RA_GRINRAI == "35"
+		cGrInstru := "5"					
+	Elseif SRA->RA_GRINRAI == "40"
+		cGrInstru := "6"					
+	Elseif SRA->RA_GRINRAI == "45"
+		cGrInstru := "7"					
+	Elseif SRA->RA_GRINRAI == "50"
+		cGrInstru := "8"					
+	Else
+		cGrInstru := "9"					
+	Endif
+
+	//+--------------------------------------------------------------+
+	//ฆ Pesquisando os Tres Ultimos Salarios ( Datas e Valores )     ฆ
+	//+--------------------------------------------------------------+	
+	cTipo   := "A"
+	nSalmes 	:= 0.00
+	nSalHora    := 0.00
+	nSalDia		:= 0.00
+	nSalario	:= 0.00
+	fSalario(@nSalario,@nSalHora,@nSalDia,@nSalMes,cTipo)
+
+	nValUltSal := nSalMes
+	nValPenSal := nSalmes
+	nValAntSal := nSalMes
+
+	//-- Data do Ultimo Salario.
+	dDTUltSal := dDemissao
+
+	//-- Data do Penultimo Salario.
+	dDTPenSal := If(Month(dDemissao)-1#0,CtoD('01/' +StrZero(Month(dDemissao)-1,2)+'/'+Right(StrZero(Year(dDemissao),4),2)),CtoD('01/12/'+Right(StrZero(Year(dDemissao)-1,4),2)) )
+	If MesAno(dDtPenSal) < MesAno(dAdmissao)
+		dDTPenSal 	:= CTOD("  /  /  ")
+ 		nValPenSal 	:= 0.00
+    Endif
+
+	//-- Data do Antepenultimo Salario.	
+	dDTAntSal := If(Month(dDtPenSal)-1#0,CtoD('01/'+StrZero(Month(dDtPenSal)-1,2)+'/'+Right(StrZero(Year(dDtPenSal),4),2)),CtoD('01/12/'+Right(StrZero(Year(dDtPenSal)-1,4),2)) )	
+	If MesAno(dDtAntSal) < MesAno(dAdmissao)
+		dDTAntSal 	:= CTOD("  /  /  ")
+		nValAntSal 	:= 0.00
+    Endif
+	
+	
+	aValSal:={}
+	//-- Funcao que retorna os ultimos aumentos salariais no periodo selecionado
+	FBuscaSal(If(!Empty(dDTAntSal),dDTAntSal,dDTPenSal),dDTUltSal,aValSal,.F.)
+	//--verifica se houve aumentoem meses anteriores
+	If Len(aValSal) > 0
+		If Len(aValSal)-1 >= 1		
+			nValPenSal :=  ( aValSal[Len(aValSal)-1,2] * If(SRA->RA_CATFUNC== "H",SRA->RA_HRSMES,1) )
+		Endif
+		If Len(aValSal)-2 >= 1
+			nValAntSal := ( aValSal[Len(aValSal)-2,2]  * If(SRA->RA_CATFUNC == "H",SRA->RA_HRSMES,1) )
+		Endif
+	Endif	
+
+    // Somar verbas como salario informadas nos parametros 
+    //--Arquivo do mes atual
+	fSomaSrr(StrZero(Year(dDTUltSal),4), StrZero(Month(dDTUltSal),2), cVerbas, @nValUlt)	
+    //--Penultimo 
+	If !Empty(dDTPenSal)
+		nValPen := fBuscaAcm(cVerbas,,dDTPenSal,dDTPenSal,"V")
+	Endif         
+	//--Antepenultimo
+	If !Empty(dDTAntSal)
+		nValAnt := fBuscaAcm(cVerbas,,dDTAntSal,dDTAntSal,"V")
+	Endif
+	
+	//--Somar verbas informardas aos salarios
+	nValUltSal += nValUlt
+	nValPenSal += nValPen
+	nValAntSal += nValAnt
+
+	//+--------------------------------------------------------------+
+	//ฆ** Inicio da Impressao do Requerimento de Seguro-Desemprego **ฆ
+	//+--------------------------------------------------------------+	
+	For Nx := 1 to nVias
+		If nCont >= 2
+			SetPrc(0,0)
+		   nLinha	:= 3
+		Else
+			nCont:= nCont + 1
+		Endif
+		fImpSeg()
+		If aReturn[5] # 1
+			If lFirst  
+				fInicia(cString)
+				nLinha	:= 3
+				Pergunte("GPR30A",.T.)                 
+				lFirst	:= If(mv_par01 = 1 ,.F. , .T. )    //  Impressao Correta ? Sim/Nao 
+				If lFirst == .T.       						// Se impressao esta incorreta, zera contador para imprimir o numero de vias correto
+					nx := 0 
+				EndIf
+			EndIf    
+    	Endif
+	Next Nx
+
+	//+--------------------------------------------------------------+
+	//ฆ** Final  da Impressao do Requerimento de Seguro-Desemprego **ฆ
+	//+--------------------------------------------------------------+
+	dbSelectArea("SRA")
+	dbSkip()	
+EndDo	
+
+//+--------------------------------------------------------------+
+//ฆ Termino do Relatorio.                                        ฆ
+//+--------------------------------------------------------------+
+dbSelectArea( 'SRA' )
+RetIndex('SRA')
+dbSetOrder(1)   
+dbGoTop()
+Set Device To Screen
+
+If aReturn[5] == 1
+	Set Printer To
+	dbCommitAll()
+	OurSpool(WnRel)
+Endif
+
+MS_Flush()
+
+Return
+
+
+
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
+ฑฑบPrograma  ณfImpSeg   บAutor  ณMicrosiga           บ Data ณ  10-01-02   บฑฑ
+ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
+ฑฑบDesc.     ณ Impressao do Requerimento de Seguro-Desemprego			  บฑฑ
+ฑฑบ          ณ                                                            บฑฑ
+ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
+ฑฑบUso       ณ AP6                                                        บฑฑ
+ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿*/
+Static Function fImpSeg()
+
+//+--------------------------------------------------------------+
+//ฆ** Inicio da Impressao do Requerimento de Seguro-Desemprego **ฆ
+//+--------------------------------------------------------------+
+@ nLinha, 09 PSAY cNome
+nLinha	+= 3
+@ nLinha, 09 PSAY cEnd 
+nLinha	+= 3
+@ nLinha, 09 PSAY Space(35) + cCep + Space(12) + cUF
+nLinha	+= 3
+@ nLinha, 09 PSAY cMae 
+nLinha	+= 3
+@ nLinha, 09 PSAY Space(08) + cTpInsc + Space(5) + cCgc + Space(12) + cCNAE
+nLinha	+= 3
+@ nLinha, 09 PSAY cPIS + Space(13) + cCTPS + Space(5) + cCTSerie + Space(5) + cCTUF
+nLinha	+= 3
+@ nLinha,09 PSAY cCBO + Space(6) + cOcup
+nLinha	+= 5
+@ nLinha, 09 PSAY StrZero(Day(dAdmissao),2) + Space(3) + StrZero(Month(dAdmissao),2) + Space(2) + Right(StrZero(Year(dAdmissao),4),2) + Space(5) + StrZero(Day(dDemissao),2) + Space(3) + StrZero(Month(dDemissao),2) + Space(2) + Right(StrZero(Year(dDemissao),4),2) + Space(13) + cSexo + Space(4) + Space(1) + cGrInstru+Space(9) + StrZero(Day(dNascim),2) + Space(3) + StrZero(Month(dNascim),2) + Space(2) + Right(StrZero(Year(dNascim),4),2) + Space(5) + cHrSemana
+nLinha	+= 3
+@ nLinha, 09 PSAY StrZero(Month(dDtAntSal),2) + Space(7) + Transform(nValAntSal,'@E 999,999,999.99') + Space(3) + StrZero(Month(dDtPenSal),2) + Space(7) + Transform(nValPenSal,'@E 999,999,999.99') + Space(3) + StrZero(Month(dDtUltSal),2) + Space(7) + Transform(nValUltSal,'@E 999,999,999.99')
+nLinha	+= 3
+@ nLinha, 09 PSAY Space(6) + Transform(nValAntSal+nValPenSal+nValUltSal,'@E 999,999,999.99')
+nLinha	+= 3
+@ nLinha, 09 PSAY Space(26) + cNMeses + Space(26) + c6Salarios + Space(25) + cIndeniz  	
+nLinha	+= 18
+@ nLinha, 09 PSAY cPis
+nLinha	+= 3
+@ nLinha, 09 PSAY cNome		
+nLinha	+= 22
+@ nLinha, 00 PSAY ' '
+
+Return
+
+
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
+ฑฑบPrograma  ณfSomaSRR  บAutor  ณMicrosiga           บ Data ณ  10-01-02   บฑฑ
+ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
+ฑฑบDesc.     ณ Soma Verbas do arquivo SRR								  บฑฑ
+ฑฑบ          ณ                                                            บฑฑ
+ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
+ฑฑฬParametrosณ CAno 	-Ano do ultimo salario                            บฑฑ
+ฑฑบ          ณ CMes 	-Mes do ultimo salario                            บฑฑ
+ฑฑบ          ณ CVerbas  -Verbas a serem somada                            บฑฑ
+ฑฑบ          ณ nValor   -Valor das verbas                                 บฑฑ
+ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
+ฑฑบUso       ณ AP6                                                        บฑฑ
+ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿*/
+static Function fSomaSrr(cAno, cMes, cVerbas, nValor)
+
+Local lRet    := .T.
+Local cPesq   := ''
+Local cFilSRR := If(Empty(xFilial('SRR')),xFilial('SRR'),SRA->RA_FILIAL)
+Local dDtGerar:= ctod('  /  /  ')	
+
+//-- Reinicializa Variaveis
+cAno    := If(Empty(cAno),StrZero(Year(dDTUltSal),4),cAno)
+cMes    := If(Empty(cMes),StrZero(Month(dDTUltSal),2),cMes)
+cVerbas := If(Empty(cVerbas),'',AllTrim(cVerbas))
+nValor  := If(Empty(nValUlt).Or.ValType(nValUlt)#'N',0,nValUlt)
+
+Begin Sequence
+
+	If Empty(cVerbas) .Or. Len(cVerbas) < 3 .Or. ;
+		!SRR->(dbSeek((cPesq := cFilSRR + SRA->RA_MAT +'R'+ cAno + cMes), .T.))
+		lRet := .F.
+		Break
+	EndIf
+
+
+	dbSelectarea('SRG')
+	If dbSeek(SRA->RA_Filial+SRA->RA_Mat,.F.)
+		dDtGerar := SRG->RG_DTGERAR
+		dbSelectArea("SRR")
+		dbSeek(SRA->RA_Filial+SRA->RA_Mat,.F.)
+		While !EOF() .And. RR_FILIAL+RR_MAT == cFil+cMat
+			If dDtGerar == SRR->RR_DATA
+				If SRR->RR_PD $ cVerbas
+					If PosSrv(SRR->RR_PD,SRR->RR_FILIAL,"RV_TIPOCOD") $ "1*3"
+				  		nValor += SRR->RR_VALOR
+					Else
+						nValor -= SRR->RR_VALOR
+					EndIf
+				Endif
+			EndIf
+			SRR->(DbSkip())
+		Enddo	
+	EndIf
+
+	If nValor == 0
+		lRet := .F.
+		Break
+	EndIf
+
+End Sequence
+dbSelectArea('SRA')
+Return lRet
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
+ฑฑบPrograma  ณfInicia   บAutor  ณR.H.Natie           บ Data ณ  11/12/01   บฑฑ
+ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
+ฑฑบDesc.     ณInicializa Impressao                                        บฑฑ
+ฑฑบ          ณ                                                            บฑฑ
+ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
+ฑฑบUso       ณ AP5                                                        บฑฑ
+ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿*/
+Static Function fInicia(cString)
+
+//--Lendo os Driver's de Impressora e gravando no Array--// 
+MS_Flush()
+aDriver := ReadDriver()
+If nLastKey == 27
+	Return .F.
+Endif
+SetDefault(aReturn,cString)
+If nLastKey == 27
+	Return  .F. 
+Endif
+Return .T.
+
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
+ฑฑบPrograma  ณfTransVerbaบAutor ณR.H.                บ Data ณ  17/08/07   บฑฑ
+ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
+ฑฑบDesc.     ณ                                                            บฑฑ
+ฑฑบ          ณ                                                            บฑฑ
+ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
+ฑฑบUso       ณ AP5                                                        บฑฑ
+ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿*/
+Static Function  fTransVerba()
+Local cPD	:= ""
+Local nX	:= 0
+
+For nX := 1 to Len(cVerbas) step 3 
+	cPD += Subs(cVerbas,nX,3)
+	cPD += "*" 
+Next nX
+
+cVerbas:= cPD
+
+Return( )

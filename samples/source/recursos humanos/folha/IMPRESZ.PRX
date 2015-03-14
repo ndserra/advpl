@@ -1,0 +1,391 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+#INCLUDE "IMPRESZ.CH"
+
+User Function Impresz()        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+
+Local Imprime	:= 0 
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP5 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("LNULL,NCONTAR,NLI,DET,X,cCodSaqIOB")
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³RdMake    ³ ImpResZ  ³ Autor ³ Mauro                        ³ Data ³ 10.03.97 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Impressao da Rescisao em Papel Zebrado                            ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe e ³ ImpResZ                                                           ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                                          ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³              ATUALIZACOES SOFRIDAS DESDE A CONSTRU€AO INICIAL.               ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Programador ³ Data     ³ BOPS/FNC  ³  Motivo da Alteracao                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Kleber      ³ 10/09/99 ³23866a     ³ Alt.para imprimir qualquer qtd de verbas.³±±
+±±³Marina      ³ 25/08/00 ³005684     ³ Inclusao de Setprc(0,0)p/zerar formulario³±±
+±±³            ³ 30/08/00 ³-----------³ Retirada parte DOS.                      ³±±
+±±³Natie       ³ 01/11/00 ³004396     ³ Imprimir complemento do endereco.        ³±±
+±±³Emerson     ³ 05/04/01 ³-----------³ Utilizar funcao STUFF() para que o nome  ³±±
+±±³            ³          ³-----------³ do sacador possa ser apresentado no video³±±
+±±³Emerson     ³ 21/03/02 ³-----------³ Alterar RA_DEMISSA para RG_DATADEM.      ³±±
+±±³Andreia     ³ 01/10/02 ³-----------³ Impressao do percentual de pensao alimen-³±±
+±±³            ³          ³-----------³ a partir do cadastro de beneficiarios.   ³±±
+±±³Priscila    ³ 14/11/02 ³-----------³ Alteracao no lay out do Formulario.      ³±±
+±±³            ³ 23/12/02 ³-----------³ Alt. para 4 digitos no ano do campo data ³±±
+±±³            ³ 17/01/03 ³-----------³ Ajuste no Campo 09 tomador de servico.   ³±±
+±±³Priscila    ³ 30/01/03 ³-----------³ Alt. nos campos 25 e 26, inclusao do Codi³±±
+±±³            ³ 30/01/03 ³-----------³ go de Saque do FGTS.                     ³±±
+±±³Pedro Eloy  ³ 09/02/04 ³Melhor     ³ Ajuste no relat. pois esta saltando Pag  ³±±
+±±³Pedro Eloy  ³ 25/03/04 ³           ³ Reduzi o tamanho do rodape de 17 para 16.³±±
+±±³            ³ 14/04/04 ³-----------³ Acerto no Driver p/Impressao             ³±±
+±±³Pedro Eloy  ³ 19/08/04 ³072090     ³ Ajuste da impressao ou nao da data/local ³±±
+±±³            ³ 29/03/05 ³078304     ³ Impressao do Muncipio da Empresa-campo 60³±±
+±±³Tania       ³29/07/2005³084485     ³ Impressao campo 63 com Orgao Homologador.³±±
+±±|Tania       ³15/09/2005³082376     ³ Acerto para imprimir Nome Completo do    ³±±
+±±³            |          |           | funcionario RA_NOMECMP, quando existir.  ³±±
+±±³            ³ 30/01/06 ³087509     ³ Impressao Chave Indentificacao           ³±±
+±±³            ³ 16/10/06 ³108848     ³ Ajuste na impressao-colunas deslocadas   ³±±
+±±³Natie       ³ 26/02/07 ³116348     ³ Impressao de varias rescisoes;estava des ³±±
+±±³            ³          ³           ³ locando paginas apos 1a impressao        ³±±
+±±³Marcelo     ³ 14/09/09 ³021627/2009³ Avaliacao do parametro 29 para impressao ³±±
+±±³            ³          ³           ³ do salario do cadastro ou do termo resc. ³±±  
+±±³Renata      ³ 19/11/09 ³027251/2009³ Ajuste em fCabecalho(), na paginacao do  ³±±
+±±³            ³          ³           ³ bairro (campo 04) e da Remun. Fins Resc. ³±±  
+±±³            ³          ³           ³ (campo 21) 								 ³±±  
+±±³Alceu P.    ³04/11/2010³24437/2010 ³Ajuste na impressao do campo 03 endereco. ³±±
+±±³Leandro Dr. ³03/04/2012³    TETOEG ³Ajuste na impressao do campo 07 CEP.      ³±±
+±±³Allyson M   ³27/08/2013|TGWGPD	  |Ajuste p/ tratamento do campo  M0_CEI no  ³±±
+±±³            ³          |      	  |array aInfo.		  						 ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß/*/
+
+lNull   := .F.
+nContar := 0
+
+
+nEpoca:= SET(5,1910)
+//--MUDAR ANO PARA 4 DIGITOS
+SET CENTURY ON
+
+fCabecalho()
+   
+For Imprime := 1 to Max(Len(aPdv),Len(aPdd))
+	If Max(Len(aPdv)/2,Len(aPdd)) <= 16
+		If Imprime <= 16 .And. Imprime <= Len(aPdv)
+			Det := Space(1) + aPdv[Imprime]+"|"
+		Else
+			Det := Space(42)+"|"
+		Endif
+		
+		If Imprime + 16 <= Len(aPdv)
+			Det := Det + Space(1) + aPdv[Imprime + 16]+"|"
+		Else
+			Det := Det + Space(42)+"|"
+		Endif
+		
+		If Imprime <= Len(aPdd)
+			Det := Det + Space(1) + aPdd[Imprime]+" |"
+		Else
+			Det := Det + Space(42)+" |"
+		Endif
+		
+		If Det <> Space(42)+"|"+Space(42)+"|"+Space(42)+" |"
+	    	@ nLi,001 PSAY "|" + Det
+		   nLi := nLi + 1
+		   nContar := nContar + 1
+		Else
+	      Exit
+		Endif
+	Else
+		If Imprime <= Len(aPdv)/2 .And. Imprime <= Len(aPdv)
+			Det := Space(1) + aPdv[Imprime]+"|"
+		Else
+			Det := Space(42)+"|"
+		Endif
+		
+		If Imprime + If(Len(aPdv)%2>0,Len(aPdv)/2-1,Len(aPdv)/2) <= Len(aPdv)
+			Det := Det + Space(1) + aPdv[Imprime + Len(aPdv)/2]+"|"
+		Else
+			Det := Det + Space(42)+"|"
+		Endif
+		
+		If Imprime <= Len(aPdd)
+			Det := Det + Space(1) + aPdd[Imprime]+" |"
+		Else
+			Det := Det + Space(42)+" |"
+		Endif
+		
+		If Det <> Space(42)+"|"+Space(42)+"|"+Space(42)+" |"
+	    	@ nLi,001 PSAY "|" + Det
+		   nLi := nLi + 1
+		   nContar := nContar + 1
+		Else
+	      Exit
+		Endif
+		If nContar > 16
+			lNull := .T.
+			fRodape()
+			lNull := .F.
+			fCabecalho()
+		EndIf
+	EndIf
+Next
+
+fRodape()
+
+Set(5,nEpoca)
+If nTdata > 8
+	SET CENTURY ON
+Else
+	SET CENTURY OFF
+Endif
+
+Return Nil   
+
+//-------------------
+Static Function fCabecalho()
+//-------------------
+Local   cCateg := fCateg(0)
+                                                        
+nLi     := 1
+
+@ nLi,001 PSAY AvalImp(132)
+
+If SRA->(FieldPos("RA_CHIDENT")) # 0 .And. !Empty(SRA->RA_CHIDENT) 
+	@ nLi,020 PSAY If(mv_par08 ==1,STR0002,STR0003)  						//"TERMO DE RESCISAO DO CONTRATO DE TRABALHO"  /   TERMO DE RESCISAO DO CONTRATO DE TRABALHO ( COMPLEMENTAR ) "
+	@ nLi,085 PSAY STR0058 + SRA->RA_CHIDENT    								// Chave Identif.: 999999999999999999999999
+Else 
+	@ nLi,045 PSAY If(mv_par08 ==1,STR0002,STR0003)							//"TERMO DE RESCISAO DO CONTRATO DE TRABALHO" / /   TERMO DE RESCISAO DO CONTRATO DE TRABALHO ( COMPLEMENTAR ) "
+Endif 
+nLi:= nLi+ 1
+@ nLi,001 PSAY STR0049 												//_______________________
+nLi := nLi + 1                    
+@ nLi,001 PSAY STR0005 												//| Identificacao do Empregador  " 
+nLi := nLi + 1
+@ nLi,001 PSAY STR0056 + SUBSTR (If( Len(aInfo) >= 27 .And. !Empty( aInfo[27] ), aInfo[27], aInfo[8] )+Space(20),1,20) + STR0001 + aInfo[3] + "-" + STR0055 + SRA->RA_FILIAL 	//"|01- CNPJ#|02- Razao Social / Nome:" ##" Filial: "
+@ nLi,131 PSAY "|"
+nLi := nLi + 1
+@ nLi,001 PSAY "|"+Replicate("-",129)+ "|"
+nLi := nLi + 1
+@ nLi,001 PSAY "|03" + STR0011+ Trim(aInfo[4])	+ Space(1) + Trim(aInfo[14])		//"|03 Endereco   : "
+@ nLi,090 PSAY "|04" + STR0014+aInfo[13] 							//"|04 Bairro : "
+@ nLi,131 PSAY "|"
+nLi := nLi + 1
+@ nLi,001 PSAY "|" + Replicate("-",129)+"|"
+nLi := nLi + 1
+@ nLi,001 PSAY "|05" + STR0015+AllTrim(aInfo[5])					//"|05 Munic.: "
+@ nLi,035 PSAY "|06" + STR0016+aInfo[6]								//"|06 UF : "
+@ nLi,048 PSAY "|07" + STR0013+aInfo[7]								//"|07 Cep: "
+@ nLi,068 PSAY STR0017+Subs(aInfo[16],1,7)							//"|08 CNAE"
+@ nLi,086 PSAY STR0004+Substr(fDesc("SI3",SRA->RA_CC,"I3_CEI")+Space(5),1,15)	//"|09 CNPJ/CEI Tomador/Obra: " 
+@ nLi,131 PSAY "|"
+nLi := nLi + 1
+@ nLi,001 PSAY STR0006 												//| Identificacao do Trabalhador//
+nLi := nLi + 1
+@ nLi,001 PSAY STR0025+SRA->RA_PIS				  					//"|10 PIS/PASEP:"
+
+If SRA->(FieldPos("RA_NOMECMP")) # 0 .And. !Empty(SRA->RA_NOMECMP)
+	@ nLi,035 PSAY STR0023+Subs(SRA->RA_NOMECMP+Space(60),1,60)	   	//"|11 NOME:" ## Nome completo
+	@ nLi,110 PSAY STR0057+SRA->RA_MAT									//"|Matricula: "
+Else
+	@ nLi,035 PSAY STR0023+Subs(SRA->RA_NOME+Space(30),1,30)		   	//"|11 NOME:"  ## Nome
+	@ nLi,080 PSAY STR0057+SRA->RA_MAT									//"|Matricula: "
+EndIf	
+
+@ nLi,131 PSAY "|"     
+nLi := nLi + 1
+@ nLi,001 PSAY "|"+Replicate("-",129)+"|"
+nLi := nLi + 1
+@ nLi,001 PSAY "|12"+STR0011+SRA->RA_ENDEREC+SPACE(1)+SRA->RA_COMPLEM //"|12 Endereco   : "
+@ nLi,080 PSAY "|13"+STR0014+SRA->RA_BAIRRO	 						 //"|13 Bairro : "
+@ nLi,131 PSAY "|"     
+nLi := nLi + 1
+@ nLi,001 PSAY "|"+Replicate("-",129)+"|"
+nLi := nLi + 1
+@ nLi,001 PSAY "|14" + STR0015+SRA->RA_MUNICIP 									//"|05 Munic.: "
+@ nLi,035 PSAY "|15" + STR0016+SRA->RA_ESTADO 		 							//"|15 UF : "  
+@ nLi,048 PSAY "|16" + STR0013+SRA->RA_CEP										//"|16 Cep: "      
+@ nLi,085 PSAY STR0024+SRA->RA_NUMCP+"/"+SRA->RA_SERCP+"/"+SRA->RA_UFCP	//"|13 Ctps/Serie/UF :"   
+@ nLi,131 PSAY "|"
+nLi := nLi + 1
+@ nLi,001 PSAY "|"+Replicate("-",129)+"|"
+nLi := nLi + 1
+@ nLi,001 PSAY STR0012+SRA->RA_CIC									//"|18 CPF:"
+@ nLi,025 PSAY STR0027+DTOC(SRA->RA_NASC)				 			//"|19 Nasc.:"
+@ nLi,048 PSAY STR0007+SUBSTR(SRA->RA_MAE+SPACE(30),1,40) 			//"|20 Nome da Mae"
+@ nLi,131 PSAY "|"                                                                       
+nLi := nLi + 1
+@ nLi,001 PSAY STR0008											   		//"|Dados do Contrato "
+nLi := nLi + 1
+
+If mv_par29 == 1
+	@ nLi,001 PSAY STR0009+Transform(SRG->RG_SALMES,"@E 999,999,999.99")//"|21 Remuneracao p/ fins rescisorios - Salario Mes
+Else
+	@ nLi,001 PSAY STR0009+Transform(SRA->RA_SALARIO,"@E 999,999,999.99")//"|21 Remuneracao p/ fins rescisorios - Salario Cadastro
+EndIf
+
+@ nLi,045 PSAY STR0010+DtoC(SRA->RA_ADMISSA)							//"|22 Admis:"
+@ nLi,070 PSAY STR0018+DtoC(SRG->RG_DTAVISO)							//"|23 Data do Aviso Previo"
+@ nLi,100 PSAY STR0030+DtoC(SRG->RG_DATADEM)							//"|24 Data do afastamento: 
+@ nLi,131 PSAY "|"
+nLi := nLi + 1
+@ nLi,001 PSAY "|"+Replicate("-",129)+"|"
+nLi := nLi + 1
+@ nLi,001 PSAY STR0034+cCodR + "- " +SubStr(cCausa+Space(30),1,30)	//"|25 Causa do Afastamento :"           
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Codigos de Saque Validos Segundo o Calendario de    Obrigacoes³
+//³e Tabelas Praticas do IOB de Out/99 Paginas 62 a 68.          ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cCodSaqIOB := "01_02_03_04_05_06_07_10_23_26_27_50_70_80_81_82_86_87_88_91_92_93_94_95" 
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Se o Codigo nao For Valido nao Imprime a Guia de Rescisao.    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+IF !(StrZero(Val(cCodSaq),2) $ cCodSaqIOB)  						//Imprime NAO se Codigo nao for de Saque.
+cCodSaq := "NAO"
+EndIF
+
+@ nLi,045 PSAY STR0035+ cCodSaq			   							//"|26 Cod. afastamento:"## Cod.Saque FGTS.		
+@ nLi,075 PSAY STR0033+Transform(nPerPensa,"999.99")				//"|27 Pens.Alim.:"
+@ nLi,100 PSAY STR0036+cCateg										//"|28 Categoria do trabalhador"
+@ nLi,131 PSAY "|"
+nLi := nLi + 1
+@ nLi,001 PSAY STR0037									//"|______________________________________________DISCRIMINACAO DAS VERBAS RESCISORIAS_____________________________________DESCONTOS_|"
+nLi := nLi + 1													
+
+nContar := 1
+  
+Return Nil
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºfRodape   ³IMPRESZ   ºAutor  ³Microsiga           º Data ³  10/30/02   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³fRodape - Impressao do Rodape da Rescisao.                  º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP5                                                        º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function fRodape()
+Local X	:= 0 
+Local cOrgao	:=	space(155)
+Local cLinha1	:=	space(24)
+Local cLinha2	:=	space(63)
+Local cLinha3	:=	space(63)
+
+nContar := nContar - 1
+For X := 1 to 16 - nContar
+    @ nLi,001 PSAY "|"+Space(42)+"|"+Space(42)+"|"+Space(42)+" |"
+    nLi := nLi + 1
+Next
+
+@ nLI,001 PSAY "*"+REPLICATE("-",129)+"*"
+nLI := nLi + 1
+@ nLI,001 PSAY STR0038+If(lNull,Space(14),Transform(nProv,"@E 999,999,999.99"))			//"|30-TOTAL BRUTO              "
+@ nLI,044 PSAY STR0039+If(lNull,Space(14),Transform(nDesc,"@E 999,999,999.99"))			//"|TOTAL DESCONTOS             "
+@ nLI,087 PSAY STR0040+If(lNull,Space(14),Transform(nProv - nDesc,"@E 999,999,999.99"))	//"|LIQUIDO A RECEBER           "
+@ nLI,131 PSAY "|"
+nLi := nLi + 1
+@ nLi,001 PSAY STR0041  				 	//"|FORMALIZACAO DA RESCISAO"
+nLi := nLi + 1
+@ nLi,001 PSAY STR0042 						//"|56 Local e data do Recebimento"
+@ nLi,065 PSAY STR0044 						//"|57 Carimbo e assinatura do empregador ou preposto"     
+If cPaisLoc == "BRA" .and. Type("mv_par27") != "U" .and. Type("mv_par28") != "U"
+	@ nLi,131 PSAY "|"
+	nLi := nLi +1 
+	@ nLi,001 PSAY "|"
+	@ nLi,65 PSAY "|"
+	@ nLi,66 PSAY "R.G.: " + mv_par27 + Space(1) + mv_par28
+Endif
+@ nLi,131 PSAY "|"
+nLi := nLi + 1
+@ nLi,001 PSAY STR0048						//"|_______________________________________________________________|_________________________________________________________________|"
+nLi := nLi + 1
+@ nLi,001 PSAY STR0043				  		//"|58 Assinatura do trabalhador"
+@ nLi,065 PSAY STR0045						//"|59 Assinatura Responsavel legal"
+@ nLi,131 PSAY "|"
+nLi := nLi + 1
+@ nLi,001 PSAY STR0048						//"|_______________________________________________________________|_________________________________________________________________|
+nLi := nLi + 1
+@ nLi,001 PSAY STR0046						//"|60 HOMOLOGACAO"                 
+@ nLi,065 PSAY STR0047  					//"|61 Digital do trabalhador    |62 Digital do responsavel legal"	
+@ nLi,131 PSAY "|"
+nLi := nLi + 1
+@ nLi,001 PSAY "|"+( substr( STR0050+ space(64),1,63) ) +STR0020			//"Foi prestada, gratuitamente, assistencia ao trabalhador, nos   "
+nLi := nLi + 1
+@ nLi,001 PSAY "|"+( substr( STR0051+ space(64),1,63) ) +STR0020         //"termos do art. 477,Inc.1. da CLT, sendo comprovado, neste ato  "
+nLi := nLi + 1
+@ nLi,001 PSAY "|"+( substr( STR0052+ space(64),1,63) ) +STR0020 		    //"o efetivo pagamento das verbas rescisorias acima especificadas."
+nLi := nLi + 1
+@ nLi,001 PSAY STR0032
+nLi := nLi + 1 
+@ nLi,001 PSAY STR0031	//"| __________________________________                            |                                |                                |"
+nLi := nLi + 1
+If Mv_Par14 == 1
+	@ nLi,001 PSAY "| "+Rtrim(aInfo[5]) + " - "+ Dtoc(SRG->RG_DATAHOM)	 // local +  data
+	@ nLi,065 PSAY "|                                |                                |"	
+Else
+	@ nLi,001 PSAY STR0029	//"| Local e data                                                  |                                |                                |"
+Endif 
+nLi := nLi + 1
+@ nLi,001 PSAY STR0032
+nLi := nLi + 1
+@ nLi,001 PSAY STR0032
+nLi := nLi + 1
+@ nLi,001 PSAY STR0031	//"| __________________________________                            |                                |                                |"
+nLi := nLi + 1
+@ nLi,001 PSAY STR0028	//"| Carimbo e assinatura do assistente                            |                                |                                |"
+nLi := nLi + 1
+@ nLi,001 PSAY STR0048						//"|_______________________________________________________________|_________________________________________________________________|
+nLi := nLi + 1       
+
+IF MV_PAR25 == 1
+	cOrgao	:=	fGetOrgao(SRA->RA_SINDICA,xFilial("RCE"))
+ElseIf MV_PAR25 == 2
+	cOrgao	:=	fGetOrgao(MV_PAR26,xFilial("RCE"))
+Else                                            
+	cOrgao	:=	""
+EndIf
+cLinha1		:=	Memoline(cOrgao,63,1,,.T.)
+cOrgao		:=	right(cOrgao,len(cOrgao)-len(AllTrim(cLinha1)))
+cLinha2		:=	Memoline(AllTrim(cOrgao),63,1,,.T.)
+cLinha3		:=	Memoline(AllTrim(cOrgao),63,2,,.T.)
+
+@ nLi,001 PSAY STR0054         				//"|63 Identificacao do orgao homologador: "
+@ nLi,065 PSAY "|"+STR0053			        //"64 Recepcao pelo Banco (data e carimbo)"
+@ nLI,131 PSAY "|"
+nLi := nLi + 1 
+@ nLi,001 PSAY "|"+cLinha1
+@ nLi,065 PSAY "|"
+@ nLI,131 PSAY "|"
+nLi := nLi + 1
+@ nLi,001 PSAY "|"+cLinha2
+@ nLi,065 PSAY "|"
+@ nLI,131 PSAY "|"
+nLi := nLi + 1
+@ nLi,001 PSAY "|"+cLinha3
+@ nLi,065 PSAY "|"
+@ nLI,131 PSAY "|"
+nLi := nLi + 1
+@ nLi,001 PSAY STR0049						//"|_________________________________________________________________________________________________________________________________|"
+nLi := nLi + 1
+@ nLi,001 PSAY SPACE(40)+ STR0019				//" A ASSISTENCIA NO ATO DE RESCISAO CONTRATUAL E GRATUITA" #  (LINHA 63)//
+
+Return Nil
+

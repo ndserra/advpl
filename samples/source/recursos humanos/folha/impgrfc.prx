@@ -1,0 +1,849 @@
+#INCLUDE "PROTHEUS.CH"
+#Include "rwmake.ch"
+#INCLUDE "MSOLE.CH"
+
+User Function IMPGRFC()                               
+
+Local nX	:= 0
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP5 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("AIMP,CFILSRR,CDATAANT,CDATAATU,CTPC,NMED13AV")
+SetPrvt("AINSSEMP,CTERCEIROS,CAVPREVIO,CCODSAQIOB, ")
+SetPrvt("NLI,NPOS,NRECNOSRR,NFGTSMAT,NFGTSMAN,NFGTS13")
+SetPrvt("NVALMULTA,NVALREM,NSALCON,NINSS,NSALFAM,NVALAV")
+SetPrvt("N13AV,NDEVPRE,NREMMAT,NREMMAN,NREMA13,NTOT39")
+SetPrvt("NTOT40,NTOT41,CFIL,NPERCFPAS,NPERCACI,CCATEG")
+SetPrvt("NFGTSAV,NFG13AV,CMESDISS,CDTDISSID,CDISSID,CAPREVIO")
+SetPrvt("NMEDAV,DTOPCAO,LMESMOMES,NMEDFERAV,cMesDiss")
+
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ IMPGRFC  ³ Autor ³ R.H.                     ³ Data ³ 26/09/01  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡„o ³ Guia de Recolhimento Rescisorio do FGTS e da Contr.Social      ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe   ³ Chamada padr„o para programas em RDMake.                       ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                                       ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³         ATUALIZACOES SOFRIDAS DESDE A CONSTRU€AO INICIAL.                 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Programador ³ Data   ³ BOPS/FNC ³  Motivo da Alteracao                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Natie       ³05/04/07³123206    ³ajuste impressao "Optante do Simples"     ³±±
+±±³Renata      ³17/04/07³123458    ³ Ajuste para nao arredondar vlr do FGTS   ³±±
+±±³            ³        ³          ³do Aviso Previo (nFgtsAv)                 ³±±
+±±³Andreia S.  ³02/08/07³127150    ³Considerar a diferenca de dissidio para o ³±±
+±±³            ³        ³          ³calculo da multa rescisoria da GRFC de    ³±±
+±±³            ³        ³          ³dissidio retroativo.                      ³±±
+±±³Jonatas     ³06/12/07³136851    ³Considerar multa de 10% do FGTS ref. dis- ³±±
+±±³            ³        ³          ³sidio coletivo gravada no ID. 727.        ³±±
+±±³Luciana     ³19/02/09³00666/2009³Ajuste para zerar a base negativa de FGTS ³±±
+±±³            ³        ³          ³sem abater as faltas no aviso prévio desde³±±
+±±³            ³        ³          ³que o parâmetro MV_ZERBASE esteja com .T. ³±±
+±±³Renata      ³10/03/09³04930/2009³Gerar base remueneracao mes (nBaseMes),   ³±±
+±±³            ³        ³          ³com 13 centavos qdo for rescisao complem. ³±±
+±±³            ³        ³          ³e funcionario tiver comissao.			  ³±±
+±±³Renata      ³17/03/09³04930/2009³Ajuste no valor do fgst (nFgtsMes), para  ³±±
+±±³            ³        ³          ³gerar valor zero qdo for rescisao complem.³±±
+±±³            ³        ³          ³e funcionario tiver comissao.		 	  ³±±
+±±³Andreia     ³23/06/09³15072/2009³Ajuste na impressao de GRRF referente a   ³±±
+±±³            ³        ³          ³dissidio porque nao estava imprimindo o   ³±±
+±±³            ³        ³          ³valor do FGTS.                            ³±±
+±±³Alex        ³10/08/09³----------³Ajuste no Grupo de Campos filial          ³±±
+±±³            ³        ³          ³tratamento para não considerar 2 posições ³±±
+±±³            ³        ³          ³fixas.                                    ³±±
+±±³Andreia     ³23/10/09³25241/2009³Tratamento para dissidio pago em rescisao ³±±
+±±³            ³        ³          ³complementar dentro do mes da rescisao    ³±±
+±±³            ³        ³          ³original.                                 ³±±
+±±³Renata      ³10/02/10³01853/2010³Incluido mes\ano na funcao fInssEmp, para ³±±
+±±³            ³        ³          ³tratamento do FAP					      ³±±
+±±³Marcelo     ³27/05/10³11547/2010³Ajuste no limite de impressao do logo CEF.³±±
+±±³Allyson M   ³27/08/13|TGWGPD	   |Ajuste p/ tratamento do campo  M0_CEI no  ³±±
+±±³            ³        |      	   |array aInfo.		  					  ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß/*/
+//-- Inicializa Variaveis
+                                              
+aImp       := {}
+
+@ 0, 0 PSAY AvalImp(132) 
+
+cFilSRR    := If(Empty(xFilial('SRR')),xFilial('SRR'),SRA->RA_FILIAL)
+cDataAnt   := '.. ..'
+cDataAtu   := '.. ..'
+cTpc       := If (SRA->RA_TPCONTR$ " *1","1",SRA->RA_TPCONTR)
+aInssEmp   := array(23,2)
+cTerceiros := Space(4)
+cCei       := Space(14)
+cDesCei    := ""
+nOpcSimp   := mv_par21
+dDtPublHom := mv_par23   //-- Recol.Dissidio (dt homologacao/acordo Col
+
+//-- Categoria do Funcionario
+cCateg := fCateg(0)
+
+//-- Data Opcao sera impressa somente para opcao menores que 05/10/1988
+DtOpcao	:= CtoD('  /  /  ')
+DtOpcao	:= If(DtoS(SRA->RA_OPCAO) < DtoS(CtoD('05/10/88')),DTOC(SRA->RA_OPCAO),DtoC(DtOpcao))
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Recolhimento dissidio / acordo -dt homologacao/publicacao     ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+//--Verifica se houve dissidio p/ rescisao complementar 
+cDtDissid 	:= Substr(dtos(dDtPublHom),7,2) + "/" + Substr(dtos(dDtPublHom),5,2) + "/"+Substr(dtos(dDtPublHom),1,4)
+cDissid		:= " " 
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Busca o Mes do Dissidio no Cadastro de Sindicatos - RCE		 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cMesDiss	:= fDesc( "RCE", SRA->RA_SINDICA, "RCE_MESDIS" )
+If !Empty(cMesDiss )
+	If StrZero(Month( SRG->RG_DATADEM ),2) < cMesDiss 
+		cMesADiss	:= (   strZero(year( SRG->RG_DATADEM )- 1,4)  + cMesDiss )
+	Else 
+		cMesADiss	:= (   strZero(year( SRG->RG_DATADEM ),4)     + cMesDiss  ) 
+	Endif 
+		
+	dbSelectArea( "SR3" ) 
+	If dbSeek( SRA->RA_FILIAL + SRA->RA_MAT ) 
+		While !Eof() .And. SRA->RA_FILIAL + SRA->RA_MAT == SR3->R3_FILIAL + SR3->R3_MAT 
+			If Mv_Par08 ==2							//-- Rescisao Complementar 
+				If MesAno(SR3->R3_DATA) >= cMesADiss
+					cDissid	:= cDtDissid 
+				Else 
+					cDissid := " "			
+				Endif 	
+			Else
+				cDissid := " "
+			EndIf
+			SR3->(dbSkip())
+		EndDo
+	EndIf
+Endif	
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Codigos de Saque Validos Segundo o Calendario de    Obrigacoes³
+//³e Tabelas Praticas do IOB de Out/99 Paginas 62 a 68.          ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cCodSaqIOB := "01_02_03_04_05_06_07_10_23_26_27_80_81_86_87_88_91_92_93_94_95" 
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Se o Codigo nao For Valido nao Imprime a Guia de Rescisao.    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+IF !(StrZero(Val(cCodSaq),2) $ cCodSaqIOB)  //Nao Imprime Guia se Codigo nao for de Saque
+	Return
+EndIF
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Modalidade de Aviso Previo : "1"-Trabalhado "2"-Indenizado    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cAPrevio := If( cAvPrevio == "I" , "2", "1")
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Codigo de movimentacao do Aviso Previo                        |
+//³.No caso de Resc.ANTECIPADA de contrato por prazo determinado,|
+//³deve ser informado o codigo de Afastamento I1 e Aviso Previo  |
+//³deve ser informado o codigo "2" - Indenizado                  |
+//³(Vide Circ.Caixa 281-02/2003 )                                |
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If cCodR == "I1"
+	cAPrevio := If( SRG->RG_DATADEM < SRA->RA_VCTOEXP, "2",If(SRG->RG_DATADEM < SRA->RA_VCTEXP2,"2",cAPrevio) )
+Endif
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Se os Encargos Empresa nao Forem Carregados nao Immprime     a³
+//³guia de Rescisao.                                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+IF !(fInssEmp(SRA->RA_FILIAL,aInssEmp,.T.,MesAno(SRG->RG_DATADEM)))
+   Return
+EndIF
+//--Verifica Qual Percentual de FGTS deve Aplicar 
+If Type("SRA->RA_PERFGTS") # "U" .And. SRA->RA_PERFGTS > 0.00
+	nPerFgts := SRA->RA_PERFGTS / 100
+Else
+	nPerFgts := aInssEmp[4,Val(cTpc)]
+Endif			
+        
+
+* L¢gico
+* N£m‚rico 
+Set Century On 
+nX         := 0
+nLi        := 0
+nPos       := 0
+nRecnoSRR  := SRR->(Recno())
+nFgtsMAt   := 0
+nFgtsMAn   := 0
+nFgts13    := 0
+nValMulta  := 0
+nValRem    := 0
+nSalCon    := 0
+nInss      := 0
+nSalFam    := 0
+nValAv     := 0
+n13Av	   := 0	
+nDevPre    := 0
+nRemMAt    := 0
+nRemMAn    := 0
+nRemA13    := 0
+nTot39     := 0
+nTot40     := 0
+nTot41     := 0
+nFgtsDep   := 0
+n05FgtsMen := 0
+n05Fgts13  := 0 
+nMedAv	   := 0                 
+nMedFerAv  := 0
+nMed13av   := 0 
+nComissa   := 0	
+
+dbSelectArea("SI3")
+cFil := SRA->RA_FILIAL
+If ( cFil #Nil .And. xFilial('SI3') == space(FWGETTAMFILIAL) ) .Or. cFil == Nil
+	cFil := xFilial("SI3")
+Endif
+nPercFPAS := 0
+If dbSeek( cFil + SRA->RA_CC )
+	If SI3->I3_PERFPAS > 0
+		aInssEmp[21,Val(cTpc)] := SI3->I3_PercAci / 100
+		nPercFPAS    := SI3->I3_PERFPAS / 100
+	Endif
+Endif	
+If aInssEmp[21,Val(cTpc)] == 0
+	aInssEmp[21,Val(cTpc)] := aInssEmp[3,Val(cTpc)]
+Endif
+
+// Verifica se existe no. do Cei para impressao
+If dbSeek(If(XFILIAL("SI3")==space(FWGETTAMFILIAL),XFILIAL("SI3"),cFil)+ SI3->I3_CUSTO)
+	If TYPE("SI3->I3_CEI") # "U" .And. !Empty(SI3->I3_CEI)
+		cCei := Left(SI3->I3_CEI,14)
+	EndIf	
+	
+	If TYPE("SI3->I3_NOME") # "U" .and. !empty(cCei)
+		cDesCei := PadR(SI3->I3_NOME,40)
+	EndIf
+EndIf
+
+//--Buscar os Valores da Rescisao/Ult.complementar
+dbSelectArea("SRR")
+If dbSeek(cFilSRR + SRA->RA_MAT + 'R' + DtoS(SRG->RG_DTGERAR) )
+
+	//-- Data do Mes da Rescis„o e Mes Anterior a Resci‡„o
+	cDataAnt := If ( Month(SRR->RR_DATA)-1<=0 , '12'+'/'+StrZero(Year(SRR->RR_DATA)-1,4),StrZero(Month(SRR->RR_DATA)-1,2)+'/'+StrZero(Year(SRR->RR_DATA),4))
+	cDataAtu := StrZero(Month(SRR->RR_DATA), 2) + '/' + StrZero(Year(SRR->RR_DATA), 4)
+
+	While ! Eof() .And. SRR->RR_FILIAL+SRR->RR_MAT+SRR->RR_TIPO3 == ;
+		cFilSrr+SRA->RA_MAT+"R" .And. SRR->RR_DATA == SRG->RG_DTGERAR 
+		
+		//--Fgts Mes Anterior
+		If SRR->RR_PD == aCodFol[117,1] 
+			nFgtsMAn := SRR->RR_VALOR
+			nRemMAn  := Round(SRR->RR_VALOR / aInssEmp[4,Val(cTpc)],2)
+		//--Fgts Pago Rescisao
+		Elseif SRR->RR_PD	 == aCodFol[119,1] .Or. SRR->RR_PD == aCodFol[650,1] //-- Fgts Semanas Anteriores
+			nFgtsMAt  += SRR->RR_VALOR
+		//--Base Fgts Pago Rescisao
+		Elseif SRR->RR_PD	 == aCodFol[293,1] .Or. SRR->RR_PD	== aCodFol[649,1] //-- Base Fgts Semanas Anteriores
+			nRemMAt  += SRR->RR_VALOR
+		//--Base Fgts 13o. Pago Rescisao
+		Elseif SRR->RR_PD	 == aCodFol[294,1]
+			nRemA13 := SRR->RR_VALOR
+		//--Multa 40 % Art. 22
+		Elseif SRR->RR_PD $ aCodFol[120,1]+"/"+aCodFol[297,1] .and. ! lDissidio
+			nValMulta += SRR->RR_VALOR			
+		//--Fgts 13o Rescisao
+		Elseif SRR->RR_PD == aCodFol[214,1]
+			nFgts13   := SRR->RR_VALOR     
+		//--Contrib. 0.5% s/Remuneracao mensal
+		Elseif SRR->RR_PD == aCodFol[295,1] .Or. SRR->RR_PD == aCodFol[651,1] //-- Contrib.0,5% Semanas Anteriores
+            n05FgtsMen	+= SRR->RR_VALOR    
+		//--Contrib. 0.5% s/Remuneracao 13o.
+		Elseif SRR->RR_PD == aCodFol[296,1]
+            n05Fgts13	:= SRR->RR_VALOR	
+		//--Base de Inss Normal e 13o. 	
+		Elseif SRR->RR_PD == aCodFol[013,1] .Or.	SRR->RR_PD == aCodFol[014,1] .Or.;
+      		 SRR->RR_PD == aCodFol[019,1] .Or.	SRR->RR_PD == aCodFol[020,1] 
+			 nSalCon := nSalCon + SRR->RR_VALOR				 
+		//--Desconto Inss e Inss 13o.			
+		Elseif SRR->RR_PD == aCodFol[064,1] .Or. SRR->RR_PD == aCodFol[070,1] .Or.;
+				SRR->RR_PD == aCodFol[065,1]			
+			nInss := nInss + SRR->RR_VALOR				 
+		//--Salario Familia	
+		Elseif SRR->RR_PD == aCodFol[034,1]			
+			nSalFam := SRR->RR_VALOR
+		//--Aviso Previo Indenizado	
+		Elseif SRR->RR_PD == aCodFol[111,1]
+			nValAv := SRR->RR_VALOR
+		//--Aviso Previo Trabalhado		
+		ElseIf SRR->RR_PD == aCodFol[112,1]
+			//cAPrevio := "1"
+		//--1/12 13o. Indenizado
+		Elseif SRR->RR_PD == aCodFol[115,1]
+			n13Av := SRR->RR_VALOR         
+		//--Media Aviso Previo Indenizado 
+		Elseif SRR->RR_PD == aCodFol[250,1]
+			nMedAv:= SRR->RR_VALOR
+		//--Media Ferias Sobre Aviso Indenizado Rescisao			
+		Elseif SRR->RR_PD == aCodFol[252,1]
+			nMedFerAv:= SRR->RR_VALOR
+		//--Media 13o. Salario Sobre Aviso Indenizado Rescisao
+		Elseif SRR->RR_PD == aCodFol[253,1]
+			nMed13Av:= SRR->RR_VALOR
+		//--Comissoes
+         ElseIf MesAno(SRA->RA_DEMISSA) < MesAno(SRR->RR_DATA) .And. ;
+    		    ( SRR->RR_PD == aCodFol[121,1] .or. SRR->RR_PD ==aCodFol[122,1] .or.; 
+        	 	  SRR->RR_PD == aCodFol[165,1] .or. SRR->RR_PD == aCodFol[166,1] )
+	  		nComissa += Round(SRR->RR_VALOR,2)   
+		Endif
+
+		//--Saldo conta FGTS(Fgts rescisao e depositado)
+		If !lDissidio
+			If SRR->RR_PD $ aCodFol[118,1]+"/"+aCodFol[117,1]+"/"+aCodFol[119,1]+"/"+aCodFol[214,1]+"/"+aCodFol[650,1]
+				nFGtsDep	+= SRR->RR_VALOR	
+			Endif       
+		Else	
+			If SRR->RR_PD $ aCodFol[339,1]+"/"+aCodFol[400,1]//+verba de valor do fgts diss.
+				nFGtsDep	+= SRR->RR_VALOR	
+			Endif    
+			If SRR->RR_PD $ aCodFol[712,1]+"/"+aCodFol[727,1]//+verba de valor da multa do fgts diss.
+				nValMulta	+= SRR->RR_VALOR	
+			EndIf	
+		EndIf	
+       	
+       	dbSelectArea("SRR")
+		dbSkip()
+	Enddo
+Endif
+
+//-- Efetua o calculo da diferenca entre a complementar calculada com  a anterior(compl.ou resc)
+//-- caso compl. calculada no mesmo mes da rescisao 
+If Mv_par08 ==2 
+	aValResc	:= {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}										//Array com  os valores da Rescisao/ compl. anterior 
+	//-- Carrega valores da resc/compl imediatamente anterior 
+	fCarResc(@aValResc,aDtResc)	
+	If lMesmoMes .and. !lDissidio
+		fAbateResc()
+	Endif	
+Endif 
+
+nBaseAviso 	:= 0.00
+nBaseMes   	:= nRemMAT  + nRemA13
+nFgtsMes	:= nFgtsMAT + nFgts13	
+nFgtsAv	   	:= 0.00
+
+//-- Calculo do valor da Base do Aviso previo indenizado p/
+//-- Abater da Remuneracao o Aviso Previo Indenizado
+nFgtsAv := 0.00
+If nValAv # 0 .And. PosSrv(aCodfol[111,1],SRA->RA_FILIAL,"RV_FGTS") == "S"
+	nBaseAviso := nValAv
+Endif
+
+//-- Abater da Remuneracao do 13o., o 13o. Indenizado
+If n13Av # 0 .And. PosSrv(aCodfol[115,1],SRA->RA_FILIAL,"RV_FGTS") == "S"
+	nBaseAviso += n13Av
+Endif		
+
+//-- Abater Media Aviso Indenizado 	
+If nMedAv # 0 .and. PosSrv(aCodFol[250,1], SRA->RA_FILIAL,"RV_FGTS") == "S"
+	nBaseAviso += nMedAv
+Endif
+	
+//-- Abater Media Ferias sobre Aviso Indenizado
+If nMedFerAv # 0 .and. PosSrv(aCodFol[252,1], SRA->RA_FILIAL,"RV_FGTS") == "S"
+	nBaseAviso += nMedFerAv
+Endif
+
+//-- Abater Media 13 Salario sobre Aviso Indenizado
+If nMed13Av # 0 .and. PosSrv(aCodFol[253,1], SRA->RA_FILIAL,"RV_FGTS") == "S"
+	nBaseAviso += nMed13Av
+Endif
+	
+If nBaseAviso > 0
+	nBaseMes  := nBaseMes - nBaseAviso
+	If nBaseMes < 0 
+		nBaseAviso := nBaseAviso + nBaseMes
+	Endif
+	nBaseMes  := If (nBaseMes  < 0,0,nBaseMes)
+	//--Achar Fgts Sobre Aviso Previo
+	nFgtsAv   := NoRound( nBaseAviso * nPerFgts,2)
+	//--Abater Fgts s/Aviso do Fgts da Quitacao
+	nFgtsMes := nFgtsMes - nFgtsAv
+	nFgtsMes := If (nFgtsMes < 0,0,nFgtsMes)
+Endif	
+If lComplem .and. nComissa > 0 // Qdo for complementar e comissao, movimentacao V3, enviar 13 centavos na remuneracao do mes.
+	nBaseMes := 0.00           // Valor sera recolhido na sefip.
+	nFgtsMes := 0.00
+EndIf
+//-- Se não ha valor da Multa, entao nao imprime Base Fgts)
+nFgtsDep:= If( (nValMulta == 0 .and. !lDissidio), 0, nFgtsDep) 
+nFgtsDep:= If(cCodR=="I3",0,nFgtsDep)
+
+If lDissidio    
+	nRemMAn		:= 0
+	nBaseMes	:= 0     
+	nFgtsMAn	:= 0
+	nContrMAN	:= 0
+	nFgtsMes	:= 0
+	nContrMes	:= 0
+	nFgtsAv		:= 0
+	nContrAv	:= 0
+	nBaseAviso	:= 0
+EndIf	
+
+nContrMes 	:= 0.00
+nContrAv	:= 0.00
+nContr13	:= 0.00
+nContrMAN	:= 0.00
+
+If MesAno(SRG->RG_DATADEM) >= '200110' .and. MesAno(SRG->RG_DATADEM) <= '200612'
+
+	//--Calcular Contr.Social 0.5 sobre as bases Separadas
+	nPerContr 	:= PosSrv(AcodFol[295,1], SRG->RG_FILIAL,"RV_PERC")/100
+	nPerCon13 	:= PosSrv(AcodFol[296,1], SRG->RG_FILIAL,"RV_PERC")/100
+	           
+If nPerContr > 0  .And. (nBaseMes > 0 .Or. nBaseAviso > 0 )
+//		nContrMes := NoRound(nBaseMes   * nPerContr,2)
+		nContrAv  := NoRound(nBaseAviso * nPerContr,2)
+		nContrMes := ( n05FgtsMen + n05Fgts13 ) - nContrAv
+		nContrMes := If( nContrMes < 0 ,0, nContrMes)
+	Endif
+	If nRemA13 > 0 .And. nPerCon13 > 0
+		nContr13  := NoRound(nRemA13 * nPerCon13,2)
+	Endif	
+	
+ 	If nRemMAN > 0 .And. MesAno(SRG->RG_DATADEM) > "200110"
+		nContrMAN := NoRound(nRemMAN * nPerContr,2)
+	Endif	
+Endif
+	
+//--GRFC ZEBRADA
+If MV_PAR01 = 4
+
+	aAdd(aImp, '       C A I X A                 GRFC- Guia de Recolhimento Rescisorio do FGTS e Contribuicao Social                                ')
+	aAdd(aImp, 'CAIXA ECONOMICA FEDERAL                                                                                                             ')  
+	aAdd(aImp, '                                                                                                                                    ')
+	aAdd(aImp, '                                                                                         |00-Para Uso da Caixa                     |')
+	aAdd(aImp, '                                                                                         |                                         |')
+	aAdd(aImp, '                                                                                         +-----------------------------------------+')
+	aAdd(aImp, ' DADOS DO EMPREGADOR                                                                     |01-Carimbo CIEF                          |')
+	aAdd(aImp, '                                                                                         |                                         |')
+	aAdd(aImp, '|02-Razao Social/nome                                                                    |                                         |')
+	aAdd(aImp, '|                                                                                        |                                         |')
+	aAdd(aImp, '+--------------------------------------------------------------------------------------+ |                                         |')
+	aAdd(aImp, '|03-CNPJ/CEI               |04-Pessoa para contato/DDD/telefone                        | |                                         |')
+	aAdd(aImp, '|                          |                                                           | |                                         |')
+	aAdd(aImp, '+--------------------------------------------------------------------------------------+ |                                         |')
+	aAdd(aImp, '|05-Endereco(logradouro,nro,andar,apartamento)                                         | |                                         |')
+	aAdd(aImp, '|                                                                                      | |                                         |')
+	aAdd(aImp, '+--------------------------------------------------------------------------------------+ +-----------------------------------------+')
+	aAdd(aImp, '|06-Bairro/distrito                       |07-Municipio                        |08-UF  | 09-Cep                                    |')
+	aAdd(aImp, '|                                         |                                    |       |                                           |')
+	aAdd(aImp, '+----------------------------------------------------------------------------------------------------------------------------------|')
+	aAdd(aImp, '|10-Tomador de servico (CNPJ/CEI)         |11-Tomador de servico (razao Social)                                                    |')
+	aAdd(aImp, '|                                         |                                                                                        |')
+	aAdd(aImp, '+----------------------------------------------------------------------------------------------------------------------------------+')
+	aAdd(aImp, '|12-FPAS     |13-Simples            |14-CNAE     |                                                                                  ')
+	aAdd(aImp, '|            |                      |            |                                                                                  ')
+	aAdd(aImp, '+------------+----------------------+------------+                                                                                  ')
+	aAdd(aImp, '                                                                                                                                    ')
+	aAdd(aImp, ' DADOS DO TRABALHADOR                                                                                                               ')
+	aAdd(aImp, '                                                                                                                                    ')
+	aAdd(aImp, '|15-Nome do trabalhador                                                                                                            |')
+	aAdd(aImp, '|                                                                                                                                  |')         
+	aAdd(aImp, '+----------------------------------------------------------------------------------------------------------------------------------+')
+	aAdd(aImp, '|16-PIS/PASEP       |17-Dt.admissao |18-Cat.|19-Dt.movto. Cod.|20-Av.previo| 1-Trabalhado         |21-Recolhimento Dissidio/Acordo |')
+	aAdd(aImp, '|                   |               |       |            |    |            | 2-Indenizado         |                                |')
+	aAdd(aImp, '+-------------------+---------------+-------+------------+----+------------+                      +--------------------------------+')
+	aAdd(aImp, '|22-Data nascimento |23- CTPS /No serie     |24-Data opcao    |                                                                     ')
+	aAdd(aImp, '|                   |                       |                 |                                                                     ')   
+	aAdd(aImp, '+-------------------+-----------------------+-----------------+                                                                     ')
+	aAdd(aImp, '                                                                                                                                    ')
+	aAdd(aImp, ' INFORMACOES DE REMUNERACAO / SALDO FINS RESCISORIOS                                                                                ')
+	aAdd(aImp, '                                                                                                                                    ')
+	aAdd(aImp, '|25-Mes Anterior Resc.|26-Mes de Rescisao |27-Aviso Previo indenizado |28-Saldo p/fins rescisorios  |29-Somatorio(Campos 25 a 28)  |')
+	aAdd(aImp, '|                     |                   |                           |                             |                              |')
+	aAdd(aImp, '+---------------------+-------------------+---------------------------+-----------------------------+------------------------------+')
+	aAdd(aImp, '                                                                                                                                    ') 
+	aAdd(aImp, '+----------------------------------------------------------------------------------------------------------------------------------+')
+	aAdd(aImp, '|Os valores lancados nos campos abaixo devem contemplar, alem daqueles devidos ao trabalhador, a Contrib Social de que trata a Lei |')
+	aAdd(aImp, '|Complementar 110/2001, bem como todos os encargos legais por recolhimento em atraso, quando for o caso                            |') 
+	aAdd(aImp, '+----------------------------------------------------------------------------------------------------------------------------------+')
+	aAdd(aImp, '                                                                                                                                    ') 
+	aAdd(aImp, ' VALORES A RECOLHER                                                                                                                 ')
+	aAdd(aImp, '                                                                                                                                    ')
+	aAdd(aImp, '|30-Mes Anterior Resc.|31-Mes de Rescisao |32-Aviso Previo indenizado |33-Multa rescisoria          |34-Total a Recolher           |')
+	aAdd(aImp, '|                     |                   |                           |                             |                              |')
+	aAdd(aImp, '+---------------------+-------------------+---------------------------+-----------------------------+------------------------------+')
+	aAdd(aImp, '                                                                                                                                    ') 
+	aAdd(aImp, '                                                                                                                                    ')
+	aAdd(aImp, '                                                                                           |Autenticacao mecanica                   ')
+	aAdd(aImp, '-----------------------------------                                                        |                                        ')
+	aAdd(aImp, '                                                                                           |                                        ')
+	aAdd(aImp, '                                                                                           |                                        ')
+	aAdd(aImp, '                                                                                                                                    ')
+	aAdd(aImp, '-----------------------------------                                                                                                 ')
+	aAdd(aImp, 'Assinatura                                                                                                                          ')
+	
+	
+	aImp[10] := Stuff( aImp[10], 002, Len(aInfo[03]), aInfo[03] )                          // Nome Completo
+	aImp[13] := Stuff( aImp[13],002, 18, If( Len(aInfo) >= 27 .And. !Empty( aInfo[27] ), aInfo[27], Transform(aInfo[08],'@R 99.999.999/9999-99') ) )   // CGC
+	aImp[13] := Stuff( aImp[13],032, Len(mv_par19+'/'+mv_par20), mv_par19+'/'+mv_par20 )  // Pessoa Para contato/telefone  
+	aImp[16] := Stuff( aImp[16],002, Len(aInfo[04]), aInfo[04] )                          // Endereco
+	aImp[19] := Stuff( aImp[19],002, Len(aInfo[13]), aInfo[13] )                          // Bairro
+	aImp[19] := Stuff( aImp[19],045, Len(aInfo[05]), aInfo[05] )                          // Municipio
+	aImp[19] := Stuff( aImp[19],082, Len(aInfo[06]), aInfo[06] )                          // UF
+	aImp[19] := Stuff( aImp[19],092, Len(aInfo[07]), aInfo[07] )                          // CEP
+	
+	// Imprime Cei/Descricao se existir
+	If !Empty(cCei)
+		aImp[22] := Stuff( aImp[22], 003,18, Transform(cCei,'@R 99.999.999/9999-99'))      // CEI
+		aImp[22] := Stuff( aImp[22], 045,25, cDesCei)                                      // Descricao Cei
+	EndIf
+	
+	aImp[25] := Stuff( aImp[25],004, Len(aInfo[17]), aInfo[17] )                          // FPAS
+	aImp[25] := Stuff( aImp[25],016, 1, Transform(nOpcSimp, "9")  )  						// Simples
+	aImp[25] := Stuff( aImp[25],040, Len(aInfo[16]), aInfo[16] )                          // CNAE
+
+	// Imprime nome completo do Funcionario se existir
+	If SRA->(FieldPos("RA_NOMECMP")) # 0 .And. !Empty(SRA->RA_NOMECMP)
+		aImp[31] := Stuff( aImp[31],002, Len(SRA->RA_NOMECMP), Subs(SRA->RA_NOMECMP+Space(60),1,60) )	// Nome do Funcionario Completo
+	Else
+		aImp[31] := Stuff( aImp[31],002, Len(SRA->RA_NOME), Subs(SRA->RA_NOME+Space(30),1,30) )			// Nome do Funcionario
+	EndIf	
+			
+	aImp[34] := Stuff( aImp[34],002, Len(SRA->RA_PIS), SRA->RA_PIS )                        	// Numero do PIS
+	aImp[34] := Stuff( aImp[34],022, Len(DTOC(SRA->RA_ADMISSA)), DTOC(SRA->RA_ADMISSA) )   	// Data de Admissao
+	aImp[34] := Stuff( aImp[34],038, Len(cCateg), cCateg )                      			 	// Categoria
+	aImp[34] := Stuff( aImp[34],046, Len(DTOC(SRG->RG_DATADEM)), DTOC(SRG->RG_DATADEM) )		// Data 
+	aImp[34] := Stuff( aImp[34],060, Len(cCodR),cCodR)													// Codigo da Movimentacao
+	aImp[34] := Stuff( aImp[34],065, Len(cAPrevio), cAPrevio ) 						   		// Aviso Previo
+	aImp[34] := Stuff( aImp[34],101, 1, cDissid )                    							 // Dissidio 
+	
+	aImp[37] := Stuff( aImp[37],002, Len(DTOC(SRA->RA_NASC)), DTOC(SRA->RA_NASC) )         // Data de Nascimento
+	aImp[37] := Stuff( aImp[37],022, Len(SRA->RA_NUMCP+'/'+SRA->RA_SERCP), SRA->RA_NUMCP+'/'+SRA->RA_SERCP ) // Numero da Carteira de Trabalho
+	aImp[37] := Stuff( aImp[37],047, Len(DtOpcao), DtOpcao )       							// Data da Opcao
+	
+	aImp[43] := Stuff( aImp[43],002, 12, TRANSFORM(nRemMAn ,'@E 9,999,999.99') )				//Remuneracao mes anterior + 13o mes ant.
+	aImp[43] := Stuff( aImp[43],025, 12, TRANSFORM(nBaseMes,'@E 9,999,999.99') )				//Remuneracao mes atual + 13o
+	aImp[43] := Stuff( aImp[43],045, 12, TRANSFORM(nBaseAviso,'@E 9,999,999.99') )				//Aviso previo indenizado+ 13o  
+	aImp[43] := Stuff( aImp[43],073, 12, TRANSFORM(nFgtsDep ,'@E 9,999,999.99') )				// Saldo FGTS 
+	aImp[43] := Stuff( aImp[43],104, 12, TRANSFORM(nRemMAn+nBaseMes+nBaseAviso+nFgtsDep,'@E 9,999,999.99') )
+	
+	aImp[54] := Stuff( aImp[54],002, 12, TRANSFORM(nFgtsMAn+nContrMAN,'@E 9,999,999.99') )
+	aImp[54] := Stuff( aImp[54],025, 12, TRANSFORM(nFgtsMes+nContrMes,'@E 9,999,999.99') )
+	aImp[54] := Stuff( aImp[54],045, 12, TRANSFORM(nFgtsAv+nContrAv,'@E 9,999,999.99')  )
+	aImp[54] := Stuff( aImp[54],073, 12, TRANSFORM(nValMulta,'@E 9,999,999.99') )
+	aImp[54] := Stuff( aImp[54],104, 12, TRANSFORM(nFgtsMAN+nContrMAN+nFgtsMes+nContrMes+nFgtsAv+nContrAv+nValMulta,'@E 9,999,999.99') )
+	
+	If mv_par22 # NIL .And. ! empty(mv_par22)
+		aImp[60] := Stuff( aImp[60],001,Len(Rtrim(aInfo[5])+Space(3)+ DTOC(mv_par22)), Rtrim(aInfo[5])+Space(3)+ DTOC(mv_par22) )
+	Else	
+		aImp[60] := Stuff( aImp[60],001,Len(Rtrim(aInfo[5])+Space(3)+ DTOC(SRG->RG_DATAHOM)), Rtrim(aInfo[5])+Space(3)+ DTOC(SRG->RG_DATAHOM) )
+	Endif
+	nLi := 0
+	For nX := 1 to Len(aImp)
+		@ nLi, 00 PSAY aImp[nX]
+		nLi := nLi + 1
+	Next nX
+
+Elseif MV_PAR01 = 5      
+	Impgraf()
+Endif
+		 
+SRR->(dbGoto(nRecnoSRR))	 
+If nTData == 8
+	Set Century OFF
+Else
+	Set Century On
+Endif
+
+Return Nil
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³ImpGraf   ºAutor  ³R.H.-Natie          º Data ³  19/10/01   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Impressao Modo Grafico GRFC                                 º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP6                                                        º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+
+Static Function  ImpGraf()
+Local cFileLogo	:= ""
+Local cStartPath := GetSrvProfString("Startpath","")
+
+oPrint:StartPage() 			// Inicia uma nova pagina
+
+/*ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³Cabecalho                                                     ³
+  ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+//Box Itens
+oPrint:Box( 030,030,2900, 2350 )
+
+cFileLogo 	:= cStartPath+ "CAIXA"+".BMP" 			// Empresa+Filial
+
+If !File( cFileLogo )
+	oPrint:say(050,040,"      C A I X A        ",oFont12)
+	oPrint:say(110,040,"CAIXA ECONOMICA FEDERAL",oFont12)
+	oPrint:Say(050,650,"GRFC - Guia de Recolhimento Rescisorio do FGTS",oFont16 ) 	
+	oPrint:Say(090,850,"e da Contribuicao Social",oFont16 ) 	
+Else
+	oPrint:SayBitmap(050,040, cFileLogo,600,300) // Tem que estar abaixo do RootPath
+	oPrint:Say(050,650,"GRFC - Guia de Recolhimento Rescisorio do FGTS",oFont16 ) 	
+	oPrint:Say(090,850,"e da Contribuicao Social",oFont16 ) 	
+Endif
+
+
+oPrint:Line(210,1550,330,1550)
+oPrint:Line(210,2300,330,2300)
+oPrint:Line(330,1550,330,2300)
+oPrint:say(210,1600," 00-Para Uso da CAIXA  ",oFont08)
+
+oPrint:Line(360,1550,810,1550)
+oPrint:Line(360,2300,810,2300)
+oPrint:Line(810,1550,810,2300)
+oPrint:say(360,1600," 01-Carimbo CIEF ",oFont08)
+
+/*ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³Dados do Empregador                                           ³
+  ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+oPrint:say(370,040,"Dados do Empregador",oFont12)
+
+oPrint:line(510,040 , 600,  040 )				//Linhas verticais
+oPrint:line(510,1500, 600,  1500)				//Linhas verticais
+oPrint:Line(600,040,600,1500)
+oPrint:say(510,050 ," 02-Razao Social / Nome ", ofont08)
+oPrint:say(560,050 ,aInfo[03],oFont12)  
+
+oPrint:line(620,040 , 710,  040 )				//Linhas verticais
+oPrint:line(620,550 , 710,  550 )				//Linhas verticais
+oPrint:line(620,1090, 710, 1090 )				//Linhas verticais
+oPrint:line(620,1500, 710, 1500 )				//Linhas verticais
+oPrint:Line(710,040,710,1500)					//Linha Horizontal
+
+oPrint:say( 620,050 ," 03-CNPJ/CEI",oFont08)
+oPrint:say( 670,050 ,If( Len(aInfo) >= 27 .And. !Empty( aInfo[27] ), aInfo[27], aInfo[8] ),oFont12)
+
+oPrint:say( 620,560," 04- Pessoa para contato",oFont08)
+oPrint:say( 670,560,mv_par19, oFont12)
+
+oPrint:say( 620,1100," DDD - Telefone",oFont08)
+oPrint:say( 670,1100, mv_par20, oFont12)
+
+
+oPrint:line(720, 040, 810, 040)				//Linhas verticais
+oPrint:line(720,1500, 810,1500)				//Linhas verticais
+oPrint:Line(810, 040, 810, 1500)			//Linha Horizontal 
+oPrint:say( 720,050 , " 05- Endereco (Logradouro,No,andar,apartamento) ",oFont08)
+oPrint:say( 770,050 ,aInfo[04],oFont12)  
+
+oPrint:line(820,040 , 910,  040)				//Linhas verticais
+oPrint:line(820,620 , 910,  620)				//Linhas verticais
+oPrint:line(820,1330, 910, 1330)				//Linhas verticais
+oPrint:line(820,1630, 910, 1630)				//Linhas verticais
+oPrint:Line(820,2300, 910, 2300)
+oPrint:Line(910, 040, 910, 2300)				//Linha horizontal 
+
+oPrint:say( 820,050 , " 06- Bairro / Distrito ",oFont08)
+oPrint:say( 870,050 , aInfo[13],oFont12)  
+
+oPrint:say( 820,640 , " 07- Municipio",oFont08)
+oPrint:say( 870,640 , aInfo[05],oFont12)  
+
+oPrint:say( 820,1340, " 08- UF",oFont08)
+oPrint:say( 870,1340, aInfo[06],oFont12)  
+
+oPrint:say( 820,1640, " 09- CEP",oFont08)
+oPrint:say( 870,1640, aInfo[07],oFont12)  
+
+
+oPrint:line(920,040 ,1010, 040)				//Linhas verticais
+oPrint:line(920,790 ,1010, 790)				//Linhas verticais
+oPrint:line(920,2300,1010,2300)				//Linhas verticais
+oPrint:Line(1010,040,1010,2300)                   
+oPrint:say( 920,050 , " 10- Tomador de servico(CNPJ/CEI)",oFont08)
+If !empty(cCei) 
+	oPrint:say( 970,050 , Transform(cCei,"@R 99.999.999/9999-99"),oFont12)  
+Endif
+
+oPrint:say( 920,800 , " 11- Tomador de servico(Razao Social)",oFont08)
+oPrint:say( 970,800 , cDesCei,oFont12)  
+
+oPrint:line(1020,040 ,1110, 040  )				//Linhas verticais
+oPrint:line(1020,400 ,1110, 400  )				//Linhas verticais
+oPrint:line(1020,700 ,1110, 700  )				//Linhas verticais
+oPrint:line(1020,1000,1110, 1000 )				//Linhas verticais
+oPrint:line(1110, 040,1110, 1000 )				// Linha Horizontal 
+
+oPrint:say(1020,050 , " 12- FPAS",oFont08)
+oPrint:say(1070,050 , aInfo[17],oFont12)  
+
+oPrint:say(1020,410 , " 13- SIMPLES",oFont08)
+oPrint:say(1070,450 , Transform(nOpcSimp,"9") ,oFont12)               
+
+oPrint:say(1020,710 , " 14- CNAE",oFont08)
+oPrint:say(1070,720 , aInfo[16],oFont12)  
+
+/*ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³Dados do Trabalhador                                          ³
+  ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+oPrint:say( 1200,040,"Dados do Trabalhador",oFont12)
+
+oPrint:line(1320,040 ,1410, 040  )				//Linhas verticais
+oPrint:line(1320,2300,1410, 2300 )				//Linhas verticais
+oPrint:line(1410,040 ,1410, 2300 )				//Linha Horizontal 
+oPrint:say(1320,050," 15- Nome do Trabalhador",oFont08)
+
+//Imprime nome completo do Funcionario, se existir.
+If SRA->(FieldPos("RA_NOMECMP")) # 0 .And. !Empty(SRA->RA_NOMECMP)
+	oPrint:say(1350,050,Subs(SRA->RA_NOMECMP+Space(60),1,60),oFont12)	//Nome do Funcionario Completo
+Else
+	oPrint:say(1350,050,Subs(SRA->RA_NOME+Space(30),1,30),oFont12)		//Nome do Funcionario
+EndIf	
+
+oPrint:line(1420,040 ,1510, 040 )				//Linhas verticais
+oPrint:line(1420,350 ,1510, 350 )				//Linhas verticais
+oPrint:line(1420,670 ,1510, 670 )				//Linhas verticais
+oPrint:line(1420,810 ,1510, 810 )				//Linhas verticais
+oPrint:line(1470,1090,1510,1090 )				//Linhas verticais
+oPrint:line(1420,1250,1510,1250 )				//Linhas verticais
+oPrint:line(1420,1510,1510,1510 )				//Linhas verticais
+oPrint:line(1420,1740,1510,1740 )				//Linhas verticais
+oPrint:line(1420,2300,1510,2300 )				//Linhas verticais
+oPrint:line(1510,040 ,1520,1510 )				//Linha Horizontal
+oPrint:line(1510,1740,1510,2300 )				//Linha Horizontal
+
+oPrint:say(1420,050," 16- No PIS/PASEP",oFont08)
+oPrint:say(1470,060,SRA->RA_PIS,oFont12)
+
+oPrint:say(1420,360," 17- Dt Admissao",oFont08)
+oPrint:say(1470,370,dtoc(SRA->RA_ADMISSA),oFont12)
+
+oPrint:say(1420,670," 18- Cat ",oFont08)
+oPrint:say(1470,680,cCateg,oFont12)
+
+oPrint:say(1420,820," 19- Dt Movto",oFont08)
+oPrint:say(1470,830,dtoc(SRG->RG_DATADEM),oFont12)
+
+oPrint:say(1420,1100," Codigo",oFont08)
+oPrint:say(1470,1110,cCodR,oFont12)
+
+oPrint:say(1420,1260," 20- Av.Previo",oFont08)
+oPrint:say(1470,1270,cAPrevio,oFont12)
+
+oPrint:say(1420,1520,"1-Trabalhado",oFont07)
+oPrint:say(1450,1520,"2-Indenizado",oFont07)
+
+oPrint:say(1420,1740," 21- Recolhimento dissidio/Acordo",oFont08)
+oPrint:say(1440,1740,"     Dt Homologacao/Publicacao",oFont08)
+oPrint:say(1470,1750,cDissid,oFont12)
+
+oPrint:line(1520, 040,1610, 040)				//Linhas verticais
+oPrint:line(1520, 420,1610, 420)				//Linhas verticais
+oPrint:line(1520,1020,1610,1020)				//Linhas verticais
+oPrint:line(1520,1510,1610,1510)	     		//Linhas verticais
+oPrint:line(1610, 040,1610,1510 )				//Linha Horizontal 
+oPrint:say(1520,050," 22- Dt de Nascimento",oFont08)
+oPrint:say(1570,050,dtoc(SRA->RA_NASC),oFont12)
+
+oPrint:say(1520,430," 23- Cart.Trabalho(No Serie)",oFont08)
+oPrint:say(1570,440, SRA->RA_NUMCP + "/" + SRA->RA_SERCP,oFont12)
+
+oPrint:say(1520,1030," 24- Dt Opcao",oFont08)
+oPrint:say(1570,1030,DtOpcao ,oFont12)
+
+oPrint:say(1520,1520,"Campo Obrigatorio para ",oFont07)
+oPrint:say(1550,1520,"Admissao ant.05/10/1988",oFont07)
+
+/*ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³Informacoes de remuneracao                                    ³
+  ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+oPrint:say(1700,040," Informacao de remuneracao / saldo fins  rescisorios",oFont12)
+
+oPrint:line(1820, 040,1910, 040)				//Linhas verticais
+oPrint:line(1820, 450,1910, 450)
+oPrint:line(1820, 900,1910, 900)
+oPrint:line(1820,1350,1910,1350)
+oPrint:line(1820,1800,1910,1800)
+oPrint:line(1820,2300,1910,2300)				//Linhas verticais
+oPrint:line(1910, 040,1910,2300)				//Linha Horizontal 
+
+oPrint:say(1820,050," 25- Mes Ant. Rescisao",oFont08)
+oPrint:say(1870,050,Transform(nRemMAn,"@E 9,999,999.99") ,oFont12)
+
+oPrint:say(1820,460," 26- Mes de Rescisao",oFont08)
+oPrint:say(1870,460,Transform(nBaseMes,"@E 9,999,999.99") ,oFont12)
+
+oPrint:say(1820,910," 27- Aviso prev.Indeniz.",oFont08)
+oPrint:say(1870,910,Transform(nBaseAviso,"@E 9,999,999.99") ,oFont12)
+
+oPrint:say(1820,1360," 28- Saldo p/fins Rescis.",oFont08)
+oPrint:say(1870,1360,Transform(nFgtsDep,"@E 9,999,999.99") ,oFont12)
+
+oPrint:say(1820,1810," 29- Somatorio(Cpos 25 a 28)",oFont08)
+oPrint:say(1870,1810,Transform(nRemMAn+nBaseMes+nBaseAviso+nFgtsDep,"@E 9,999,999.99") ,oFont12)
+
+
+oPrint:box(2000,040,2070,2300)
+oPrint:say(2020,050,"Os valores lancados nos campos abaixo devem contemplar, alem daqueles devidos ao trabalhador, a Contribuicao Social de que",oFont07)
+oPrint:Say(2040,050,"trata a Lei Complementar 110/2001, bem como todos os encargos legais por recolhimento em atraso, quando for o caso",oFont07)
+
+
+/*ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³Valores a Recolher                                            ³
+  ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+oPrint:Say(2100,040,"Valores a Recolher",oFont12)
+
+oPrint:line(2220, 040,2310, 040)				//Linhas verticais
+oPrint:line(2220,2300,2310,2300)				//Linhas verticais
+oPrint:line(2220, 450,2310, 450)
+oPrint:line(2220, 900,2310, 900)
+oPrint:line(2220,1350,2310,1350)
+oPrint:line(2220,1800,2310,1800)
+oPrint:line(2310, 040,2310,2300)				//Linha Horizontal 
+
+oPrint:say(2220,050," 30- Mes Ant. Rescisao",oFont08)
+oPrint:say(2270,050,Transform(nFgtsMan+nContrMan,"@E 9,999,999.99") ,oFont12)
+              
+oPrint:say(2220,460," 31- Mes de Rescisao",oFont08)
+oPrint:say(2270,460,Transform(nFgtsMes+nContrMes,"@E 9,999,999.99") ,oFont12)
+
+oPrint:say(2220,910," 32- Aviso prev.Indeniz.",oFont08)
+oPrint:say(2270,910,Transform(nFgtsAv+nContrAv,"@E 9,999,999.99") ,oFont12)
+
+oPrint:say(2220,1360," 33- Multa Rescisoria",oFont08)
+oPrint:say(2270,1360,Transform(nValMulta,"@E 9,999,999.99") ,oFont12)
+
+oPrint:say(2220,1810," 34- Total a Recolher",oFont08)
+oPrint:say(2270,1810,Transform(nFgtsMan+nContrMan+nFgtsMes+nContrMes+nFgtsAv+nContrAv+nValMulta,"@E 9,999,999.99") ,oFont12)
+
+oPrint:line(2400,050,2400,700)
+If mv_par22 # NIL .and. !Empty(mv_par22)
+	oPrint:say(2420,050,rTrim(aInfo[5]) + "  "+ dtoc(mv_par22),oFont08)
+Else
+	oPrint:say(2420,050,rTrim(aInfo[5]) + "   "+ dtoc(SRG->RG_DATAHOM),oFont08)
+Endif
+
+oPrint:line(2600,050,2600,700)
+oPrint:say(2620,050,"Assinatura",oFont08)
+
+oPrint:line(2500,1100,2700,1100)
+oPrint:say(2500,1110,"Autenticacao Mecanica",oFont08) 	
+
+oPrint:EndPage() 		// Finaliza a pagina
+return
+

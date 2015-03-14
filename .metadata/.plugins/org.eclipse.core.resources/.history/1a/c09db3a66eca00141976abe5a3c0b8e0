@@ -1,0 +1,12 @@
+#include 'totvs.ch'
+
+CLASS MT010INC
+
+	METHOD New() CONSTRUCTOR
+
+ENDCLASS
+
+//-----------------------------------------------------------------
+METHOD New() CLASS MT010INC
+
+Return

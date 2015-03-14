@@ -1,0 +1,325 @@
+#INCLUDE "PROTHEUS.CH"
+#INCLUDE "TBICONN.CH"
+#INCLUDE "RWMAKE.CH"
+#INCLUDE "PONWORK.CH"
+
+
+/*
+зддддддддддбддддддддддбдддддддбдддддддддддддддддддддддбддддддбдддддддддд©
+ЁPrograma  ЁPonWork   Ё Autor Ё Marinaldo de Jesus    Ё Data Ё21/11/2001Ё
+цддддддддддеддддддддддадддддддадддддддддддддддддддддддаддддддадддддддддд╢
+ЁDescri┤└o ЁExemplo de Programa Para Agendamento de Rotinas em WorkFlow Ё
+цддддддддддедддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+ЁSintaxe   Ё Void                                                       Ё
+цддддддддддедддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+Ё Uso      ЁModelo Desenvolvido para Agendamento do PONM010 -   ProcessoЁ
+Ё          Ёde Leitura e Apontamento de Marcacoes					    Ё
+цддддддддддадддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+Ё          ATUALIZACOES SOFRIDAS DESDE A CONSTRU─AO INICIAL.		    Ё
+цддддддддддддбддддддддбддддддбдддддддддддддддддддддддддддддддддддддддддд╢
+ЁProgramador Ё Data   Ё BOPS Ё  Motivo da Alteracao                     Ё
+цддддддддддддеддддддддеддддддедддддддддддддддддддддддддддддддддддддддддд╢
+Ё            Ё        Ё      Ё                                 		  	Ё
+юддддддддддддаддддддддаддддддадддддддддддддддддддддддддддддддддддддддддды
+здддддддддддддбддддддддддбддддддддддддддддбддддддддддддддддддддддддддддддддддддддддддд©
+ЁProgramador  Ё Data     Ё FNC            Ё  Motivo da Alteracao                      Ё
+цдддддддддддддеддддддддддеддддддддддддддддедддддддддддддддддддддддддддддддддддддддддддЁ
+ЁRogerio R.   Ё29/07/2009Ё00000018267/2009ЁCompatibilizacao dos fontes para aumento doЁ
+Ё             Ё          Ё                Ёcampo filial e gestЦo corporativa.         Ё
+юдддддддддддддаддддддддддаддддддддддддддддаддддддддддддддддддддддддддддддддддддддддддды
+
+зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё As Instrucoes Abaixo deverao ser Incluidas no INI do Server			Ё
+юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+[ONSTART]
+JOBS=LEITURA_CLASSIFICACAO	//Define o Nome do Job
+
+[LEITURA_CLASSIFICACAO]		//Configuracoes do Job
+Main=u_StartJobPon			//ou Main=wfStart() se tiver apenas uma empresa
+Environment=Environment		//Nome do Environment que devera ser utilizado
+зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё A chamada abaixo devera ser Incluida no Agendamento do WorkFlow		Ё
+юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+u_PonScheduler(		"01"	,;	//01 -> Codigo da Empresa no SIGAMAT
+				 	"01"	,;	//02 -> Codigo da Filial no SIGAMAT
+				 	.F.		,;	//03 -> Utilizar os Parametros do SX1 para o Processo de Leitura / Apontamento
+				 	.T.		,;	//04 -> Limitar a Data Final do Apontamento aa DataBase do Sistema
+				 	.T.		,;	//05 -> Efetuar o Apontamento Por Filial
+				 	.F.		,;	//06 -> Efetua Apontamento para Relogios nao Lidos
+				 	.F.		,;	//07 -> Forcar o Reapontamento das Marcacoes   
+				 	.F.		 ;  //08 -> Processa apenas a filial passada como parametro 
+			   )
+зддддддддддбдддддддддддддбдддддддбддддддддддддддддддддбддддддбдддддддддд©
+ЁFun┤┘o    ЁPonScheduler Ё Autor Ё Marinaldo de Jesus Ё Data Ё21/11/2001Ё
+цддддддддддедддддддддддддадддддддаддддддддддддддддддддаддддддадддддддддд╢
+ЁDescri┤┘o ЁPrepara o Ambiente da Empresa e Executa a  Leitura/ApontamenЁ
+Ё          Ёto														    Ё
+цддддддддддедддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+ЁSintaxe   Ёu_PonScheduler( aUserDefParam )								Ё
+цддддддддддедддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+ЁParametrosЁaUserDefParam -> Array contendo os Parametros do Usuario	Ё
+Ё          Ё       														Ё
+ЁConteudo  ЁaUserDefParam[1]Codigo da Empresa no SIGAMAT				Ё
+Ё          Ё       														Ё
+Ё          ЁaUserDefParam[2]Codigo da Filial no SIGAMAT  				Ё
+Ё          Ё       														Ё
+Ё          ЁaUserDefParam[3]Se .T. caracterizara que o Programa   deveraЁ
+Ё          Ё                utilizar os Parametros do Programa de  LeituЁ
+Ё          Ё                ra/Apontamento, confome Definidos pelo 	UsuaЁ
+Ё          Ё                rio. Caso Contrario Ira considerar os ParameЁ
+Ё          Ё                tros De/Ate de Forma Generica. 				Ё
+Ё          Ё       														Ё
+Ё          ЁaUserDefParam[4]Se a Data Fim dos Parametros deve ser LitidaЁ
+Ё          Ё                da a Menor Data entra a DataBase e o Fim  doЁ
+Ё          Ё                Periodo de Apontamento						Ё
+Ё          ЁaUserDefParam[5]Se Deve Processar Por Filial                Ё
+Ё          ЁaUserDefParam[6]Se Deve Efetuar Apontamento Quando nao ConseЁ
+Ё          Ё                gui Ler o Arquivo do Relogio                Ё
+Ё          ЁaUserDefParam[7]Se Deve Forcar o Reapontamento 				Ё
+Ё          ЁaUserDefParam[8]Se Utiliza a Filial passada como a que deve-Ё
+Ё          Ё                ra ser processada como parametro.			Ё
+цддддддддддедддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+ЁUso       ЁPonWork                                                    	Ё
+цддддддддддедддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+ЁObservacaoЁEssa Funcao devera ser Cadastrada no Agendamento           	Ё
+юддддддддддадддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+User Function PonScheduler( aUserDefParam )
+
+Local aFiliais			:= {}
+Local cEmp				:= ""
+Local cFil				:= ""
+Local lWhorkFlow		:= .T.
+Local lUserDefParam		:= .F.
+Local lLimitaDataFim	:= .T.
+Local lProcFilial		:= .F.
+Local lApontaNaoLidas	:= .F.
+Local lForceReaponta	:= .F.  
+Local lSomentecFil		:= .F.
+Local nUserParam		:= 0.00
+Local nLenParam			:= 0.00
+Local nFilial			:= 0.00
+
+/*
+зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Enviando Mensagens para o Console do Server                 			Ё
+юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+ConOut("")
+ConOut( STR0001 )	//"Iniciando U_PonScheduler()..."
+ConOut("")
+
+/*
+зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Verifica os Parametros passados          								Ё
+юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+IF ( !Empty( aUserDefParam ) .and. ValType( aUserDefParam ) == "A" )
+	nLenParam := Len( aUserDefParam )
+	For nUserParam := 1 To nLenParam
+		Do Case
+			Case ( nUserParam == 1 ) ; cEmp          	:= IF( ( ValType( aUserDefParam[ nUserParam ] ) == "C" ) , aUserDefParam[ nUserParam ] , ""	 )
+			Case ( nUserParam == 2 ) ; cFil				:= IF( ( ValType( aUserDefParam[ nUserParam ] ) == "C" ) , aUserDefParam[ nUserParam ] , ""	 )
+			Case ( nUserParam == 3 ) ; lUserDefParam	:= IF( ( ValType( aUserDefParam[ nUserParam ] ) == "L" ) , aUserDefParam[ nUserParam ] , .F. )
+			Case ( nUserParam == 4 ) ; lLimitaDataFim	:= IF( ( ValType( aUserDefParam[ nUserParam ] ) == "L" ) , aUserDefParam[ nUserParam ] , .T. )
+			Case ( nUserParam == 5 ) ; lProcFilial		:= IF( ( ValType( aUserDefParam[ nUserParam ] ) == "L" ) , aUserDefParam[ nUserParam ] , .F. )
+			Case ( nUserParam == 6 ) ; lApontaNaoLidas	:= IF( ( ValType( aUserDefParam[ nUserParam ] ) == "L" ) , aUserDefParam[ nUserParam ] , .F. )
+			Case ( nUserParam == 7 ) ; lForceReaponta	:= IF( ( ValType( aUserDefParam[ nUserParam ] ) == "L" ) , aUserDefParam[ nUserParam ] , .F. )
+			Case ( nUserParam == 8 ) ; lSomentecFil		:= IF( ( ValType( aUserDefParam[ nUserParam ] ) == "L" ) , aUserDefParam[ nUserParam ] , .F. )
+		End Case
+	Next nUserParam
+EndIF
+
+/*
+зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Verifica se Empresa/Filial foram Passados								Ё
+юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+IF !Empty( cEmp ) .and. !Empty( cFil )
+
+	/*
+	зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Enviando Mensagens para o Console do Server                 			Ё
+	юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	ConOut("")
+	ConOut( STR0002 ) //"Preparando Ambiente da Empresa. Aguarde... "
+	ConOut("")
+	
+	/*
+	зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Prepara Ambiente da Empresa											Ё
+	юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	PREPARE ENVIRONMENT EMPRESA ( cEmp ) FILIAL ( cFil )
+	
+		/*
+		зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Redefine nModulo de forma a Garantir que o Modulo seja o SIGAPON		Ё
+		юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		SetModulo( "SIGAPON" , "PON" )
+
+		/*
+		зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Processando a Leitura/Apontamento                           			Ё
+		юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		IF ( lProcFilial )
+		
+			If lSomentecFil 
+				/*
+				зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Processa somente a Filial passada como parametro            			Ё
+				юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				aFiliais := GetFilRecnos(cEmpAnt, cFil, cFil)
+			Else 
+				/*
+				зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Processa todas as Filiais da Empresa passada como parametro  			Ё
+				юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				aFiliais := GetFilRecnos(cEmpAnt , Space(FWGETTAMFILIAL), Replicate("Z", FWGETTAMFILIAL))
+			Endif
+        
+            For nFilial := 1 To Len( aFiliais )
+			
+				/*
+				зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Posiciona o SM0 na Filial a ser Processada                  			Ё
+				юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				SM0->( dbGoto( aFiliais[ nFilial , 02 ] ) )
+
+				/*
+				зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Enviando Mensagens para o Console do Server                 			Ё
+				юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				ConOut("")
+				//"Inicio da Leitura/Apontamento em: "###" as "
+				ConOut( STR0003  + Dtoc( MsDate() ) + STR0004 + Time() )
+				ConOut("")
+				//"Empresa: "
+				ConOut( STR0005 + SM0->( FWGETCODFILIAL + " - " + AllTrim( M0_NOMECOM ) ) )
+				ConOut("")
+				//"Filial:  "
+				ConOut( STR0006 + SM0->( FWGETCODFILIAL + " - " + AllTrim( M0_FILIAL ) + "/" + AllTrim( M0_NOME ) ) )
+				ConOut("")
+
+				/*
+				зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Chamada a Funcao de Leitura e Apontamento das Marcacoes     			Ё
+				юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				Ponm010(	lWhorkFlow					,;	//Define Que a Chamada Esta Sendo Efetuada Atraves do WorkFlow
+						 	lUserDefParam				,;	//Verifica Se Devera Considerar os Parametros Pre-Definidos Pelo Usuario
+						 	lLimitaDataFim				,;	//Verifica Se Devera Limitar a Data Fim a Menor Data entre a DataBase e o Periodo Final de Apontamento
+							aFiliais[ nFilial , 01 ]	,;	//Filial a ser processada
+						 	lProcFilial					,;	//Processo por Filial
+						 	lApontaNaoLidas				,;	//Se Aponta as Marcacoes para as Filiais nao Lidas
+						 	lForceReaponta				 ;	//Forcar o Reapontamento das Marcacoes
+						)
+
+				/*
+				зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Garante o Posicionamento no SIGAMAT                         			Ё
+				юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				SM0->( MsGoto( aFiliais[ nFilial , 02 ] ) )
+
+				/*
+				зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Enviando Mensagens para o Console do Server                 			Ё
+				юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				ConOut("")
+				// "Final da Leitura/Apontamento em: "###" as "
+				ConOut(STR0007 + Dtoc( MsDate() ) + STR0004 + Time() )
+				ConOut("")
+				//"Empresa: "
+				ConOut(STR0005 + SM0->( M0_CODIGO + " - " + AllTrim( M0_NOMECOM ) ) )
+				ConOut("")
+				//"Filial:  "
+				ConOut(STR0006 + FWGETCODFILIAL + " - " +  SM0->(AllTrim(M0_FILIAL) + "/" + AllTrim(M0_NOME) ) )
+				ConOut("")
+
+            Next nFilial
+		Else
+
+			/*
+			зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+			Ё Enviando Mensagens para o Console do Server                 			Ё
+			юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+			ConOut("")
+			//"Inicio da Leitura/Apontamento em: "###" as "
+			ConOut( STR0003  + Dtoc( MsDate() ) + STR0004 + Time() )
+			ConOut("")
+
+			/*
+			зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+			Ё Chamada a Funcao de Leitura e Apontamento das Marcacoes     			Ё
+			юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+			Ponm010(	lWhorkFlow					,;	//Define Que a Chamada Esta Sendo Efetuada Atraves do WorkFlow
+					 	lUserDefParam				,;	//Verifica Se Devera Considerar os Parametros Pre-Definidos Pelo Usuario
+					 	lLimitaDataFim				,;	//Verifica Se Devera Limitar a Data Fim a Menor Data entre a DataBase e o Periodo Final de Apontamento
+						cFil						,;	//Filial a ser processada
+					 	lProcFilial					,;	//Processo por Filial
+					 	lApontaNaoLidas				,;	//Se Aponta as Marcacoes para as Filiais nao Lidas
+					 	lForceReaponta				 ;	//Forcar o Reapontamento das Marcacoes
+					)
+
+			/*
+			зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+			Ё Enviando Mensagens para o Console do Server                 			Ё
+			юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+			ConOut("")
+			// "Final da Leitura/Apontamento em: "###" as "
+			ConOut( STR0007 + Dtoc( MsDate() ) + STR0004 + Time() )
+			ConOut("")
+
+		EndIF		
+		
+	/*
+	зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Enviando Mensagens para o Console do Server                 			Ё
+	юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	ConOut("")
+	ConOut( STR0008 )	//"Encerrando Ambiente da Empresa. Aguarde... "
+	ConOut("")
+	/*
+	зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Finaliza o Ambiente da Empresa										Ё
+	юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	RESET ENVIRONMENT
+
+Else
+
+	/*
+	зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Enviando Mensagens para o Console do Server                 			Ё
+	юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	ConOut("")
+	ConOut( STR0009 )	//"Nao foi possivel concluir o processo. Empresa ou Filial Invalidas."
+	ConOut("")
+
+EndIF
+
+/*
+зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Enviando Mensagens para o Console do Server                 			Ё
+юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+ConOut("")
+ConOut("Finalizando U_PonScheduler()...")
+ConOut("")
+	
+Return( NIL )
+
+/*
+зддддддддддбдддддддддддддбдддддддбддддддддддддддддддддбддддддбдддддддддд©
+ЁFun┤┘o    ЁStartJobPon  Ё Autor Ё Marinaldo de Jesus Ё Data Ё21/11/2001Ё
+цддддддддддедддддддддддддадддддддаддддддддддддддддддддаддддддадддддддддд╢
+ЁDescri┤┘o ЁStart do Processo de WorkFlow                               Ё
+цддддддддддедддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+ЁSintaxe   Ёu_StartJobPon												Ё
+цддддддддддедддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+ЁParametrosЁ															Ё
+цддддддддддедддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+ЁUso       ЁPonWork                                                    	Ё
+цддддддддддедддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+ЁObservacaoЁEssa Funcao devera ser Incluida no .INI do Server          	Ё
+юддддддддддадддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+User Function StartJobPon()
+
+Local aEmpFil := Array( 02 )
+
+aEmpFil[ 01 ] := "01"	//Codigo da Empresa confome SIGAMAT
+aEmpFil[ 02 ] := "01"	//Codigo da Filial  confome SIGAMAT
+
+Return( wfStart( aEmpFil ) )

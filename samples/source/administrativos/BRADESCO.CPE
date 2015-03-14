@@ -1,0 +1,69 @@
+REGISTRO       0010010"0"                                                         
+COD.EMPRESA    0020090"00000000"                                                  
+TIPO IDENTIDADE0100100"2"                                                         
+CGC            0110250SUBST(SM0->M0_CGC,1,14)                                     
+NOME - EXPRESSO0260650SUBST(SM0->M0_NOME,1,30)                                    
+TIPO SERVICO   0660670"20"                                                        
+COD. ORIGEM    0680680"1"                                                         
+REMESSA        0690730STRZERO((VAL(SEE->EE_ULTDSK)+1),5,0)                        
+RETORNO        0740780"00000"                                                     
+DATA GRAVACAO  0790860DTOS(DDATABASE)                                             
+HORA GRAVACAO  0870920SUBSTR(TIME(),1,2)+SUBSTR(TIME(),4,2)+SUBSTR(TIME(),7,2)    
+DENS.GRAVACAO  0930970SPACE(5)                                                    
+UNID.GRAVACAO  0981000SPACE(3)                                                    
+IDMICRO        1011050"     "                                                     
+TIPO PROCESS.  1061060"0"                                                         
+RESERVA 1      1071800SPACE(74)                                                   
+RESERVA 2      1812600SPACE(80)                                                   
+RESERVA 3      2614940SPACE(234)                                                  
+NUM.SEQUENCIAL 4955000"000001"                                                    
+COD.REGISTRO   0010010"1"                                                         
+TIPO IDENTIFIC 0020020IF(SA2->A2_TIPO="J","2",IF(SA2->A2_TIPO="F","1","3"))       
+IDENTIFICACAO  0030170STRZERO(VAL(SA2->A2_CGC),15)                                
+NOME FORNECEDOR0180470SUBS(SA2->A2_NOME,1,30)                                     
+END. FORNECEDOR0480870SUBS(SA2->A2_END,1,40)                                      
+CEP  FORNECEDOR0880950SA2->A2_CEP                                                 
+CODIGO BANCO   0960980SPACE(3)                                                    
+CODIGO AGENCIA 0991040Space(06)                                                   
+CONTA CORRENTE 1051190Space(15)                                                   
+NUM.PAGAMENTO  1201350Space(16)                                                   
+CARTEIRA       1361380Space(3)                                                    
+NOSSO NUMERO   1391500Space(12)                                                   
+SEU NUMERO     1511650Space(15)                                                   
+DATA VENCIMENTO1661730DTOS(SE2->E2_VENCREA)                                       
+DATA EMISSAO   1741810DTOS(SE2->E2_EMISSAO)                                       
+DATA LIMITE    1821890Repl("0",8)                                                 
+VALOR DOCUMENTO1902042STRZERO(SE2->E2_VALOR*100,15)                               
+VALOR PAGAMENTO2052192STRZERO(SE2->E2_SALDO*100,15)                               
+VALOR DESCONTO 2202342STRZERO(0,15)                                               
+VALOR ACRESCIMO2352492STRZERO(0,15)                                               
+TIPO DE DOCUMEN2502510"04"                                                        
+NUM DOCUMENTO  2522610STRZERO(VAL(SE2->E2_NUM),10)                                
+SERIE          2622630SPACE(2)                                                    
+MOD PAGAMENTO  2642650Space(2)                                                    
+DT EFET PAGAMEN2662730DTOS(SE2->E2_VENCREA)                                       
+MOEDA          2742760SPACE(3)                                                    
+SIT AGENDAME   2772780SPACE(2)                                                    
+INFORM RETORNO 2792880SPACE(10)                                                   
+TIPO DE MOVIMEN2892890"0"                                                         
+CODIGO MOVIMENT2902910"00"                                                        
+ENDERECO SACADO2923310SPACE(40)                                                   
+SACADOR        3323730SPACE(42)                                                   
+CAMPO LIVRE CB 3743980Space(25)                                                   
+DIG.VER.COD.BAR3993990IF( EMPTY(SE2->E2_CODBAR)," ",SUBS(SE2->E2_CODBAR,5,1))     
+CODIGO MOEDA   4004000IF (EMPTY(SE2->E2_CODBAR)," ",SUBS(SE2->E2_CODBAR,4,1) )    
+DIGITAVEL      4014130SPACE(13)                                                   
+COD AREA EMPRE 4144150"  "                                                        
+USO EMPRESA    4164500Space(35)                                                   
+RESERVA        4514720Space(22)                                                   
+COD LANCAMENTO 4734770Space(5)                                                    
+RESERVA        4784780Space(1)                                                    
+TIPO CONTA     4794790"0"                                                         
+CONTA COMPLEM  4804860"0000000"                                                   
+RESERVA2       4874940SPACE(8)                                                    
+NUM SEQUENCIA  4955000INCREMENTA()                                                
+CODIGO REGISTRO0010010"9"                                                         
+QTDE REGISTRO  0020070INCREMENTA()                                                
+TOT VALOR PAGO 0080242STRZERO(SOMAVALOR(),17)                                     
+RESERVA        0254940SPACE(470)                                                  
+NUMERO SEQUENC.4955000INCREMENTA()                                                

@@ -1,0 +1,562 @@
+#INCLUDE "PROTHEUS.CH"
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+#IFNDEF WINDOWS
+	#DEFINE PSAY SAY
+#ENDIF
+
+User Function Mao_obr()        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP5 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("CDESC1,CDESC2,CDESC3,CSTRING,AORD,ARETURN")
+SetPrvt("NOMEPROG,ALINHA,NLASTKEY,CPERG,APOSICAO1,ATOTCC1")
+SetPrvt("ATOTFIL1,ATOTEMP1,AINFO,LEND,AT_PRG,WCABEC0")
+SetPrvt("WCABEC1,CONTFL,LI,NTAMANHO,CTIT,WNREL")
+SetPrvt("NORDEM,CFILDE,CFILATE,CCCDE,CCCATE,CMATDE")
+SetPrvt("CMATATE,NPORCENC,NPORCPRO,TITULO,ACODFOL,NINSS")
+SetPrvt("NSALATE,NSALACI,NTOTDFFIL,NTOTDSFIL,NTOTDEFIL,NTOTDPFIL")
+SetPrvt("NTOTIFFIL,NTOTISFIL,NTOTIEFIL,NTOTIPFIL,NTOTDFGER,NTOTDSGER")
+SetPrvt("NTOTDEGER,NTOTDPGER,NTOTIFGER,NTOTISGER,NTOTIEGER,NTOTIPGER")
+SetPrvt("NLINDF,NLINDS,NLINDE,NLINDP,NLINIF,NLINIS")
+SetPrvt("NLINIE,NLINIP,CINICIO,CFIM,CFILANT,CCCANT")
+SetPrvt("CCODMO,DESCFIL,NSALARIO,NPROVISAO,NENCARGO,DESC_CC")
+SetPrvt("CDET,DETALHE,")
+
+#IFNDEF WINDOWS
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 05/07/00 ==> 	#DEFINE PSAY SAY
+#ENDIF
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ MAO_OBRA ³ Autor ³ R.H. - Aldo           ³ Data ³ 06.08.97 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Rela‡„o Distribuicao de Mao de Obra                        ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ RdMake                                                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³         ATUALIZACOES SOFRIDAS DESDE A CONSTRU€AO INICIAL.             ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Programador ³ Data   ³ BOPS ³  Motivo da Alteracao                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+cDesc1  := "Rela‡„o Distribuicao de M„o de Obra "
+cDesc2  := "Ser  impresso de acordo com os parametros solicitados pelo"
+cDesc3  := "usuario."
+cString := "SRA"  // alias do arquivo principal (Base)
+aOrd    := { "Centro de Custo" }               //Ordem
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis (Basicas)                            		  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aReturn  := { "Zebrado",1,"Administra‡„o",2,2,1,"",1 }
+NomeProg := "MAOOBRA"
+aLinha   := {}
+nLastKey := 0
+cPerg    := "GPRMOB"
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis (Programa)                                  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aPosicao1 := {} // Array das posicoes
+aTotCc1   := {}
+aTotFil1  := {}
+aTotEmp1  := {}
+aInfo     := {}
+lEnd      := .f.
+
+/*/
+-- Consideracoes dos campos do Cadastro de Verbas
+	- Dever  ser incluido os seguintes campos: 
+		Campo "RV_SALARIO":
+			Tipo      : Caracter
+			Tamanho   : 1
+			Validacoes:
+				N - Nao entra em Salarios
+				S - Soma em Salarios
+				H - Subtrai de Salarios
+
+		Campo "RV_ENCARGO":
+			Tipo      : Caracter
+			Tamanho   : 1
+			Validacoes:
+				N - Nao entra em Encargos
+				S - Soma em Encargos
+				H - Subtrai de Encargos
+				I - Soma em Encargos + (mv_par07) 
+				B - Soma (mv_par07) em Encargos 
+				F - Soma (mv_par08) em Provisoes
+
+-- Arquivo de Perguntas: GPRMOB
+   - Dever  ser Incluido no SX1???
+
+-- Lay-Out impressao
+FILIAL C.CUSTO   DESCRICAO                      M.OBRA   FUNCION       SALARIOS       ENCARGOS      PROVISOES          TOTAL
+XX     XXXXXXXXX 123456789012345678901234567890 INDIRETA 999,999 999,999,999.99 999,999,999.99 999,999,999.99 999,999,999.99
+                                               T O T A L 999,999 999,999,999.99 999,999,999.99 999,999,999.99 999,999,999.99
+/*/
+
+AT_PRG   := "MAOOBRA"
+wCabec0  := 1
+wCabec1  := "FILIAL C.CUSTO   DESCRICAO                      M.OBRA   FUNCION       SALARIOS       ENCARGOS      PROVISOES          TOTAL"
+Contfl   := 1
+Li       := 0
+nTamanho := "M"
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+pergunte("GPRMOB",.F.)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros                         ³
+//³ mv_par01        //  Filial De                                ³
+//³ mv_par02        //  Filial Ate                               ³
+//³ mv_par03        //  Centro de Custo De                       ³
+//³ mv_par04        //  Centro de Custo Ate                      ³
+//³ mv_par05        //  Matricula De                             ³
+//³ mv_par06        //  Matricula Ate                            ³
+//³ mv_par07        //  Porcentagem Encargos                     ³
+//³ mv_par08        //  Porcentagem Provisao                     ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+cTit   := " RELA€O DISTRIBUICAO DE MAO DE OBRA "
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a funcao SETPRINT                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+wnrel:="MAOOBRA"            //Nome Default do relatorio em Disco
+wnrel:=SetPrint(cString,wnrel,cPerg,cTit,cDesc1,cDesc2,cDesc3,.F.,aOrd)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Carregando variaveis mv_par?? para Variaveis do Sistema.     ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nOrdem     := aReturn[8]
+cFilDe     := mv_par01
+cFilAte    := mv_par02
+cCcDe      := mv_par03
+cCcAte     := mv_par04
+cMatDe     := mv_par05
+cMatAte    := mv_par06
+nPorcEnc   := mv_par07
+nPorcPro   := mv_par08
+
+Titulo := " RELA€O DISTRIBUICAO DE MAO DE OBRA "
+
+If nLastKey #27
+	SetDefault(aReturn,cString)
+
+	#IFDEF WINDOWS
+		RptStatus({|| GRMOImp()})// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==> 		RptStatus({|| Execute(GRMOImp)})
+	#ELSE
+		GRMOImp()
+	#ENDIF
+
+Endif
+
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ GRMOImp  ³ Autor ³ R.H. - Aldo           ³ Data ³ 06.08.97 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Rela‡„o Distribuicao de Mao de Obra                        ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe e ³ GRMOImp()                                                  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ RDmake                                                     ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==> Function GRMOImp
+Static Function GRMOImp()
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis (Programa)                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aCodFol   := {}
+nInss     := 0
+nSalAte   := 0
+nSalAci   := 0
+
+nTotDFFil:=0
+nTotDSFil:=0
+nTotDEFil:=0 
+nTotDPFil:=0
+
+nTotIFFil:=0
+nTotISFil:=0
+nTotIEFil:=0 
+nTotIPFil:=0
+
+nTotDFGer:=0
+nTotDSGer:=0
+nTotDEGer:=0 
+nTotDPGer:=0
+
+nTotIFGer:=0
+nTotISGer:=0
+nTotIEGer:=0 
+nTotIPGer:=0
+
+nLinDF:=0
+nLinDS:=0
+nLinDE:=0
+nLinDP:=0
+
+nLinIF:=0
+nLinIS:=0
+nLinIE:=0
+nLinIP:=0
+
+dbSelectArea( "SRA" )
+dbSetOrder( 2 )
+
+dbGoTop()
+dbSeek(cFilDe + cCcDe + cMatDe,.T.)
+cInicio := "SRA->RA_FILIAL + SRA->RA_CC + SRA->RA_MAT"
+cFim    := cFilAte + cCcAte + cMatAte
+
+cFilAnt    := Space(FWGETTAMFILIAL)
+cCcAnt     := Space(9)
+cCodMO     := " "
+
+dbSelectArea( "SRA" )
+SetRegua(SRA->(RecCount()))
+
+While	!EOF() .And. &cInicio <= cFim
+	
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Movimenta Regua Processamento                                ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	IncRegua()
+	
+	If SRA->RA_FILIAL #cFilAnt
+		If	!fInfo(@aInfo,SRA->RA_FILIAL)
+			Exit
+		Endif
+		dbSelectArea( "SRA" )
+		cFilAnt    := SRA->RA_FILIAL
+		DescFil := Left(aInfo[1]+Space(30),30) 
+		nTotDFFil:=0
+		nTotDSFil:=0
+		nTotDEFil:=0 
+		nTotDPFil:=0
+		nTotIFFil:=0
+		nTotISFil:=0
+		nTotIEFil:=0 
+		nTotIPFil:=0
+		nLinDF:=0
+		nLinDS:=0
+		nLinDE:=0
+		nLinDP:=0
+		nLinIF:=0
+		nLinIS:=0
+		nLinIE:=0
+		nLinIP:=0		
+	Endif
+	
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Cancela ImpresÆo ao se pressionar <ALT> + <A>                ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	#IFNDEF WINDOWS
+		Inkey()
+		If Lastkey() == 286
+			lEnd := .T.
+		EndIf	
+	#ENDIF
+	
+	If lEnd
+		@Prow()+1,0 PSAY cCancel
+		Exit
+	EndIF
+
+	nSalario  := 0
+	nProvisao := 0
+	nEncargo  := 0
+	cCcAnt    := SRA->RA_CC
+	Desc_Cc   := Space(30)
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Procura Descricao do Centro de Custo      						  ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	dbSelectArea( "SI3" )
+	If dbSeek(xFilial("SI3")+cCcAnt)    
+		Desc_Cc := Left(Si3->i3_Desc + Space(30),30)   
+	Endif
+
+	cCodMO :="D"
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Procura Tipo de Mao de Obra no Cadastro de Funcoes			  ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	dbSelectArea( "SRJ" )
+	If dbSeek( If(xFilial("SRJ")==Space(FWGETTAMFILIAL),Space(FWGETTAMFILIAL),SRA->RA_FILIAL) + SRA->RA_CODFUNC )
+		cCodMO :=If(RJ_MAOBRA $ "D ","D","I")
+	Endif	
+
+	dbSelectArea( "SRA" )
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Consiste Parametriza‡Æo do Intervalo de ImpressÆo            ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If (Sra->Ra_Filial < cFilDe) .Or. (Sra->Ra_Filial > cFilAte) .Or. ;
+	   (Sra->Ra_Mat < cMatDe) .Or. (Sra->Ra_Mat > cMatAte) .Or. ;
+		(Sra->Ra_CC < cCcDe) .Or. (Sra->Ra_CC > cCCAte) 
+		fTestaTotal()		
+		Loop
+	EndIf
+
+	If SRA->RA_SITFOLH == "T" .OR. (SRA->RA_SITFOLH == "D" .And. MesAno(SRA->RA_DEMISSA) #MesAno(dDataBase) )
+		fTestaTotal()		
+		Loop
+	Endif
+	
+	dbSelectArea( "SRC" )
+	If dbSeek( SRA->RA_FILIAL + SRA->RA_MAT )
+
+		While !Eof() .And. SRC->RC_FILIAL == SRA->RA_FILIAL .And. SRA->RA_MAT == SRC->RC_MAT
+
+			If PosSrv(SRC->RC_PD,SRA->RA_FILIAL,"RV_SALARIO") == "S"
+				nSalario:=nSalario+SRC->RC_VALOR
+			ElseIf PosSrv(SRC->RC_PD,SRA->RA_FILIAL,"RV_SALARIO") == "H"
+				nSalario:=nSalario-(SRC->RC_VALOR)
+			Endif
+
+			If PosSrv(SRC->RC_PD,SRA->RA_FILIAL,"RV_ENCARGO") $ "SI"
+				nEncargo:=nEncargo+SRC->RC_VALOR
+			Endif
+			If PosSrv(SRC->RC_PD,SRA->RA_FILIAL,"RV_ENCARGO") $ "BI"
+				nEncargo:=nEncargo+NoRound(SRC->RC_VALOR*(nPorcEnc/100))
+			Endif
+			If PosSrv(SRC->RC_PD,SRA->RA_FILIAL,"RV_ENCARGO") $ "H"
+				nEncargo:=nEncargo-NoRound(SRC->RC_VALOR*(nPorcEnc/100))
+			Endif
+
+			If PosSrv(SRC->RC_PD,SRA->RA_FILIAL,"RV_ENCARGO") #"F"
+				dbSkip()
+				Loop
+			Endif
+
+			dbSelectArea( "SRC" )
+			nProvisao:=nProvisao+(SRC->RC_VALOR)
+
+			If PosSrv(SRC->RC_PD,SRA->RA_FILIAL,"RV_INSS") == "S"
+				nProvisao:=nProvisao+NoRound(SRC->RC_VALOR*(nPorcPro/100))
+			Endif
+
+			If PosSrv(SRC->RC_PD,SRA->RA_FILIAL,"RV_FGTS") == "S"
+				nProvisao:=nProvisao+NoRound(SRC->RC_VALOR*(nPorcPro/100))
+			Endif
+
+			dbSkip()
+		Enddo
+	Endif
+	
+	dbSelectArea( "SRF" )
+	If dbSeek( SRA->RA_FILIAL + SRA->RA_MAT )	  
+		nProvisao:=nProvisao+RF_VPROVAT
+		nProvisao:=nProvisao+RF_VIAPVAT
+		nProvisao:=nProvisao+RF_VFGTVAT
+		nProvisao:=nProvisao+RF_VPRDTAT
+		nProvisao:=nProvisao+RF_VINDTAT
+		nProvisao:=nProvisao+RF_VFGDTAT
+	Endif
+
+	If cCodMO=="D"
+
+		nLinDF:=nLinDF+1
+		nLinDS:=nLinDS+nSalario
+		nLinDE:=nLinDE+nEncargo 
+		nLinDP:=nLinDP+nProvisao
+		
+		nTotDFFil:=nTotDFFil+1
+		nTotDSFil:=nTotDSFil+nSalario
+		nTotDEFil:=nTotDEFil+nEncargo 
+		nTotDPFil:=nTotDPFil+nProvisao
+
+		nTotDFGer:=nTotDFGer+1
+		nTotDSGer:=nTotDSGer+nSalario
+		nTotDEGer:=nTotDEGer+nEncargo 
+		nTotDPGer:=nTotDPGer+nProvisao
+		
+	Else
+
+		nLinIF:=nLinIF+1
+		nLinIS:=nLinIS+nSalario
+		nLinIE:=nLinIE+nEncargo 
+		nLinIP:=nLinIP+nProvisao
+		
+		nTotIFFil:=nTotIFFil+1
+		nTotISFil:=nTotISFil+nSalario
+		nTotIEFil:=nTotIEFil+nEncargo 
+		nTotIPFil:=nTotIPFil+nProvisao
+
+		nTotIFGer:=nTotIFGer+1
+		nTotISGer:=nTotISGer+nSalario
+		nTotIEGer:=nTotIEGer+nEncargo 
+		nTotIPGer:=nTotIPGer+nProvisao
+
+	Endif
+	
+	fTestaTotal()  // Quebras e Skips
+EndDo
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Termino do Relatorio                                         ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SRA" )
+dbSetOrder(1)
+Set Device To Screen
+If aReturn[5] == 1
+	Set Printer To
+	Commit
+	ourspool(wnrel)
+Endif
+
+MS_FLUSH()
+
+
+*--------------------------*
+// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==> Function fTestaTotal
+Static Function fTestaTotal()
+*--------------------------*
+dbSelectArea( "SRA" )
+cFilAnt    := SRA->RA_FILIAL              // Iguala Variaveis
+cCcAnt     := SRA->RA_CC
+dbSkip()
+
+If Eof() .Or. &cInicio > cFim
+	fImpCc()
+	fImpFil()
+	fImpEmp()
+Elseif cFilAnt #SRA->RA_FILIAL
+	fImpCc()
+	fImpFil()
+Elseif cCcAnt #SRA->RA_CC
+ 	fImpCc()
+Endif
+
+
+
+*-----------------------*
+
+Return(nil)        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+
+// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==> Function fImpCc
+Static Function fImpCc()
+*-----------------------*
+dbSelectArea( "SRA" )
+
+If nLinDF > 0 .Or. nLinDS > 0 .Or. nLinDE > 0 .Or. nLinDP > 0
+	cDet := cFilAnt+"     "+cCcAnt+" "+Desc_Cc+" DIRETA  "
+	cDet := cDet + " " + TRANSFORM(nLinDF,"@E 999,999")
+	cDet := cDet + " " + TRANSFORM(nLinDS,"@E 999,999,999.99")
+	cDet := cDet + " " + TRANSFORM(nLinDE,"@E 999,999,999.99")
+	cDet := cDet + " " + TRANSFORM(nLinDP,"@E 999,999,999.99")
+	cDet := cDet + " " + TRANSFORM(nLinDS+nLinDE+nLinDP,"@E 999,999,999.99")
+	Impr(cDet,"C")
+Endif
+
+If nLinIF > 0 .Or. nLinIS > 0 .Or. nLinIE > 0 .Or. nLinIP > 0
+	cDet := cFilAnt+"     "+cCcAnt+" "+Desc_Cc+" INDIRETA"
+	cDet := cDet + " " + TRANSFORM(nLinIF    ,"@E 999,999")
+	cDet := cDet + " " + TRANSFORM(nLinIS    ,"@E 999,999,999.99")
+	cDet := cDet + " " + TRANSFORM(nLinIE    ,"@E 999,999,999.99")
+	cDet := cDet + " " + TRANSFORM(nLinIP    ,"@E 999,999,999.99")
+	cDet := cDet + " " + TRANSFORM(nLinIS+nLinIE+nLinIP,"@E 999,999,999.99")
+	Impr(cDet,"C")
+Endif
+
+nLinDF:=0
+nLinDS:=0
+nLinDE:=0
+nLinDP:=0
+
+nLinIF:=0
+nLinIS:=0
+nLinIE:=0
+nLinIP:=0
+
+
+*------------------------*
+
+Return(nil)        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+
+// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==> Function fImpFil
+Static Function fImpFil()
+*------------------------*
+If (nTotDSFil+nTotDEFil+nTotDPFil+nTotDFFil) > 0 .Or.	(nTotISFil+nTotIEFil+nTotIPFil+nTotIFFil) > 0
+	Impr("","C")
+   cDet := cFilAnt+Space(15)+DescFil+" "+"DIRETA   "
+	cDet := cDet + TRANSFORM(nTotDFFil,"@E 999,999")+" "
+	cDet := cDet + TRANSFORM(nTotDSFil,"@E 999,999,999.99")+" "
+	cDet := cDet + TRANSFORM(nTotDEFil,"@E 999,999,999.99")+" "
+	cDet := cDet + TRANSFORM(nTotDPFil,"@E 999,999,999.99")+" "
+	cDet := cDet + TRANSFORM(nTotDPFil+nTotDEFil+nTotDSFil,"@E 999,999,999.99")
+	Impr(cDet,"C")
+
+   cDet := Space(48)+"INDIRETA "+ TRANSFORM(nTotIFFil,"@E 999,999")+" "
+	cDet := cDet + TRANSFORM(nTotISFil,"@E 999,999,999.99")+" "
+	cDet := cDet + TRANSFORM(nTotIEFil,"@E 999,999,999.99")+" "
+	cDet := cDet + TRANSFORM(nTotIPFil,"@E 999,999,999.99")+" "
+	cDet := cDet + TRANSFORM(nTotIPFil+nTotIEFil+nTotISFil,"@E 999,999,999.99")
+	Impr(cDet,"C")
+
+	cDet := Space(47)+"T O T A L "+TRANSFORM(nTotDFFil+nTotIFFil,"@E 999,999")+" "
+	cDet := cDet + TRANSFORM(nTotDSFil+nTotISFil,"@E 999,999,999.99")+" "
+	cDet := cDet + TRANSFORM(nTotDEFil+nTotIEFil,"@E 999,999,999.99")+" "
+	cDet := cDet + TRANSFORM(nTotDPFil+nTotIPFil,"@E 999,999,999.99")+" "
+	cDet := cDet + TRANSFORM(nTotDPFil+nTotIPFil+nTotDEFil+nTotIEFil+nTotDSFil+nTotISFil,"@E 999,999,999.99")
+	Impr(cDet,"C")
+	Detalhe:=Repl("=",132)
+	Impr(Detalhe,"C")
+
+Endif
+
+
+*------------------------*
+
+Return(nil)        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+
+// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==> Function fImpEmp
+Static Function fImpEmp()
+*------------------------*
+If (nTotDSGer+nTotDEGer+nTotDPGer+nTotDFGer) > 0 .Or. (nTotISGer+nTotIEGer+nTotIPGer+nTotIFGer) > 0
+
+	cDet := Space(48)+"DIRETA   "+TRANSFORM(nTotDFGer,"@E 999,999")+" "
+	cDet := cDet + TRANSFORM(nTotDSGer,"@E 999,999,999.99")+" "
+	cDet := cDet + TRANSFORM(nTotDEGer,"@E 999,999,999.99")+" "
+	cDet := cDet + TRANSFORM(nTotDPGer,"@E 999,999,999.99")+" "
+	cDet := cDet + TRANSFORM(nTotDPGer+nTotDEGer+nTotDSGer,"@E 999,999,999.99")
+	Impr(cDet,"C")
+
+   cDet := Space(48)+"INDIRETA "+ TRANSFORM(nTotIFGer,"@E 999,999")+" "
+	cDet := cDet + TRANSFORM(nTotISGer,"@E 999,999,999.99")+" "
+	cDet := cDet + TRANSFORM(nTotIEGer,"@E 999,999,999.99")+" "
+	cDet := cDet + TRANSFORM(nTotIPGer,"@E 999,999,999.99")+" "
+	cDet := cDet + TRANSFORM(nTotIPGer+nTotIEGer+nTotISGer,"@E 999,999,999.99")
+	Impr(cDet,"C")
+
+	cDet := Space(47)+"T O T A L " + TRANSFORM(nTotDFGer+nTotIFGer,"@E 999,999")+" "
+	cDet := cDet + TRANSFORM(nTotDSGer+nTotISGer,"@E 999,999,999.99")+" "
+	cDet := cDet + TRANSFORM(nTotDEGer+nTotIEGer,"@E 999,999,999.99")+" "
+	cDet := cDet + TRANSFORM(nTotDPGer+nTotIPGer,"@E 999,999,999.99")+" "    
+	cDet := cDet + TRANSFORM(nTotDPGer+nTotIPGer+nTotDEGer+nTotIEGer+nTotDSGer+nTotISGer,"@E 999,999,999.99")    
+	Impr(cDet,"C")
+ 	Detalhe:=Repl("=",132)
+	Impr(Detalhe,"C")
+	Impr("","F")
+
+Endif
+
+Return(nil)        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+

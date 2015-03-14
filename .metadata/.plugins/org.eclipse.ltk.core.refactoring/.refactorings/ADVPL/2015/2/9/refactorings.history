@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Move &apos;ADVPL.prw&apos; to &apos;resources&apos;" description="Move &apos;ADVPL.prw&apos; to &apos;resources&apos;" destination="resources" element1="/Formacao/resources/ADVPL.prw" element2="/Formacao/resources/CADZZ0.prw" element3="/Formacao/resources/exemplo.prw" element4="/Formacao/resources/REL00001.prw" flags="7" id="org.eclipse.ltk.core.refactoring.move.resources" resources="4" stamp="1425129877866" updateReferences="true"/>
+</session>

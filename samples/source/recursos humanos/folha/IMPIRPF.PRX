@@ -1,0 +1,1396 @@
+#Include "rwmake.ch"        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00 
+#INCLUDE "IMPIRPF.CH"
+#define  CRLF chr(13)+chr(10)
+
+Static lUsaRRA := If(FindFunction( "fUsaRRA" ),fUsaRRA(),.F.)
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³RdMake    ³ IMPIRPF  ³ Autor ³ R.H. - Recursos Humano    ³ Data ³ 26.01.98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Impressao da DIRF em Formulario Continuo                       ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe e ³ DIRFPF                                                         ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ RdMake                                                         ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Programar ³ Data   ³ BOPS     ³  Motivo da Alteracao                       ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Cristina  ³03/06/98³xxxxxx    ³ Conversao para outros idiomas              ³±±
+±±³Aldo      ³15/01/98³          ³ Alteracao do Lay-Out para 1998.            ³±±
+±±³Mauro     ³21/01/00³          ³ Alteracao do Lay-Out para 1999.            ³±±
+±±³Marina    ³30/08/00³          ³ Retirada parte DOS.                        ³±±
+±±³Natie     ³05/02/02³          ³ Inclusao Impressao grafica                 ³±±
+±±³Emerson   ³08/02/02³          ³ Inversao dos valores de "Indenizacao de    ³±±
+±±³          ³        ³          ³ Rescisao" e "Outros" na impressao grafica. ³±±
+±±³Andreia   ³07/03/03³062850    ³ Acerto na impressao do quadro 6 para que as³±±
+±±³          ³        ³          ³ informacoes nao saiam fora do quador( Impr.³±±
+±±³          ³        ³          ³ Grafica).                                  ³±±
+±±³          ³        ³          ³ Verificacao do numero de linhas a serem    ³±±
+±±³          ³        ³          ³ impressas para fazer a quebra de pagina.   ³±±
+±±|          ³08/04/04³----------³ Acerto no Driver para Impressao            ³±±
+±±³Andreia   ³28/01/05³          ³ Ajuste para imprimir valores referentes a  ³±±
+±±³          ³        ³          ³ exigibilidade suspensa e deposito judicial.³±±
+±±³Andreia   ³11/02/05³          ³ Ajuste para imprimir valores de informacoes³±±
+±±³          ³        ³          ³ complementares, mesmo sem valor.           ³±±
+±±³Andreia   ³16/01/06³091090    ³Atualizacao para DIRF 2006. Passa a arma-   ³±±
+±±³          ³        ³          ³zenar o historico das declaracoes. Criado   ³±±
+±±³          ³        ³          ³o campo R4_ANO, e criada a tabela RCS para  ³±±
+±±³          ³        ³          ³armazenar as informacoes complementares.    ³±±
+±±³Andreia   ³07/02/07³118680    ³Alteracao do texto de aprovacao pela IN/SRF.³±±
+±±³Andreia   ³11/01/08³136901    ³Atualizacao para dirf 2008.                 ³±±
+±±³Renata    ³21/01/09³08254/2008³Ajuste msg qdo existe Exigibilidade         ³±±
+±±³		     ³        ³01374/2009³suspensa.                                   ³±±
+±±³Renata    ³02/03/09³05130/2009³Ajuste na paginacao dos valores da contrib.,³±±
+±±³          ³        ³          ³pensao, etc ..  ara nao incluir a exigib.   ³±±
+±±³          ³        ³          ³suspensa.		      					      ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÁÄÂÄÄÄÄÄÄÁÄÂÄÄÄÄÄÄÄÄÁÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Programador ³ Data   ³ FNC     ³  Motivo da Alteracao					  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Luis Ricardo³17/01/11³018489/10³Tratamento dos campos relacionados as	  ³±±
+±±³Cinalli     ³        ³         ³informacoes complementares para DIRF/2011. |±±
+±±³Luis Ricardo³21/01/11³001528/11³Ajustes para separacao dos informes no RH  ³±±
+±±³Cinalli     ³        ³    e    ³Online qdo o funcionario possui contrato   |±±
+±±³            ³        ³018489/10³de residente no exterior.				  |±±
+±±³Luis Ricardo³16/02/11³003569/11³Ajustes das Inf. Complementares no tipo de ³±±
+±±³Cinalli     ³        ³         ³formulario PRE-IMPRESSO. Ordenacao das inf.|±±
+±±³ 		   ³        ³         ³Complementares no HTML. Transf. das funcoes|±±
+±±³ 		   ³        ³         ³BotImpIRPF e TracoDuplo para rotina GPEM580|±±
+±±³Luis Ricardo³18/02/11³003662/11³Ajustes das Inf. Complementares em todos os³±±
+±±³Cinalli     ³        ³         ³tipos de formulario a serem impressos.	  |±±
+±±³Luis Ricardo³22/02/11³003943/11³Alteracao das funcoes BotImpIRPF/TracoDuplo³±±
+±±³Cinalli     ³        ³         ³de FUNCTION para STATIC FUNCTION. Ajuste na|±±
+±±³			   ³        ³         ³quebra de pag. das inf. Compl. do RH Online|±±
+±±³Allyson M   ³28/01/12³000997/12³Ajustes para incluir o quadro 6 referente  ³±±
+±±³            ³        ³   TEIOF4³RRA.	  									  |±±
+±±³Allyson M   ³13/02/12³003849/12³Ajustes para efetuar quebra de pagina apos ³±±
+±±³            ³        ³  TENRU7 ³o quadro 6 no modo pre-impresso e grafico. |±±
+±±³ 		   ³        ³         ³Ajuste para verificar corretamente o tipo  |±±
+±±³ 		   ³        ³         ³de incidencias W e 2.					  |±±
+±±³ 		   ³        ³         ³Ajuste no quadro 1 p/ inverter posicao dos |±±
+±±³ 		   ³        ³         ³campos e alteracoes no cabecalho. 		  |±±
+±±³Allyson M   ³24/02/12³004616/12³Ajustes para recompilar rotina com as alte-³±±
+±±³            ³        ³   TEOWX6|racoes no include impirpf.ch. 			  |±±
+±±³Leandro Dr. ³17/08/12³         ³Legislacao - Desenvolvimento de ajustes    ³±±
+±±³            ³        ³TFOZMC   ³para utilizacao de RRA.                    ³±±
+±±³Allyson M   ³09/01/13³TGJSTB   ³Ajustes p/ corrigit titulo do quadro 5.    ³±±
+±±³Allyson M   ³26/02/13³TGOUYD   ³Ajuste na geracao do CNPJ, no campo 4.1 e  ³±±
+±±³Gustavo M   ³        ³         ³nos meses do RRA.                    	  ³±±
+±±³Allyson M   ³01/04/13³TGYTZQ   ³Ajuste p/ utilizar o nome do funcionario	  ³±±
+±±³            ³        ³         ³logado, p/ utilizar na impressao do informe³±±
+±±³            ³        ³         ³no RH Online.				   	  		  ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß/*/
+User Function Impirpf()        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP5 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+                                                             
+SetPrvt("CDESEMP,CDESEND,CDESCID,CUF,CTPINSC,CTELEF")
+SetPrvt("CDESCEP,CCOMPLEMENTO,CCOMPL1,")
+
+cDesEmp 	:= aInfo[3]
+cDesEnd 	:= aInfo[4]
+cDesCid 	:= aInfo[5]
+cUf	  		:= aInfo[6]
+cTpInsc 	:= Str(aInfo[15],1)
+cTelef  	:= aInfo[10]
+cDesCep 	:= ainfo[7]                  
+
+cDescOred	:= If(empty(cDescOred),space(50),Left(cDescOred+space(50),50))
+
+If lUsaRRA
+	lImpRRA := !Empty(aTotRRA)
+Else
+	lImpRRA	:= .F.
+EndIf
+
+If nTipRel== 1
+	fIrpfPre()
+ElseIf nTipRel== 2
+	fIrpfGraf()    
+Else
+	cHtml := fIrpfHtml( lPulaHtml )
+Endif		
+
+Return If(nTipRel == 3, cHtml, Nil)
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³fIrpfPre  ºAutor  ³Microsiga           º Data ³  02/05/02   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Impressao Comprovante de rendimentos e retencao do Imp.Rendaº±±
+±±º          ³Fonte - Formulario Pre Impresso                             º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Especifico                                                 º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function fIrpfPre()
+Local nx		:= 1
+Local x			:= 0
+Local nTamImp	:= 59
+Local nQuebraLin:= 0
+Local nQtdeLin	:= 0
+Local nRRa		:= 0
+Local nTotRRA	:= Max(If(lUsaRRA,Len(aTotRRA),1),1)
+
+CL := "-"
+cB := "|"
+
+SET DEVICE TO PRINT
+@ 00,00 PSAY AvalImp( Colunas ) 
+@ 01,00 PSAY " " + Replicate(cL,78) + " "
+@ 02,00 PSAY STR0001	//"|         MINISTERIO DA FAZENDA         |   COMPROVANTE DE RENDIMENTOS PAGOS   |"
+@ 03,00 PSAY STR0002	//"|     SECRETARIA DA RECEITA FEDERAL     |          E DE RETENÇÃO DE            |"
+@ 04,00 PSAY STR0003	//"| IMPOSTO SOBRE A RENDA DA PESSOA FISICA|      IMPOSTO DE RENDA NA FONTE       |"
+@ 05,00 PSAY STR0092+Soma1(mv_par08)+")"+SPACE(9)+cB+STR0093+mv_par08+")"+SPACE(9)+cB //"|         (EXERCICIO DE - " ##"      (ANO CALENDÁRIO - "
+@ 06,00 PSAY " " + Replicate(cl,78) + " "
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³1. Fonte pagadora³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+@ 08,00 PSAY STR0005 	//"  1. - Fonte Pagadora Pessoa Juridica ou Pessoa Fisica"
+@ 09,00 PSAY " " + Replicate(cl,78) + " "
+@ 10,00 PSAY STR0006 // "| CNPJ/CPF                    | Nome Empresarial/Nome                          |" )
+@ 11,00 PSAY "| "+PADR(cCgc,28)+"| "+PADR(cDesEmp,47)+cB
+@ 12,00 PSAY " " + Replicate(cL,78) + " "
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³2. Pessoa fisica/benefic.³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If !empty(cFil_Mat)
+	@ 14,00 PSay STR0011+PADL((cFil_Mat),29)							//"  2. - PESSOA FISICA BENEFICIARIA DOS RENDIMENTOS "
+Else
+	If SRL->(FieldPos("RL_CC"))== 0
+		@ 14,00 PSAY STR0011+PADL((SRL->RL_FILIAL+"-"+SRL->RL_MAT),29)	//"  2. - PESSOA FISICA BENEFICIARIA DOS RENDIMENTOS "
+	Else
+		@ 14,00 PSAY STR0011+PADL((SRL->RL_FILIAL+"-"+SRL->RL_MAT+"-"+SRL->RL_CC),29)	//"  2. - PESSOA FISICA BENEFICIARIA DOS RENDIMENTOS "
+	EndIf
+EndIf	
+
+@ 15,00 PSAY " " + Replicate(cL,78) + " "
+@ 16,00 PSAY STR0012 + " "+ SRL->RL_CPFCGC + "   " + STR0013 + " "+PADR(SRL->RL_BENEFIC,40) + cB	//"| CPF:" ### "NOME COMPLETO:"
+@ 17,00 PSAY cB + Replicate(cL,78) + cB
+@ 18,00 PSAY STR0014 +" "+PADR(SRL->RL_CODRET + "-" + cDescRet,53) + cB // "| NATUREZA DO RENDIMENTO:"
+@ 19,00 PSAY " " + Replicate(cL,78) + " "
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³3. Rendimentos tributaveis/deducoes e irpf³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+@ 21,00 PSAY STR0015	//"  3. - Rendimentos Tributaveis, Deducoes e Imposto Retido na Fonte       R$    "
+@ 22,00 PSAY " " + Replicate(cL,78) + " "
+@ 23,00 PSAY STR0016 + cB + Space(5) + Transform(Round(nTotRend,2)     ,"@E 99,999,999.99") + Space(1) + cB	//"| 01. Total dos Rendimentos (Inclusive Ferias)             "
+@ 24,00 PSAY STR0017 + cB + Space(5) + Transform(Round(aTotLetra[02],2),"@E 99,999,999.99") + Space(1) + cB	//"| 02. Contribuicao Previdenciaria Oficial                  "
+@ 25,00 PSAY STR0018 + cB + Space(5) + Transform(Round(aTotLetra[03],2),"@E 99,999,999.99") + Space(1) + cB	//"| 03. Contribuicao a Previdencia Privada                   "
+@ 26,00 PSAY STR0019 + cB + Space(5) + Transform(Round(aTotLetra[04],2),"@E 99,999,999.99") + Space(1) + cB	//"| 04. Pensao Alimenticia (Informar Benefic. no Quadro 07)  "
+@ 27,00 PSAY STR0021 + cB + Space(5) + Transform(Round(nTotRetido,2)   ,"@E 99,999,999.99") + Space(1) + cB	//"| 06. Imposto de Renda Retido 							  "
+@ 28,00 PSAY " " + Replicate(cL,78) + " "
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³4. Rendimentos Isentos e nao tributaveis³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+@ 30,00 PSAY STR0022	//"  4. - Rendimentos Isentos e Nao Tributaveis                             R$    "
+@ 31,00 PSAY " " + Replicate(cL,78) + " "
+@ 32,00 PSAY STR0024 + cB + Space(5) + Transform(Round(aTotLetra[08]+aTotLetra[43],2),"@E 99,999,999.99") + Space(1) + cB	//"| 01. Parte dos Proventos Aposentadoria,Reforma ou Pensao  "
+@ 33,00 PSAY STR0025	+ cB + Space(5) + Transform(Round(aTotLetra[09],2),"@E 99,999,999.99") + Space(1) + cB	//"| 02. Diarias e Ajudas de Custo                            "
+@ 34,00 PSAY STR0026 + cB + Space(5) + Transform(Round(aTotLetra[10],2),"@E 99,999,999.99") + Space(1) + cB	//"| 03. Pensao, Prov.de Aposent.ou Reforma por Molestia Grave"
+@ 35,00 PSAY STR0027 + cB + Space(5) + Transform(Round(aTotLetra[11],2),"@E 99,999,999.99") + Space(1) + cB	//"| 04. Lucro e Dividendo a partir de 1996 pago por PJ       "
+@ 36,00 PSAY STR0028 + cB + Space(5) + Transform(Round(aTotLetra[12],2),"@E 99,999,999.99") + Space(1) + cB	//"| 05. Val.Pagos Tit./Soc.Micro-Emp. exceto Pro-Labore      "
+@ 37,00 PSAY STR0023 + cB + Space(5) + Transform(Round(aTotLetra[07],2),"@E 99,999,999.99") + Space(1) + cB	//"| 06. Indenizacao por Rescisao Inc.a Tit.PDV e Acid.Trab.  "
+@ 38,00 PSAY STR0029 + "("+Subs(cDescOred,1,44)+ ")" + cB + Space(5) + Transform(Round(aTotLetra[13]+aTotLetra[41],2),"@E 99,999,999.99") + Space(1) + cB	//"| 07. Outros                                               "
+@ 39,00 PSAY " " + Replicate(cL,78) + " "
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³5.  Rendimentos sujeitos a tributacao exclusiva ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+@ 41,00 PSAY STR0030	//"  5. - Rendimentos Sujeitos a Tributação Exclusiva (rendimento líquido)  R$"
+@ 42,00 PSAY " " + Replicate(cL,78) + " "
+@ 43,00 PSAY STR0031 + cB + Space(5) + Transform(Round(nLiq13o,2),"@E 99,999,999.99") + Space(1) + cB	//"| 01. Decimo Terceiro Salario                              "
+@ 44,00 PSAY STR0032 + cB + Space(5) + Transform(Round(aTotLetra[17],2),"@E 99,999,999.99") + Space(1) + cB	//"| 02. Outros                                               "
+@ 45,00 PSAY " " + Replicate(cL,78) + " "
+
+nLin := 47
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³6. Rendimentos Recebidos Acumuladamente³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+@ nLin,00 PSAY STR0067	//"  6. RRA- Art. 12-A da Lei nº 7.713, de 1988 (sujeito a trib. exclusiva) R$     "
+
+For nRRA := 1 to nTotRRA
+	If nRRA == 2
+		nLinhas += 4
+
+		@ 01,00 PSAY " " + Replicate(cL,78) + " "
+		@ 02,00 PSAY STR0001	//"|         MINISTERIO DA FAZENDA         |   COMPROVANTE DE RENDIMENTOS PAGOS   |"
+		@ 03,00 PSAY STR0002	//"|     SECRETARIA DA RECEITA FEDERAL     |          E DE RETENÇÃO DE            |"
+		@ 04,00 PSAY STR0003	//"| IMPOSTO SOBRE A RENDA DA PESSOA FISICA|      IMPOSTO DE RENDA NA FONTE       |"
+		@ 05,00 PSAY STR0092+Soma1(mv_par08)+")"+SPACE(9)+cB+STR0093+mv_par08+")"+SPACE(9)+cB //"|         (EXERCICIO DE - "##"      (ANO CALENDÁRIO - "
+		@ 06,00 PSAY " " + Replicate(cl,78) + " "
+		nLin := 07
+	EndIf
+	
+	nLin ++
+	@ nLin,00 PSAY " " + Replicate(cL,78) + " "
+	nLin ++
+	
+	@ nLin++,00 PSAY "| 6." + AllTrim(Str(nRRA)) + " " + STR0097 + If(lImpRRA,PADR(aTotRRA[nRRA,2],30),Space(30)) + cB + STR0070 + cB + Transform(Round(If(lImpRRA,aTotRRA[nRRA,4],0.00),2),"@E 999.99") + cB	//"| 6.1 Número do processo: "##" Qtde de meses "
+	@ nLin++,00 PSAY " " + Replicate(cL,78) + " "
+	@ nLin++,00 PSAY STR0071 + If(lImpRRA,PADR(aTotRRA[nRRA,3]+"-"+cDescRRA,53),Space(53)) + cB	//"| Natureza do rendimento: "
+	@ nLin++,00 PSAY " " + Replicate(cL,78) + " "
+	@ nLin++,00 PSAY STR0072 + cB + Space(5) + Transform(Round(If(lImpRRA,aTotRRA[nRRA,5,1],0.00),2),"@E 99,999,999.99") + Space(1) + cB	//"| 01. Total dos rendimentos tribut. (incl. férias e 13o)   "
+	@ nLin++,00 PSAY STR0073 + cB + Space(5) + Transform(Round(If(lImpRRA,aTotRRA[nRRA,5,3],0.00),2),"@E 99,999,999.99") + Space(1) + cB	//"| 02. Exclusão: Despesas com ação judicial                 "
+	@ nLin++,00 PSAY STR0074 + cB + Space(5) + Transform(Round(If(lImpRRA,aTotRRA[nRRA,5,2],0.00),2),"@E 99,999,999.99") + Space(1) + cB	//"| 03. Dedução: Contribuição previdenciária oficial         "
+	@ nLin++,00 PSAY STR0075 + cB + Space(5) + Transform(Round(If(lImpRRA,aTotRRA[nRRA,5,4],0.00),2),"@E 99,999,999.99") + Space(1) + cB	//"| 04. Dedução: Pensão aliment. (preencher também quadro 7) "
+	@ nLin++,00 PSAY STR0076 + cB + Space(5) + Transform(Round(If(lImpRRA,aTotRRA[nRRA,5,5],0.00),2),"@E 99,999,999.99") + Space(1) + cB	//"| 05. Imposto sobre a renda retido na fonte                "
+	@ nLin++,00 PSAY STR0077 + cB + Space(5) + Transform(Round(If(lImpRRA,aTotRRA[nRRA,5,6],0.00),2),"@E 99,999,999.99") + Space(1) + cB	//"| 06. Rendimentos isentos de pensão, proventos de aposent. "
+	@ nLin++,00 PSAY STR0078 + cB + Space(5) + Transform(Round(If(lImpRRA,aTotRRA[nRRA,5,6],0.00),2),"@E 99,999,999.99") + Space(1) + cB	//"|     ou reforma por moléstia grave ou aposent. ou reforma "
+	@ nLin++,00 PSAY STR0079 + cB + Space(5) + Transform(Round(If(lImpRRA,aTotRRA[nRRA,5,6],0.00),2),"@E 99,999,999.99") + Space(1) + cB	//"|     por acidente em serviço                              "
+	@ nLin++,00 PSAY " " + Replicate(cL,78) + " "
+Next nRRA
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³7. Informacoes complementares³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If nTotRRA > 1
+	nLin++
+Else
+	// Calculo de linhas para definir se deve pular pagina
+	If Ascan(aComplem,{|x| Subs(x[3],15,1) == "W" .or. Subs(x[3],15,1) == "2"} ) > 0                          
+		nLinhas += 4
+	EndIf
+	
+	@ 01,00 PSAY " " + Replicate(cL,78) + " "
+	@ 02,00 PSAY STR0001	//"|         MINISTERIO DA FAZENDA         |   COMPROVANTE DE RENDIMENTOS PAGOS   |"
+	@ 03,00 PSAY STR0002	//"|     SECRETARIA DA RECEITA FEDERAL     |          E DE RETENÇÃO DE            |"
+	@ 04,00 PSAY STR0003	//"| IMPOSTO SOBRE A RENDA DA PESSOA FISICA|      IMPOSTO DE RENDA NA FONTE       |"
+	@ 05,00 PSAY STR0092+Soma1(mv_par08)+")"+SPACE(9)+cB+STR0093+mv_par08+")"+SPACE(9)+cB //"|         (EXERCICIO DE - "##"      (ANO CALENDÁRIO - "
+	@ 06,00 PSAY " " + Replicate(cl,78) + " "
+	nLin := 08
+EndIf
+
+@ ++nLin,00 PSAY STR0033	//"  7. - Informacoes Complementares                                        R$     "
+nLin ++
+@ nLin,00 PSAY " " + Replicate(cL,78) + " "
+nLin ++
+
+If len(aComplem) > 0
+	If Ascan(aComplem,{|x| Subs(x[3],15,1) == "W" .or. Subs(x[3],15,1) == "2"} ) > 0                          
+		@ nLin,00 PSAY "| "+ SUBSTR(STR0064,1,62) + " |" + space(13) + "|"
+		nLin++
+		@ nLin,00 PSAY "| "+ SUBSTR(STR0064,64,43) + SUBSTR(STR0065,1,21) + " |" + space(13) + "|"
+		nLin++
+		@ nLin,00 PSAY "| "+ SUBSTR(STR0065,23,61) + "-" + " |" + space(13) + "|"
+   		nLin++
+		@ nLin,00 PSAY "| "+ SUBSTR(STR0065,84,24) +  SUBSTR(STR0066,1,40) + space(5) + " |" + space(13) + "|"
+   		nLin++
+	EndIf
+EndIf	
+
+aSort( aComplem,,,{ |x,y| x[4] < y[4] } )
+
+For nx := 1 to len(aComplem)
+    If Len( Alltrim( aComplem[nx,1] ) ) > nTamImp
+
+		// Quebra da informacao em mais linhas caso a descricao seja maior que nTamImp caracteres
+		nQtdeLin	:= ( Len( aComplem[nx,1] ) / nTamImp )		// Define quantidade de linhas para imprimir UMA inform. complementar
+
+		// Imprime a primeira parte com o contador de inform. complementares
+		@ nLin,00 PSAY "| "+ strzero(nx,02) + ". " + Substr( aComplem[nx,1], 1, nTamImp ) + cB + space(13) + "|"
+
+		For x := 1	to Int( nQtdeLin )
+			nLin++
+			If x < Int( nQtdeLin )	// Enquanto for menor deve imprimir sem o valor. O Valor somente e impresso na ultima ocorrencia
+				@ nLin,00 PSAY "| " + space(04) + Substr( aComplem[nx,1], (nTamImp*x)+1, nTamImp ) + cB + Space(13) + "|"
+			Else
+				@ nLin,00 PSAY "| " + space(04) + Substr( aComplem[nx,1], (nTamImp*x)+1, nTamImp ) ;
+									+ space(nTamImp-Len(Substr( aComplem[nx,1], (nTamImp*x)+1, nTamImp ))) + cB + TRANSFORM(acomplem[nx,2], "@E 99,999,999.99") + "|"
+			EndIf
+		Next
+	Else
+		@ nLin,00 PSAY "| "+ strzero(nx,02)+". "+ Alltrim(aComplem[nx,1]) + space(nTamImp-Len(AllTrim(aComplem[nx,1]))) + cB + TRANSFORM(aComplem[nx,2],"@E 99,999,999.99") +"|"
+    EndIf
+	nLin++
+Next
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³8. Responsavel pelas informacoes³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+@ nLin,00 PSAY " " + Replicate(cL,78) + " "
+nLin +=2
+@ nLin,00 PSAY STR0034	//"  8. - Responsavel Pelas Informacoes"
+nLin++
+@ nLin,00 PSAY " " + Replicate(cL,78) + " "
+nLin++
+@ nLin,00 PSAY cB+" " + PADR(cResponsa+space(5)+DtoC(dDataBase),77) + cB
+nLin++
+@ nLin,00 PSAY " " + Replicate(cL,78) + " "
+nLin++
+@ nLin,00 PSAY " " + STR0091	// "Aprovado pela IN RFB nº 1.215, de 15 de dezembro de 2011."
+SET DEVICE TO SCREEN
+
+/*
+
+LAY-OUT MODELO
+ ------------------------------------------------------------------------------ 
+|         MINISTERIO DA FAZENDA         |   COMPROVANTE DE RENDIMENTOS PAGOS   |
+|                                       |          E DE RETENCAO DE            |
+|     SECRETARIA DA RECEITA FEDERAL     |      IMPOSTO DE RENDA NA FONTE       |
+|                                       |      (ANO CALENDARIO - 9999)         |
+ ------------------------------------------------------------------------------ 
+  1. - Fonte Pagadora Pessoa Juridica ou Pessoa Fisica    
+ ------------------------------------------------------------------------------ 
+| Nome Empresarial/Nome                            CNPJ/CPF                    |
+| XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX         99999999999999              |
+ ------------------------------------------------------------------------------ 
+
+  2. - PESSOA FISICA BENEFICIARIA DOS RENDIMENTOS                    01-000000
+ ------------------------------------------------------------------------------ 
+| CPF: 99999999999   NOME COMPLETO: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX   |
+|                                                                              |
+| NATUREZA DO RENDIMENTO: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX   |
+ ------------------------------------------------------------------------------ 
+
+  3. - Rendimentos Tributaveis, Deducoes e Imposto Retido na Fonte       R$    
+ ------------------------------------------------------------------------------ 
+| 01. Total dos Rendimentos (Inclusive Ferias)             |              0,00 |
+| 02. Contribuicao Previdenciaria Oficial                  |              0,00 |
+| 03. Contribuicao a Previdencia Privada                   |              0,00 |
+| 04. Pensao Alimenticia (Informar Benefic. no Campo 06)   |              0,00 |
+| 05. Imposto Retido na Fonte                              |              0,00 |
+ ------------------------------------------------------------------------------ 
+
+  4. - Rendimentos Isentos e Nao Tributaveis                             R$    
+      123456789012345678901234567890   12345678901234
+ 12345678901234567890123456789012345678901234567890123456789012345678901234567890
+ ------------------------------------------------------------------------------ 
+| 01. Salario Familia                                      |              0,00 |
+| 02. Parte dos Proventos Aposentadoria,Reforma ou Pensao  |              0,00 |
+| 03. Diarias e Ajudas de Custo                            |              0,00 |
+| 04. Prov. de Pensao, Aposent. ou Reforma por Inval.Perm  |              0,00 |
+| 05. Lucro e Dividendo de 1996 pago por PJ                |              0,00 |
+| 06. Val.Pagos Tit./Soc.Micro-Emp. exceto Pro-Labore      |              0,00 |
+| 07. Outros (especificar)                                 |              0,00 |
+ ------------------------------------------------------------------------------ 
+
+  5. - Rendimentos Sujeitos a Tributacao Exclusiva (Rend.Liquido)        R$    
+ ----------------------------------------------------------+------------------- 
+| 01. Decimo Terceiro Salario                              |              0,00 |
+| 02. Outros                                               |              0,00 |
+ ----------------------------------------------------------+------------------- 
+
+  6. RRA- Art. 12-A da Lei nº 7.713, de 1998 (sujeito a trib. exclusiva) R$
+ ------------------------------------------------------------------------------
+| 6.1 Número do processo: 				  		        | Qtde de meses | 	   |
+ ------------------------------------------------------------------------------
+| Natureza do rendimento: 													   |
+ ------------------------------------------------------------------------------
+| 01. Total dos rendimentos tribut. (incl. férias e 13o) 				| 0,00 |
+| 02. Exclusão: Despesas com ação judicial 								| 0,00 |
+| 03. Dedução: Contribuição previdenciária oficial 						| 0,00 |
+| 04. Dedução: Pensão aliment. (preencher também quadro 7) 				| 0,00 |
+| 05. Imposto sobre a renda retido na fonte 							| 0,00 |
+| 06. Rendimentos isentos de pensão, proventos de aposent. 				| 0,00 |
+| ou reforma por moléstia grave ou aposent. ou reforma 					| 0,00 |
+| por acidente em serviço 												| 0,00 |
+ ------------------------------------------------------------------------------
+
+  7. - Informacoes Complementares                                        R$     
+ ------------------------------------------------------------------------------ 
+|ASSISTENCIA MEDICA                                                            |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+ ------------------------------------------------------------------------------ 
+
+  8. - Responsavel Pelas Informacoes
+ ------------------------------------------------------------------------------ 
+
+| NOME                                 DATA                   ASSINATURA       |
+| XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX     99/99/99                                  |
+ ------------------------------------------------------------------------------ 
+Aprovado pela IN RFB nº 1.215, de 15 de dezembro de 2011.
+*/
+
+Return(nil)        // incluido pelo assistente de conversao do AP5 IDE em 04/02/00
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³fIrpfGraf ºAutor  ³Microsiga           º Data ³  02/05/02   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Impressao Comprovante de rendimentos e retencao do Imp.Rendaº±±
+±±º          ³Fonte - Formulario Grafico                                  º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Especifico                                                 º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function  fIrpfGraf()
+
+Local cFileFaz	:= ""
+Local cStartPath:= GetSrvProfString("Startpath","")
+Local N 		:= 0     
+Local lExigi	:= .F.
+Local nx		:= 1
+Local nTamImp	:= 80
+Local nRRa		:= 0
+Local nTotRRA	:= Max(If(lUsaRRA,Len(aTotRRA),1),1)
+
+
+oPrint:StartPage() 			// Inicia uma nova pagina
+
+/*ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³Cabecalho                                                     ³
+  ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+
+cFileFaz 	:= cStartPath+ "RECEITA" + ".BMP" 		// Empresa+Filial
+
+nLin := 030
+nLinI:= 030
+//ÚÄÄÄÄÄÄÄÄÄ¿
+//³Cabecalho³
+//ÀÄÄÄÄÄÄÄÄÄÙ
+nLin +=20 
+oPrint:Box( nLinI,0030,nLin+255,2350)  				// box Cabecalho 
+oPrint:Line(nLinI,1450,nLin+255,1450)				// Linha Div.Cabecalho
+If File(cFileFaz)
+	oPrint:SayBitmap(nLinI+10,050, cFileFaz,235,195) // Tem que estar abaixo do RootPath
+Endif
+nLin +=20
+oPrint:say(nLin,500 ,STR0036,oFont13n)				//	ministerio da fazenda 
+oPrint:Say(nLin,1500,STR0038,oFont10)				//Comprovante de rendimento
+nLin +=50
+oPrint:say(nLin+10,500 ,STR0037,oFont10)			//secretaria de receita
+oPrint:Say(nLin,1500,STR0039,oFont10)              //Retencao de rendimentos
+nLin +=50
+oPrint:Say(nLin,500,STR0094,oFont10n) 				//"IMPOSTO SOBRE A RENDA DA PESSOA FÍSICA"
+nLin +=50
+oPrint:say(nLin,650,STR0095,oFont10n)				//	" ( EXERCÍCIO " 
+oPrint:Say(nLin,890,Soma1(mv_par08),oFont10n)    		  	//ano  calendario
+oPrint:Say(nLin,985,")",ofont10) 
+oPrint:Say(nLin,1560,STR0040,oFont10n) 				//ano base
+oPrint:Say(nLin,1950,mv_par08,oFont10n)    		  	//ano  base
+oPrint:Say(nLin,2035,")",ofont10) 
+ 
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³1. Fonte pagadora³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nLin +=160
+oPrint:Say(nLin,040,STR0005,oFont12n) 			 	//"  1. - Fonte Pagadora Pessoa Juridica ou Pessoa Fisica"
+nLin +=60
+nLinI:=nLin -10
+oPrint:Box(nLinI ,0030,nLin + 120,2350)				//box
+oPrint:Line(nLinI,430,nLin + 120,430)
+
+oPrint:Say(nLIn,040,STR0042,ofont08) 				//Nome  empresarial
+oPrint:Say(nLin,440,STR0041,oFont08)				//CPF/CNPJ
+nLin+=50 
+oPrint:Say(nLin,050,PADR(cCgc,100),oFont10)
+oPrint:Say(nLin,450,PADR(cDesEmp,100),oFont10)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³2. Pessoa fisica/benefic.³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nLin+=100
+If !empty(cFil_Mat)
+	oPrint:Say(nLin,040, STR0011+PADL((cFil_Mat),29), oFont12n) 							//"  2. - PESSOA FISICA BENEFICIARIA DOS RENDIMENTOS "
+Else
+	If SRL->(FieldPos("RL_CC"))== 0
+		oPrint:Say(nLin,040, STR0011+PADL((SRL->RL_FILIAL+"-"+SRL->RL_MAT),29), oFont12n) 							//"  2. - PESSOA FISICA BENEFICIARIA DOS RENDIMENTOS "
+	Else
+		oPrint:Say(nLin,040, STR0011+PADL((SRL->RL_FILIAL+"-"+SRL->RL_MAT+"-"+SRL->RL_CC),29), oFont12n)			     //"  2. - PESSOA FISICA BENEFICIARIA DOS RENDIMENTOS "
+	EndIf
+EndIf
+
+nLin +=60  
+nLinI:=nLin - 10
+
+oPrint:Box(nLinI,030,nLin+220,2350)						//box
+
+oPrint:Say(nLin,040,STR0043,oFont08)								//cpf
+oPrint:Say(nLin,440,STR0013,oFont08)        						//Nome  completo
+nLin +=50
+oPrint:Say(nLin,050,SRL->RL_CPFCGC ,oFont10)
+oPrint:Say(nLin,450,PADR(SRL->RL_BENEFIC,140),oFont10)
+nLin +=50
+oPrint:Line(nLin,030,nLin,2350)									//Linha horizontal
+oPrint:Line(nLinI,430,nLin,430)									//Linha vertical 
+nLin +=20
+oPrint:Say(nLin,040,STR0044,oFont08)								//Natureza do rendimento
+nLin +=30
+oPrint:Say(nLin,050,PADR(SRL->RL_CODRET + "-" + cDescRet,153),oFont10)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³3. Rendimentos tributaveis/deducoes e irpf³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nLin +=100
+oPrint:say(nLin,0040,left(STR0015,50),oFont12n)										//"  3. - Rendimentos Tributaveis, Deducoes e Imposto Retido na Fonte"
+oPrint:Say(nLIn,1950,STR0050,oFont10n)
+
+nLin +=60
+nLinI:=nLin -10
+oPrint:Box(nLinI ,0030,nLin + 400,2350)													//box
+oPrint:Line(nLinI,1900,nLin + 400,1900)
+
+nLin +=10
+oPrint:Say(nLin,0040,STR0045,oFont10)											//1.Total de rendimentos(+ferias)
+oPrint:Say(nLin,2000,Transform(Round(nTotRend,2),"@E 99,999,999.99"),oFont12) 	//"| 01. Total dos Rendimentos (Inclusive Ferias)"
+nLin+=50
+oPrint:Line(nLin,030,nLin,2350)
+
+nLin+=30
+oPrint:say(nLin,0040,STR0046,oFont10)
+oPrint:Say(nLin,2000,Transform(Round(aTotLetra[02],2),"@E 99,999,999.99"), oFont12)	//"| 02. Contribuicao Previdenciaria Oficial "
+
+nLin +=50
+oPrint:Line(nLin,030, nLin,2350)
+
+nLin +=30
+oPrint:Say(nLin,0040,STR0047,oFont10)
+oPrint:say(nLin,2000,Transform(Round(aTotLetra[03],2),"@E 99,999,999.99"),oFont12)		//"| 03. Contribuicao a Previdencia Privada"
+nLin +=50
+oPrint:Line(nLin,030,nLin,2350)
+
+nLin +=30
+oPrint:Say(nLin,0040,STR0048,ofont10)
+oPrint:Say(nLin,2000,Transform(Round(aTotLetra[04],2),"@E 99,999,999.99"),oFont12)		//"| 04. Pensao Alimenticia (Informar Benefic. no Quadro 07)   "
+nLin +=50
+oPrint:Line(nLin,030,nLin,2350)
+
+nLin+=30
+oPrint:Say(nLin,0040,STR0049,oFont10)
+oPrint:Say(nLin,2000,Transform(Round(nTotRetido,2),"@E 99,999,999.99"),oFont12)		//"| 05. Imposto Retido na Fonte"
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³4. Rendimentos Isentos e nao tributaveis³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nLin += 100
+oPrint:Say(nLin,0040,left(STR0022,50),oFont12n)	   									//"  4. - Rendimentos Isentos e Nao Tributaveis"
+oPrint:Say(nLIn,1950,STR0050,oFont10n)
+
+nLin +=60
+nLinI:=nLin -10
+oPrint:Box(nLinI ,0030,nLin + 560,2350)
+oPrint:Line(nLinI,1900,nLin + 560,1900)
+
+nLin +=10
+oPrint:Say(nLin,0040,STR0052,oFont10)
+oPrint:Say(nLin,2000,Transform(Round((aTotLetra[08]+aTotLetra[43]),2),"@E 99,999,999.99"),oFont12)		//"| 01. Parte dos Proventos Aposentadoria,Reforma ou Pensao  "
+nLin +=50
+oPrint:Line(nLin,030,nLin,2350)
+
+nLin +=30
+oPrint:Say(nLin,0040,STR0053,oFont10)
+oPrint:Say(nLin,2000,Transform(Round(aTotLetra[09],2),"@E 99,999,999.99"),oFont12)		//"| 02. Diarias e Ajudas de Custo  "
+nLin +=50
+oPrint:Line(nLin,030,nLin,2350)
+
+nLin +=30
+oPrint:Say(nLin,0040,STR0054,ofont10)
+oPrint:Say(nLin,2000,Transform(Round((aTotLetra[10]+aTotLetra[42]),2),"@E 99,999,999.99"),oFont12)		//"| 03. Pensao, Prov.de Aposent.ou Reforma por Molestia Grave"
+nLin +=50
+oPrint:Line(nLin,030,nLin,2350)
+
+nLin +=30
+oPrint:Say(nLin,0040,STR0055,oFont10)
+oPrint:Say(nLin,2000,Transform(Round(aTotLetra[11],2),"@E 99,999,999.99"),oFont12)		//"| 04. Lucro e Dividendo a partir de 1996 pago por PJ       "
+nLin +=50
+oPrint:Line(nLin,030,nLin,2350)
+
+nLin +=30
+oPrint:Say(nLin,0040,STR0056,oFont10)
+oPrint:Say(nLin,2000,Transform(Round(aTotLetra[12],2),"@E 99,999,999.99"),oFont12)		//"| 05. Val.Pagos Tit./Soc.Micro-Emp. exceto Pro-Labore      "
+nLin +=50
+oPrint:Line(nLin,030,nLin,2350)
+
+nLin +=30
+oPrint:Say(nLin,0040,STR0051,oFont10)
+oPrint:Say(nLin,2000,Transform(Round(aTotLetra[07],2),"@E 99,999,999.99"),oFont12)		//"| 06. Indenizacao por Rescisao Inc.a Tit.PDV e Acid.Trab.  "
+nLin +=50
+oPrint:Line(nLin,030,nLin,2350)
+
+nLin +=30
+oPrint:Say(nLin,0040,STR0057+"("+Subs(cDescOred,1,45)+")",oFont10)
+oPrint:Say(nLin,2000,Transform(Round((aTotLetra[13]+aTotLetra[41]),2),"@E 99,999,999.99"),oFont12)		//"| 07. Outros                                               "
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³5.  Rendimentos sujeitos a tributacao exclusiva ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nLin +=100
+oPrint:Say(nLin,0040,Left(STR0030,71),oFont12n)								  					//"  5. - Rendimentos Sujeitos a Tributação Exclusiva (rendimento líquido)  R$"
+oPrint:Say(nLIn,1950,STR0050,oFont10n)
+
+nLin +=60 
+nLinI:=nLin-10
+
+oPrint:Box(nLinI ,0030,nLin+160,2350)
+oPrint:Line(nLinI,1900,nLin+160,1900)
+
+nLin +=10
+oPrint:Say(nLIn,0040,STR0058,oFont10)
+oPrint:Say(nLin,2000,Transform(Round(nLiq13o,2),"@E 99,999,999.99") ,oFont12)			//"| 01. Decimo Terceiro Salario "
+nLin +=50
+oPrint:Line(nLin,040,nLin,2350)
+
+nLin +=30
+oPrint:Say(nLin,0040,STR0059,ofont10)
+oPrint:Say(nLin,2000,Transform(Round(aTotLetra[17],2),"@E 99,999,999.99"),oFont12)		//"| 02. Outros "
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³6. Rendimentos Recebidos Acumuladamente³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nLin += 100
+oPrint:Say(nLin,0040,STR0068,oFont12n)		//"  6. - Rendimentos Recebidos Acumuladamente- Art. 12-A da Lei nº7.713, de 1988 (sujeitos à tributação exclusiva)"
+
+For nRRA := 1 to nTotRRA
+	If nRRA == 2
+		oPrint:EndPage() 			// Finaliza a pagina
+		//-- CABECALHO 
+		oPrint:StartPage() 			// Inicia uma nova pagina
+		nLin := 030
+		nLinI:= 030
+		nLin +=20
+		
+		oPrint:Box( nLinI,0030,nLin+255,2350)  				// box Cabecalho 
+		oPrint:Line(nLinI,1450,nLin+255,1450)				// Linha Div.Cabecalho
+		If File(cFileFaz)
+			oPrint:SayBitmap(nLinI+10,050, cFileFaz,235,195) // Tem que estar abaixo do RootPath
+		EndIf
+		
+		nLin +=20
+		oPrint:say(nLin,500 ,STR0036,oFont13n)				//	ministerio da fazenda 
+		oPrint:Say(nLin,1500,STR0038,oFont10)				//Comprovante de rendimento
+		nLin +=50
+		oPrint:say(nLin+10,500 ,STR0037,oFont10)			//secretaria de receita
+		oPrint:Say(nLin,1500,STR0039,oFont10)              //Retencao de rendimentos
+		nLin +=50
+		oPrint:Say(nLin,500,STR0094,oFont10n) 				//"IMPOSTO SOBRE A RENDA DA PESSOA FÍSICA"
+		nLin +=50
+		oPrint:say(nLin,650,STR0095,oFont10n)				//	" ( EXERCÍCIO "
+		oPrint:Say(nLin,890,Soma1(mv_par08),oFont10n)    		  	//ano  calendario
+		oPrint:Say(nLin,985,")",ofont10) 
+		oPrint:Say(nLin,1560,STR0040,oFont10n) 				//ano base
+		oPrint:Say(nLin,1950,mv_par08,oFont10n)    		  	//ano  base
+		oPrint:Say(nLin,2035,")",ofont10)
+		nLin += 160 				
+	Else
+		If nRRA == 1
+			nLin +=60
+		Else
+			nLin += 100
+		EndIf
+	EndIf
+
+	nLinI:=nLin -10
+	oPrint:Box(nLinI ,0030,nLin + 140,1900)
+	oPrint:Line(nLinI,1900,nLin + 60,1900)
+	oPrint:Line(nLinI,1150,nLin + 60,1150)
+	oPrint:Line(nLinI,1550,nLin + 60,1550)
+	oPrint:Say(nLin+80,1950,STR0050,oFont10n)
+
+	nLin +=10
+	oPrint:Say(nLin,0040,"6." + AllTrim(Str(nRRA)) + " " + STR0097 + If(lImpRRA,PADR(aTotRRA[nRRA,2],30),Space(30)) ,oFont10)	//"6.1 Número do processo: "
+	oPrint:Say(nLin,1175,STR0081,oFont10)	//"Quantidade de meses: "
+	oPrint:Say(nLin,1650,Transform(If(lImpRRA,aTotRRA[nRRA,4],0.00),"@E 99,999,999.99"),oFont12)		
+	nLin +=50
+	oPrint:Line(nLin,030,nLin,1900)
+
+	nLin +=30
+	oPrint:Say(nLin,0040,STR0082 + If(lImpRRA,PADR(aTotRRA[nRRA,3]+"-"+cDescRRA,53),Space(53)) ,oFont10)//"Natureza do atendimento: "
+	nLin +=50
+	oPrint:Line(nLin,030,nLin,1900)
+	
+	nLin +=60
+	nLinI:=nLin -10
+	oPrint:Box(nLinI ,0030,nLin + 500,2350)
+	oPrint:Line(nLinI,1900,nLin + 500,1900)	
+	
+	nLin +=10
+	oPrint:Say(nLin,0040,STR0083,oFont10)	//"01. Total dos rendimentos tributáveis (inclusive férias e décimo terceiro salário)"
+	oPrint:Say(nLin,2000,Transform(If(lImpRRA,aTotRRA[nRRA,5,1],0.00),"@E 99,999,999.99"),oFont12)	
+	nLin +=50
+	oPrint:Line(nLin,030,nLin,2350)
+	
+	nLin +=30
+	oPrint:Say(nLin,0040,STR0084,oFont10)//" 02. Exclusão: Despesas com ação judicial"
+	oPrint:Say(nLin,2000,Transform(If(lImpRRA,aTotRRA[nRRA,5,3],0.00),"@E 99,999,999.99"),oFont12)		
+	nLin +=50
+	oPrint:Line(nLin,030,nLin,2350)
+	
+	nLin +=30
+	oPrint:Say(nLin,0040,STR0085,ofont10)//" 03. Dedução: Contribuição previdenciária oficial"
+	oPrint:Say(nLin,2000,Transform(If(lImpRRA,aTotRRA[nRRA,5,2],0.00),"@E 99,999,999.99"),oFont12)		
+	nLin +=50
+	oPrint:Line(nLin,030,nLin,2350)
+	
+	nLin +=30
+	oPrint:Say(nLin,0040,STR0086,oFont10)//" 04. Dedução: Pensão aliment. (preencher também quadro 7) "
+	oPrint:Say(nLin,2000,Transform(If(lImpRRA,aTotRRA[nRRA,5,4],0.00),"@E 99,999,999.99"),oFont12)		
+	nLin +=50
+	oPrint:Line(nLin,030,nLin,2350)
+	
+	nLin +=30
+	oPrint:Say(nLin,0040,STR0087,oFont10)//" 05. Imposto sobre a renda retido na fonte                "
+	oPrint:Say(nLin,2000,Transform(If(lImpRRA,aTotRRA[nRRA,5,5],0.00),"@E 99,999,999.99"),oFont12)		
+	nLin +=50
+	oPrint:Line(nLin,030,nLin,2350)
+	
+	nLin +=30
+	oPrint:Say(nLin,0040,STR0089,oFont10)//"06. Rendimentos isentos de pensão, proventos de aposentadoria ou reforma por moléstia grave ou aposentadoria"
+	oPrint:Say(nLin+30,0040,STR0090,oFont10)//"ou reforma por acidente em serviço" 
+	oPrint:Say(nLin,2000,Transform(If(lImpRRA,aTotRRA[nRRA,5,6],0.00),"@E 99,999,999.99"),oFont12)	
+Next nRRA
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³7. Informacoes complementares³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If nTotRRA > 1
+	nLin += 100
+Else
+	oPrint:EndPage() 			// Finaliza a pagina
+	//-- CABECALHO 
+	oPrint:StartPage() 			// Inicia uma nova pagina
+	nLin := 030
+	nLinI:= 030
+	nLin +=20 
+	oPrint:Box( nLinI,0030,nLin+255,2350)  				// box Cabecalho 
+	oPrint:Line(nLinI,1450,nLin+255,1450)				// Linha Div.Cabecalho
+	If File(cFileFaz)
+		oPrint:SayBitmap(nLinI+10,050, cFileFaz,235,195) // Tem que estar abaixo do RootPath
+	Endif
+	nLin +=20
+	oPrint:say(nLin,500 ,STR0036,oFont13n)				//	ministerio da fazenda 
+	oPrint:Say(nLin,1500,STR0038,oFont10)				//Comprovante de rendimento
+	nLin +=50
+	oPrint:say(nLin+10,500 ,STR0037,oFont10)			//secretaria de receita
+	oPrint:Say(nLin,1500,STR0039,oFont10)              //Retencao de rendimentos
+	nLin +=50
+	oPrint:Say(nLin,500,STR0094,oFont10n) 				//"IMPOSTO SOBRE A RENDA DA PESSOA FÍSICA"
+	nLin +=50
+	oPrint:say(nLin,650,STR0095,oFont10n)				//	" ( EXERCÍCIO "
+	oPrint:Say(nLin,890,Soma1(mv_par08),oFont10n)    		  	//ano  calendario
+	oPrint:Say(nLin,985,")",ofont10) 
+	oPrint:Say(nLin,1560,STR0040,oFont10n) 				//ano base
+	oPrint:Say(nLin,1950,mv_par08,oFont10n)    		  	//ano  base
+	oPrint:Say(nLin,2035,")",ofont10) 
+	nLin += 100
+EndIf
+
+If len( aComplem ) > 0       
+	If Ascan(aComplem,{|x| Subs(x[3],15,1) == "W" .or. Subs(x[3],15,1) == "2"} ) > 0                          
+		lExigi := .T.
+	EndIf
+	aEval(aComplem,{|| nLinhas += 110 })
+EndIF
+
+nLin += 60
+
+oPrint:Say(nLin,0040,left(STR0033,50),oFont12n)	//"  7. - Informacoes Complementares                                        R$     "
+
+nLin   += 60
+nLinI  := nLin - 10
+nLin   += 10
+
+If Empty( aComplem )
+	nLin+=230
+	oPrint:box(nLinI,0030,nLin ,2350) 
+	oPrint:line(nLinI,1900,nLin ,1900)
+Else 
+	aSort( aComplem,,,{ |x,y| x[4] < y[4] } )
+
+	nLinhas += nLin + 40
+
+	// Ajusta nLinhas dependendo da quantidade de quebra de linha por complemento
+	aEval( aComplem, { |x| nLinhas += (40*(Int( Len( x[1] ) / nTamImp )+1)) } )
+
+	oPrint:box(nLinI,0030,nLinhas,2350)
+	oPrint:line(nLinI,1900,nLinhas,1900)
+
+	If lExigi
+	    oPrint:say(nLin,0040,STR0064,oFont10)
+   	    nLin +=45
+	    oPrint:say(nLin,0040,STR0065,oFont10)
+   	    nLin +=45
+	    oPrint:say(nLin,0040,STR0066,oFont10)
+		nLin += 45
+	EndIf
+
+	For n:= 1 to len( aComplem )
+	    If Len( Alltrim( aComplem[n,1] ) ) > nTamImp
+
+			// Quebra da informacao em mais linhas caso a descricao seja maior que nTamImp caracteres
+			// Define quantidade de linhas para imprimir UMA inform. complementar
+			nQtdeLin := ( Len( aComplem[n,1] ) / nTamImp )
+
+			// Imprime a primeira parte com o contador de inform. complementares
+		    oPrint:say(nLin,0040,strzero(n,02)+". "+ Substr( aComplem[n,1], 1, nTamImp ), oFont10 )
+
+			For nx := 1	to Int( nQtdeLin )
+				nLin += 40
+			    oPrint:say(nLin,0100, Substr( aComplem[n,1], (nTamImp*nx)+1, nTamImp ), oFont10 )
+			Next nx
+		Else
+		    oPrint:say(nLin,0040,strzero(n,02)+". "+ AllTrim( aComplem[n,1] ), oFont10 )
+	    EndIf
+
+	    oPrint:Say(nLin,2000,TRANSFORM(aComplem[n,2],"@E 99,999,999.99"),oFont10)
+	    nLin += 45
+		oPrint:line(nLinI,1900,nLin,1900)
+		nLin += 25
+	Next n 
+Endif
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³8. Responsavel pelas informacoes³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nLin 	:= If( Empty( aComplem ), nLin + 40, nLinhas + 40 )
+
+oPrint:Say(nLin,0040,STR0034,ofont12n)			//"  8. - Responsavel Pelas Informacoes"
+nLin	+=50 
+oPrint:Box(nLin,0030,nLin + 100,2350)
+oPrint:Line(nLin,1300,nLin+ 100,1300)
+oPrint:Line(nLin,1540,nLin+ 100,1540)
+
+nLin +=20
+oPrint:say(nLin,0040,left(STR0041,4),oFont08)
+oPrint:Say(nLin,1340,STR0060,oFont08)
+oPrint:Say(nLin,1550,STR0061,oFont08)
+
+nLin += 30
+oPrint:say(nLin,0050,cResponsa,ofont10)
+oPrint:say(nLin,1340,DtoC(dDataBase),oFont10)
+
+nLin+=50
+oPrint:say(nLin,0040,STR0091,oFont08)		// "Aprovado pela IN RFB nº 1.215, de 15 de dezembro de 2011."
+
+oPrint:EndPage() 		// Finaliza a pagina
+
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³fIrpfHtml ºAutor  ³Tatiane V. Matias   º Data ³  23/01/06   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Impressao Comprovante de rendimentos e retencao do Imp.Rendaº±±
+±±º          ³Fonte - HTML                                                º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Especifico                                                 º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function  fIrpfHtml()
+Local n			:= 0
+Local nTam		:= 0
+Local nTamMais	:= 0
+Local lExigi	:= .F.
+Local nTamImp	:= 60
+Local nRRa		:= 0
+Local nTotRRA	:= Max(If(lUsaRRA,Len(aTotRRA),1),1)
+
+// Var para controle de salto de pagina qdo ha mais de um html/informe para mesmo funcionario
+Local lPulaHtml := If( Type( "lPulaHtml" ) # "U", lPulaHtml, .F. )
+
+//Logo e Titulo
+cFileFaz 	:= TcfRetDirImg() + "/receita.gif" //RECEITA.BMP
+
+cHtml :=	'<html>' 
+
+If cFrame = "2"               
+	cHtml +='<STYLE TYPE="text/css"> '
+	cHtml +='	.folha { '
+	cHtml +='   		 page-break-after: always; '
+	cHtml +='			} '
+	cHtml +='</STYLE> '	
+Endif
+
+cHtml +=	 '<head>' 
+cHtml +=	' <title>' + STR0063 + '</title>' 
+cHtml +=	'  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">' 
+cHtml +=	'  <link rel="stylesheet" href="css/rhonline.css" type="text/css">' 
+
+If cFrame = "1"               
+	cHtml +=	'<script language="JavaScript">' + CRLF
+	cHtml +=		'<!--' + CRLF
+	cHtml +=			'function Imprimir()' + CRLF
+	cHtml +=			'{' + CRLF
+	cHtml +=				'var val_body1	= parent.mainFrame.document.body.innerHTML;' + CRLF
+	cHtml +=				'var val_body2	= parent.bottomFrame.document.body.innerHTML;' + CRLF
+	cHtml +=				'parent.mainFrame.document.body.innerHTML = val_body2;' + CRLF
+	cHtml +=				'parent.mainFrame.print();' + CRLF
+	cHtml +=				'parent.mainFrame.document.body.innerHTML = val_body1;' + CRLF
+	cHtml +=			'}' + CRLF
+	cHtml +=		' -->' + CRLF
+	cHtml +=	'</script>' + CRLF
+EndIf                       
+
+cHtml +=	'</head>' 
+cHtml +=	'<body bgcolor="#FFFFFF" text="#000000">' 
+If cFrame = "1"               
+	cHtml +=	'  <Table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">' 
+Else
+	cHtml +=	'  <Table width="90%" border="0" cellspacing="0" cellpadding="0" align="center">' 
+EndIf
+
+If cFrame = "2" .and. lPulaHtml //	//Quebra de pagina no frame escondido qdo ha mais de um html/informe para mesmo funcionario
+	cHtml +='<div class="folha"> '
+   	CabecHtml(@cHtml)
+	cHtml +='</div> '
+Else
+	CabecHtml(@cHtml)
+Endif	
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³1. Fonte pagadora³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cHtml +=	'	<TR><TD colspan="2" height="10"></TD></TR>' 
+cHtml +=	'	<TR><TD colspan="2">' 
+cHtml +=	'			<b><span class="menu_titulo">' + STR0005 + '</span></b>' 
+cHtml +=	'	</TD>' 
+cHtml +=	'	</TR>' 
+cHtml +=	'	<TR><TD colspan="2">' 
+cHtml +=	'		<table width="100%"  border="1" cellspacing="0" cellpadding="0">' 
+cHtml +=	'			<tr><td width="30%">' 
+cHtml +=	'				<table border="0" cellspacing="0" cellpadding="0">' 
+cHtml +=	'					<TR>' 
+cHtml +=	'						<TD><span class="etiquetas_2">' + STR0042 + '</span></TD>' 
+cHtml +=	'					</TR>' 
+cHtml +=	'					<TR>' 
+cHtml +=	'						<TD><span class="dados">&nbsp;&nbsp;&nbsp;' + PADR(cCgc,100) + '</span></TD>' 
+cHtml +=	'					</TR>' 
+cHtml +=	'				</table>' 
+cHtml +=	'			</td>' 
+cHtml +=	'			<td width="70%">' 
+cHtml +=	'				<table border="0" cellspacing="0" cellpadding="0">' 
+cHtml +=	'					<TR>' 
+cHtml +=	'						<TD><span class="etiquetas_2">' + STR0041 + '</span></TD>' 
+cHtml +=	'					</TR>' 
+cHtml +=	'					<TR>' 
+cHtml +=	'						<TD><span class="dados">&nbsp;&nbsp;&nbsp;' + PADR(cDesEmp,100) + '</span></TD>' 
+cHtml +=	'					</TR>' 
+cHtml +=	'				</table>' 
+cHtml +=	'			</td></tr>' 
+cHtml +=	'		</table>' 
+cHtml +=	'	</TD></TR>' 
+cHtml +=	'	<TR><TD colspan="2" height="10"></TD></TR>' 
+cHtml +=	'	<TR><TD colspan="2">' 
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³2. Pessoa fisica/benefic.³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If SRL->(FieldPos("RL_CC"))== 0
+	cHtml +=	'			<b><span class="menu_titulo">' + STR0011+PADL((SRL->RL_FILIAL+"-"+SRL->RL_MAT),29) + '</span></b>' 
+Else
+	cHtml +=	'			<b><span class="menu_titulo">' + STR0011+PADL((SRL->RL_FILIAL+"-"+SRL->RL_MAT+"-"+SRL->RL_CC),29) + '</span></b>' 
+EndIf
+
+cHtml +=	'	</TD>' 
+cHtml +=	'	</TR>' 
+cHtml +=	'	<TR><TD colspan="2">' 
+cHtml +=	'		<table width="100%"  border="1" cellspacing="0" cellpadding="0">' 
+cHtml +=	'			<tr>' 
+cHtml +=	'				<td width="20%">' 
+cHtml +=	'				<table width="100%" border="0" cellspacing="0" cellpadding="0">' 
+cHtml +=	'					<TR>' 
+cHtml +=	'						<TD><span class="etiquetas_2">' + STR0043 + '</span></TD>' 
+cHtml +=	'					</TR>' 
+cHtml +=	'					<TR>' 
+cHtml +=	'						<TD><span class="dados">&nbsp;&nbsp;&nbsp;' + SRL->RL_CPFCGC + '</span></TD>' 
+cHtml +=	'					</TR>' 
+cHtml +=	'				</table>' 
+cHtml +=	'				</td>' 
+cHtml +=	'				<td>' 
+cHtml +=	'				<table border="0" cellspacing="0" cellpadding="0">' 
+cHtml +=	'					<TR>' 
+cHtml +=	'						<TD><span class="etiquetas_2">' + STR0013 + '</span></TD>' 
+cHtml +=	'					</TR>' 
+cHtml +=	'					<TR>' 
+cHtml +=	'						<TD><span class="dados">&nbsp;&nbsp;&nbsp;' + PADR(cNomeBen,140) + '</span></TD>' 
+cHtml +=	'					</TR>' 
+cHtml +=	'				</table>' 
+cHtml +=	'				</td>' 
+cHtml +=	'			</tr>' 
+cHtml +=	'			<tr>' 
+cHtml +=	'				<td colspan="2">' 
+cHtml +=	'				<table width="100%"  border="0" cellspacing="0" cellpadding="0">' 
+cHtml +=	'					<TR>' 
+cHtml +=	'						<TD><span class="etiquetas_2">' + STR0044 + '</span></TD>' 
+cHtml +=	'					</TR>' 
+cHtml +=	'					<TR>' 
+cHtml +=	'						<TD><span class="dados">&nbsp;&nbsp;&nbsp;' + PADR(SRL->RL_CODRET + "-" + cDescRet,153) + '</span></TD>' 
+cHtml +=	'					</TR>' 
+cHtml +=	'				</table>' 
+cHtml +=	'				</td>' 
+cHtml +=	'			</tr>' 
+cHtml +=	'		</table>' 
+cHtml +=	'	</TD></TR>' 
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³3. Rendimentos tributaveis/deducoes e irpf³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cHtml +=	'	<TR><TD colspan="2" height="10"></TD></TR>' 
+cHtml +=	'	<TR><TD width="80%">' 
+cHtml +=	'			<b><span class="menu_titulo">' + left(STR0015,50) + '</span></b>' 
+cHtml +=	'		</TD>' 
+cHtml +=	'		<TD align="center">' 
+cHtml +=	'			<b><span class="menu_titulo">' + STR0050 + '</span></b>' 
+cHtml +=	'		</TD>' 
+cHtml +=	'	</TR>' 
+cHtml +=	'	<TR><TD colspan="2">' 
+cHtml +=	'		<table width="100%"  border="1" cellspacing="0" cellpadding="2">' 
+cHtml +=	'			<tr>' 
+cHtml +=	'				<TD width="80%"><span class="etiquetas_3">' + STR0045 + '</span></TD>' 
+cHtml +=	'				<TD align="right"><span class="dados">' + Transform(Round(nTotRend,2),"@E 99,999,999.99") + '</span></TD>' 
+cHtml +=	'			</tr>' 
+cHtml +=	'			<tr>' 
+cHtml +=	'				<TD width="80%"><span class="etiquetas_3">' + STR0046 + '</span></TD>' 
+cHtml +=	'				<TD align="right"><span class="dados">' + Transform(Round(aTotLetra[02],2),"@E 99,999,999.99") + '</span></TD>' 
+cHtml +=	'			</tr>' 
+cHtml +=	'			<tr>' 
+cHtml +=	'				<TD width="80%"><span class="etiquetas_3">' + STR0047 + '</span></TD>' 
+cHtml +=	'				<TD align="right"><span class="dados">' + Transform(Round(aTotLetra[03],2),"@E 99,999,999.99") + '</span></TD>' 
+cHtml +=	'			</tr>' 
+cHtml +=	'			<tr>' 
+cHtml +=	'				<TD width="80%"><span class="etiquetas_3">' + STR0048 + '</span></TD>' 
+cHtml +=	'				<TD align="right"><span class="dados">' + Transform(Round(aTotLetra[04],2),"@E 99,999,999.99") + '</span></TD>' 
+cHtml +=	'			</tr>' 
+cHtml +=	'			<tr>' 
+cHtml +=	'				<TD width="80%"><span class="etiquetas_3">' + STR0049 + '</span></TD>' 
+cHtml +=	'				<TD align="right"><span class="dados">' + Transform(Round(nTotRetido,2),"@E 99,999,999.99") + '</span></TD>' 
+cHtml +=	'			</tr>' 
+cHtml +=	'		</table>' 
+cHtml +=	'	</TD></TR>' 
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³4. Rendimentos Isentos e nao tributaveis³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cHtml +=	'	<TR><TD colspan="2" height="10"></TD></TR>' 
+cHtml +=	'	<TR><TD width="80%">' 
+cHtml +=	'			<b><span class="menu_titulo">' + left(STR0022,50) + '</span></b>' 
+cHtml +=	'		</TD>' 
+cHtml +=	'		<TD align="center">' 
+cHtml +=	'			<b><span class="menu_titulo">' + STR0050 + '</span></b>' 
+cHtml +=	'		</TD>' 
+cHtml +=	'	</TR>' 
+cHtml +=	'	<TR><TD colspan="2">' 
+cHtml +=	'		<table width="100%"  border="1" cellspacing="0" cellpadding="2">' 
+cHtml +=	'			<tr>' 
+cHtml +=	'				<TD width="80%"><span class="etiquetas_3">' + STR0052 + '</span></TD>' 
+cHtml +=	'				<TD align="right"><span class="dados">' + Transform(Round(aTotLetra[08]+aTotLetra[43],2),"@E 99,999,999.99") + '</span></TD>' 
+cHtml +=	'			</tr>' 
+cHtml +=	'			<tr>' 
+cHtml +=	'				<TD width="80%"><span class="etiquetas_3">' + STR0053 + '</span></TD>' 
+cHtml +=	'				<TD align="right"><span class="dados">' + Transform(Round(aTotLetra[09],2),"@E 99,999,999.99") + '</span></TD>' 
+cHtml +=	'			</tr>' 
+cHtml +=	'			<tr>' 
+cHtml +=	'				<TD width="80%"><span class="etiquetas_3">' + STR0054 + '</span></TD>' 
+cHtml +=	'				<TD align="right"><span class="dados">' + Transform(Round(aTotLetra[10],2),"@E 99,999,999.99") + '</span></TD>' 
+cHtml +=	'			</tr>' 
+cHtml +=	'			<tr>' 
+cHtml +=	'				<TD width="80%"><span class="etiquetas_3">' + STR0055 + '</span></TD>' 
+cHtml +=	'				<TD align="right"><span class="dados">' + Transform(Round(aTotLetra[11],2),"@E 99,999,999.99") + '</span></TD>' 
+cHtml +=	'			</tr>' 
+cHtml +=	'			<tr>' 
+cHtml +=	'				<TD width="80%"><span class="etiquetas_3">' + STR0056 + '</span></TD>' 
+cHtml +=	'				<TD align="right"><span class="dados">' + Transform(Round(aTotLetra[12],2),"@E 99,999,999.99") + '</span></TD>' 
+cHtml +=	'			</tr>' 
+cHtml +=	'			<tr>' 
+cHtml +=	'				<TD width="80%"><span class="etiquetas_3">' + STR0051 + ' </span></TD>' 
+cHtml +=	'				<TD align="right"><span class="dados">' + Transform(Round(aTotLetra[07],2),"@E 99,999,999.99") + '</span></TD>' 
+cHtml +=	'			</tr>' 
+cHtml +=	'			<tr>' 
+cHtml +=	'				<TD width="80%"><span class="etiquetas_3">' + STR0057+'('+Subs(cDescOred,1,45)+')' + '</span></TD>' 
+cHtml +=	'				<TD align="right"><span class="dados">' + Transform(Round(aTotLetra[13]+aTotLetra[41],2),"@E 99,999,999.99") + '</span></TD>' 
+cHtml +=	'			</tr>' 
+cHtml +=	'		</table>' 
+cHtml +=	'	</TD></TR>' 
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³5.  Rendimentos sujeitos a tributacao exclusiva ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cHtml +=	'	<TR><TD colspan="2" height="10"></TD></TR>' 
+cHtml +=	'	<TR><TD width="80%">' 
+cHtml +=	'			<b><span class="menu_titulo">' + Left(STR0030,71) + '</span></b>' 
+cHtml +=	'		</TD>' 
+cHtml +=	'		<TD align="center">' 
+cHtml +=	'			<b><span class="menu_titulo">' + STR0050 + '</span></b>' 
+cHtml +=	'		</TD>' 
+cHtml +=	'	</TR>' 
+cHtml +=	'	<TR><TD colspan="2">' 
+cHtml +=	'		<table width="100%"  border="1" cellspacing="0" cellpadding="2">' 
+cHtml +=	'			<tr>' 
+cHtml +=	'				<TD width="80%"><span class="etiquetas_3">' + STR0058 + '</span></TD>' 
+cHtml +=	'				<TD align="right"><span class="dados">' + Transform(Round(nLiq13o,2),"@E 99,999,999.99") + '</span></TD>' 
+cHtml +=	'			</tr>' 
+cHtml +=	'			<tr>' 
+cHtml +=	'				<TD width="80%"><span class="etiquetas_3">' + STR0059 + '</span></TD>' 
+cHtml +=	'				<TD align="right"><span class="dados">' + Transform(Round(aTotLetra[17],2),"@E 99,999,999.99") + '</span></TD>' 
+cHtml +=	'			</tr>' 
+cHtml +=	'		</table>' 
+cHtml +=	'	</TD></TR>' 
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³6. Rendimentos Recebidos Acumuladamente³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+For nRRA := 1 to nTotRRA
+	cHtml +=	'	<TR><TD colspan="2" height="10"></TD></TR>' 
+	cHtml +=	'	<TR><TD width="80%">' 
+	cHtml +=	'			<b><span class="menu_titulo">' + STR0068 + '</span></b>' 
+	cHtml +=	'		</TD>' 
+	cHtml +=	'		<TD align="center">' 
+	cHtml +=	'			<b><span class="menu_titulo">' + STR0050 + '</span></b>' 
+	cHtml +=	'		</TD>' 
+	cHtml +=	'	</TR>' 
+	cHtml +=	'	<TR><TD colspan="2">' 
+	cHtml +=	'		<table width="80%"  border="1" cellspacing="0" cellpadding="2">' 
+	cHtml +=	'			<tr>' 
+	cHtml +=	'				<TD width="55%"><span class="etiquetas_3">' + "6." + AllTrim(Str(nRRA)) + " " + STR0097 + If(lImpRRA,PADR(aTotRRA[nRRA,2],30),Space(30)) + '</span></TD>' 
+	cHtml +=	'				<TD width="20%" align="center"><span class="etiquetas_3">' + STR0070 + '</span></TD>' 
+	cHtml +=	'				<TD width="15%" align="right"><span class="dados">' + Transform(If(lImpRRA,aTotRRA[nRRA,4],0.00),"@E 99,999,999.99") + '</span></TD>' 
+	cHtml +=	'			</tr>' 
+	cHtml +=	'		</table>' 
+	cHtml +=	'	</TD></TR>' 
+	cHtml +=	'	<TR><TD colspan="2">' 
+	cHtml +=	'		<table width="80%"  border="1" cellspacing="0" cellpadding="2">' 
+	cHtml +=	'			<tr>' 
+	cHtml +=	'				<TD><span class="etiquetas_3">' + STR0082 + If(lImpRRA,PADR(aTotRRA[nRRA,3]+"-"+cDescRRA,53),Space(53)) + '</span></TD>' 
+	cHtml +=	'			</tr>' 
+	cHtml +=	'		</table>' 
+	cHtml +=	'	</TD></TR>' 
+	cHtml +=	'	<TR><TD colspan="2" height="10"></TD></TR>' 
+	cHtml +=	'	<TR><TD colspan="2">' 
+	cHtml +=	'		<table width="100%"  border="1" cellspacing="0" cellpadding="2">' 
+	cHtml +=	'			<tr>' 
+	cHtml +=	'				<TD width="80%"><span class="etiquetas_3">' + STR0083 + '</span></TD>' 
+	cHtml +=	'				<TD align="right"><span class="dados">' + Transform(If(lImpRRA,aTotRRA[nRRA,5,1],0.00),"@E 99,999,999.99") + '</span></TD>' 
+	cHtml +=	'			</tr>' 
+	cHtml +=	'			<tr>' 
+	cHtml +=	'				<TD width="80%"><span class="etiquetas_3">' + STR0084 + '</span></TD>' 
+	cHtml +=	'				<TD align="right"><span class="dados">' + Transform(If(lImpRRA,aTotRRA[nRRA,5,3],0.00),"@E 99,999,999.99") + '</span></TD>' 
+	cHtml +=	'			</tr>' 
+	cHtml +=	'			<tr>' 
+	cHtml +=	'				<TD width="80%"><span class="etiquetas_3">' + STR0085 + '</span></TD>' 
+	cHtml +=	'				<TD align="right"><span class="dados">' + Transform(If(lImpRRA,aTotRRA[nRRA,5,2],0.00),"@E 99,999,999.99") + '</span></TD>' 
+	cHtml +=	'			</tr>' 
+	cHtml +=	'			<tr>' 
+	cHtml +=	'				<TD width="80%"><span class="etiquetas_3">' + STR0086 + '</span></TD>' 
+	cHtml +=	'				<TD align="right"><span class="dados">' + Transform(If(lImpRRA,aTotRRA[nRRA,5,4],0.00),"@E 99,999,999.99") + '</span></TD>' 
+	cHtml +=	'			</tr>' 
+	cHtml +=	'			<tr>' 
+	cHtml +=	'				<TD width="80%"><span class="etiquetas_3">' + STR0087 + '</span></TD>' 
+	cHtml +=	'				<TD align="right"><span class="dados">' + Transform(If(lImpRRA,aTotRRA[nRRA,5,5],0.00),"@E 99,999,999.99") + '</span></TD>' 
+	cHtml +=	'			</tr>' 
+	cHtml +=	'			<tr>' 
+	cHtml +=	'				<TD width="80%"><span class="etiquetas_3">' + STR0088 + ' </span></TD>' 
+	cHtml +=	'				<TD align="right"><span class="dados">' + Transform(If(lImpRRA,aTotRRA[nRRA,5,6],0.00),"@E 99,999,999.99") + '</span></TD>' 
+	cHtml +=	'			</tr>' 
+	cHtml +=	'		</table>' 
+	cHtml +=	'	</TD></TR>' 
+Next nRRA 
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³7. Informacoes complementares³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If Ascan(aComplem,{|x| Subs(x[3],15,1) == "W" .or. Subs(x[3],15,1) == "2"} ) > 0                          
+	lExigi := .T.
+EndIf	
+
+aSort( aComplem,,,{ |x,y| x[4] < y[4] } )
+
+nTam := len( aComplem )
+
+//Quebra de pagina no frame escondido
+If cFrame = "2"
+                    
+	nTamMais := 0
+	aEval( aComplem, { |x| nTamMais += Int( Len( x[1] ) / nTamImp ) } )
+
+	If ( nTam + nTamMais ) > 14
+		For n := 1 to 22
+			cHtml +=	'	<TR><TD colspan="2">&nbsp;</TD></TR>' 
+		Next n 
+		CabecHtml(@cHtml)
+	EndIf
+EndIf
+
+cHtml +=	'	<TR><TD colspan="2" height="10"></TD></TR>' 
+cHtml +=	'	<TR><TD colspan="2">' 
+cHtml +=	'			<b><span class="menu_titulo">' + left(STR0033,50) + '</span></b>' 
+cHtml +=	'		</TD>' 
+cHtml +=	'	</TR>' 
+cHtml +=	'	<TR><TD colspan="2">' 
+cHtml +=	'		<table width="100%"  border="1" cellspacing="0" cellpadding="0">' 
+cHtml +=	'			<tr>' 
+cHtml +=	'				<td>' 
+cHtml +=	'					<table width="100%" border="0" cellspacing="3" >' 
+                
+If nTam = 0
+		cHtml +=	'						<tr>' 
+		cHtml +=	'                    <td width="80%"><span class="dados">&nbsp;</span></td>' 
+		cHtml +=	'							<Td align="right"><span class="dados">&nbsp;</span></td>' 
+		cHtml +=	'                  </tr>' 
+Else
+	If lExigi
+			cHtml +=	'                    <td width="80%"><span class="dados">' + STR0064 + STR0065 + STR0066 + '</span></td>' 
+			cHtml +=	'                  </tr>' 
+
+	Endif
+	For n:= 1 to nTam
+		cHtml +=	'						<tr>' 
+		cHtml +=	'                    <td width="80%"><span class="dados">' + STRZERO(n,02) + ". "+  aComplem[n,1] + '</span></td>' 
+		cHtml +=	'							<Td align="right"><span class="dados">' + TRANSFORM(aComplem[n,2],"@E 99,999,999.99") + '</span></td>' 
+		cHtml +=	'                  </tr>' 
+	Next n 
+
+EndIf
+cHtml +=	'              </table>' 
+                
+cHtml +=	'				</td>' 
+cHtml +=	'			</tr>' 
+cHtml +=	'		</table>' 
+cHtml +=	'	</TD></TR>' 
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³8. Responsavel pelas informacoes³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cHtml +=	'	<TR><TD colspan="2" height="10"></TD></TR>' 
+cHtml +=	'	<TR><TD colspan="2">' 
+cHtml +=	'			<b><span class="menu_titulo">' + STR0034 + '</span></b>' 
+cHtml +=	'		</TD>' 
+cHtml +=	'	</TR>' 
+cHtml +=	'	<TR><TD colspan="2">' 
+cHtml +=	'		<table width="100%"  border="1" cellspacing="0" cellpadding="0">' 
+cHtml +=	'			<tr><td width="65%">' 
+cHtml +=	'				<table border="0" cellspacing="0" cellpadding="0">' 
+cHtml +=	'					<TR>' 
+cHtml +=	'						<TD><span class="etiquetas_2">' + left(STR0041,4) + '</span></TD>' 
+cHtml +=	'					</TR>' 
+cHtml +=	'					<TR>' 
+cHtml +=	'						<TD><span class="dados">&nbsp;&nbsp;&nbsp;' + cResponsa + '</span></TD>' 
+cHtml +=	'					</TR>' 
+cHtml +=	'				</table>' 
+cHtml +=	'			</td>' 
+cHtml +=	'			<td width="15%">' 
+cHtml +=	'				<table border="0" cellspacing="0" cellpadding="0">' 
+cHtml +=	'					<TR>' 
+cHtml +=	'						<TD><span class="etiquetas_2">' + STR0060 + '</span></TD>' 
+cHtml +=	'					</TR>' 
+cHtml +=	'					<TR>' 
+cHtml +=	'						<TD><span class="dados">&nbsp;&nbsp;&nbsp;' + dDataInf + '</span></TD>'
+cHtml +=	'					</TR>' 
+cHtml +=	'				</table>' 
+cHtml +=	'			</td>' 
+cHtml +=	'			<td width="20%">' 
+cHtml +=	'				<table border="0" cellspacing="0" cellpadding="0">' 
+cHtml +=	'					<TR>' 
+cHtml +=	'						<TD><span class="etiquetas_2">' + STR0061 + '</span></TD>' 
+cHtml +=	'					</TR>' 
+cHtml +=	'					<TR>' 
+cHtml +=	'						<TD><span>&nbsp;&nbsp;&nbsp;</span></TD>' 
+cHtml +=	'					</TR>' 
+cHtml +=	'				</table>' 
+cHtml +=	'			</td></tr>'
+cHtml +=	'		</table>' 
+cHtml +=	'	</TD></TR>' 
+cHtml +=	'	<TR><TD colspan="2"><span class="etiquetas_2">' + STR0091 + '</span></TD></TR>' 
+cHtml +=	' </Table>'   
+
+cHtml += ' <p align="right"><a href="' + If(GetRpoRelease() >= "R7", "javascript:window.print();" ,"javascript:Imprimir();") + '"><img src="' + TcfRetDirImg() + '/imprimir.gif" width="90" height="28" hspace="20" border="0"></a></p>'
+cHtml += '<p &nbsp;</p>'
+
+cHtml +=	'</body>' 
+cHtml +=	'</html>' 
+
+Return cHtml
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³CabecHtml ºAutor  ³Tatiane V. Matias   º Data ³  23/01/06   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Impressao do cabecalho do Informe de Rendimento - HTML      º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Especifico                                                 º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function CabecHtml(cHtml)
+
+	cHtml +=	'	<TR>' 
+	cHtml +=	'		<TD  colspan="2">' 
+	cHtml +=	'			<table width="100%"  border="1" cellspacing="0" cellpadding="0">' 
+	cHtml +=	'			  <tr>' 
+	cHtml +=	'				<td>' 
+	cHtml +=	'					<table width="100%"  border="0" cellspacing="0" cellpadding="0">' 
+	cHtml +=	'					  <tr align="center">' 
+	cHtml +=	'						<td width="10%" rowspan="2" height="10%"><img src="' + cFileFaz + '" width="70" height="70" align=left></td>' 
+	cHtml +=	'						<td><b><span class="titulo_opcao">' + STR0036 + '</span></b></td>' 
+	cHtml +=	'					  </tr>' 
+	cHtml +=	'					  <tr align="center">' 
+	cHtml +=	'						<td><span class="texto_2">' + STR0037 + '</span></td>' 
+	cHtml +=	'					  </tr>' 
+	cHtml +=	'					  <tr align="center">' 
+	cHtml +=	'						<td></td><td><span class="texto_2">' + STR0096 + '</span></td>' 
+	cHtml +=	'					  </tr>' 
+	cHtml +=	'					  <tr align="center">' 
+	cHtml +=	'						<td></td><td><b><span class="menu_titulo_2">' + STR0095 + '  ' + Soma1(cAno) + ')</span></b></td>' 
+	cHtml +=	'					  </tr>' 
+	cHtml +=	'					</table>' 
+	cHtml +=	'				</td>' 
+	cHtml +=	'				<td>' 
+	cHtml +=	'					<table width="100%"  border="0" cellspacing="0" cellpadding="0">' 
+	cHtml +=	'					  <tr align="center">' 
+	cHtml +=	'						<td><span class="menu_titulo_2">' + STR0038 + '</span></td>' 
+	cHtml +=	'					  </tr>' 
+	cHtml +=	'					  <tr align="center">' 
+	cHtml +=	'						<td><span class="menu_titulo_2">' + STR0039 + '</span></td>' 
+	cHtml +=	'					  </tr>' 
+	cHtml +=	'					  <tr align="center">' 
+	cHtml +=	'						<td><b><span class="menu_titulo_2">' + STR0040 + '  ' + cAno + ')</span></b></td>' 
+	cHtml +=	'					  </tr>' 
+	cHtml +=	'				  </table>' 
+	cHtml +=	'				</td>' 
+	cHtml +=	'			 </tr>' 
+	cHtml +=	'			</table>' 
+	cHtml +=	'		<TD>' 
+	cHtml +=	'	</TR>' 
+
+Return Nil
+
+// Funcao para apresentar o botao da impressora no html
+Static Function BotImpIRPF()
+Return( '<p align="right"><a href="javascript:Imprimir();"><img src="'+ TcfRetDirImg() + '/imprimir.gif" width="90" height="28" hspace="20" border="0"></a></p>' )
+
+// Funcao para trocar o indicador **botaoframe*** pelo tracejado separador dos INFORMES
+Static Function TracoDuplo()
+Local cTracoDupl := ""
+
+cTracoDupl += '	<p &nbsp;</p>'
+cTracoDupl += '	<p &nbsp;</p>'
+cTracoDupl += ' <table frame="above" width="100%"> '
+cTracoDupl += ' 	<tr> '
+cTracoDupl += ' 		<td width = "0%" style = "border-style: dotted" ></td> '
+cTracoDupl += '			<p &nbsp;</p>'
+cTracoDupl += ' 	</tr> '
+cTracoDupl += ' </table> '
+
+Return( cTracoDupl )

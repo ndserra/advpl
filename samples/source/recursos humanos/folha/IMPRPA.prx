@@ -1,0 +1,1025 @@
+#INCLUDE "PROTHEUS.CH"
+#INCLUDE "RWMAKE.CH"
+#INCLUDE "IMPRPA.CH"
+
+
+/*
+зддддддддддбддддддддддбдддддддбдддддддддддддддддддддддбддддддбдддддддддд©
+ЁPrograma  Ё ImpRpa   Ё Autor ЁMARINALDO DE JESUS     Ё Data Ё31/05/2000Ё
+цддддддддддеддддддддддадддддддадддддддддддддддддддддддаддддддадддддддддд╢
+ЁDescri┤└o Ё RPA - RECIBO DE PAGAMENTO DE AUTONOMOS                     Ё
+цддддддддддедддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+ЁSintaxe   Ё Chamada padr└o para programas em RdMake.                   Ё
+цддддддддддедддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+ЁUso       Ё Generico                                                   Ё
+цддддддддддедддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+ЁObs.:     Ё Para a Impressao do Numero de Inscricao do Autonomo no INSSЁ
+Ё          Ё do	Tipo de Servico e do Orgao Emissor do RG, sera   necessaЁ
+Ё          Ё rio estar incluido, no Cadastro de Funcionarios, os Campos:Ё
+Ё          Ё                                                            Ё
+Ё          Ё RA_NUMINSC - Tipo Caracter,Tamanho 11 Masc @R 9999.9999.999Ё
+Ё          Ё RA_SERVICO - Tipo Caracter,Tamanho 60 Masc @!              Ё
+Ё          Ё RA_ORGEMRG - Tipo Caracter,Tamanho 05 Masc @R! NNN/NN      Ё
+цддддддддддадддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+Ё         ATUALIZACOES SOFRIDAS DESDE A CONSTRU─AO INICIAL.             Ё
+цддддддддддддбддддддддддбддддддбдддддддддддддддддддддддддддддддддддддддд╢
+ЁProgramador ЁData      Ё BOPS ЁMotivo da Alteracao                     Ё
+цддддддддддддеддддддддддеддддддедддддддддддддддддддддддддддддддддддддддд╢
+ЁMarinaldo   Ё05/07/2000Ё------ЁComentar a Funcao fPerg_RPA()           Ё
+ЁMarina      Ё30/08/2000Ё------ЁValidacao Filial/Acesso.Limpeza DOS.    Ё
+Ё            Ё          Ё------ЁImprimir mov anterior a partir dDataRef.Ё
+ЁMarinaldo   Ё06/10/2000Ё------ЁUtilizar PosSRV() para Retornar o   TipoЁ
+Ё            Ё----------Ё------Ёda Verba.1-Prov.;2-Desc.;3-Base.        Ё
+ЁPriscila    Ё16/04/2003|------ЁAjuste na Impressao do Recibo p/n compriЁ
+Ё            Ё          |------Ёmir qdo for Direto na Porta da Impress. Ё
+ЁEmerson     Ё28/05/2003Ё------ЁAjuste na picture do CNPJ               Ё
+|            Ё08/04/2004Ё------ЁAcerto no Driver p/Impressao            Ё
+Ё            Ё30/11/2004Ё------Ёsubstitui NOUTVEN por NOUTVENC          Ё
+ЁAndreia     Ё28/12/2004Ё077540ЁAcerto no tratamento do valor do IR paraЁ
+Ё            Ё          |------Ёadiantamento.                           Ё
+ЁPedro Eloy  Ё06/11/2007Ё135430ЁFeito o tratamento dos campos RA_RGUF e Ё
+Ё            Ё          |------ЁRA_RGORG.                        Ё
+ЁPedro Eloy  Ё28/12/2007Ё138389ЁAjustado o layout do recibo.     Ё
+ЁReginaldo G Ё19/08/2009ЁFNC   ЁAjuste no grupo de campo filial  Ё
+ЁLuis Artuso Ё05/09/2013ЁTHROZOЁAjuste na exibicao do campo      Ё
+Ё            Ё          Ё      ЁTipo de servico prestado.        Ё
+юддддддддддддаддддддддддаддддддадддддддддддддддддддддддддддддддддддддддды*/
+User Function ImpRpa()
+
+//зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+//Ё Declaracao de variaveis utilizadas no programa atraves da funcao    Ё
+//Ё SetPrvt, que criara somente as variaveis definidas pelo usuario,    Ё
+//Ё identificando as variaveis publicas do sistema utilizadas no codigo Ё
+//Ё Incluido pelo assistente de conversao do AP5 IDE                    Ё
+//юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+SetPrvt("CSTRING,AORD,CDESC1,CDESC2,CDESC3,LEND")
+SetPrvt("NLASTKEY,CPERG,NOMEPROG,ARETURN,TITULO,LI")
+SetPrvt("NTAMANHO,WNREL,NORDEM,NTIPORPA,CSEMANA,CFILDE")
+SetPrvt("CFILATE,CCCDE,CCCATE,CMATDE,CMATATE,CNOMEDE")
+SetPrvt("CNOMEATE,CSITUACAO,CCATEGORIA,CNUMRPA,DDATAREF,LATUAL")
+SetPrvt("CARQANT,CARQNEW,LIGUAL,CSAVSCR1,CSAVCUR1,CSAVROW1")
+SetPrvt("CSAVCOL1,CSAVCOR1,CINDRC,CRCNTX,NPOSANOMES,CDATAANT")
+SetPrvt("CEXCLUI,CINICIO,CFIM,CFILIALANT,CCCANT,CNUMANT")
+SetPrvt("CFILMAT,CDESC_FIL,CDESC_CC,CDESC_CGC,CLOCAL_FIL,AINFO")
+SetPrvt("ACODFOL,NVALORAUT,NINSSAUT,NIRRFAUT,NOUTVENC,NOUTDESC")
+SetPrvt("NTOTVENC,NTOTDESC,NLIQUIDO,NOUTVEN,CQUERY")
+SetPrvt("AIMPRPA,NCOLUNAS,CRET1,CRET2,CEXTENSO")
+SetPrvt("NPOSRPA,AREGS,")
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Define Variaveis Basicas Genericas                           Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+cString   := 'SRA'                                  //Alias do arquivo principal (Base).
+aOrd      := {STR0001,STR0002,STR0003,STR0004}      //'Matricula'###'C.Custo'###'Nome'###'C.Custo + Nome'
+cDesc1    := STR0005                                //'Emiss└o de Recibos de Pagamento de Autonomo.'
+cDesc2    := STR0006                                //'Ser═ impresso de acordo com os parametros solicitados pelo'
+cDesc3    := STR0007                                //'usuario.'
+lEnd      := .F.
+nLastKey  := 0
+cPerg     := 'RPAGPE'
+nomeprog  := 'RPA'
+aReturn   := {STR0008, 1,STR0009, 2, 2, 1, '',1 }   //'Zebrado'###'Administra┤└o'
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Titulo do Relatorio                                          Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+Titulo		:= cDesc1
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Variaveis Para a Funcao fImpRpa()                            Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+Li			:= 0
+nTamanho	:= "P"
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Variaveis de Acesso do Usuario                               Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+cAcessaSRA	:= &( " { || " + ChkRH( "IMPRPA" , "SRA" , "2" ) + " } " )
+cAcessaSR1	:= &( " { || " + ChkRH( "IMPRPA" , "SR1" , "2" ) + " } " )
+cAcessaSRC	:= &( " { || " + ChkRH( "IMPRPA" , "SRC" , "2" ) + " } " )
+cAcessaSRI	:= &( " { || " + ChkRH( "IMPRPA" , "SRI" , "2" ) + " } " )
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Verifica as Perguntas Selecionadas nos Parametros            Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+Pergunte(cPerg,.F.)
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Envia controle para a funcao SETPRINT                        Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+WnRel := 'RPA' // Nome Default do relatorio em Disco.
+WnRel := SetPrint(cString,Wnrel,cPerg,Titulo,cDesc1,cDesc2,cDesc3,.F.,aOrd,,nTamanho)
+
+IF nLastKey == 27
+	Return Nil
+EndIF
+
+SetDefault(aReturn,cString)
+
+IF nLastKey == 27
+	Return Nil
+EndIF
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Chamada do Relatorio.                                        Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+RptStatus( { |lEnd| fIncRpa() } , Titulo )
+
+Return Nil
+
+Static Function fIncRpa()
+
+Local aOrdBag     := {}
+Local cMesArqRef  := ""
+Local cArqMov     := ""
+Local cAliasMov   := ""
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Verifica Ordem do Relatorio                                  Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+nOrdem    := aReturn[8]
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Carregando variaveis MV_PAR?? para Variaveis do Sistema.     Ё
+цдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+Ё MV_PAR01        //  Emitir Recibos(Adto/Folha/1╕/2╕)         Ё
+Ё MV_PAR02        //  Numero da Semana                         Ё
+Ё MV_PAR03        //  Filial De                                Ё
+Ё MV_PAR04        //  Filial Ate                               Ё
+Ё MV_PAR05        //  Centro de Custo De                       Ё
+Ё MV_PAR06        //  Centro de Custo Ate                      Ё
+Ё MV_PAR07        //  Matricula De                             Ё
+Ё MV_PAR08        //  Matricula Ate                            Ё
+Ё MV_PAR09        //  Nome De                                  Ё
+Ё MV_PAR10        //  Nome Ate                                 Ё
+Ё MV_PAR11        //  Situacoes a Imprimir                     Ё
+Ё MV_PAR12        //  Categorias a Imprimir                    Ё
+Ё MV_PAR13        //  Nro. do 1o. Recibo                       Ё
+Ё MV_PAR14        //  Data de Referencia                       Ё
+Ё MV_PAR15        //  Gerar Para                               Ё
+Ё MV_PAR16        //  Arquivo Movimento Anterior               Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+Pergunte(cPerg,.F.)
+
+nTipoRpa	:= MV_PAR01
+cSemana		:= MV_PAR02
+cFilDe		:= MV_PAR03
+cFilAte		:= MV_PAR04
+cCcDe		:= MV_PAR05
+cCcAte		:= MV_PAR06
+cMatDe		:= MV_PAR07
+cMatAte		:= MV_PAR08
+cNomeDe		:= MV_PAR09
+cNomeAte	:= MV_PAR10
+cSituacao	:= MV_PAR11
+cCategoria	:= MV_PAR12
+cNumRpa		:= MV_PAR13
+dDataRef	:= MV_PAR14
+
+cMesAnoRef := StrZero(Month(dDataRef),2) + StrZero(Year(dDataRef),4)
+cMesArqRef := If(nTipoRpa == 4,"13"+Right(cMesAnoRef,4),cMesAnoRef)
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+| Verifica se existe o arquivo de fechamento do mes informado  |
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+lAtual := ( !fExistArq( cMesArqRef,,0 ) .And. MesAno(dDataRef) == MesAno(dDataBase) )
+
+If !lAtual
+	If !fIniArqMov( cMesArqRef, @cAliasMov , @aOrdBag , @cArqMov )
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		| Se nao encontrar o arquivo retorna o arquivo atual           |
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		ChkFile( cAliasMov , .F. )
+		Return
+	EndIf
+EndIf
+
+/*
+зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+ЁBloco que definira a Consistencia da Parametrizacao dos Intervalos seleЁ
+Ёcionados nas Perguntas De? Ate? para o Skip/Loop e Para a SetRegua()   Ё
+юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+cExclui := ""
+cExclui := cExclui + "{ || "
+cExclui := cExclui + "(RA_FILIAL  < cFilDe     .or. RA_FILIAL  > cFilAte    ).or."
+cExclui := cExclui + "(RA_MAT     < cMatDe     .or. RA_MAT     > cMatAte    ).or."
+cExclui := cExclui + "(RA_CC      < cCcDe      .or. RA_CC      > cCCAte     ).or."
+cExclui := cExclui + "(RA_NOME    < cNomeDe    .or. RA_NOME    > cNomeAte   ).or."
+cExclui := cExclui + "!(RA_SITFOLH$cSituacao).or.!(RA_CATFUNC$cCategoria)"
+cExclui := cExclui + " } "
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Seleciona Arquivo Principal e Carrega Regua de Processamento Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+dbSelectArea('SRA')
+SetRegua( SRA->( RecCount() ) )
+dbGotop()
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Posicionando no Primeiro Registro do Parametro               Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+IF nOrdem == 1
+	dbSetOrder(nOrdem)
+	dbSeek( cFilDe + cMatDe , .T. )
+	cInicio := '{ || RA_FILIAL + RA_MAT }'
+	cFim    := cFilAte + cMatAte
+ElseIF nOrdem == 2
+	dbSetOrder(nOrdem)
+	dbSeek( cFilDe + cCcDe + cMatDe , .T. )
+	cInicio  := '{ || RA_FILIAL + RA_CC + RA_MAT }'
+	cFim     := cFilAte + cCcAte + cMatAte
+ElseIF nOrdem == 3
+	dbSetOrder(nOrdem)
+	dbSeek( cFilDe + cNomeDe + cMatDe , .T. )
+	cInicio := '{ || RA_FILIAL + RA_NOME + RA_MAT }'
+	cFim    := cFilAte + cNomeAte + cMatAte
+ElseIF nOrdem == 4
+	dbSetOrder(08)
+	dbSeek( cFilDe + cCcDe + cNomeDe ,.T. )
+	cInicio  := '{ || RA_FILIAL + RA_CC + RA_NOME } '
+	cFim     := cFilAte + cCcAte + cNomeAte
+EndIF
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Variaveis Para Impressao dos Dados da Empresa/Autonomo       Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+cFilialAnt	:= Space(FWGETTAMFILIAL)
+cCcAnt		:= Space(GetSx3Cache("RA_CC", "X3_TAMANHO"))
+cNumAnt		:= cNumRpa
+cFilMat		:= ""
+cDesc_Fil	:= ""
+cDesc_Cc	:= ""
+cDesc_CGC	:= ""
+cLocal_Fil  := ""
+aInfo		:= {}
+aCodFol		:= {}
+nValorAut	:= 0
+nINSSAut	:= 0
+nIRRFAut	:= 0
+nOutVenc	:= 0
+nOutDesc	:= 0
+nTotVenc	:= 0
+nTotDesc	:= 0
+nLiquido	:= 0
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Ira Executar Enquanto Estiver dentro do Escopo dos ParametrosЁ
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+While SRA->( !Eof() .and. Eval( &(cInicio) ) <= cFim )
+	
+	/*
+	здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Reinicializa Variaveis                                       Ё
+	юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	nValorAut := 0 ; nIRRFAut := 0 ; nINSSAut := 0
+	nOutVenc  := 0 ; nOutDesc := 0 ; nTotVenc := 0
+ 	nTotDesc  := 0 
+	
+	/*
+	здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Movimenta Regua Processamento                                Ё
+	юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	IncRegua()
+	
+	/*
+	здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Cancela Impresфo                                             Ё
+	юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	IF lEnd
+		@ Prow()+1,0 PSAY cCancel
+		Exit
+	EndIF
+	
+	/*
+	здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Consiste Parametrizacao do Intervalo de Impressao            Ё
+	юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	IF SRA->( Eval ( &(cExclui) ) )
+		dbSelectArea("SRA")
+		dbSkip()
+		Loop
+	EndIF
+	
+	cFilMat := SRA->( RA_FILIAL + RA_MAT )
+	
+	/*
+	зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	ЁConsiste Filiais e Acessos                                             Ё
+	юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	IF !( SRA->RA_FILIAL $ fValidFil() .and. Eval( cAcessaSRA ) )
+		dbSelectArea("SRA")
+		dbSkip()
+		Loop
+	EndIF
+	
+	/*
+	здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Carregando Informacoes das Verbas e da Filial                Ё
+	юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	IF SRA->RA_FILIAL != cFilialAnt
+		IF !Fp_CodFol(@aCodFol,SRA->RA_FILIAL) .or. !fInfo(@aInfo,SRA->RA_FILIAL)
+			/*
+			здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+			Ё Encerra o Loop se Nao Existir Cadastro de Verbas ou Filial   Ё
+			юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+			Exit
+		EndIF
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Descricao da Filial e do CGC                                 Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		cDesc_Fil	:= aInfo[3]
+		cLocal_FIl	:= aInfo[5]
+		cDesc_CGC	:= aInfo[8]
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Atualiza a Variavel cFilialAnt                               Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		dbSelectArea("SRA")
+		cFilialAnt := SRA->RA_FILIAL
+	EndIF
+	
+	/*
+	здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Recibo de Adiantamento ou Folha                              Ё
+	юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	IF nTipoRPA == 1 .or. nTipoRPA == 2
+		dbSelectArea("SRC")
+		dbSetOrder(1)
+		IF dbSeek( cFilMat , .T. )
+			While SRC->( !Eof() .and. RC_FILIAL + RC_MAT == cFilMat )
+				
+				/*
+				здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Cancela Impressao.                                           Ё
+				юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				IF lEnd
+					Exit
+				EndIF
+				
+				If !Eval(cAcessaSRC)
+					dbSkip()
+					Loop
+				EndIf
+				
+				/*
+				здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Verifica se a Semana Esta Dentro da Semana dos Parametros    Ё
+				юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				IF SRC->RC_SEMANA #cSemana
+					dbSelectArea("SRC")
+					dbSkip()
+					Loop
+				EndIF
+				
+				/*
+				здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Identificador de Calculo da Verba de Desconto do AdiantamentoЁ
+				юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				IF (nTipoRpa == 1) .and. (SRC->RC_PD == aCodFol[7,1])
+					nOutVenc := nOutVenc + SRC->RC_VALOR
+					/*
+					здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+					Ё Identificador de Calculo da Verba de I.R.R.F. Sobre o Adto.  Ё
+					юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				ElseIF (nTipoRpa == 1) .and. (SRC->RC_PD == aCodFol[12,1])
+					nIRRFAut := nIRRFAut + SRC->RC_VALOR
+					/*
+					здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+					Ё Identificador de Calculo da Verba de Arredondamento do Adto. Ё
+					юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				ElseIF (nTipoRpa == 1) .and. (SRC->RC_PD == aCodFol[8,1])
+					nOutVenc := nOutVenc + SRC->RC_VALOR
+				Else
+					/*
+					здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+					Ё Verifica as Verbas de Proventos que se Referem a AdiantamentoЁ
+					юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+					IF PosSrv( SRC->RC_PD , SRA->RA_FILIAL, "RV_TIPOCOD") == "1" //Proventos
+						IF (nTipoRpa != 1) .or. (nTipoRpa == 1 .and. PosSrv(SRC->RC_PD,SRA->RA_FILIAL,"RV_ADIANTA") == "S")
+							/*
+							здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+							Ё Identificador de Calculo da Verba de Pagamento de Autonomo.  Ё
+							юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+							IF SRC->RC_PD == aCodFol[218,1]
+								nValorAut := nValorAut + SRC->RC_VALOR
+							Else
+								/*
+								здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+								Ё Outros Vencimentos                                           Ё
+								юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+								nOutVenc := nOutVenc + SRC->RC_VALOR
+							EndIF
+						EndIF
+						/*
+						здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+						Ё Verifica as Verbas de Descontos que se Referem a AdiantamentoЁ
+						юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+					ElseIF PosSrv( SRC->RC_PD , SRA->RA_FILIAL, "RV_TIPOCOD") == "2" //Descontos
+						IF (nTipoRpa != 1) .or. (nTipoRpa == 1 .and. PosSrv(SRC->RC_PD,SRA->RA_FILIAL,"RV_ADIANTA") == "S")
+							/*
+							здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+							ЁIdentificadores de Calculo da Verba de IRRF,  do INSS AutonomoЁ
+							Ёdo INSS de Folha, Ferias e de 13o. Salario.                   Ё
+							юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+							IF SRC->RC_PD $ ( aCodFol[066,1] + "_" + aCodFol[222,1] + "_" + aCodFol[064,1] + "_" + aCodFol[065,1] + "_" + aCodFol[070,1] )
+								IF SRC->RC_PD == aCodFol[066,1]
+									nIRRFAut := nIRRFAut + SRC->RC_VALOR
+								Else
+									nINSSAut := nINSSAut + SRC->RC_VALOR
+								EndIF
+							Else
+								/*
+								здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+								ЁOutros Descontos                                              Ё
+								юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+								nOutDesc := nOutDesc + SRC->RC_VALOR
+							EndIF
+						EndIF
+					EndIF
+				EndIF
+				dbSelectArea("SRC")
+				dbSkip()
+			Enddo
+		EndIF
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Recibo de 1a. Parcela do 13o. Salario                        Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	ElseIF nTipoRpa == 3
+		dbSelectArea("SRC")
+		dbSetOrder(1)
+		IF dbSeek( cFilMat , .T. )
+			While  SRC->( !Eof() .and. RC_FILIAL + RC_MAT == cFilMat )
+				
+				/*
+				здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Cancela Impressao.                                           Ё
+				юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				IF lEnd
+					Exit
+				EndIF
+				
+				/*
+				здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Identificador de Calculo da 1a. Parcela do 13o. e Outros Ven.Ё
+				юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				IF SRC->RC_PD == aCodFol[22,1]
+					nOutVenc:= nOutVenc+ SRC->RC_VALOR
+				EndIF
+				
+				dbSelectArea("SRC")
+				dbSkip()
+			Enddo
+		EndIF
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Recibo da Segunda Parcela do 13o. Salario                    Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	ElseIF nTipoRpa == 4
+		dbSelectArea("SRI")
+		dbSetOrder(1)
+		IF dbSeek( cFilMat , .T. )
+			While SRI->( !Eof() .and. RI_FILIAL + RI_MAT == cFilMat )
+				
+				/*
+				здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Cancela Impressao.                                           Ё
+				юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				IF lEnd
+					Exit
+				EndIF
+				
+				If !Eval(cAcessaSRI)
+					dbSkip()
+					Loop
+				EndIf
+				
+				/*
+				здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Todas as Verbas de Proventos                                 Ё
+				юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				IF PosSrv( SRI->RI_PD , SRA->RA_FILIAL, "RV_TIPOCOD") == "1" //Proventos
+					/*
+					здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+					Ё Identificador de Calculo da Verba de Pagamento de Autonomo   Ё
+					юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+					IF SRI->RI_PD == aCodFol[218,1]
+						nValorAut := nValorAut + SRI->RI_VALOR
+					Else
+						nOutVenc := nOutVenc + SRI->RI_VALOR
+					EndIF
+					/*
+					здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+					Ё Todas as Verbas de Desconto                                  Ё
+					юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				ElseIF PosSrv( SRI->RI_PD , SRA->RA_FILIAL, "RV_TIPOCOD") == "2" //Descontos
+					/*
+					здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+					Ё Identificadores de Calculo da Verba de IRRF e de INSS 2a. ParЁ
+					Ё cela de 13o. Salario.                                        Ё
+					юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+					IF SRI->RI_PD $ ( aCodFol[071,1] + "_" + aCodFol[070,1] + "_" + aCodFol[222,1] )
+						IF SRI->RI_PD == aCodFol[071,1]
+							nIRRFAut := nIRRFAut + SRI->RI_VALOR
+						Else
+							nINSSAut := nINSSAut + SRI->RI_VALOR
+						EndIF
+					Else
+						nOutDesc := nOutDesc + SRI->RI_VALOR
+					EndIF
+				EndIF
+				dbSelectArea("SRI")
+				dbSkip()
+			Enddo
+		EndIF
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Valores Extras                                               Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	ElseIF nTipoRpa == 5
+		dbSelectArea("SR1")
+		dbSetOrder(1)
+		IF dbSeek( cFilMat , .T. )
+			While SR1->( !Eof() .and. R1_FILIAL + R1_MAT == cFilMat )
+				
+				/*
+				здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Cancela Impressao.                                           Ё
+				юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				IF lEnd
+					Exit
+				EndIF
+				
+				If !Eval(cAcessaSR1)
+					dbSkip()
+					Loop
+				EndIf
+				
+				/*
+				здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Verifica se a Semana Esta Dentro da Semana dos Parametros    Ё
+				юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				IF cSemana #"99"
+					IF SR1->R1_SEMANA #cSemana
+						dbSelectArea("SR1")
+						dbSkip()
+						Loop
+					EndIF
+				EndIF
+				
+				/*
+				здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Todos os Proventos                                           Ё
+				юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				IF PosSrv( SR1->R1_PD , SRA->RA_FILIAL, "RV_TIPOCOD") == "1" //Proventos
+					/*
+					здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+					Ё Identificador de Calculo da Verba de Pagamento de Autonomo   Ё
+					юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+					IF SR1->R1_PD == aCodFol[218,1]
+						nValorAut := nValorAut + SR1->R1_VALOR
+					Else
+						nOutVenc := nOutVenc + SR1->R1_VALOR
+					EndIF
+					/*
+					здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+					Ё Todos os Descontos                                           Ё
+					юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				ElseIF PosSrv( SR1->R1_PD , SRA->RA_FILIAL, "RV_TIPOCOD") == "2" //Descontos
+					nOutDesc := nOutDesc + SR1->R1_VALOR
+				EndIF
+				dbSelectArea("SR1")
+				dbskip()
+			Enddo
+		EndIF
+	EndIF
+	
+	nTotVenc := nValorAut + nOutVenc
+	nTotDesc := nIRRFAut  + nINSSAut + nOutDesc
+	
+	nLiquido := Max( nTotVenc - nTotDesc , 0 )
+	
+	/*
+	здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Se Nao Tiver Valores a Imprimir, Salta Para o Proximo RegitroЁ
+	юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	dbSelectArea("SRA")
+	IF nTotVenc == 0 .and. nTotDesc == 0
+		dbSkip()
+		Loop
+	EndIF
+	
+	/*
+	здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Numeracao do Recibo                                          Ё
+	юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	IF cNumAnt != cNumRpa
+		cNumRpa := StrZero( Val(cNumRpa) + 1 , 10 )
+	EndIF
+	
+	/*
+	здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Imprime os Recibos de Autonomo                               Ё
+	юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	fImpRPA()
+	
+	/*
+	здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Proximo Registro                                             Ё
+	юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	dbSelectArea("SRA")
+	dbSkip()
+	cNumAnt := ""
+Enddo
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Grava o Ultimo Numero Impresso no SX1                        Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+dbSelectArea( "SX1" )
+dbSetOrder(1)
+IF dbSeek( cPerg + "13" )
+	RecLock("SX1",.F.,.T.)
+	SX1->X1_CNT01 := cNumRpa
+	MsUnlock()
+EndIF
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Seleciona arq. defaut do Siga caso Imp. Mov. Anteriores      Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+If !lAtual
+	fFimArqMov( cAliasMov , aOrdBag , cArqMov )
+EndIf
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Restaura a Ordem Primaria dos Indices.                       Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+dbSelectArea("SR1") ; dbSetOrder(1)
+dbSelectArea("SRC") ; dbSetOrder(1)
+dbSelectArea("SRI") ; dbSetOrder(1)
+dbSelectArea("SRA") ; dbSetOrder(1)
+
+IF aReturn[5] == 1
+	Set Printer To
+	dbCommit()
+	OurSpool(WnRel)
+EndIF
+
+MS_FLUSH()
+
+/*
+зддддддддддбддддддддддбдддддддбдддддддддддддддддддддддбддддддбдддддддддд©
+ЁFun┤└o    ЁfImpRPA   Ё Autor ЁMarinaldo de Jesus     Ё Data Ё02/06/2000Ё
+цддддддддддеддддддддддадддддддадддддддддддддддддддддддаддддддадддддддддд╢
+ЁDescri┤└o ЁImprime Recibo de Pagamento de Autonomo                     Ё
+юддддддддддадддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+Static Function fImpRPA()
+
+Local nCarCH
+Local nPosRpa
+
+aImpRpa		:= {}
+nColunas	:= IF(nTamanho == "P" , 80 , IF( nTamanho == "G", 220 , 132) )
+cRet1		:= ""
+cRet2		:= ""
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Extraindo o Extenso do Liquido.                              Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+cExtenso	:= Extenso(nLiquido,.F.,1 )
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Separando o Extenso para impressao em 2 Linhas.              Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+SepExt(cExtenso,43,80,@cRet1,@cRet2)
+
+cRet1 := IF( !Empty(cRet1), "(" + cRet1 , cRet1 )
+cRet1 := IF( !Empty(cRet1) .and. Len(AllTrim(cRet1)) < 43 .and. Empty(cRet2), AllTrim(cRet1) + ")",cRet1)
+cRet2 := IF( !Empty(cRet2), AllTrim(cRet2) + ".****)" , cRet2 )
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Carrega a Mascara do Recibo.                                 Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+//                                  10        20        30        40        50        60        70        80
+//                          12345678901234567890123456789012345678901234567890123456789012345678901234567890
+aAdd( aImpRpa, STR0011 ) //'       RECIBO DE PAGAMENTO DE AUTONOMO  - RPA     +-------- No.RECIBO ---------+' 01
+aAdd( aImpRpa, STR0012 ) //'                                                  |                            |' 02
+aAdd( aImpRpa, STR0013 ) //'+-------------------------------------------------+----------------------------+' 03
+aAdd( aImpRpa, STR0014 ) //'| NOME OU RAZAO SOCIAL DA EMPRESA                 |   MATRICULA (GCG ou INSS)  |' 04
+aAdd( aImpRpa, STR0015 ) //'|                                                 |                            |' 05
+aAdd( aImpRpa, STR0016 ) //'+-------------------------------------------------+----------------------------+' 06
+aAdd( aImpRpa, STR0017 ) //'           RECEBI DA EMPRESA ACIMA IDENTIFICADA, PELA PRESTACAO DOS SERVICOS  DE' 07
+aAdd( aImpRpa, STR0018 ) //'                                                                                ' 08
+aAdd( aImpRpa, STR0019 ) //'A IMPORTANCIA DE:                                                               ' 09
+aAdd( aImpRpa, STR0020 ) //'                                                                                ' 10
+aAdd( aImpRpa, STR0021 ) //'+--------- NUMERO DE INSCRICAO ---------+ ESPECIFICACAO:                        ' 11
+aAdd( aImpRpa, STR0022 ) //'| NO INSS :                             | I VALOR DO SERVICO.....               ' 12
+aAdd( aImpRpa, STR0023 ) //'| NO CPF  :                             | II OUTROS..............               ' 13
+aAdd( aImpRpa, STR0024 ) //'+------------- IDENTIDADE --------------+      SOMA..............               ' 14
+aAdd( aImpRpa, STR0025 ) //'| NUMERO :                              |                                       ' 15
+aAdd( aImpRpa, STR0026 ) //'| ORGAO EMISSOR :          UF :         | DESCONTOS:                            ' 16
+aAdd( aImpRpa, STR0027 ) //'+-------------- ENDERECO ---------------+ III  I.R.R.F...........               ' 17
+aAdd( aImpRpa, STR0028 ) //'|                                       | IV   INSS..............               ' 18
+aAdd( aImpRpa, STR0029 ) //'|                                       | V    OUTROS............               ' 19
+aAdd( aImpRpa, STR0030 ) //'|                                       |                                       ' 20
+aAdd( aImpRpa, STR0031 ) //'|                                       | VALOR LIQUIDO..........               ' 21
+aAdd( aImpRpa, STR0032 ) //'+------- LOCALIDADE -------+--- DATA ---+ +------------ ASSINATURA ------------+' 22
+aAdd( aImpRpa, STR0033 ) //'|                          |            | |                                    |' 23
+aAdd( aImpRpa, STR0034 ) //'+--------------------------+------------+ +------------------------------------+' 24
+aAdd( aImpRpa, STR0035 ) //'C.CUSTO:                                  +----------- NOME COMPLETO ----------+' 25
+aAdd( aImpRpa, STR0036 ) //'                                          |                                    |' 26
+aAdd( aImpRpa, STR0037 ) //'                                          +------------------------------------+' 27
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Inclui as Informacoes da Empresa/Autonomo                    Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+For nPosRpa := 1 To Len(aImpRpa)
+	
+	IF nPosRpa == 2
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Numero do Recibo.                                  Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 69 , Len(cNumRpa) , cNumRpa )
+	ElseIF nPosRpa == 4 .And. cPaisLoc != "BRA"
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Configura o titulo como RUC.                                 Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/            
+		IF SRA->( FieldPos("RA_SERVICO") != 0 )
+			cString := RetTitle("RA_CIC",5)+"/"+RetTitle("RA_SERVICO",5)+")"
+		Else
+			cString := RetTitle("RA_CIC",5)+")"
+		EndIf
+		
+        If Len(cString) < 12
+        	cString := cString+Space(12-Len(cString))
+        EndIf
+      	nTam := Len(cString)
+
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 66 , nTam, cString)
+	ElseIF nPosRpa == 5
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Nome da Empresa                                    Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 03 , Len(AllTrim( cDesc_Fil) ) , AllTrim( cDesc_Fil ) )
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o CGC da Empresa                                     Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		If cPaisLoc != "BRA"
+			cString := Transform(cDesc_CGC, PesqPict("SA1","A1_CGC"))
+			
+	        If Len(cString) < 17
+	        	cString := cString+Space(17-Len(cString))
+	        EndIf
+	      	nTam := Len(cString)
+
+			aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 61 , nTam , cString )
+		Else
+			aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 61 , Len(Transform(cDesc_CGC, "@R ##.###.###/####-##")) , Transform(cDesc_CGC, "@R ##.###.###/####-##") )
+		EndIf
+	ElseIF nPosRpa == 08
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Se Existir o Campo no Cadastro de Funcionarios, Carrega a DesЁ
+		Ё cricao do Tipo de Servico Prestado.(Tipo Caract., Tamanho 80)Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		IF SRA->( FieldPos("RA_SERVICO") != 0 )
+			aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 02 , Len(AllTrim(SRA->RA_SERVICO) ) , AllTrim(SRA->RA_SERVICO ) )
+		EndIF
+	ElseIF nPosRpa == 09
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Valor Liquido                                      Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 19 , Len(AllTrim(STR0038))  , AllTrim(STR0038) )
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 22 , Len(TransForm(nLiquido, "@E 999,999,999.99")) , TransForm(nLiquido, "@E 999,999,999.99") )
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Extenso (1a. Linha)                                Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 36 , Len( cRet1 ) , cRet1 )
+	ElseIF nPosRpa == 10
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Extenso (2a. Linha)                                Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 03 , Len( cRet2 ) , cRet2 )
+	ElseIF nPosRpa == 12
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Numero de Inscricao no INSS (Autonomo)             Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		IF SRA->( FieldPos("RA_NUMINSC") != 0 ) .And. !Empty(SRA->RA_NUMINSC)
+			aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 13 , Len(TransForm(SRA->RA_NUMINSC, "@R 9999.9999.999")) , TransForm(SRA->RA_NUMINSC, "@R 9999.9999.999") )
+		Else
+			aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 13 , Len(TransForm(SRA->RA_PIS, "@R 9999.9999.999")) , TransForm(SRA->RA_PIS, "@R 9999.9999.999") )
+		EndIF
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Valor da Prestacao de Servico                      Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		If cPaisLoc != "BRA"
+			IF SRA->( FieldPos("RA_SERVICO") != 0 )
+				aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 06 , 06, RetTitle("RA_SERVICO",5)+":" )
+			Else
+				aImpRpa[nPosRpa] := StrTran( aImpRpa[nPosRpa], SubStr(aImpRpa[nPosRpa],2,10), Space(10) )
+			EndIf
+		EndIf
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 66 , Len(TransForm(nValorAut, "@E 999,999,999.99")) , TransForm(nValorAut, "@E 999,999,999.99") )
+	ElseIF nPosRpa == 13
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Numero do CPF do Autonomo                          Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		If cPaisLoc <> "BRA"
+			aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 06 , 06, RetTitle("RA_CIC",5)+":" )
+			cString := TransForm(SRA->RA_CIC, PesqPict("SRA","RA_CIC"))
+			If Len(cString) < 14
+				cString := cString+Space(14-Len(cString))
+			EndIf
+			nTam := Len(cString)
+			
+			aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 13 , nTam , cString )
+		Else
+			aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 13 , Len(TransForm(SRA->RA_CIC, "@R 999.999.999-99")) , TransForm(SRA->RA_CIC, "@R 999.999.999-99") )
+		EndIf
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Valor de Outros Vencimentos                        Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 66 , Len(TransForm(nOutVenc, "@E 999,999,999.99")) , TransForm(nOutVenc, "@E 999,999,999.99") )
+	ElseIF nPosRpa == 14
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega a Soma dos Vencimentos                               Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 66 , Len(TransForm(nTotVenc, "@E 999,999,999.99")) , TransForm(nTotVenc, "@E 999,999,999.99") )
+	ElseIF nPosRpa == 15
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Numero do RG do Autonomo                           Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 13 , Len(TransForm(SRA->RA_RG, "@R 999.999.999-99")) , TransForm(SRA->RA_RG, "@R 999.999.999-99") )
+	ElseIF nPosRpa == 16
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		ЁSe Existir o Campo RA_ORGEMRG, no Cadastro de Funcionarios,CarЁ
+		Ёrega o Orgao Emissor do RG e a U.F.(Tipo Caracter, Tam 05)    Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		IF SRA->( FieldPos("RA_ORGEMRG") != 0 ) .And. !Empty(SRA->RA_ORGEMRG)
+			aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 19 , Len(Subst(SRA->RA_ORGEMRG,1,3)) , Subst(SRA->RA_ORGEMRG,1,3) )
+			aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 33 , Len(Subst(SRA->RA_ORGEMRG,4,2)) , Subst(SRA->RA_ORGEMRG,4,2) )
+		Else
+			aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 19 , Len(TransForm(SRA->RA_RGORG, "@R 999")) , SRA->RA_RGORG )
+
+			If SRA->( FieldPos("RA_RGUF") != 0 ) .And. !Empty(SRA->RA_RGUF)
+				aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 33 , Len(TransForm(SRA->RA_RGUF, "@R 99")) , SRA->RA_RGUF )
+			Endif
+		EndIF
+	ElseIF nPosRpa == 17
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Valor do I.R.R.F.                                  Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		If cPaisLoc != "BRA"
+			aImpRpa[nPosRpa] := StrTran( aImpRpa[nPosRpa], SubStr(aImpRpa[nPosRpa],48,18), Replicate(".",18) )
+		EndIf
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 66 , Len(TransForm(nIRRFAut, "@E 999,999,999.99")) , TransForm(nIRRFAut, "@E 999,999,999.99") )
+	ElseIF nPosRpa == 18
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Endereco do Funcionario                            Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 03 , Len(AllTrim(SRA->RA_ENDEREC)) , AllTrim(SRA->RA_ENDEREC) )
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Valor do INSS de Autonomos                         Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		If cPaisLoc != "BRA"
+			aImpRpa[nPosRpa] := StrTran( aImpRpa[nPosRpa], SubStr(aImpRpa[nPosRpa],48,18), Replicate(".",18) )
+		EndIf
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 66 , Len(TransForm(nINSSAut, "@E 999,999,999.99")) , TransForm(nINSSAut, "@E 999,999,999.99") )
+	ElseIF nPosRpa == 19
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Complemento do Endereco do Funcionario             Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 03 , Len(AllTrim(SRA->RA_COMPLEM)) , AllTrim(SRA->RA_COMPLEM) )
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Valor de Outros Descontos                          Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 66 , Len(TransForm(nOutDesc, "@E 999,999,999.99")) , TransForm(nOutDesc, "@E 999,999,999.99") )
+	ElseIF nPosRpa == 20
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Bairro do Funcionario                              Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 03 , Len(AllTrim(SRA->RA_BAIRRO)) , AllTrim(SRA->RA_BAIRRO) )
+	ElseIF nPosRpa == 21
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega a Cidade do Funcionario                              Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 03 , Len(AllTrim(SRA->RA_MUNICIP)) , AllTrim(SRA->RA_MUNICIP) )
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Valor Liquido                                      Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 66 , Len(TransForm(nLiquido, "@E 999,999,999.99")) , TransForm(nLiquido, "@E 999,999,999.99") )
+	ElseIF nPosRpa == 23
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Local                                              Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 03 , Len(AllTrim(cLocal_Fil)) , AllTrim(cLocal_Fil) )
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Data                                               Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 30 , Len(Dtoc(dDataRef)) , Dtoc(dDataRef) )
+	ElseIF nPosRpa == 25
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Codigo do Centro de Custo                          Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 13 , Len(AllTrim(SRA->RA_CC)) , AllTrim(SRA->RA_CC) )
+	ElseIF nPosRpa == 26
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega a Descricao do Centro de Custo                       Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		cDesc_CC := fDesc("SI3",SRA->RA_CC,"I3_DESC")
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 03 , Len(AllTrim(cDesc_CC)) , AllTrim(cDesc_CC) )
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega o Nome do Funcionario                                Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		aImpRpa[nPosRpa] := Stuff( aImpRpa[nPosRpa], 45 , Len(AllTrim(SRA->RA_NOME)) , AllTrim(SRA->RA_NOME)   )
+	EndIF
+	
+Next nPosRpa
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Imprime o Recibo                                             Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+@ Li, 00 PSAY AvalImp( nColunas ) 
+For nCarCH := 1 To Len(aImpRpa)
+	
+	/*
+	здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Cancela Impresфo ao se pressionar <ALT> + <A>                Ё
+	юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	IF lEnd == .T.
+		Exit
+	EndIF
+	
+	/*
+	здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Impressao do Recibo                                          Ё
+	юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	Li := Li + 1
+	@ Li, 00 PSAY aImpRpa[nCarCH]
+	
+Next nCarCH
+
+Li := Li + 2
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Imprime o Separador de Recibo ou Reinicializa Li             Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+IF Li == 29
+	@ Li, 00 PSAY Replicate("-",nColunas)
+	Li := Li + 1
+Else
+	Li := 0
+EndIF
+
+Return

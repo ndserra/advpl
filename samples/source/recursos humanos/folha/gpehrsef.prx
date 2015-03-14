@@ -1,0 +1,1531 @@
+#INCLUDE "PROTHEUS.CH"
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³GPEHRSEF  º Autor ³ Equipe RH          º Data ³  19/01/06   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDescricao ³ Codigo gerado pelo AP6 IDE.                                º±±
+±±º          ³ 91797                                                      º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºPedro Eloy³ Criada a implementação da rotina de horas efetivas, buscando±±
+±±º24/03/06  ³ a tabela SPI(Banco de horas) - Ponto e acumulando na verba  ±±
+±±º			 ³ escolhida no parametro do pergunte. Gerando por Mat+CCusto. ±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±ºPedro Eloy³ Transferencia de funcionario dentro do periodo.             ±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±ºPedro Eloy³ Ajuste na consulta do F3 da pergunte filial de/ate.         ±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±ºPedro Eloy³ Despreza a categoria do funcionario, caso nao selecionado.  ±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±ºPedro Eloy³ Feita inclusao de uma pergunta para permitir a inclusao     ±±
+±±º05/04/06  ³ na soma de uma verba quando for categoria comissionado.     ±±
+±±ºRenata    ³ Colocada mensagem de aviso para que o usuario saiba que esta±±
+±±º13/02/08  ³ rotina não necessita ser executa para ano-base inferior     ±±
+±±º          ³ 2006.                                                       ±±
+±±³Reginaldo ³17/08/09³020733³Ajuste no Grupo de Campos filial            ³±±
+±±³          ³        ³ /2009³tratamento para não considerar 2 posições   ³±±
+±±³          ³        ³      ³fixas.                                      ³±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP6 IDE                                                    º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+User Function GPEHRSEF()
+Local nOpca 		:= 	0
+Local aSays			:=	{ }
+Local aButtons		:= 	{ } //<== arrays locais de preferencia
+Local aRegs	   		:= 	{ }
+Local cPerg			:= 	"GPEHEF"
+Local nCont			:= 0
+
+Private cString 	:= 	"SRA"
+Private lAbortPrint := 	.F.
+Private cAnoPar		:= ""
+
+If Aviso("Atencao","Esta rotina NAO necessita ser executada a partir do ano base 2006. ", {"Continua","Cancela"})==2
+	Return
+EndIf
+
+cCadastro := OemToAnsi("Processamento para a geracao das horas efetivas.")
+
+//+--------------------------------------------------+
+//³ mv_par01  - Filial De                            ³
+//³ mv_par02  - Filial Ate                           ³
+//³ mv_par03  - Centro de Custo De                   ³
+//³ mv_par04  - Centro de Custo Ate                  ³  
+//³ mv_par05  - Matricula De                         ³
+//³ mv_par06  - Matricula Ate                        ³
+//³ mv_par07  - Turno de                             ³
+//³ mv_par08  - Turno ate                            ³
+//³ mv_par09  - Ano de processamento                 ³
+//³ mv_par10  - Somar Banco de horas (S/N)           ³
+//³ mv_par11  - Verba de horas efetiva do banco de H.³
+//³ mv_par12  - Categoria                            ³
+//³ mv_par13  - Verbas Comissionado                  ³
+//+--------------------------------------------------+
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³           Grupo  Ordem Pergunta Portugues   Pergunta Espanhol       Pergunta Ingles         Variavel 	Tipo  Tamanho Decimal Presel  GSC   Valid                 Var01     	 Def01      DefSPA1      DefEng1      Cnt01          					  Var02  Def02    DefSpa2  DefEng2	Cnt02  Var03 Def03  DefSpa3 DefEng3 Cnt03  Var04  Def04  DefSpa4    DefEng4  Cnt04 		 Var05  Def05  DefSpa5 DefEng5   Cnt05  	XF3  GrgSxg   cPyme   aHelpPor  aHelpEng	 aHelpSpa    cHelp      ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+aAdd(aRegs,{cPerg,"01","Filial de           ?","¨De Sucursal        ?","From Branch        ?","mv_ch1","C",FWGETTAMFILIAL,0,0,"G","Naovazio"		,"mv_par01",""				,"","","","","","","","","","","","","","","","","","","","","","","","XM0","" })
+aAdd(aRegs,{cPerg,"02","Filial at‚          ?","¨A  Sucursal        ?","To Branch          ?","mv_ch2","C",FWGETTAMFILIAL,0,0,"G","Naovazio"		,"mv_par02",""				,"","","","","","","","","","","","","","","","","","","","","","","","XM0","" })
+aAdd(aRegs,{cPerg,"03","Matricula De        ?","¨De Matricula       ?","From Registration  ?","mv_ch3","C",06,0,0,"G","Naovazio"		,"mv_par03",""				,"","","000000","","","","","","","","","","","","","","","","","","","","","SRA","" })
+aAdd(aRegs,{cPerg,"04","Matricula At‚       ?","¨A  Matricula       ?","To Registration    ?","mv_ch4","C",06,0,0,"G","Naovazio"		,"mv_par04",""				,"","","999999","","","","","","","","","","","","","","","","","","","","","SRA","" })
+aAdd(aRegs,{cPerg,"05","Centro de Custo De  ?","¨De Centro de Costo ?","From Cost Center   ?","mv_ch5","C",09,0,0,"G","Naovazio"		,"mv_par05",""				,"","","000000000","","","","","","","","","","","","","","","","","","","","","SI3","" })
+aAdd(aRegs,{cPerg,"06","Centro de Custo At‚ ?","¨A  Centro de Costo ?","To   Cost Center   ?","mv_ch6","C",09,0,0,"G","Naovazio"		,"mv_par06",""				,"","","999999999","","","","","","","","","","","","","","","","","","","","","SI3","" })
+aAdd(aRegs,{cPerg,"07","Turno De            ?","¨Turno De           ?","Turno De           ?","mv_ch7","C",03,0,0,"G","Naovazio"		,"mv_par07",""				,"","","","","","","","","","","","","","","","","","","","","","","","SR6","" })
+aAdd(aRegs,{cPerg,"08","Turno Ate           ?","¨Turno Ate          ?","Turno Ate          ?","mv_ch8","C",03,0,0,"G",""				,"mv_par08",""				,"","","","","","","","","","","","","","","","","","","","","","","","SR6","" })
+aAdd(aRegs,{cPerg,"09","Ano processamento   ?","¨Ano processamento 	?","Ano processamento  ?","mv_ch9","C",04,0,0,"G","Naovazio"		,"mv_par09",""				,"","","","","","","","","","","","","","","","","","","","","","","","","" })
+aAdd(aRegs,{cPerg,"10","Somar Banco de Horas?","¨Somar Banco de Hora?","Somar Banco de Horas","mv_chA","N",01,0,0,"C","Naovazio"		,"mv_par10","Sim"			,"","","","","Nao","","","","","","","","","","","","","","","","","","","","" })
+aAdd(aRegs,{cPerg,"11","Verba H.Efet.B.Horas?","¨Verba H.Efet.B.Hora?","Verba H.Efet.B.Horas","mv_chB","C",03,0,0,"G",""		        ,"mv_par11",""				,"","","","","","","","","","","","","","","","","","","","","","","","SRV","" })
+aAdd(aRegs,{cPerg,"12","Categorias          ?","¨Categorias         ?","Categories         ?","mv_chC","C",15,0,0,"G","fCategoria"		,"mv_par12",""				,"","","","","","","","","","","","","","","","","","","","","","","","","S","",{},{},{},".RHCATEG."})
+aAdd(aRegs,{cPerg,"13","Verbas Comissionado ?","¨Verbas Comissionado?","Verbas Comissionado ","mv_chD","C",30,0,0,"G","fVerbas()"		,"mv_par13",""				,"","","","","","","","","","","","","","","","","","","","","","","","","" })
+
+ValidPerg(aRegs,cPerg,.F.)
+
+Pergunte(cPerg,.F.)
+
+AADD(aSays,OemToAnsi("Processa os funcionarios buscando o acumulado,") )
+AADD(aSays,OemToAnsi("gerando verba com a horas efetivas.") )   
+AADD(aSays,OemToAnsi("Esta rotina NAO devera ser executada a partir") )   
+AADD(aSays,OemToAnsi("do ano base 2006.") )   
+
+AADD(aButtons, { 5,.T.,{|| Pergunte(cPerg,.T. ) } } )
+AADD(aButtons, { 1,.T.,{|o| nOpca := 1,FechaBatch() }} )
+AADD(aButtons, { 2,.T.,{|o| FechaBatch() }} )
+
+FormBatch( cCadastro, aSays, aButtons )
+
+cFilDe			:= mv_par01
+cFilAte			:= mv_par02
+cMatDe			:= mv_par03
+cMatAte			:= mv_par04
+cCcDe			:= mv_par05
+cCcAte			:= mv_par06
+cTurnoDe		:= mv_par07
+cTurnoAte		:= mv_par08
+cAnoPar			:= mv_par09
+cVerbaBH		:= mv_par11
+cCategoria		:= mv_par12
+
+cVerbasComis 	:= ""
+cCodigos		:= Alltrim(mv_par13)
+cVerbaOutras	:= ""             
+
+For nCont := 1 To Len(cCodigos) Step 3
+	cVerbasComis 	+= Substr(cCodigos,nCont,3)+"/"
+	cVerbaOutras	+= Substr(cCodigos,nCont,3)+If(nCont+4>Len(cCodigos),"","','")
+Next nCont
+
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros 						        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+IF nOpca == 1
+	Processa({|lEnd| GPEHEFProc(),"Processando a tabela de Acumulados "}) 
+Endif
+
+
+Return
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºFun‡„o    ³RUNREPORT º Autor ³ AP6 IDE            º Data ³  19/01/06   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDescri‡„o ³ Funcao auxiliar chamada pela RPTSTATUS. A funcao RPTSTATUS º±±
+±±º          ³ monta a janela com a regua de processamento.               º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Programa principal                                         º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+
+Function GPEHEFProc()
+
+Local cAcessaSRA		:= &( " { || " + IF( Empty( cAcessaSRA := ChkRH( "GPEHRSEF" , "SRA" , "1" ) ) , ".T." , cAcessaSRA ) + " } " )
+Local cFilAnte			:= replicate("!", FWGETTAMFILIAL)
+Local _aGuardaCompMes	:= {}
+Local cPagFunc			:= ""
+Local cCatFunc			:= ""
+Local nCont				:= 0
+Local cVerbaNova  		:= ""
+Local cMenor			:= cAnoPar+"01"
+Local cMaior			:= cAnoPar+"12"
+Local cChave            := ""
+Local cVerbas			:= ""
+Local aStruSRD  		:= {}      //Estrutura da Query
+Local cAliasSRD 		:= "SRD"
+Local cDataArq			:= "!!!!!!"
+Local cSemanaArq		:= "!!"
+Local nPosHEf			:= 0
+Local nHorasEfet		:= 0
+Local nEfetTrab			:= 0
+Local nEfetDsr			:= 0
+Local aFunc				:= {}
+Local lQuery    		:= .F. 		// Indica se a query foi executada
+Local Normal   			:= 0
+Local Descanso 			:= 0
+Local aCodFol   		:= {}	   // Matriz com Codigo da folha
+Local dDataRef               
+Local cDiasMes			:= GetMv("MV_DIASMES")
+Local aPeriodo			:= {}
+Local nUltDia			:= 0
+Local nHorDsr			:= 0
+Local nHorTrab			:= 0
+Local DiasTrab			:= 0 	//-- Dias Trabalhados
+Local DiasDsr			:= 0 	//-- Dias de DSR
+Local SDiasTrab			:= 0 	//-- Dias Trabalhados na Semana
+Local SDiasDsr			:= 0 	//-- Dias de DSR na Semana
+Local dDtPesq			:= ""
+Local aStruRCF  		:= {}      //Estrutura da Query
+Local nVezMex			:= 0
+Local nTagComis			:= 0
+Local cFaltaMes			:= ""
+Local lFirstMes			:= .T.      
+Local lFirstCalen		:= .T.
+Local aLog				:= {}
+Local aTitle			:= {}
+Local aComVerba			:= {}
+Local aSemVerba			:= {}
+Local nX
+Local nAux				:= 0
+Local aHorasBH			:= {}
+
+// VARIAVEIS PARA A FUNCAO FDTRABDSR()
+Private aSemanas		:= {}
+Private cSemana			:= ""
+
+If  "8.11" $ cVersao
+	// Verificar os periodos dos meses
+	lRetorno := U_ChekPer()
+	
+	If !lRetorno
+	    Return
+	Endif
+Endif
+
+
+dbSelectArea( "SRA" )
+dbGotop()	
+ProcRegua( SRA->(RecCount()) )                  
+
+While !Eof()     
+
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Aborta o Calculo                                  	 	     ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If lAbortPrint
+		Break
+	Endif
+	
+	/*
+	ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	³Consiste Filiais e Acessos                                             ³
+	ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+	IF !( SRA->RA_FILIAL $ fValidFil() ) .or. !Eval( cAcessaSRA )
+		dbSelectArea("SRA")
+		dbSkip()
+		Loop
+	EndIF
+
+	If SRA->RA_FILIAL < cFilDe .Or. SRA->RA_FILIAL > cFilAte
+		dbSelectArea("SRA")
+		dbSkip()
+		Loop
+	Endif
+
+	If SRA->RA_MAT < cMatDe .Or. SRA->RA_MAT > cMatAte
+		dbSelectArea("SRA")
+		dbSkip()
+		Loop
+	Endif
+
+	If SRA->RA_CC < cCcDe .Or. SRA->RA_CC > cCcAte
+		dbSelectArea("SRA")
+		dbSkip()
+		Loop
+	Endif
+
+	If SRA->RA_TNOTRAB < cTurnoDe .Or. SRA->RA_TNOTRAB > cTurnoAte
+		dbSelectArea("SRA")
+		dbSkip()
+		Loop
+	Endif
+
+	If SRA->RA_ADMISSA > cTod("31/12/"+cAnoPar)
+		dbSelectArea("SRA")
+		dbSkip()
+		Loop
+	Endif
+
+	If !Empty(SRA->RA_DEMISSA) .and. ;
+		( SRA->RA_DEMISSA < cTod("01/01/"+cAnoPar) )
+		dbSelectArea("SRA")
+		dbSkip()
+		Loop
+	EndIf
+
+    // Despreza caso não for a categoria selecionada.
+	If !(SRA->RA_CATFUNC $ cCategoria )
+		dbSelectArea("SRA")
+		dbSkip()
+		Loop
+	EndIf
+
+
+	IncProc( SRA->RA_FILIAL + " - " + SRA->RA_MAT + " - " + SRA->RA_NOME )		
+
+	cFilAnt	:= SRA->RA_FILIAL
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Quebra de Filial					   	 				     ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If cFilAnte # SRA->RA_FILIAL
+		_aGuardaCompMes	:=	{} 			
+		cFilAnte := SRA->RA_FILIAL            
+		
+		If  !("8.11" $ cVersao)  // versao nao 8.11
+
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³ Parametro Composicao do Mes        			 			     ³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+			For nCont:= 1 to 12
+				Ef_CompMes(@Normal,@Descanso,cAnoPar+StrZero(nCont,2))
+				Aadd(_aGuardaCompMes,{cAnoPar,Alltrim(StrZero(nCont,2)),Normal,Descanso})
+			Next
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³ Checa Composicao dos Meses         			 			     ³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+			cFaltaMes   := ""  
+			lFirstMes   := .T.
+			For nCont:= 1 to len(_aGuardaCompMes)
+				If Empty(_aGuardaCompMes[nCont][3])						
+					If lFirstMes
+						cFaltaMes += _aGuardaCompMes[nCont][2] + "/" + cAnoPar
+						lFirstMes := .F.
+					Else
+						cFaltaMes += ", " + _aGuardaCompMes[nCont][2] + "/" + cAnoPar
+					Endif
+				Endif							
+			Next
+			If !(cFaltaMes == "")
+				Alert(oEmToAnsi("Não foi encontrada a composição do mês dos seguintes períodos: ") + Chr(13) + cFaltaMes + Chr(13) + "Acesse a opção PARÂMETROS e efetue o cadastro das horas normais e de repouso para o(s) período(s) citado(s)." )
+				Exit
+			Endif
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³ Carrega Variaveis Codigos da Folha							 ³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+			If !FP_CODFOL(@aCodFol,SRA->RA_FILIAL)
+				Exit
+			Endif
+						
+    	Endif
+
+		If "8.11" $ cVersao
+			FP_CODFOL(@aCodFol,SRA->RA_FILIAL)
+		Endif
+
+		If Empty(aCodFol[624,1])
+			Alert(oEmtoAnsi("Não foi encontrada a verba com identificador de cálculo 624."))
+			Exit
+		Endif
+
+		cVerbaNova	:=  PosSrv(aCodFol[624,1],SRA->RA_FILIAL,"RV_COD" )
+		cInssVb		:= 	PosSrv(aCodFol[624,1],SRA->RA_FILIAL,"RV_INSS" )
+		cIrVb		:= 	PosSrv(aCodFol[624,1],SRA->RA_FILIAL,"RV_IR" )
+		cFGTSVb		:=	PosSrv(aCodFol[624,1],SRA->RA_FILIAL,"RV_FGTS" )
+			
+	Endif
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿               
+	//³ Parametro Composicao do Mes        			 			     ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+	Begin Sequence
+
+		If "8.11" $ cVersao
+				
+			For nCont:= 1 to 12
+				DiasTrab  :=0
+				nHorDsr   :=0
+				nHorTrab  :=0
+				lFirstCalen := .T.			       
+				nVezMes	  := If (SRA->RA_TIPOPGT ==  "S", 5, 1)
+				For nVezMex := 1 To nVezMes
+					cSemana := If(nVezMes > 1, strzero(nVezMex,2), " ")
+					If !( ;
+							XFTrabCalen(;
+							    cTod("01/"+StrZero(nCont,2)+"/"+cAnoPar),;		//-- data de Referencia
+			               		@DiasTrab								,;		//-- Dias Trabalhados
+			               		0										,;		//-- Dias Nao Trabalhados
+			               		@DiasDsr		  						,;		//-- Dias de DSR
+			               		0      		  							,;		//-- Dias Nao Uteis de Vale Transporte 
+			               		0      		 							,;		//-- Dias uteis de Vale Transporte 
+			               		0      		 							,; 		//-- Dias de Diferenca de Vale Transporte
+			               		@nHorDsr	 							,;		//-- Qtde de Horas de DSR
+			               		@nHorTrab	 							,;		//-- Qtde de HoraS Trabalhadas 
+			               		0      		 							,;		//-- Dias de Vale Refeicao 
+			               		0      		 							,;		//-- Dias totais de V.T. Dias Uteis 
+			               		0      		 							,;		//-- Dias totais de V.T. Dias Nao uteis 
+			               		cSemana		  					 		);   	//( se muda a semana )
+			    		) .and. lFirstCalen
+
+							If SRA->RA_TIPOPGT ==  "S"
+								aAdd( aSemVerba , { SRA->RA_FILIAL , SRA->RA_MAT , SRA->RA_NOME , cCatFunc , oemtoansi("Funcionário com pagto semanal - cadastro de semanas incompleto no período.") } )		
+							Else
+								aAdd( aSemVerba , { SRA->RA_FILIAL , SRA->RA_MAT , SRA->RA_NOME , cCatFunc , oemtoansi("Cadastro de períodos incompleto.") } )		
+							Endif
+							
+							Break
+							
+			    	Endif
+			        
+					lFirstCalen := .F.
+					nPos := Ascan(_aGuardaCompMes,{ |X| x[1]+x[2] == cAnoPar+strZero(nCont,2) })
+					If nPos > 0
+						_aGuardaCompMes[nPos,3] := nHorTrab
+						_aGuardaCompMes[nPos,4] := nHorDsr
+					Else		
+						Aadd(_aGuardaCompMes,{cAnoPar,StrZero(nCont,2),nHorTrab,nHorDsr})					
+					Endif	
+				Next
+			Next
+	
+		Endif
+	
+		cPagFunc	:= SRA->RA_TIPOPGT		
+		cCatFunc	:= SRA->RA_CATFUNC		
+		cChave      := SRA->RA_FILIAL + SRA->RA_MAT
+		
+		If cCatFunc $ "E|G|A"
+			aAdd( aSemVerba , { SRA->RA_FILIAL , SRA->RA_MAT , SRA->RA_NOME , cCatFunc , oemtoansi("Funcionário com categoria não participante da RAIS.") } )				
+			Break		
+		Endif
+		
+		#IFDEF TOP
+			
+			/*
+			ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			³Ajusta a variaveis cMenor e cMaior quando tiver media de 13o  ³
+			³Salario e as variaveis estiverem vazias para formar o periodo ³
+			³a ser filtrado na query a ser executada no SRD.               ³
+			ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+			cVerbas := "'"
+			If SRA->RA_CATFUNC $ "H|M|C"		// Categoria  Horista | Mensalista | Comissionado
+				cVerbas += aCodFol[032,1]+"','"+aCodFol[031,1]+"','"+aCodFol[165,1]+"','"+aCodFol[121,1]+"','"+aCodFol[048,1]+"','"+aCodFol[112,1]+"','"+cVerbaOutras
+			Elseif	SRA->RA_CATFUNC $ "P"		// Categoria Pro-Labore
+				cVerbas += aCodFol[217,1]+"','"+aCodFol[048,1]+"','"+aCodFol[112,1]
+			Elseif	SRA->RA_CATFUNC $ "D" 		// Categoria Diarista
+				cVerbas += aCodFol[031,1]+"','"+aCodFol[048,1]+"','"+aCodFol[112,1]
+			Endif
+			cVerbas += "'"
+			
+			lQuery 		:= .T.
+			cAliasSRD 	:= "QSRD"
+			aStruSRD  	:= If(Empty(aStruSRD),SRD->(dbStruct()),aStruSRD)
+			cQuery 		:= "SELECT * "
+			cQuery 		+= "FROM "+RetSqlName("SRD")+" SRD "
+			cQuery 		+= "WHERE SRD.RD_FILIAL='"+SRA->RA_FILIAL+"' AND "
+			cQuery 		+= "SRD.RD_MAT='"+SRA->RA_MAT+"' AND "
+			cQuery 		+= "SRD.RD_DATARQ>='"+cMenor+"' AND "
+			cQuery 		+= "SRD.RD_DATARQ<='"+cMaior+"' AND "
+			If !(cVerbas=="''")
+				If !(SRA->RA_CATFUNC $ "I|J|T")
+					cQuery += " SRD.RD_PD IN ("+cVerbas+")  AND "
+				Else
+					cQuery += " SRD.RD_PD NOT IN ('"+SPACE(03)+"')  AND "
+				EndIf
+			Endif
+			cQuery 		+= "SRD.D_E_L_E_T_=' ' "
+			cQuery 		+= "ORDER BY "+SqlOrder(SRD->(IndexKey()))
+	
+			cQuery := ChangeQuery(cQuery)
+		
+			dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),cAliasSRD,.T.,.T.)
+	
+			For nCont := 1 To Len(aStruSRD)
+				If ( aStruSRD[nCont][2] <> "C" )
+					TcSetField(cAliasSRD,aStruSRD[nCont][1],aStruSRD[nCont][2],aStruSRD[nCont][3],aStruSRD[nCont][4])
+				EndIf
+			Next nCont
+			
+		#ENDIF	
+	
+		#IFNDEF TOP	
+			dbSelectArea(cAliasSRD) 
+			dbSetOrder(1)
+			dbSeek(cChave+cMenor,.T.)
+	
+		#ENDIF
+	
+		While !Eof().And.(cAliasSRD)->RD_FILIAL>=Substr(cChave,1,FWGETTAMFILIAL).And.(cAliasSRD)->RD_FILIAL<=Substr(cChave,1,FWGETTAMFILIAL).And.;
+					 (cAliasSRD)->RD_MAT>=Substr(cChave,FWGETTAMFILIAL+1,6) .And. (cAliasSRD)->RD_MAT <= Substr(cChave,FWGETTAMFILIAL+1,6)
+					 
+			If (cAliasSRD)->RD_DATARQ < cMenor .Or. (cAliasSRD)->RD_DATARQ > cMaior
+				dbSelectARea(cAliasSRD)
+			  	dbSkip()
+			  	loop
+			Endif
+
+			// Transferencia de funcionario dentro do periodo.     
+			If (cAliasSRD)->RD_EMPRESA <> cEmpAnt .And. ;
+			   !Empty( (cAliasSRD)->RD_EMPRESA )
+				dbSelectARea(cAliasSRD)
+				dbSkip()
+			  	loop
+			Endif
+			
+			If (cAliasSRD)->RD_DATARQ <> cDataArq		
+			
+				nPosHEf		:= Ascan(_aGuardaCompMes, { |x| x[1] == Substr((cAliasSRD)->RD_DATARQ,1,4) .And. x[2] == Substr((cAliasSRD)->RD_DATARQ,5,2) } )
+				nEfetTrab	:= _aGuardaCompMes[nPosHEf][3]
+				nEfetDsr	:= _aGuardaCompMes[nPosHEf][4]			
+				cDataArq	:= (cAliasSRD)->RD_DATARQ  
+				dDataRef    := CTOD("01/"+Right(cDataArq,2)+"/"+Left(cDataArq,4))
+				nUltDia	    := If ( cDiasMes = "S" , f_UltDia(dDataRef) , 30 )					
+				nTagComis	:= 0
+				
+			Endif
+			
+			// Carrega dias uteis e de repouso da semana
+			If ( (cAliasSRD)->RD_SEMANA <> cSemanaArq ) .AND. ( !Empty((cAliasSRD)->RD_SEMANA) )
+				If !("8.11" $ cVersao)		
+					dDtPesq     := CTOD("01/"+Right(cDataArq,2)+"/"+Left(cDataArq,4))
+					SDiasTrab   := XFDTRABDSR(dDtPesq,,,(cAliasSRD)->RD_SEMANA,"N") // Dias trabalhados na semana
+					SDiasDsr    := XFDTRABDSR(dDtPesq,,,(cAliasSRD)->RD_SEMANA,"D") // Dias de DSR na semana			
+					cSemanaArq	:= (cAliasSRD)->RD_SEMANA
+					If (SDiasTrab == 99999) .OR. (SDiasDsr == 99999)
+						aAdd( aSemVerba , { SRA->RA_FILIAL , SRA->RA_MAT , SRA->RA_NOME , cCatFunc , oemtoansi("Cadastro de Semanas Incompleto nos parâmetros.") } )		
+						Break
+					Endif
+				Else
+					SDiasTrab   := DiasTrab // Dias trabalhados na semana
+					SDiasDsr    := DiasDsr  // Dias de DSR na semana			
+					cSemanaArq	:= (cAliasSRD)->RD_SEMANA
+				Endif			
+			Endif
+			
+						
+				nPosMes := Ascan(aFunc, { |x| x[1]+x[2] == (cAliasSRD)->RD_CC+(cAliasSRD)->RD_DATARQ } ) 
+				
+				// Rescisao
+				If ((cAliasSRD)->RD_PD $ aCodFol[048,1] .OR. (cAliasSRD)->RD_PD $ aCodFol[112,1]) .and. ; 
+				   (!Empty(SRA->RA_DEMISSA) .and. MesAno(SRA->RA_DEMISSA) == (cAliasSRD)->RD_DATARQ) .and. ;
+				    cCatFunc $ "H|M|C|D|S|P"
+			
+					nHorasEfet := nEfetTrab
+					If (cAliasSRD)->RD_TIPO1 $ "H"
+						If nPosMes  ==  0
+							aAdd(aFunc, {  (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,(cAliasSRD)->RD_HORAS,(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb })
+						Elseif nPosMes > 0
+							aFunc[nPosMes][3] += (cAliasSRD)->RD_HORAS
+						Endif							
+					ElseIf (cAliasSRD)->RD_TIPO1 $ "D|V"
+						If nPosMes  ==  0
+							aAdd(aFunc, {  (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,( ( (cAliasSRD)->RD_HORAS/nUltDia ) * nHorasEfet ),(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb })
+						Elseif nPosMes > 0
+							aFunc[nPosMes][3] += ( ( (cAliasSRD)->RD_HORAS/nUltDia ) * nHorasEfet )
+						Endif
+					Endif
+					
+                Endif
+
+				If cCatFunc $ "H" // Categoria  Horista 
+					nHorasEfet := nEfetTrab + nEfetDsr		
+					If (cAliasSRD)->RD_PD $ aCodFol[032,1]
+						If ( cPagFunc $ "S" )
+							If nPosMes  ==  0
+								aAdd(aFunc, {  (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,( ( (cAliasSRD)->RD_HORAS/nUltDia ) * nHorasEfet ),(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb })
+							Elseif nPosMes > 0
+								aFunc[nPosMes][3] += ( ( (cAliasSRD)->RD_HORAS/nUltDia ) * nHorasEfet )
+							Endif							
+						Else
+							If (cAliasSRD)->RD_TIPO1 $ "H|V"
+								If nPosMes  ==  0						
+									aAdd(aFunc, { (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,(cAliasSRD)->RD_HORAS,(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb })
+								Elseif nPosMes > 0
+									aFunc[nPosMes][3] += (cAliasSRD)->RD_HORAS 
+								Endif
+							ElseIf (cAliasSRD)->RD_TIPO1 $ "D"
+								If nPosMes  ==  0
+									aAdd(aFunc, {  (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,( ( (cAliasSRD)->RD_HORAS/nUltDia ) * nHorasEfet ),(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb })
+								Elseif nPosMes > 0
+									aFunc[nPosMes][3] += ( ( (cAliasSRD)->RD_HORAS/nUltDia ) * nHorasEfet )
+								Endif
+							Endif
+						Endif
+				  //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿               
+				  //³ Tambem preve verba de mensalista, caso tenha havido mudanca de categoria.  ³
+				  //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+					ElseIf (cAliasSRD)->RD_PD $ aCodFol[031,1]
+						nHorasEfet := nEfetTrab
+						If (cAliasSRD)->RD_TIPO1 == "H"
+							If nPosMes  ==  0						
+								aAdd(aFunc, { (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,(cAliasSRD)->RD_HORAS,(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb })
+							Elseif nPosMes > 0
+								aFunc[nPosMes][3] += (cAliasSRD)->RD_HORAS
+							Endif
+						ElseIf (cAliasSRD)->RD_TIPO1 $ "D|V"
+							If nPosMes  ==  0
+								aAdd(aFunc, {  (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,( ((cAliasSRD)->RD_HORAS/30) * nHorasEfet ),(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb })
+							Elseif nPosMes > 0
+								aFunc[nPosMes][3] += ( ( (cAliasSRD)->RD_HORAS/30 ) * nHorasEfet )
+							Endif
+						Endif
+					Endif
+				ElseIf cCatFunc $ "M"	// Categoria  Mensalista
+					nHorasEfet := nEfetTrab
+					If (cAliasSRD)->RD_PD $ aCodFol[032,1]
+						If nPosMes  ==  0
+							aAdd(aFunc, { (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,(cAliasSRD)->RD_HORAS,(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb })
+						Elseif nPosMes > 0
+							aFunc[nPosMes][3] += (cAliasSRD)->RD_HORAS
+						Endif
+					ElseIf (cAliasSRD)->RD_PD $ aCodFol[031,1]
+						If (cAliasSRD)->RD_TIPO1 == "H"
+							If nPosMes  ==  0						
+								aAdd(aFunc, { (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,(cAliasSRD)->RD_HORAS,(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb })
+							Elseif nPosMes > 0
+								aFunc[nPosMes][3] += (cAliasSRD)->RD_HORAS
+							Endif
+						ElseIf (cAliasSRD)->RD_TIPO1 $ "D|V"
+							If nPosMes  ==  0
+								aAdd(aFunc, {  (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,( ((cAliasSRD)->RD_HORAS/30) * nHorasEfet ),(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb })
+							Elseif nPosMes > 0
+								aFunc[nPosMes][3] += ( ( (cAliasSRD)->RD_HORAS/30 ) * nHorasEfet )
+							Endif
+						Endif // rotina implementada, Func. era Comissionado e passou para Mensalista. Pegar o historico.
+					ElseIf ( (cAliasSRD)->RD_PD $ aCodFol[165,1] ) .or.  ;     	// Comissao
+					       ( (cAliasSRD)->RD_PD $ cVerbasComis )   .Or.  ;		// Verba setada pelo usuario (Comissao)
+					       ( (cAliasSRD)->RD_PD $ aCodFol[121,1] ) 				// Comissao Rescisao
+							If nPosMes  ==  0
+								aAdd(aFunc,{ (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,nHorasEfet,(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb})
+							Elseif nPosMes > 0
+								aFunc[nPosMes][3] := nHorasEfet
+							Endif				
+					EndIf		
+					
+				ElseIf cCatFunc $ "C"	// Categoria  Comissionado
+					nHorasEfet := nEfetTrab
+					If (cAliasSRD)->RD_PD $ aCodFol[032,1]
+						nTagComis := 1
+						If nPosMes  ==  0
+							aAdd(aFunc, { (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,(cAliasSRD)->RD_HORAS,(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb })
+						Elseif nPosMes > 0
+							aFunc[nPosMes][3] += (cAliasSRD)->RD_HORAS
+						Endif
+					ElseIf (cAliasSRD)->RD_PD $ aCodFol[031,1]
+						If (cAliasSRD)->RD_TIPO1 == "H"
+							nTagComis := 1
+							If nPosMes  ==  0						
+								aAdd(aFunc, { (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,(cAliasSRD)->RD_HORAS,(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb })
+							Elseif nPosMes > 0
+								aFunc[nPosMes][3] += (cAliasSRD)->RD_HORAS
+							Endif
+						ElseIf (cAliasSRD)->RD_TIPO1 $ "D|V"
+							nTagComis := 1
+							If nPosMes  ==  0
+								aAdd(aFunc, {  (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,( ((cAliasSRD)->RD_HORAS/30) * nHorasEfet ),(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb })
+							Elseif nPosMes > 0
+								aFunc[nPosMes][3] += ( ( (cAliasSRD)->RD_HORAS/30 ) * nHorasEfet )
+							Endif
+						Endif                              
+					ElseIf ( nTagComis == 0 ) .and. ( cCatFunc $ "C" ) .and. ;
+					       ( ( (cAliasSRD)->RD_PD $ aCodFol[165,1] ) .or.  ;     	// Comissao
+					       (   (cAliasSRD)->RD_PD $ cVerbasComis )   .Or.  ;		// Verba setada pelo usuario (Comissao)
+					       ( ( (cAliasSRD)->RD_PD $ aCodFol[121,1] ) .and. ;		// Comissao Rescisao
+					         ( !Empty(SRA->RA_DEMISSA) .and. MesAno(SRA->RA_DEMISSA) == Right((cAliasSRD)->RD_DATARQ,2)+Left((cAliasSRD)->RD_DATARQ,4) ) ) )
+						If nPosMes  ==  0
+							aAdd(aFunc,{ (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,nHorasEfet,(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb})
+						Elseif nPosMes > 0
+							aFunc[nPosMes][3] := nHorasEfet
+						Endif				
+					EndIf							
+				ElseIf cCatFunc == "P" // Categoria Pro-Labore
+					nHorasEfet := nEfetTrab
+					If (cAliasSRD)->RD_PD $ aCodFol[217,1]
+						If (cAliasSRD)->RD_TIPO1 == "H"
+							If nPosMes  ==  0
+								aAdd(aFunc, { (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,(cAliasSRD)->RD_HORAS,(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb })
+							Elseif nPosMes > 0
+								aFunc[nPosMes][3] += (cAliasSRD)->RD_HORAS
+							Endif
+						ElseIf (cAliasSRD)->RD_TIPO1 $ "D|V"
+							If nPosMes  ==  0
+								aAdd(aFunc,{ (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,( ( (cAliasSRD)->RD_HORAS/30 ) * nHorasEfet ),(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb })
+							Elseif nPosMes > 0
+								aFunc[nPosMes][3] += ( ( (cAliasSRD)->RD_HORAS/30 ) * nHorasEfet )
+							Endif
+						EndIf
+					Endif
+				ElseIf cCatFunc $ "I|J" // Categoria Professor Mensalista | Professor Aulista	
+					nHorasEfet := nEfetTrab		
+		            cTarefa	:= PosSrv((cAliasSRD)->RD_PD,SRA->RA_FILIAL,"RV_TAREFA")
+					If !(cTarefa$"N  |   ") 
+						If (cAliasSRD)->RD_TIPO1 $ "H|V|D"
+							If nPosMes  ==  0
+								aAdd(aFunc,{ (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,(cAliasSRD)->RD_HORAS,(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb})
+							Elseif nPosMes > 0
+								aFunc[nPosMes][3] += (cAliasSRD)->RD_HORAS
+							Endif	
+						Endif	
+					Endif
+				ElseIf cCatFunc == "D" // Categoria Diarista
+					nHorasEfet := nEfetTrab
+					If (cAliasSRD)->RD_PD $ aCodFol[031,1]
+						If (cAliasSRD)->RD_TIPO1 == "H"
+							If nPosMes  ==  0
+								aAdd(aFunc, { (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ, (cAliasSRD)->RD_HORAS,(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb })
+							Elseif nPosMes > 0
+								aFunc[nPosMes][3] +=  (cAliasSRD)->RD_HORAS
+							Endif
+						ElseIf (cAliasSRD)->RD_TIPO1 $ "D|V"
+							If nPosMes  ==  0
+								aAdd(aFunc, { (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,( ( (cAliasSRD)->RD_HORAS/30 ) * nHorasEfet ),(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb })
+							Elseif nPosMes > 0
+								aFunc[nPosMes][3] += ( ( (cAliasSRD)->RD_HORAS/30 ) * nHorasEfet )
+							Endif
+						EndIf
+					Endif
+				ElseIf cCatFunc $ "S"	// Categoria  Semanalista
+					nHorasEfet := nEfetTrab + nEfetDsr		
+					If (cAliasSRD)->RD_PD $ aCodFol[032,1]
+						If (cAliasSRD)->RD_TIPO1 == "H"
+							If nPosMes  ==  0						
+								aAdd(aFunc, { (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,(cAliasSRD)->RD_HORAS,(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb })
+							Elseif nPosMes > 0
+								aFunc[nPosMes][3] += (cAliasSRD)->RD_HORAS
+							Endif
+						ElseIf (cAliasSRD)->RD_TIPO1 $ "D|V"
+							If nPosMes  ==  0
+								aAdd(aFunc, {  (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,( (cAliasSRD)->RD_HORAS * (nHorasEfet/nUltDia) ),(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb })
+							Elseif nPosMes > 0
+								aFunc[nPosMes][3] += ( (cAliasSRD)->RD_HORAS * (nHorasEfet/nUltDia) )
+							Endif
+						Endif
+					Endif
+				ElseIf cCatFunc $ "T" // Tarefeiro | 
+					nHorasEfet := nEfetTrab		
+		            cTarefa	:= PosSrv((cAliasSRD)->RD_PD,SRA->RA_FILIAL,"RV_TAREFA")
+					If !(cTarefa$"N  |   ") 
+						If (cAliasSRD)->RD_TIPO1 $ "H|V|D"
+							If nPosMes  ==  0
+								aAdd(aFunc,{ (cAliasSRD)->RD_CC,(cAliasSRD)->RD_DATARQ,nHorasEfet,(cAliasSRD)->RD_DATPGT,cInssVb,cIrVb,cFGTSVb})
+							Elseif nPosMes > 0
+								aFunc[nPosMes][3] := nHorasEfet
+							Endif	
+						Endif
+					Endif	
+				Endif
+	        	
+			dbSelectARea(cAliasSRD)
+			dbSkip()
+		EndDo
+	
+		If ( lQuery )
+			dbSelectARea(cAliasSRD)
+			dbCloseArea()
+			lQuery := .F.
+		Endif
+	
+        
+		//---------------------- Banco de horas SPI
+		If Mv_par10 == 1
+    			dbSelectArea("SPI")
+    			DbSetOrder(2) //PI_FILIAL+PI_MAT+Dtos(PI_DATA)+PI_PD
+			cAliasSPI 	:= "SPI"
+			aStruSPI	:= {}
+
+			#IFDEF TOP
+				cDtade		:= '01/01/'+cAnoPar
+				cDtaAte		:= '31/12/'+cAnoPar
+
+				lQuery 		:= .T.
+				cAliasSPI 	:= "QSPI"
+				aStruSPI  	:= If(Empty(aStruSPI),SPI->(dbStruct()),aStruSPI)
+				cQuery 		:= "SELECT * "
+				cQuery 		+= "FROM "+RetSqlName("SPI")+" SPI "
+				cQuery 		+= "WHERE SPI.PI_FILIAL='"+SRA->RA_FILIAL+"' AND "
+				cQuery 		+= "SPI.PI_MAT ='"+SRA->RA_MAT +"' AND "
+				cQuery 		+= "SPI.PI_DATA>='"+cDtade+"' AND "
+				cQuery 		+= "SPI.PI_DATA<='"+cDtaAte+"' AND "
+				cQuery 		+= "SPI.D_E_L_E_T_=' ' "
+				cQuery 		+= "ORDER BY "+SqlOrder(SPI->(IndexKey()))
+		
+				cQuery := ChangeQuery(cQuery)				
+				dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),cAliasSPI,.T.,.T.)
+		
+				For nCont := 1 To Len(aStruSPI)
+					If ( aStruSPI[nCont][2] <> "C" )
+						TcSetField(cAliasSPI,aStruSPI[nCont][1],aStruSPI[nCont][2],aStruSPI[nCont][3],aStruSPI[nCont][4])
+					EndIf
+				Next nCont					
+			#ENDIF	
+		
+			#IFNDEF TOP	
+	    		//dbSelectArea("SPI")
+	    		//DbSetOrder(2) //PI_FILIAL+PI_MAT+Dtos(PI_DATA)+PI_PD
+	    		dbSeek(xFilial(cAliasSPI)+SRA->RA_MAT,.t. )
+			#ENDIF
+			
+			While !Eof() .And. (cAliasSPI)->PI_FILIAL >= SRA->RA_FILIAL .And. (cAliasSPI)->PI_MAT = SRA->RA_MAT
+							 
+				If (cAliasSPI)->PI_DATA < cTod('01/01/'+cAnoPar) .Or. (cAliasSPI)->PI_DATA > cTod('31/12/'+cAnoPar)
+					dbSelectArea(cAliasSPI)
+				  	dbSkip()
+				  	loop
+				Endif
+
+				If Year((cAliasSPI)->PI_DATA) <> Year(cToD("01/01/"+cAnoPar))							
+					dbSelectArea(cAliasSPI)
+				    dbSkip()
+				    Loop
+				Endif
+
+				//-- Se o Evento for Provento/Base
+			   	IF (PosSP9( (cAliasSPI)->PI_PD , SRA->RA_FILIAL, "P9_TIPOCOD") $ "1*3" )
+
+					nPos := Ascan(aHorasBH,{ |X| Alltrim(x[2]) == Alltrim( (cAliasSPI)->PI_CC) .And. Alltrim(x[5]) == MesAno((cAliasSPI)->PI_DATA) })
+
+					// Gerar "n" registro para o SRD devido a quantidade de CCusto diferente no SPI.
+					If nPos = 0
+			   			Aadd(aHorasBH,{(cAliasSPI)->PI_MAT,(cAliasSPI)->PI_CC,  (cAliasSPI)->PI_QUANT ,(cAliasSPI)->PI_DATA,MesAno((cAliasSPI)->PI_DATA)})
+					Else
+						aHorasBH[nPos][3]	:= __TimeSum(aHorasBH[nPos][3],(cAliasSPI)->PI_QUANT)
+					Endif
+					
+			   	EndIf
+                dbSelectArea(cAliasSPI)
+				dbSkip()
+			EndDo
+
+			// Gravação das hras efetiva do banco de horas, Verba apontada pelo usuario
+			If Len(aHorasBH) > 0
+				dbSelectArea("SRD")
+				dbSetOrder(2) //RD_FILIAL+ RD_CC+RD_MAT+RD_DATARQ+RD_PD+RD_SEMANA+RD_SEQ
+				For nCont:= 1 to Len(aHorasBH)
+					If !dbSeek(SRA->RA_FILIAL+aHorasBH[nCont][2]+SRA->RA_MAT+ aHorasBH[nCont][5] + cVerbaBH)
+					   	RecLock("SRD",.T.)                
+							SRD->RD_FILIAL	:= 	SRA->RA_FILIAL
+							SRD->RD_MAT		:=	SRA->RA_MAT
+							SRD->RD_PD		:=	cVerbaBH
+				  			SRD->RD_CC		:=	aHorasBH[nCont][2]
+					Else		   	
+					   		RecLock("SRD",.F.)                
+					Endif	    	
+						SRD->RD_TIPO1	:= 	"H"
+						SRD->RD_HORAS	:= 	fConvHr( aHorasBH[nCont][3] , "D" )
+						SRD->RD_DATARQ	:=  aHorasBH[nCont][5]
+					  	SRD->RD_DATPGT	:=  LastDay(aHorasBH[nCont][4])
+					  	SRD->RD_TIPO2	:=	"G"
+					  	SRD->RD_MES		:=	Substr(aHorasBH[nCont][5],5,2)
+					  	SRD->RD_STATUS	:=	"A"
+					  	SRD->RD_INSS	:=  PosSrv(cVerbaBH,SRA->RA_FILIAL,"RV_INSS" )
+					  	SRD->RD_IR		:=	PosSrv(cVerbaBH,SRA->RA_FILIAL,"RV_IR" )
+					  	SRD->RD_FGTS	:=	PosSrv(cVerbaBH,SRA->RA_FILIAL,"RV_FGTS" )
+				        MsUnlock()
+                Next	
+			EndIf	
+			aHorasBH	:= {}
+			If ( lQuery )
+				dbSelectARea(cAliasSPI)
+				dbCloseArea()
+				lQuery := .F.
+			EndIf		
+		Endif
+
+			//---------------------------------
+		
+		If len(aFunc) > 0		
+			aAdd( aComVerba , { SRA->RA_FILIAL , SRA->RA_MAT , SRA->RA_NOME , cCatFunc } )		
+			For nCont:= 1 to Len(aFunc)
+				If Empty(aFunc[nCont][3])
+				   loop
+				Endif
+	
+				dbSelectArea("SRD")
+				dbSetOrder(2) //RD_FILIAL+ RD_CC+RD_MAT+RD_DATARQ+RD_PD+RD_SEMANA+RD_SEQ
+				If !dbSeek(SRA->RA_FILIAL+aFunc[nCont][1]+SRA->RA_MAT+aFunc[nCOnt][2]+cVerbaNova)
+				   	RecLock("SRD",.T.)                
+							SRD->RD_FILIAL	:= 	cFilAnt		//SRA->RA_FILIAL
+							SRD->RD_MAT		:=	SRA->RA_MAT
+							SRD->RD_PD		:=	cVerbaNova
+				  			SRD->RD_CC		:=	aFunc[nCont][1]
+				Else		   	
+				   	RecLock("SRD",.F.)                
+				Endif	    	
+				SRD->RD_TIPO1	:= 	"H"
+				SRD->RD_HORAS	:= 	aFunc[nCont][3]
+				SRD->RD_DATARQ	:= 	aFunc[nCont][2]
+			  	SRD->RD_DATPGT	:=	aFunc[nCont][4]
+			  	SRD->RD_TIPO2	:=	"G"
+			  	SRD->RD_MES		:=	Substr(aFunc[nCont][2],5,2)
+			  	SRD->RD_STATUS	:=	"A"
+			  	SRD->RD_INSS	:=	aFunc[nCont][5]
+			  	SRD->RD_IR		:=	aFunc[nCont][6]
+			  	SRD->RD_FGTS	:=	aFunc[nCont][7]	
+		        MsUnlock()
+		
+			Next nCont 
+		Else
+			aAdd( aSemVerba , { SRA->RA_FILIAL , SRA->RA_MAT , SRA->RA_NOME , cCatFunc , oemtoansi("Não foram encontradas verbas correspondentes à categoria.") } )				
+		Endif
+	    
+	End Sequence
+
+	If ( lQuery )
+		dbSelectARea(cAliasSPI)
+		dbCloseArea()
+	Endif
+
+	DbSelectArea("SRA")
+	SRA->(dbSkip())
+	aFunc	 := {}
+
+EndDo                  
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Monta LOG com resultado da importacao.           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+If len(aSemVerba) > 0
+	aSort( aSemVerba ,,, {|x,y| x[1] + x[2] + x[4] < y[1] + y[2] + y[4] } )
+	nAux ++
+	aAdd( aLog , {} )
+	aAdd( aTitle , oEmToAnsi("VERBA NÃO GERADA PARA OS FUNCIONÁRIOS:") )
+	aAdd( aLog[nAux] , "Fil.  Mat.   Nome                       Categ.  Ocorrencia" )
+	aAdd( aLog[nAux] , replicate("-",130) )
+	For nX := 1 to len(aSemVerba)
+		aAdd( aLog[nAux] , aSemVerba[nX,1] + Space(3) + aSemVerba[nX,2] + Space(2) + Left(aSemVerba[nX,3],25) + Space(2) + aSemVerba[nX,4] + Space(7) + aSemVerba[nX,5] )
+	Next nX
+Endif
+
+If len(aComVerba) > 0
+	aSort( aComVerba ,,, {|x,y| x[1] + x[2] < y[1] + y[2] } )
+	nAux ++
+	aAdd( aLog , {} )
+	aAdd( aTitle , oEmToAnsi("VERBA GERADA PARA OS FUNCIONÁRIOS:") )
+	aAdd( aLog[nAux] , "Fil.  Mat.   Nome                       Categ." )
+	aAdd( aLog[nAux] , replicate("-",130) )
+	For nX := 1 to len(aComVerba)
+		aAdd( aLog[nAux] , aComVerba[nX,1] + Space(3) + aComVerba[nX,2] + Space(2) + Left(aComVerba[nX,3],25) + Space(2) + aComVerba[nX,4] )
+	Next nX
+Endif
+
+fMakeLog(aLog,aTitle,,,"GPEHRSEF"+DTOS(Date()),oEmToAnsi("Log de Ocorrências - Geração de Horas Efetivamente Trabalhadas"),"M","P",,.F.)
+
+dbSelectArea("SRD")
+dbSetOrder(1)
+
+Return
+
+
+
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³GPEHRSEF  ºAutor  ³Microsiga           º Data ³  01/27/06   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³                                                            º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP                                                         º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+
+User Function ChekPer()   
+
+Local nCont		:= 0
+Local cFalta	:= ""
+Local lAllMeses := .T.
+Local lFirst    := .T.
+
+dbSelectArea("RCF")
+dbSetOrder(1) //RCF_FILIAL + RCF_ANO+ RCF_MES + RCF_TNOTRA + RCF_SEMANA
+
+cFalta   := ""  
+
+For nCont:= 1 to 12
+	If !dbSeek(xFilial("RCF")+cAnoPar+StrZero(nCont,2),.F.)
+		If lFirst
+			cFalta += StrZero(nCont,2) + "/" + cAnoPar
+			lFirst := .F.
+		Else
+			cFalta += ", " + StrZero(nCont,2) + "/" + cAnoPar
+		Endif
+	Endif
+Next                 
+
+If !(cFalta == "")
+	Alert(oEmToAnsi("Não foram encontrados os seguintes períodos: ") + Chr(13) + cFalta )
+	lAllMeses := .F.
+Endif
+	
+Return(lAllMeses)
+
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o	 ³ CompMes	³ Autor ³ R.H. -	            ³ Data ³ 11.03.97 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Carregar Parametro Composicao do mes						  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe	 ³ CompMes(Normal,Descanso,cAnoMes) 						  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³ Normal	- Variavel para retorno das horas normais 		  ³±±
+±±³			 ³ Descanso - Variavel para retorno das horas de descanso	  ³±±
+±±³			 ³ cAnoMes	- Ano e Mes Para Pesquisao no arquivo de Param.   ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso		 ³ Generico 												  ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß/*/
+Function Ef_CompMes(Normal,Descanso,cAnoMes)
+
+If FPHIST82(SRA->RA_FILIAL,"19",SRA->RA_FILIAL+cAnoMes)
+	Normal	:= Svnormal   := VAL(SUBSTR(SRX->RX_TXT,01,06))
+	Descanso := Svdescanso := VAL(SUBSTR(SRX->RX_TXT,07,06))
+ElseIf FPHIST82(SRA->RA_FILIAL,"19","  "+cAnoMes)
+	Normal	:= Svnormal   := VAL(SUBSTR(SRX->RX_TXT,01,06))
+	Descanso := Svdescanso := VAL(SUBSTR(SRX->RX_TXT,07,06))
+Else
+	Normal := SvNormal := Descanso := SvDescanso := 0.00
+Endif
+Return ( .T. )
+
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³XfTrabCalenºAutor  ³Microsiga           º Data ³  05/12/03    º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Esta funcao foi reescrita para considerar dias nao trabalhadosº±±
+±±º          ³como DSR.                                                     º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ GENERICO                                                     º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+Function XFTrabCalen(dDataref,;		//-- data de Referencia
+                    nDTrab  ,;		//-- Dias Trabalhados
+                    nDNTrab ,;		//-- Dias Nao Trabalhados
+                    nDDsr   ,;		//-- Dias de DSR
+                    nDNUtil ,;		//-- Dias Nao Uteis de Vale Transporte 
+                    nDUte   ,;		//-- Dias uteis de Vale Transporte 
+                    nDifVT  ,; 		//-- Dias de Diferenca de Vale Transporte
+                    nHrsDSR ,;		//-- Qtde de Horas de DSR
+                    nHrsTrab,;		//-- Qtde de HoraS Trabalhadas 
+                    nVlRefei,;		//-- Dias de Vale Refeicao 
+                    nTotVT  ,;		//-- Dias totais de V.T. Dias Uteis 
+                    nTotNVT ,;		//-- Dias totais de V.T. Dias Nao uteis 
+                    cSem,;
+                    lPerAfas,;		//-- Proporcional a Afastamento
+                    lAdmissao,;		//-- Proporcional a Admissao
+                    nDifVTN)		//-- Dias de Dif.de VT ( dias Nao Uteis ) 		
+
+Local lUltSemana
+Local cMesAnoSem	:= ""
+Local nPosSem
+Local nPos			:= 0
+Local nPos1			:= 0 
+Local nInicio 
+Local nCount		:= 0 
+Local nTotDias 
+Local nDiaFinal 	:= f_UltDia(dDataRef) 
+Local cOldSem 		:= Space(2) 
+Local aAfast		:= {}
+
+Private aDados		:= {}
+
+Static cMesASem 
+Static cTurno
+
+DEFAULT dDataref	:= dDataBase
+DEFAULT cMesASem 	:= "!!!!!!"
+DEFAULT cTurno 		:= "!!!"
+DEFAULT nDTrab 		:= 0
+DEFAULT nDNTrab		:= 0 
+DEFAULT nDDsr  		:= 0                       
+DEFAULT nDNUtil		:= 0
+DEFAULT nDUte		:= 0
+DEFAULT nDifVT		:= 0
+DEFAULT nDifVTN		:= 0 
+DEFAULT nHrsDSR		:= 0 
+DEFAULT nHrsTrab	:= 0
+DEFAULT nVlRefei	:= 0 
+DEFAULT nTotVT		:= 0 
+DEFAULT nTotNVT		:= 0 
+DEFAULT lPerAfas	:= .F. 
+DEFAULT lAdmissao	:= .T.
+
+cOldSem		:= cSemana
+cSem 		:= If (cSem == Nil ,Space(2),cSem) 
+
+
+//--Atribui a Semana Solicitada ou 00 para mensalista
+cSemana		:= cSem 
+
+//--Carrega a Semana Somente se Mudar a data de Referencia 
+If Type( "aPeriodo" ) = "U"
+	aPeriodo := {}
+EndIf
+
+If cMesASem # MesAno(dDataRef) .or. cTurno # SRA->RA_TNOTRAB .Or. Empty(aPeriodo)
+	//--Funcao para carregar Periodo 
+	If !XfCarPeriodo(dDataRef,@aPeriodo, lUltSemana, nPosSem, .F.)
+		Return .F.
+	EndIf
+	cMesASem 	:= MesAno(dDataRef) 
+	cTurno		:= SRA->RA_TNOTRAB  
+Endif 
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Para semanalistas, calcula o n£mero de dias trabalhados      ³
+//³ conforme Calendario                                          ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cMesAnoSem	:= Substr(cMesASem,5,2) + substr(cMesASem,1,4)
+If(nPos 	:= Ascan( aPeriodo, { |X| X[1]+ X[2] == SRA->RA_TNOTRAB +  cSemana } ) )== 0
+	If( nPos := Ascan( aPeriodo, { |X| X[1]+ X[2] == Space( TamSX3("RA_TNOTRAB")[1] ) +  cSemana } ) ) == 0
+		If( nPos := Ascan( aPeriodo, { |X| X[1]+ X[2] == SRA->RA_TNOTRAB +  "  "} ) ) == 0
+			nPos:= Ascan( aPeriodo, { |X| x[1]+ x[2] == Space( TamSX3("RA_TNOTRAB")[1] ) + "  " } )
+		EndIf
+	Endif	
+Endif 
+
+If nPos > 0 
+	aDados	:= aClone(aPeriodo[nPos,5]) 	 					//-- Dias do Periodo 
+	//-- Verifica se Deve Desprezar o Periodo Inicial e final quando afastamento ou
+	//-- se for passado so data fim deve-se contar ate a data final no caso de demissao.
+	//--.Or. MesAno(dDataIni) # MesAno(Ctod(aPeriodo[ nPos,3],"DDMMYY"))
+	/*	
+	If dDataIni = Nil .Or. Empty(dDataIni) 
+		lPerAfas := .F. 
+    ElseIf !Empty(dDataIni) .And. dDataFim # Nil 
+		lPerAfas := .T.
+	Endif	
+	dDataIni    := If (dDataIni == Nil .Or. MesAno(dDataIni) # MesAno(DDataRef),CTOD("01/"+StrZero(Month(dDataRef),2)+"/"+StrZero(Year(dDataref),4),"DDMMYY"),dDataIni) 
+	dDataFim 	:= If (dDataFim == Nil .Or. MesAno(dDataFim) # MesAno(DDataRef),CTOD(StrZero(nDiaFinal,2)+"/"+StrZero(Month(dDataRef),2)+"/"+StrZero(Year(dDataRef),4),"DDMMYY"),dDataFim)  
+	dDataFim 	:= If (dDataFim > aPeriodo[ nPos,4],APeriodo[ nPos,4],dDataFim)
+    */
+	
+	nDiaFinal := f_UltDia(aPeriodo[nPos,4]) 				//-- Dia Final do Periodo
+	dDataIni    := CTOD("01/"+StrZero(Month(dDataRef),2)+"/"+StrZero(Year(dDataref),4),"DDMMYY")
+	dDataFim 	:= CTOD(StrZero(nDiaFinal,2)+"/"+StrZero(Month(dDataRef),2)+"/"+StrZero(Year(dDataRef),4),"DDMMYY")
+	dDataFim 	:= If (dDataFim > aPeriodo[ nPos,4],aPeriodo[ nPos,4],dDataFim)
+
+	nTotDias := Len(aDados)								//-- Total de Dias da Semana 
+	nInicio  := 1               
+
+	//-- Monta a Data de Inicio da Pesquisa  
+	dDataDia := (aPeriodo[nPos,3] + nInicio ) - 1 
+	cData	 := MesAno(dDataRef) 
+	cData	 := substr(cData,5,2) + "/" + substr(cData,1,4) 
+	        
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Verifica dias de Afastamentos/Ferias                                     ³
+	//³ aAfast{nAvosAP,nDiasAP,SR8->R8_DATAINI,SR8->R8_DATAFIM,SR8->R8_TIPO})    ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	fRetAfas(dDataDia, dDataFim , , , , @aAfast ) 
+	
+	For nCount := nInicio to nTotDias 
+	                                               
+		nPos1 := ascan(aAfast,{|x| !Empty(x[4]) .and. dDataDia >= x[3] .and. dDataDia <= x[4]}  )
+		If nPos1 == 0
+			nPos1 := ascan(aAfast,{|x| Empty(x[4]) .and. dDataDia >= x[3] .and. dDataDia <= dDataFim  })
+		Endif 
+	
+		If  (  lPerAfas  .And.  nPos1 <= 0           ) .Or. ;
+		    (  !lPerAfas .And.  dDataDia <= dDataFim )
+
+			nDTrab += If( aDados[nCount,2] == "1"  ,1 ,0 ) 
+	      	nDDsr  += If( aDados[nCount,2] == "3"  ,1 ,0 )
+	      	nDNTrab+= If( !(aDados[nCount,2]$"1/3"),1 ,0 )
+	    	nDNUtil+= If( (Alltrim( Upper(  Cdow( aDados[nCount,1] ))) == "SATURDAY" .OR. ; 
+						  Alltrim( Upper(  Cdow( aDados[nCount,1] ))) == "SUNDAY"   ) .AND. ; 
+		   				   aDados[nCount,3] == "1"      ,1,0 )
+			nDUte  += If( ( Alltrim( Upper( Cdow( aDados[nCount,1] ))) != "SATURDAY" .and. ;
+						     Alltrim( Upper( Cdow( aDados[nCount,1] ))) != "SUNDAY" ) .AND. ;
+						  aDados[nCount,3] == "1"    ,1 ,0 ) 
+			nDifVT += If( ( Alltrim( Upper( Cdow( aDados[nCount,1] ))) != "SATURDAY" .and. ;
+						     Alltrim( Upper( Cdow( aDados[nCount,1] ))) != "SUNDAY" ) .AND. ;
+						  aDados[nCount,4] == "1"    ,1 ,0 )
+			nDifVTN+= If( ( Alltrim( Upper( Cdow( aDados[nCount,1] ))) == "SATURDAY" .or. ;
+						     Alltrim( Upper( Cdow( aDados[nCount,1] ))) == "SUNDAY" ) .AND. ;
+						     aDados[nCount,4] == "1"    ,1 ,0 )
+			nVlRefei  += If( aDados[nCount,5] == "1"  ,1 ,0 )
+			nHrsDSR	  += aDados[nCount,6] 
+			nHrsTrab  += aDados[nCount,7]
+		Endif 
+		dDataDia := aPeriodo[nPos,3] + nCount
+	Next nCount
+Endif  
+
+//-- Dias totais de V.T. Dias Uteis 
+aEval(aDados,{ |X| nTotVT	+= If(  X[3] == "1" .and. ; 
+									( Alltrim( Upper( Cdow( X[1] ))) != "SATURDAY" ) .and.  ;
+									( Alltrim( Upper( Cdow( X[1] ))) != "SUNDAY"	) ;
+								 ,1,0 );
+			  }) 
+//-- Dias totais de V.T. Dias Nao uteis 
+aEval(aDados,{ |X| nTotNVT	+= If(  X[3] == "1" .and. ; 
+									(( Alltrim( Upper( Cdow( X[1] ))) == "SATURDAY" ).or.  ;
+									 ( Alltrim( Upper( Cdow( X[1] ))) == "SUNDAY"   );
+									)   ;
+								 ,1,0 ) ;
+			})
+//--Retorna a Semana Original do Calculo
+cSemana := cOldSem
+
+Return .T.
+
+/* 
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³XfCarPeriodoºAutor  ³Microsiga- Natie    º Data ³  01/12/03   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Esta funcao foi reescrita para considerar dias nao trabalhadosº±±
+±±º          ³como DSR.                                                     º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±³Parametros³dDataRef  = Data para Mes Ano de referencia                   ³±±
+±±³          ³aPeriodo  = Array parta carregar as semanas da data de ref.   ³±±
+±±³          ³nPosSem   = Posicao da Semana atual no array aPeriodo		    ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±ºUso       ³ Sigagpe                                                      º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/ 
+Function XfCarPeriodo( dDataRef ,aPeriodo , lUtlSemana , nPosSem , lShowHelp ) 
+
+Local cFilRCF	:= ""
+Local cKeyComp	:= "" 
+Local cKeyTurno := ""
+Local cKeySemana:= ""
+Local cTurno	:= SRA->RA_TNOTRAB
+Local cMsgHelp	:= ""
+Local dDtDePer	:= ctod("")
+Local dDtAtePer	:= ctod("")
+Local nHrsDia	:= 0
+Static cChkSem
+
+If cChkSem = Nil
+	cChkSem   := Getmv("MV_GPCHSEM")			//-- Indica se na Folha de Pagamento deve checar se a semana solicitada esta cadastrada
+Endif
+
+DEFAULT lShowHelp := IF( FindFunction( "AddLogExecRot" ) , .F. , .T. )
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿ 
+//³ Parametro Semanas											 ³ 
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ 
+cKeyComp := MesAno(dDataRef)		//-- Competencia 
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿ 
+//³ Testa se RCF e RCG sao Exclusivos           				 ³ 
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ 
+cFil	:= xFilial("RCF", SRA->RA_FILIAL)
+dbSelectArea( "RCF")
+	If cSemana != Space(2)  .and. cChkSem =="S" 
+		If !dbSeek(cFil + cKeyComp + cTurno + cSemana, .T. )
+			cTurno	:= Space( TamSX3("RCF_TNOTRA")[1] )
+			If !dbSeek(cFil + cKeyComp +cTurno+ cSemana, .T. ) 
+				IF ( lShowHelp )
+					HELP( " ",1,"GPCALEND",  )						//--Nao existe periodo cadastrado 
+				ElseIF FindFunction( "AddLogExecRot" )
+					cMsgHelp := "Function: "
+					cMsgHelp += ProcName()
+					cMsgHelp += "/Line: "
+					cMsgHelp += AllTrim( Str( ProcLine() ) )
+					cMsgHelp += " - "
+					cMsgHelp += "Help:GPCALEND"
+					cMsgHelp += " -> "
+					cMsgHelp += oemtoansi("Nao existe periodo cadastrado.")
+					AddLogExecRot( cMsgHelp ) 
+				EndIF
+				Return(.F.) 
+			Endif
+		Endif
+	Else 
+		If !dbSeek(cFil + cKeyComp + cTurno, .T. ) 
+			cTurno	:= Space( TamSX3("RCF_TNOTRA")[1] )
+			If !dbSeek(cFil + cKeyComp + cTurno,.T. ) 
+				IF ( lShowHelp )
+					HELP( " ",1,"GPCALEND",  )						//--Nao existe periodo cadastrado 
+				ElseIF FindFunction( "AddLogExecRot" )
+					cMsgHelp := "Function: "
+					cMsgHelp += ProcName()
+					cMsgHelp += "/Line: "
+					cMsgHelp += AllTrim( Str( ProcLine() ) )
+					cMsgHelp += " - "
+					cMsgHelp += "Help:GPCALEND"
+					cMsgHelp += " -> "
+					cMsgHelp += oemtoansi("Nao existe periodo cadastrado.")
+					AddLogExecRot( cMsgHelp ) 
+				EndIF
+				Return(.F.) 
+			Endif	
+		Endif 
+	EndIf 
+
+	aDados 		:= {} 
+	If AScan(aPeriodo,{|x| x[1]+x[2]== cTurno + cSemana }) = 0 
+		While !RCF->( Eof() ) .and. cFil + cKeyComp + cTurno == RCF->(RCF_FILIAL + RCF_ANO + RCF_MES + RCF_TNOTRA ) 
+			cFilRCF		:= RCF->RCF_FILIAL 
+			cKeyTurno	:= RCF->RCF_TNOTRA 
+			cKeySemana	:= RCF->RCF_SEMANA 
+			dDtDePer	:= RCF->RCF_DTINI 
+			dDtAtePer	:= RCF->RCF_DTFIM 
+			nHrsDia		:= RCF->RCF_HRSDIA
+			aDados		:= {}
+			If RCG->( dbSeek(cFilRCF+ cKeyComp + cKeyTurno + cKeySemana ) ) 
+				While !RCG->( Eof() )  .and. cFilRCF+ cKeyComp + cKeyTurno + cKeySemana = RCG->(RCG_FILIAL + RCG_ANO + RCG_MES + RCG_TNOTRA + RCG_SEMANA ) 
+					aadd(aDados,{RCG->RCG_DIAMES, RCG->RCG_TIPDIA, RCG->RCG_VTRANS, RCG->RCG_DIFTRA,  RCG->RCG_VREFEI, If( RCG->RCG_TIPDIA="2",RCF->RCF_HRSDIA,If(RCG->RCG_TIPDIA="3",RCG->RCG_HRSDSR,0)) , RCG->RCG_HRSTRA } ) 
+					RCG->( DBSKIP() )                                                                                                                                                                                
+				Enddo 
+			Endif 
+			aadd(aPeriodo, {cKeyTurno, cKeySemana, dDtDePer, dDtAtePer, aDados }  )
+			RCF->(DBSKIP()) 
+		Enddo 
+	Endif	
+	Asort( aPeriodo ,,, { |X,Y| X[1]+ x[2] < Y[1]+ y[2] } )		//-- Turno + Semana
+	
+	If cSemana != Space(2)  .and. cChkSem =="S" 
+		lUltSemana := If( cSemana == aPeriodo[Len(aPeriodo),2] , .T. , .F. ) 
+		nPosSem	   := Ascan(aPeriodo,{|X| x[1]+x[2] == cTurno+cSemana}) 
+	Endif 
+
+Return(.T.)
+
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³XfDTrabDsr ºAutor  ³Microsiga           º Data ³  04/09/03   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³                                                            º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP                                                         º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+Function XFDTRABDSR(dDataref,dDataIni,dDataFim,cSem,cRet)
+                             
+Local lUltSemana
+Local nPosSem                
+Local nIncio
+Local nCount
+Local nFim
+Local nTotDias                                               
+Local nDiaFinal := f_UltDia(dDataRef) 
+Local nValRet 	:= 0               
+Local cOldSem 	:= Space(2)
+Local lPerAfas	:= .F.		
+
+Static cMesASem                             
+
+DEFAULT cMesASem 	:= "!!!!!!"
+DEFAULT aSemanas 	:= {}                   
+
+cOldSem		:= cSemana
+cRet		:= If (cRet == Nil .Or. !cRet$ "N/D/U/S", " ",cRet)
+cSem 		:= If (cSem == Nil .Or. cSem == Space(2), "00",cSem)
+nDTrab 		:= 0
+nDDsr  		:= 0                       
+nDSab		:= 0
+nDUte		:= 0
+
+//--Atribui a Semana Solicitada ou 00 para mensalista
+cSemana		:= cSem
+
+//--Carrega a Semana Somente se Mudar a data de Referencia
+If cMesASem # MesAno(dDataRef) .Or. Empty(aSemanas)
+	aSemanas 	:= {}
+
+	//--Funcao para carregar Semana
+	If !XfCarSemana(dDataRef,@aSemanas,lUltSemana,nPosSem,.F.)
+		nValRet := 99999
+		Return (nValRet)
+	Endif
+	cMesASem := MesAno(dDataRef)
+Endif	    
+
+nPos := Ascan( aSemanas, { |X| X[1] == cSem } )
+If nPos > 0
+
+	//-- Verifica se Deve Desprezar o Periodo Inicial e final quando afastamento ou
+	//-- se for passado so data fim deve-se contar ate a data final no caso de demissao.
+	//--.Or. MesAno(dDataIni) # MesAno(Ctod(aSemanas[ nPos,2],"DDMMYY"))
+	If dDataIni = Nil .Or. Empty(dDataIni) 
+		lPerAfas := .F.
+    ElseIf !Empty(dDataIni) .And. dDataFim # Nil
+    	lPerAfas := .T.
+    Endif	
+
+
+	nDiaFinal := f_UltDia(Ctod(aSemanas[ nPos,3],"DDMMYY")) 
+
+	dDataIni    := If (dDataIni == Nil .Or. MesAno(dDataIni) # MesAno(DDataRef),CTOD("01/"+StrZero(Month(dDataRef),2)+"/"+StrZero(Year(dDataref),4),"DDMMYY"),dDataIni)   
+	dDataFim 	:= If (dDataFim == Nil .Or. MesAno(dDataFim) # MesAno(DDataRef),CTOD(StrZero(nDiaFinal,2)+"/"+StrZero(Month(dDataRef),2)+"/"+StrZero(Year(dDataRef),4),"DDMMYY"),dDataFim)   
+	dDataFim 	:= If (dDataFim > Ctod(aSemanas[ nPos,3],"DDMMYY"),Ctod(aSemanas[ nPos,3],"DDMMYY"),dDataFim)
+
+	nTotDias := aSemanas[ nPos,5 ]  // Total de Dias da Semana
+	nInicio  := 1                 
+
+	If Day(dDataFim) >= f_UltDia(Ctod(aSemanas[ nPos,3],"DDMMYY")) 
+		nFim     :=  Len( aSemanas[ nPos,4 ] )
+	ElseIf Day(dDataFim) < f_UltDia(dDataRef) .And. ! lPerAfas	
+		nFim     := Day(dDataFim)                                   
+	Elseif lPerAfas
+		nFim     :=  Len( aSemanas[ nPos,4 ] )
+	Endif
+
+
+	//-- Verifica Admissao no periodo e diminui o numero de dias a ser pesquisado
+	If SRA->RA_ADMISSAO >= Ctod(aSemanas[ nPos,2],"DDMMYY") .And. SRA->RA_ADMISSAO <= Ctod( aSemanas[ nPos,3],"DDMMYY")
+		nInicio := nTotDias - ( Ctod(aSemanas[ nPos,3],"DDMMYY")-SRA->RA_ADMISSAO )
+	EndIf
+
+	//-- Monta a Data de Inicio da Pesquisa
+	dDataDia := (Ctod(aSemanas[ nPos,2],"DDMMYY") + nInicio ) -1 
+	//-- Verifica os dias de Trab. e Dsr da Semana
+	For nCount := nInicio To nFim
+
+		If (lPerAfas .And. (dDataDia < dDataIni  .Or. dDataDia > dDataFim )) ;
+			.Or. (! lPerAfas .And. dDataDia <= dDataFim)
+	
+			If SubStr( aSemanas[ nPos,4],nCount,1 ) == "S"
+				++nDTrab
+				If Alltrim(Upper(Cdow(dDataDia))) = "SATURDAY"
+					nDSab ++
+				Else
+					nDUte ++
+				Endif
+			Else
+				++nDDsr
+			EndIf
+		Endif	
+		dDataDia := Ctod(aSemanas[ nPos,2],"DDMMYY") + nCount
+
+	Next nCount
+Endif  
+
+//--Prepara a Variavel e retorno conforme o Parametro cRet
+If cRet == "N"  		// Dias Totias Trabalhados no Periodo
+	nValRet := nDTrab
+Elseif cRet == "D"  	// Dias Total de DSR no Periodo
+	nValRet := nDDsr
+ElseIf cRet == "U"     	// Dias da Semana/Uteis do Periodo
+	nValRet	:= nDUte
+ElseIf cRet == "S"		// Dias de Sabado do Periodo
+	nValRet	:= nDSab
+Else
+	nValRet:= 0
+Endif	          
+
+//--Retorna a Semana Original do Calculo
+cSemana := cOldSem
+
+Return(nValRet)
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³XfCarSemanaºAutor  ³Microsiga           º Data ³  10/08/01   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Carrega o Array aSemanas com as semanas do mes de Calculo   º±±
+±±º          ³atraves da Filial e do turno do funcionario posicionado     º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±³Parametros³dDataRef  = Data para Mes Ano de referencia                 ³±±
+±±³          ³aSemanas  = Array parta carregar as semanas da data de ref. ³±±
+±±³          ³lUtlSemana= Variavel logica que indica ultima semana do mes ³±±
+±±³          ³nPosSem   = Posicao da Semana atual no array aSemanas		  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±ºUso       ³ Sigagpe                                                    º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+Function XfCarSemana(dDataRef,aSemanas,lUltSemana,nPosSem,lShowHelp)
+
+Local lRet	:= .T.
+Local cChaveSem
+Static cChkSem
+
+If cChkSem = Nil
+	cChkSem   	:= Getmv("MV_GPCHSEM")
+Endif
+
+If cSemana # Space( 2 ) .And. cChkSem = "S"
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Parametro Semanas											 			  ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	cChaveSem := StrZero(Year(dDataRef),4)+StrZero(Month(dDataRef),2)+SRA->RA_TNOTRAB
+	dbSelectArea( "SRX" )
+	
+	If !dbSeek( If(cFilial==Space(FWGETTAMFILIAL),Space(FWGETTAMFILIAL),SRA->RA_FILIAL) + "01" + cChaveSem + cSemana , .T. )
+		If !dbSeek( If(cFilial==Space(FWGETTAMFILIAL),Space(FWGETTAMFILIAL),SRA->RA_FILIAL) + "01" + Subs(cChaveSem,3,9) + cSemana , .T. )
+			If !dbSeek( If(cFilial==Space(FWGETTAMFILIAL),Space(FWGETTAMFILIAL),SRA->RA_FILIAL) + "01" + Left(cChaveSem,6)+"999"+cSemana , .T. )
+				If !dbSeek( If(cFilial==Space(FWGETTAMFILIAL),Space(FWGETTAMFILIAL),SRA->RA_FILIAL) + "01" + Subs(cChaveSem,3,4)+"999"+cSemana , .T. )
+					If lShowHelp
+						HELP( " ",1,"SEMNAOCAD" )
+					Endif
+					lRet := .F.
+				Endif
+			Endif
+		Endif
+	Endif
+	
+	If !dbSeek(If(cFilial==Space(FWGETTAMFILIAL),Space(FWGETTAMFILIAL),SRA->RA_FILIAL) + "01" + cChaveSem , .T. )
+		If !dbSeek(If(cFilial==Space(FWGETTAMFILIAL),Space(FWGETTAMFILIAL),SRA->RA_FILIAL) + "01" + Subs(cChaveSem,3,9) , .T. )
+			cChaveSem := Left(cChaveSem,6)+"999"
+			If !dbSeek(If(cFilial==Space(FWGETTAMFILIAL),Space(FWGETTAMFILIAL),SRA->RA_FILIAL) + "01" + cChaveSem , .T. )
+				If !dbSeek(If(cFilial==Space(FWGETTAMFILIAL),Space(FWGETTAMFILIAL),SRA->RA_FILIAL) + "01" + Subs(cChaveSem,3,4) , .T. )
+					If lShowHelp
+						HELP( " ",1,"SEMNAOCAD" )
+					Endif
+					lRet := .F.
+				Endif
+			Endif
+		Endif
+	Endif
+	
+	aSemanas := {}
+
+	If lRet
+		While !Eof() .And. RX_TIP == "01"
+			If RX_FILIAL == (If(cFilial==Space(FWGETTAMFILIAL),Space(FWGETTAMFILIAL),SRA->RA_FILIAL)) .And.;
+					(Left( RX_COD,9 ) == cChaveSem .Or. Left( RX_COD,7 ) == Subs(cChaveSem,3,9))
+				If Len(AllTrim(RX_COD)) == 9
+					Aadd( aSemanas , { SubStr( RX_COD,8,2 ) , DtoC(CtoD( Left( RX_TXT,8 ),"DDMMYY" )) , DtoC(CtoD( SubStr( RX_TXT,10,8 ) , "DDMMYY" )) , SubStr( RX_TXT, 20,( CtoD( SubStr( RX_TXT,10,8 ) , "DDMMYY" ) - CtoD( Left( RX_TXT,8 ) , "DDMMYY" ) ) + 1 ) , CtoD( SubStr( RX_TXT,10,8 ) , "DDMMYY" ) - CtoD( Left( RX_TXT,8 ) , "DDMMYY" ) + 1 } )
+				Else						
+					Aadd( aSemanas , { SubStr( RX_COD,10,2 ) ,;
+						If("/" $ RX_TXT , SubStr( RX_TXT, 1,10) , DtoC(StoD(SubStr( RX_TXT, 1,8 )))) ,;
+						If("/" $ RX_TXT , SubStr( RX_TXT, 12,10), DtoC(StoD(SubStr( RX_TXT,12,8 )))) ,;
+						SubStr( RX_TXT,24,(  If("/" $ RX_TXT , CtoD(SubStr( RX_TXT, 12,10) , "DDMMYY" ), StoD(SubStr( RX_TXT,12,8 ))) - ;
+						If("/" $ RX_TXT , CtoD(SubStr( RX_TXT, 01,10), "DDMMYY"), StoD(SubStr( RX_TXT, 1,8 ))) ) + 1 ) ,;
+						If("/" $ RX_TXT , CtoD(SubStr( RX_TXT, 12,10), "DDMMYY"), StoD(SubStr( RX_TXT,12,8 ))) - ;
+						If("/" $ RX_TXT , CtoD(SubStr( RX_TXT, 01,10), "DDMMYY"), StoD(SubStr( RX_TXT, 1,8 ))) + 1 } )
+				EndIf
+			EndIf
+			dbSkip()
+		Enddo
+		Asort( aSemanas ,,, { |X,Y| X[1] < Y[1] } )
+		lUltSemana := If( cSemana == aSemanas[ Len( aSemanas ),1 ] , .T. , .F. )
+		nPosSem	   := Ascan(aSemanas,{|X| x[1] == cSemana})
+	EndIf
+Endif
+Return(lRet)

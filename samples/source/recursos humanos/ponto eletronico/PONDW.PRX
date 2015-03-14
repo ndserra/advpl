@@ -1,0 +1,1662 @@
+#INCLUDE "rwmake.ch"  
+#INCLUDE "PROTHEUS.CH"
+#INCLUDE "PONCALEN.CH"
+#INCLUDE "TBICONN.CH"
+
+/*
+************************************************************************************ 
+                                I N S T R U C O E S 
+************************************************************************************ 
+
+Na fonte de dados do cubo CBU_SIGAPON, em parametros, comando Embedded SQL informar a expressao:
+select
+ ATRASO,
+ FALTAS,
+ FALTATRABO,
+ HRSAFAST,
+ HRSDIURNAS,
+ HRSEXTRABO,
+ HRSEXTRAS,
+ HRSFERIAS,
+ HRSNA0REAL,
+ HRSNOTURN,
+ SANTECIP,
+ SEXPED,
+ --Dados Centro de Custo - CTT
+ TMP.M0_CODIGO CENTRO_CUSTO_M0_CODIGO,
+ TMP.M0_CODFIL CTT_FILIAL,
+ CTT_CUSTO,
+ --Empresa e Filial
+ TMP.M0_CODIGO M0_CODIGO,
+ TMP.M0_CODFIL M0_CODFIL,
+ --Dados Período de Apontamento
+ TMP.M0_CODIGO PER_APONTAMENTO_M0_CODIGO,
+ TMP.M0_CODFIL PO_FILIAL,
+ SEQUENCIA,
+ PO_DATAINI,
+ PO_DATAFIM,
+ DATAAPO,
+ DESCPER
+from
+ %XEXP:DWDSTMPARQ()% AS TMP
+
+Em eventos, realizar as chamadas conforme as fontes:
+//-- Para fonte Mensal (SPC - Apontamentos) informar:
+StartJob("PonDw",DWDSENVIRONMENT(),.T.,{DWDSEMP(),DWDSFIL(),'SPC',DWDSTmpArq()})
+Return(.T.)
+
+//-- Para fonte Historica (SPH - Apontamentos Acumulados) informar:
+StartJob("PonDw",DWDSENVIRONMENT(),.T.,{DWDSEMP(),DWDSFIL(),'SPH',DWDSTmpArq()})
+Return(.T.)
+
+*/
+
+
+/*                                                                
+
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡„o    ³ PONDW    ³ Autor ³Mauricio MR            ³ Data ³12/03/2007³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡„o ³ Funcoes para uso do DW                                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso  	 ³ SIGAPON							   						  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³         ATUALIZACOES SOFRIDAS DESDE A CONSTRU€AO INICIAL.             ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Programador ³ Data   ³ BOPS ³  Motivo da Alteracao                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Mauricio MR ³12.03.07³      ³ Criacao.								  ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+         
+/*
+Exemplo de chamda:
+StartJob( "PonDW", 'TOP912', .F., aParam )
+*/
+
+
+User Function PonDW(aParam)                   
+Local aPeriodos		:= {}
+Local cEmp			:= aParam[1]  //Empresa
+Local cFil			:= aParam[2]  //Filial   
+Local cAlias 		:= UPPER(ALLTRIM(aParam[3]))  //Alias da tabela Origem (SPC ou SPH)  
+Local cNameFile 	:= UPPER(ALLTRIM(aParam[4]))  //Nome da tabela de transferencia
+
+Local cAliasDW		:= "ALIASDW"  //Alias da tabela de transferencia de Dados para o DW
+Local cAliasPer		:= ""	//Alias da tabela de Periodos
+Local cNameFilePer 	:= ""  //Nome fisico da tabela de Periodos
+
+Local cDataIni	:= ""
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Preparando o ambiente para execucao                                     ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+//-- Evita que se consuma licenca
+RpcSetType ( 3 )
+
+PREPARE ENVIRONMENT EMPRESA cEmp FILIAL cFil MODULO "PON"  
+
+cDataIni	:= SuperGetMv( "MV_ABSINI" )
+
+//"Criando Tabela para importação de dados do SIGAPON..."
+
+//"Obtendo dados..."	  
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Cria e Preenche a tabela temporaria de Periodos						   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	//-- Cria a tabela temporaria de Periodos
+	PonDwPerCreaFile(	cEmp 			,; //Codigo da Empresa 
+						cFil 			,; //Codigo da Filial
+						@cNameFilePer  	,; //Nome fisico da tabela de Periodos
+						@cAliasPer   	;  //Alias da tabela de Periodos    
+				    )  
+	//-- Preenche a tabela temporaria de periodos
+	PonDwPeriodos(  cAliasPer 	,; 	//Alias da tabela temporaria de Periodos de Apontamento
+					cDataIni	,; 	//Data inicial para apuracao dos dados 
+					@aPeriodos	;   //Array para identificar os periodos de afastamentos
+				  )				     					
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Cria a tabela de transferencia de Dados				    			   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	//-- Cria tabela temporaria de Dados
+	PonDwAbsCreaFile(	cEmp 		,; //Codigo da Empresa 
+						cFil 		,; //Codigo da Filial
+						cAliasDW	,; //Alias DW
+						@cNameFile ;   // Nome Fisico da Tabela temporaria para o Alias
+					)
+	
+//"Obtendo dados..."	  
+	
+	//-- Alimenta tabela temporaria							    
+	PonDwPutFile(	cAlias			,; //Alias da tabela de Origem de Dados
+					cAliasDW		,; //Alias da tabela temporaria
+					cNameFile		,; //Nome do arquivo da tabela temporaria  
+                    cAliasPer		,; //Alias da tabela temporaria de Periodos
+                    cNameFilePer    ,; //Nome do arquivo fisico da tabela temporaria de Periodos de apontamento 
+                    aPeriodos		; //Periodos de Apontamento
+				  )  
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Finalisando o ambiente para execucao                                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+// "Importação de dados finalizada..."
+
+RESET ENVIRONMENT	
+
+Return(.T.)
+
+/*/
+ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿
+³Fun‡„o    ³PonDwAbsCreaFile ³ Autor ³Mauricio MR	   ³ Data ³12/03/2007³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´
+³Descri‡„o ³Cria/Abre arquivo temporario para dados  do DW 				 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Sintaxe   ³<Vide Parametros Formais>									 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Parametros³<Vide Parametros Formais>									 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Retorno   ³NIL															 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Observa‡„o³                                                      	     ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Uso       ³SIGAPON     												 ³
+ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ/*/  
+
+Static Function PonDwAbsCreaFile( 	cEmp 		,; //Codigo da Empresa 
+									cFil 		,; //Codigo da Filial
+									cAliasDW	,; //Alias da tabela temporaria
+									cNameFile	;  //Nome do arquivo da tabela temporaria
+								  )    
+
+Local cNameIndex	:= cNameFile + "1"
+Local cRdd			:= "TOPCONN"
+Local aFields		:= {}
+Local nTam			:= TamSX3("PI_SALDO")[1]
+Local nDec			:= TamSX3("PI_SALDO")[2]	
+
+//-- Elimina a Tabela Criada
+PonDwDelFile({cNameFile })	
+
+//-- Os nomes M0_ devem ser respeitados para que o roteiro do DW identifique 
+//-- quais são os atributos referentes a Empresa e Filial.
+AADD(aFields, { "M0_CODIGO"		,"C", 2							,0		})  //Para a 'alimentacao automatica' campo chave Dimensao Periodo
+AADD(aFields, { "M0_CODFIL"		,"C", TamSX3("PO_FILIAL")[1]	,0		})  
+AADD(aFields, { "PO_FILIAL"		,"C", TamSX3("PO_FILIAL")[1]	,0		})  //Para a 'alimentacao automatica' campo chave Dimensao Periodo
+AADD(aFields, { "CTT_CUSTO"		,"C", TamSX3("CTT_CUSTO")[1]	,0		})	
+AADD(aFields, { "SEQUENCIA"	 	,"C", 6							,0		})	//Para a 'alimentacao automatica' campo chave Dimensao Periodo
+AADD(aFields, { "PO_DATAINI"	,"D", TamSX3("PO_DATAINI")[1]	,0		})	//Para a 'alimentacao automatica' campo chave Dimensao Periodo
+AADD(aFields, { "PO_DATAFIM"	,"D", TamSX3("PO_DATAFIM")[1]	,0		})	//Para a 'alimentacao automatica' campo chave Dimensao Periodo
+AADD(aFields, { "DESCPER"		,"C", 20 						,0   	})	//Para a 'alimentacao automatica' campo chave Dimensao Periodo
+AADD(aFields, { "DATAAPO"		,"D", TamSX3("PC_DATA")[1]		,0		})	
+AADD(aFields, { "HRSNA0REAL"	,"N", nTam						,nDec	})	
+AADD(aFields, { "HRSDIURNAS"	,"N", nTam						,nDec	})	
+AADD(aFields, { "HRSNOTURN"		,"N", nTam						,nDec	})	
+AADD(aFields, { "ATRASO"		,"N", nTam						,nDec	})	
+AADD(aFields, { "FALTAS"		,"N", nTam						,nDec	})	
+AADD(aFields, { "SANTECIP"		,"N", nTam						,nDec	})	
+AADD(aFields, { "SEXPED"		,"N", nTam						,nDec	})	
+AADD(aFields, { "HRSEXTRAS"		,"N", nTam						,nDec	})	
+AADD(aFields, { "HRSEXTRABO"	,"N", nTam						,nDec	})	
+AADD(aFields, { "FALTATRABO"	,"N", nTam						,nDec	})	
+AADD(aFields, { "HRSAFAST"		,"N", nTam						,nDec	})	
+AADD(aFields, { "HRSFERIAS"		,"N", nTam						,nDec	})	
+
+      
+IF( lRet := MSCreate( cNameFile , aFields , cRdd ) )
+    //-- Abre o arquivo em modo Exclusivo
+   	DbUseArea(.T.,cRdd,cNameFile,cAliasDW,.F.,.F.)
+	dbCreateIndex( cNameIndex, "M0_CODIGO + M0_CODFIL + CTT_CUSTO + PO_DATAINI", { || M0_CODIGO + M0_CODFIL + CTT_CUSTO + Dtos(PO_DATAINI)})
+EndIF
+
+Return (NIL) 
+
+
+/*/
+ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿
+³Fun‡„o    ³PonDwPerCreaFile ³ Autor ³Mauricio MR	   ³ Data ³27/03/2007³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´
+³Descri‡„o ³Cria/Abre arquivo temporario para Periodo de Apontamento     ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Sintaxe   ³<Vide Parametros Formais>									 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Parametros³<Vide Parametros Formais>									 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Retorno   ³NIL															 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Observa‡„o³                                                      	     ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Uso       ³SIGAPON     												 ³
+ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ/*/  
+
+Static Function PonDwPerCreaFile(	cEmp 		,; //Codigo da Empresa 
+									cFil 		,; //Codigo da Filial
+									cNameFile   ,; //Nome fisico da tabela
+									cAliasPer   ;  //Alias da tabela
+								  )    
+
+Local cNameIndex	:= ""
+Local cRdd			:= "TOPCONN"
+Local aFields		:= {}
+                            
+cAliasPer			:= "PONPER"
+cNameFile			:= cAliasPer + cEmp + cFil
+cNameIndex			:= cNameFile + "1"
+
+//-- Elimina a Tabela Criada
+PonDwDelFile({"PONPER" + cEmp + cFil })	
+
+//-- Os nomes M0_ devem ser respeitados para que o roteiro do DW identifique 
+//-- quais são os atributos referentes a Empresa e Filial.
+AADD(aFields, { "M0_CODIGO"		,"C", 2							,0		})  //Para a 'alimentacao automatica' campo chave Dimensao Periodo
+AADD(aFields, { "PO_FILIAL"		,"C", TamSX3("PO_FILIAL")[1]	,0		})  //Para a 'alimentacao automatica' campo chave Dimensao Periodo
+AADD(aFields, { "SEQUENCIA"	 	,"C", 6							,0		})	//Para a 'alimentacao automatica' campo chave Dimensao Periodo
+AADD(aFields, { "PO_DATAINI"	,"D", TamSX3("PO_DATAINI")[1]	,0		})	//Para a 'alimentacao automatica' campo chave Dimensao Periodo
+AADD(aFields, { "PO_DATAFIM"	,"D", TamSX3("PO_DATAFIM")[1]	,0		})	//Para a 'alimentacao automatica' campo chave Dimensao Periodo
+AADD(aFields, { "DESCPER"		,"C", 20 						,0   	})	//Para a 'alimentacao automatica' campo chave Dimensao Periodo
+      
+IF( lRet := MSCreate( cNameFile , aFields , cRdd ) )
+    //-- Abre o arquivo em modo Exclusivo
+   	DbUseArea(.T.,cRdd,cNameFile,cAliasPer,.F.,.F.)
+	dbCreateIndex( cNameIndex, "M0_CODIGO + PO_FILIAL + SEQUENCIA + PO_DATAINI", { || M0_CODIGO + PO_FILIAL + SEQUENCIA + DTOS(PO_DATAINI)})
+EndIF
+
+Return (NIL) 
+ 
+/*/
+ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿
+³Fun‡„o    ³PonDwDelFile     ³ Autor ³Mauricio MR	   ³ Data ³16/03/2007³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´
+³Descri‡„o ³Elimina tabela temporaria para dados  do DW  				 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Sintaxe   ³<Vide Parametros Formais>									 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Parametros³<Vide Parametros Formais>									 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Retorno   ³NIL															 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Observa‡„o³                                                      	     ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Uso       ³SIGAPON     												 ³
+ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ/*/  
+
+Static Function PonDwDelFile(aParam)
+Local cNameFile	:= aParam[1]
+Local lRet 		:= .F.   
+
+//-- Elimina a Tabela Criada 
+If TcCanOpen(cNameFile)
+   MsErase(cNameFile)    
+EndIf   
+
+Return (lRet)
+
+
+
+/*/
+ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿
+³Fun‡„o    ³PonDwPutFile 	 ³ Autor ³Mauricio MR	   ³ Data ³12/03/2007³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´
+³Descri‡„o ³Carrega arquivo temporario com dados  do DW  				 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Sintaxe   ³<Vide Parametros Formais>									 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Parametros³<Vide Parametros Formais>									 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Retorno   ³NIL															 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Observa‡„o³                                                      	     ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Uso       ³SIGAPON     												 ³
+ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ/*/  
+
+Static Function PonDwPutFile(	cAlias			,; //Alias da tabela de Origem de Dados
+								cAliasDW		,; //Alias da tabela temporaria
+								cNameFile		,; //Nome do arquivo da tabela temporaria  
+			                    cAliasPer		,; //Alias da tabela temporaria de Periodos
+			                    cNameFilePer    ,; //Nome do arquivo fisico da tabela temporaria de Periodos de apontamento 
+			                    aPeriodos		; //Periodos de Apontamento
+							  )  					  
+					    
+				  
+Local aArea	:= GetArea()
+
+//-- Posiciona no Primeiro Registro do Periodo de Apontamento
+(cAliasPer)->(DbGotop())
+
+        
+		PonDwHorasApo(	cAlias					,; //Alias da tabela de Origem de Dados
+						cAliasDW				,; //Alias da tabela temporaria
+						cNameFile				,; //Nome do arquivo da tabela temporaria  
+					    cNameFilePer    		,; //Periodos de Apontamento
+						(cAliasPer)->PO_DATAINI  ; //Data inicial para apuracao dos dados              	   		            
+				  )	   
+                    
+		PonDwAfasta(	cAlias			,; //Alias da tabela de Origem de Dados
+						cAliasDW		,; //Alias da tabela temporaria
+						cNameFile		,; //Nome do arquivo da tabela temporaria 
+						cAliasPer		,;  //Alias do Periodo de Apontamento 
+					    aPeriodos		; //Periodos de Apontamento
+					  ) 
+	
+				  			
+RestArea(aArea)
+
+Return(.T.) 
+
+
+
+/*/
+ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿
+³Fun‡„o    ³PonDwHorasApo 	 ³ Autor ³Mauricio MR	   ³ Data ³09/04/2007³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´
+³Descri‡„o ³Cria Query de Horas e realiza chamadas de calculo das mesmas ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Sintaxe   ³<Vide Parametros Formais>									 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Parametros³<Vide Parametros Formais>									 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Retorno   ³NIL															 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Observa‡„o³                                                      	     ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Uso       ³SIGAPON     												 ³
+ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ/*/  
+Static Function PonDwHorasApo(	cAlias					,; //Alias da tabela de Origem de Dados
+								cAliasDW				,; //Alias da tabela temporaria
+								cNameFile				,; //Nome do arquivo da tabela temporaria  
+				   		        cNameFilePer    		,; //Periodos de Apontamento
+								cDataIni			 	 ; //Data inicial para apuracao dos dados              	   		            
+							  )	    
+Local aArea			:= GetArea()
+Local cAliasQry
+
+Local cCondFil		:= ''
+Local cFilOld		:= '' 
+Local cFilChave		:= ''
+ 
+
+Local cChave		:= ''
+Local cLastChave	:= '!!!!' 
+Local cSequencia	:= '' 
+Local cFilApo		:= ''
+
+Local aSoma			:= {0,0,0,0,0,0,0,0,0,0,0,0}  
+Local cFilHrs		:= ''
+Local cCCHrs		:= ''
+Local dDataHrs		:= Ctod('')  
+Local dDataIni		:= Ctod('')  
+Local dDataFim		:= Ctod('')
+Local cDescPer		:= ''  
+
+cDataIni	 := "% '" + Dtoc(cDataIni)	+ "' %" 
+
+cNameFilePer := "% " + cNameFilePer	+ " %"  
+
+	/*/
+	ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	³ Obtem os Códigos dos Eventos de Descontos	 (Faltas/Atrasos/Saidas)  ³
+	ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ/*/    
+	cAliasQry := GetNextAlias()
+   
+	If cAlias == "SPC"
+		cCondFil		:= "% SPC.PC_FILIAL = '" + cFilant+ "' %"
+		BeginSql Alias cAliasQry
+
+		SELECT
+			
+		%exp:cEmpAnt% M0_CODIGO,
+		%xFilial:SPC% APO_FILIAL, 	
+		SPC.PC_DATA AS DATAAPO,
+		SPC.PC_CC CTT_CUSTO,
+		0 AS HRSNA0REAL,
+		SPC.PC_QUANTC AS HRSDIURNAS,
+		0 AS HRSNOTURN,
+		0 AS ATRASO,
+		0 AS FALTAS,
+		0 AS SANTECIP,
+		0 AS SEXPED,
+		0 AS HRSEXTRAS,
+		0 AS HRSEXTRABO,
+		0 AS FALTATRABO,
+		0 AS HRSAFAST,
+		0 AS HRSFERIAS,
+			PERAPON.PO_FILIAL  AS PO_FILIAL, PERAPON.SEQUENCIA  AS SEQUENCIA, PERAPON.DESCPER  AS DESCPER, PERAPON.PO_DATAINI AS PO_DATAINI, PERAPON.PO_DATAFIM AS PO_DATAFIM  
+			FROM 	 %Table:SPC% SPC
+			INNER JOIN %Table:SP9% SP9
+			ON 	( SPC.PC_PD = SP9.P9_CODIGO ) AND 	( SP9.P9_FILIAL = %xFilial:SP9% ) 
+			INNER JOIN %exp:cNameFilePer% PERAPON
+			ON 	( SPC.PC_DATA BETWEEN  PERAPON.PO_DATAINI AND PERAPON.PO_DATAFIM) AND ( PERAPON.PO_FILIAL = SPC.PC_FILIAL )
+		WHERE
+				(SP9.P9_IDPON = '001A') AND
+				SPC.%NotDel% AND
+				SP9.%NotDel% AND
+				(SPC.PC_FILIAL = %xFilial:SPC% ) 
+			
+		UNION ALL
+		SELECT
+		%exp:cEmpAnt% M0_CODIGO,
+		%xFilial:SPC% APO_FILIAL, 	
+		SPC.PC_DATA AS DATAAPO,
+		SPC.PC_CC CTT_CUSTO,
+		0 AS HRSNA0REAL,
+		0 AS HRSDIURNAS,
+		SPC.PC_QUANTC  AS HRSNOTURN,
+		0 AS ATRASO,
+		0 AS FALTAS,
+		0 AS SANTECIP,
+		0 AS SEXPED,
+		0 AS HRSEXTRAS,
+		0 AS HRSEXTRABO,
+		0 AS FALTATRABO,
+		0 AS HRSAFAST,
+		0 AS HRSFERIAS,
+		PERAPON.PO_FILIAL AS PO_FILIAL, PERAPON.SEQUENCIA  AS SEQUENCIA, PERAPON.DESCPER  AS DESCPER, PERAPON.PO_DATAINI AS PO_DATAINI, PERAPON.PO_DATAFIM AS PO_DATAFIM  
+			FROM 	 %Table:SPC% SPC 
+			INNER JOIN %Table:SP9% SP9
+			ON 	( SPC.PC_PD = SP9.P9_CODIGO ) AND ( SP9.P9_FILIAL = %xFilial:SP9% )
+			INNER JOIN %exp:cNameFilePer% PERAPON
+			ON 	( SPC.PC_DATA BETWEEN  PERAPON.PO_DATAINI AND PERAPON.PO_DATAFIM) AND ( PERAPON.PO_FILIAL = SPC.PC_FILIAL )	
+		WHERE
+				SP9.P9_IDPON = '026A' AND   
+				SPC.%NotDel% AND
+				SP9.%NotDel% AND
+				(SPC.PC_FILIAL = %xFilial:SPC% )
+		
+		UNION ALL
+		SELECT 	
+		%exp:cEmpAnt% M0_CODIGO,
+		%xFilial:SPC% APO_FILIAL, 	
+		SPC.PC_DATA AS DATAAPO,
+		SPC.PC_CC CTT_CUSTO,
+		SPC.PC_QUANTC  AS HRSNA0REAL,
+		0 AS HRSDIURNAS,
+		0  AS HRSNOTURN,
+		0 AS ATRASO,
+		0 AS FALTAS,
+		0 AS SANTECIP,
+		0 AS SEXPED,
+		0 AS HRSEXTRAS,
+		0 AS HRSEXTRABO,
+		0 AS FALTATRABO,
+		0 AS HRSAFAST,
+		0 AS HRSFERIAS,
+		PERAPON.PO_FILIAL AS PO_FILIAL, PERAPON.SEQUENCIA  AS SEQUENCIA, PERAPON.DESCPER  AS DESCPER, PERAPON.PO_DATAINI AS PO_DATAINI, PERAPON.PO_DATAFIM AS PO_DATAFIM  
+			FROM 	 %Table:SPC% SPC  
+			INNER JOIN %Table:SP9% SP9
+			ON 	( SPC.PC_PD = SP9.P9_CODIGO ) AND ( SP9.P9_FILIAL = %xFilial:SP9% )
+			INNER JOIN %exp:cNameFilePer% PERAPON
+			ON 	( SPC.PC_DATA BETWEEN  PERAPON.PO_DATAINI AND PERAPON.PO_DATAFIM) AND ( PERAPON.PO_FILIAL = SPC.PC_FILIAL )	
+			WHERE
+				SP9.P9_IDPON IN('005A','006A') AND    
+				SPC.%NotDel% AND
+				SP9.%NotDel% AND
+				(SPC.PC_FILIAL = %xFilial:SPC% )
+		
+		UNION ALL
+		SELECT 	
+		%exp:cEmpAnt% M0_CODIGO,
+		%xFilial:SPC% APO_FILIAL, 	
+		SPC.PC_DATA AS DATAAPO,
+		SPC.PC_CC CTT_CUSTO,
+		0 AS HRSNA0REAL,
+		0 AS HRSDIURNAS,
+		0  AS HRSNOTURN,
+		SPC.PC_QUANTC  AS ATRASO,
+		0 AS FALTAS,
+		0 AS SANTECIP,
+		0 AS SEXPED,
+		0 AS HRSEXTRAS,
+		0 AS HRSEXTRABO,
+		0 AS FALTATRABO,
+		0 AS HRSAFAST,
+		0 AS HRSFERIAS,
+		PERAPON.PO_FILIAL AS PO_FILIAL, PERAPON.SEQUENCIA  AS SEQUENCIA, PERAPON.DESCPER  AS DESCPER, PERAPON.PO_DATAINI AS PO_DATAINI, PERAPON.PO_DATAFIM AS PO_DATAFIM  
+			FROM 	 %Table:SPC% SPC 
+			INNER JOIN %Table:SP9% SP9
+			ON 	( SPC.PC_PD = SP9.P9_CODIGO ) AND ( SP9.P9_FILIAL = %xFilial:SP9% )
+			INNER JOIN %exp:cNameFilePer% PERAPON
+			ON 	( SPC.PC_DATA BETWEEN  PERAPON.PO_DATAINI AND PERAPON.PO_DATAFIM) AND ( PERAPON.PO_FILIAL = SPC.PC_FILIAL )	
+			WHERE
+				SP9.P9_IDPON IN('012A','011N' ) AND  
+				SPC.%NotDel% AND
+				SP9.%NotDel% AND
+				(SPC.PC_FILIAL = %xFilial:SPC% )
+		
+		UNION ALL
+		SELECT 	
+		%exp:cEmpAnt% M0_CODIGO,
+		%xFilial:SPC% APO_FILIAL, 	
+		SPC.PC_DATA AS DATAAPO,
+		SPC.PC_CC CTT_CUSTO,
+		0 AS HRSNA0REAL,
+		0 AS HRSDIURNAS,
+		0  AS HRSNOTURN,
+		0 AS ATRASO,
+		SPC.PC_QUANTC  AS FALTAS,
+		0 AS SANTECIP,
+		0 AS SEXPED,
+		0 AS HRSEXTRAS,
+		0 AS HRSEXTRABO,
+		0 AS FALTATRABO,
+		0 AS HRSAFAST,
+		0 AS HRSFERIAS,
+		PERAPON.PO_FILIAL AS PO_FILIAL, PERAPON.SEQUENCIA  AS SEQUENCIA, PERAPON.DESCPER  AS DESCPER, PERAPON.PO_DATAINI AS PO_DATAINI, PERAPON.PO_DATAFIM AS PO_DATAFIM  
+			FROM 	 %Table:SPC% SPC 
+			INNER JOIN %Table:SP9% SP9
+			ON 	( SPC.PC_PD = SP9.P9_CODIGO ) AND ( SP9.P9_FILIAL = %xFilial:SP9% )
+			INNER JOIN %exp:cNameFilePer% PERAPON
+			ON 	( SPC.PC_DATA BETWEEN  PERAPON.PO_DATAINI AND PERAPON.PO_DATAFIM) AND ( PERAPON.PO_FILIAL = SPC.PC_FILIAL )	
+			WHERE
+				SP9.P9_IDPON IN('010A','009N','008A','007N','032A','033N','034A','035N' ) AND 
+				SPC.%NotDel% AND
+				SP9.%NotDel% AND
+				(SPC.PC_FILIAL = %xFilial:SPC% )
+				
+		UNION ALL
+		SELECT 	
+		%exp:cEmpAnt% M0_CODIGO,
+		%xFilial:SPC% APO_FILIAL, 	
+		SPC.PC_DATA AS DATAAPO,
+		SPC.PC_CC CTT_CUSTO,
+		0 AS HRSNA0REAL,
+		0 AS HRSDIURNAS,
+		0  AS HRSNOTURN,
+		0 AS ATRASO,
+		0 AS FALTAS,
+		SPC.PC_QUANTC   AS SANTECIP,
+		0 AS SEXPED,
+		0 AS HRSEXTRAS,
+		0 AS HRSEXTRABO,
+		0 AS FALTATRABO,
+		0 AS HRSAFAST,
+		0 AS HRSFERIAS,
+		PERAPON.PO_FILIAL AS PO_FILIAL, PERAPON.SEQUENCIA  AS SEQUENCIA, PERAPON.DESCPER  AS DESCPER, PERAPON.PO_DATAINI AS PO_DATAINI, PERAPON.PO_DATAFIM AS PO_DATAFIM  
+			FROM 	 %Table:SPC% SPC 
+			INNER JOIN %Table:SP9% SP9
+			ON 	( SPC.PC_PD = SP9.P9_CODIGO ) AND ( SP9.P9_FILIAL = %xFilial:SP9% )
+			INNER JOIN %exp:cNameFilePer% PERAPON
+			ON 	( SPC.PC_DATA BETWEEN  PERAPON.PO_DATAINI AND PERAPON.PO_DATAFIM) AND ( PERAPON.PO_FILIAL = SPC.PC_FILIAL )	
+			WHERE
+				SP9.P9_IDPON IN('014A','013N' ) AND  
+				SPC.%NotDel% AND
+				SP9.%NotDel% AND
+				(SPC.PC_FILIAL = %xFilial:SPC% )
+		
+		UNION ALL
+		SELECT
+		%exp:cEmpAnt% M0_CODIGO,
+		%xFilial:SPC% APO_FILIAL, 	
+		SPC.PC_DATA AS DATAAPO,
+		SPC.PC_CC CTT_CUSTO,
+		0 AS HRSNA0REAL,
+		0 AS HRSDIURNAS,
+		0  AS HRSNOTURN,
+		0 AS ATRASO,
+		0 AS FALTAS,
+		0 AS SANTECIP,
+		SPC.PC_QUANTC   AS SEXPED,
+		0 AS HRSEXTRAS,
+		0 AS HRSEXTRABO,
+		0 AS FALTATRABO,
+		0 AS HRSAFAST,
+		0 AS HRSFERIAS,
+		PERAPON.PO_FILIAL AS PO_FILIAL, PERAPON.SEQUENCIA  AS SEQUENCIA, PERAPON.DESCPER  AS DESCPER, PERAPON.PO_DATAINI AS PO_DATAINI, PERAPON.PO_DATAFIM AS PO_DATAFIM  
+			FROM 	 %Table:SPC% SPC 
+			INNER JOIN %Table:SP9% SP9
+			ON 	( SPC.PC_PD = SP9.P9_CODIGO ) AND ( SP9.P9_FILIAL = %xFilial:SP9% )
+			INNER JOIN %exp:cNameFilePer% PERAPON
+			ON 	( SPC.PC_DATA BETWEEN  PERAPON.PO_DATAINI AND PERAPON.PO_DATAFIM) AND ( PERAPON.PO_FILIAL = SPC.PC_FILIAL )	
+			WHERE
+				SP9.P9_IDPON IN('020A','019N' ) AND 
+				SPC.%NotDel% AND
+				SP9.%NotDel% AND
+				(SPC.PC_FILIAL = %xFilial:SPC% )
+			
+		UNION ALL
+		SELECT 	
+		%exp:cEmpAnt% M0_CODIGO,
+		%xFilial:SPC% APO_FILIAL, 	
+		SPC.PC_DATA AS DATAAPO,
+		SPC.PC_CC CTT_CUSTO,
+		0 AS HRSNA0REAL,
+		0 AS HRSDIURNAS,
+		0  AS HRSNOTURN,
+		0 AS ATRASO,
+		0 AS FALTAS,
+		0 AS SANTECIP,
+		0 AS SEXPED,
+		SPC.PC_QUANTC    AS HRSEXTRAS,
+		0 AS HRSEXTRABO,
+		0 AS FALTATRABO,
+		0 AS HRSAFAST,
+		0 AS HRSFERIAS,
+		PERAPON.PO_FILIAL AS PO_FILIAL, PERAPON.SEQUENCIA  AS SEQUENCIA, PERAPON.DESCPER  AS DESCPER, PERAPON.PO_DATAINI AS PO_DATAINI, PERAPON.PO_DATAFIM AS PO_DATAFIM  
+			FROM 	 %Table:SPC% SPC 
+			INNER JOIN %exp:cNameFilePer% PERAPON
+			ON 	( SPC.PC_DATA BETWEEN  PERAPON.PO_DATAINI AND PERAPON.PO_DATAFIM) AND ( PERAPON.PO_FILIAL = SPC.PC_FILIAL )	
+			WHERE
+				SPC.%NotDel% AND 
+				(SPC.PC_FILIAL = %xFilial:SPC% ) AND
+				(
+					SPC.PC_PD IN (  SELECT SP4.P4_CODAUT AS HRSEXTRAS 
+											FROM 	%Table:SP4% SP4
+											WHERE 	SP4.%NotDel% AND ( SP4.P4_FILIAL = %xFilial:SP4% )	
+										
+								    )
+					OR
+					SPC.PC_PD IN ( 	SELECT SP4.P4_CODNAUT AS HRSEXTRAS 
+											FROM 	%Table:SP4% SP4
+											WHERE 	SP4.%NotDel% AND ( SP4.P4_FILIAL = %xFilial:SP4% )			
+								    )  
+				
+			     )
+	
+			
+		UNION ALL
+		
+		SELECT
+		%exp:cEmpAnt% M0_CODIGO,
+		%xFilial:SPK% APO_FILIAL,
+		SPK.PK_DATA AS DATAAPO,
+		SPK.PK_CC CTT_CUSTO,
+		0 AS HRSNA0REAL,
+		0 AS HRSDIURNAS,
+		0 AS HRSNOTURN,
+		0 AS ATRASO,
+		0 AS FALTAS,
+		0 AS SANTECIP,
+		0 AS SEXPED,
+		0 AS HRSEXTRAS,
+		SPK.PK_HRSABO AS HRSEXTRABO,
+		0 AS FALTATRABO,
+		0 AS HRSAFAST,
+		0 AS HRSFERIAS,
+		PERAPON.PO_FILIAL AS PO_FILIAL, PERAPON.SEQUENCIA  AS SEQUENCIA, PERAPON.DESCPER  AS DESCPER, PERAPON.PO_DATAINI AS PO_DATAINI, PERAPON.PO_DATAFIM AS PO_DATAFIM  
+		FROM %Table:SPK% SPK     
+		INNER JOIN %exp:cNameFilePer% PERAPON
+		ON 	( SPK.PK_DATA BETWEEN  PERAPON.PO_DATAINI AND PERAPON.PO_DATAFIM) AND ( PERAPON.PO_FILIAL = SPK.PK_FILIAL )	
+		INNER JOIN %Table:SPC% SPC ON ( SPC.PC_PD = SPK.PK_CODEVE ) AND (SPK.PK_FILIAL = SPC.PC_FILIAL) AND  ( SPC.PC_MAT = SPK.PK_MAT ) 
+		INNER JOIN %Table:SP6% SP6 ON SPK.PK_CODABO = SP6.P6_CODIGO AND ( SP6.P6_FILIAL = %xFilial:SP6% )			
+		WHERE
+			SPK.%NotDel% AND 
+			SPC.%NotDel% AND
+			SP6.%NotDel% AND
+			(SPC.PC_QTABONO > 0 ) AND
+			(SP6.P6_ABHORAS = 'S') AND  
+			(SPK.PK_FILIAL = %xFilial:SPK%)  AND
+			(
+				SPC.PC_PD IN (  SELECT SP4.P4_CODAUT AS HRSEXTRAS 
+											FROM 	%Table:SP4% SP4
+											WHERE 	SP4.%NotDel% AND ( SP4.P4_FILIAL = %xFilial:SP4% )	
+										
+								    )
+				OR
+				SPC.PC_PD IN ( 	SELECT SP4.P4_CODNAUT AS HRSEXTRAS 
+											FROM 	%Table:SP4% SP4
+											WHERE 	SP4.%NotDel% AND ( SP4.P4_FILIAL = %xFilial:SP4% )			
+								    )  
+			)
+		
+	
+		
+								
+		UNION ALL
+		SELECT
+		%exp:cEmpAnt% M0_CODIGO,
+		%xFilial:SPK% APO_FILIAL,
+		SPK.PK_DATA AS DATAAPO,
+		SPK.PK_CC CTT_CUSTO,
+		0 AS HRSNA0REAL,
+		0 AS HRSDIURNAS,
+		0 AS HRSNOTURN,
+		0 AS ATRASO,
+		0 AS FALTAS,
+		0 AS SANTECIP,
+		0 AS SEXPED,
+		0 AS HRSEXTRAS,
+		0 AS HRSEXTRABO,
+		SPK.PK_HRSABO AS FALTATRABO,
+		0 AS HRSAFAST,
+		0 AS HRSFERIAS,
+		PERAPON.PO_FILIAL AS PO_FILIAL, PERAPON.SEQUENCIA  AS SEQUENCIA, PERAPON.DESCPER  AS DESCPER, PERAPON.PO_DATAINI AS PO_DATAINI, PERAPON.PO_DATAFIM AS PO_DATAFIM  
+		FROM %Table:SPK% SPK  
+		INNER JOIN %exp:cNameFilePer% PERAPON
+		ON 	( SPK.PK_DATA BETWEEN  PERAPON.PO_DATAINI AND PERAPON.PO_DATAFIM) AND ( PERAPON.PO_FILIAL = SPK.PK_FILIAL )	
+		INNER JOIN %Table:SPC% SPC ON ( SPC.PC_PD = SPK.PK_CODEVE ) AND (SPK.PK_FILIAL = SPC.PC_FILIAL) AND  ( SPC.PC_MAT = SPK.PK_MAT ) 
+		INNER JOIN %Table:SP6% SP6 ON SPK.PK_CODABO = SP6.P6_CODIGO AND ( SP6.P6_FILIAL = %xFilial:SP6% )
+		INNER JOIN %Table:SP9% SP9 ON SPK.PK_CODEVE = SP9.P9_CODIGO AND ( SP9.P9_FILIAL = %xFilial:SP9% )
+		WHERE
+			SPK.%NotDel% AND
+			SPC.%NotDel% AND
+			SP6.%NotDel% AND
+			(SPC.PC_QTABONO > 0) AND
+			(SP6.P6_ABHORAS = 'S') AND
+			( SP9.P9_IDPON IN ('012A','011N','010A','009N','008A','007N','032A','033N','034A','035N','014A','013N','020A','019N' ) )
+			AND
+			(SPK.PK_FILIAL = %xFilial:SPK%)
+				
+	
+		EndSql 
+
+	Else
+
+	    // Acumulado do Apontamento
+		cCondFil		:= "% SPH.PH_FILIAL = '" + cFilant+ "' %"
+		BeginSql Alias cAliasQry
+
+		SELECT
+		%exp:cEmpAnt% M0_CODIGO,
+		%xFilial:SPH% APO_FILIAL, 	
+		SPH.PH_DATA AS DATAAPO,
+		SPH.PH_CC CTT_CUSTO,
+		0 AS HRSNA0REAL,
+		SPH.PH_QUANTC AS HRSDIURNAS,
+		0 AS HRSNOTURN,
+		0 AS ATRASO,
+		0 AS FALTAS,
+		0 AS SANTECIP,
+		0 AS SEXPED,
+		0 AS HRSEXTRAS,
+		0 AS HRSEXTRABO,
+		0 AS FALTATRABO,
+		0 AS HRSAFAST,
+		0 AS HRSFERIAS,
+		PERAPON.PO_FILIAL AS PO_FILIAL, PERAPON.SEQUENCIA  AS SEQUENCIA, PERAPON.DESCPER  AS DESCPER, PERAPON.PO_DATAINI AS PO_DATAINI, PERAPON.PO_DATAFIM AS PO_DATAFIM  
+			FROM 	 %Table:SPH% SPH
+			INNER JOIN %Table:SP9% SP9
+			ON 	( SPH.PH_PD = SP9.P9_CODIGO ) AND ( SP9.P9_FILIAL = %xFilial:SP9% )
+			INNER JOIN %exp:cNameFilePer% PERAPON
+			ON 	( SPH.PH_DATA BETWEEN  PERAPON.PO_DATAINI AND PERAPON.PO_DATAFIM) AND ( PERAPON.PO_FILIAL = SPH.PH_FILIAL )
+		WHERE
+				(SP9.P9_IDPON = '001A') AND
+				SPH.%NotDel% AND
+				SP9.%NotDel% AND
+				(SPH.PH_FILIAL = %xFilial:SPH% )   AND
+				( SPH.PH_DATA	 >= 	%exp:cDataIni% )				 
+				
+			
+		UNION ALL
+		SELECT
+		%exp:cEmpAnt% M0_CODIGO,
+		%xFilial:SPH% APO_FILIAL, 	
+		SPH.PH_DATA AS DATAAPO,
+		SPH.PH_CC CTT_CUSTO,
+		0 AS HRSNA0REAL,
+		0 AS HRSDIURNAS,
+		SPH.PH_QUANTC  AS HRSNOTURN,
+		0 AS ATRASO,
+		0 AS FALTAS,
+		0 AS SANTECIP,
+		0 AS SEXPED,
+		0 AS HRSEXTRAS,
+		0 AS HRSEXTRABO,
+		0 AS FALTATRABO,
+		0 AS HRSAFAST,
+		0 AS HRSFERIAS,
+		PERAPON.PO_FILIAL AS PO_FILIAL, PERAPON.SEQUENCIA  AS SEQUENCIA, PERAPON.DESCPER  AS DESCPER, PERAPON.PO_DATAINI AS PO_DATAINI, PERAPON.PO_DATAFIM AS PO_DATAFIM  
+			FROM 	 %Table:SPH% SPH 
+			INNER JOIN %Table:SP9% SP9
+			ON 	( SPH.PH_PD = SP9.P9_CODIGO ) AND ( SP9.P9_FILIAL = %xFilial:SP9% )
+			INNER JOIN %exp:cNameFilePer% PERAPON
+			ON 	( SPH.PH_DATA BETWEEN  PERAPON.PO_DATAINI AND PERAPON.PO_DATAFIM) AND ( PERAPON.PO_FILIAL = SPH.PH_FILIAL )	
+		WHERE
+				(SP9.P9_IDPON = '026A') AND   
+				SPH.%NotDel% AND
+				SP9.%NotDel% AND
+				(SPH.PH_FILIAL = %xFilial:SPH% ) AND
+				( SPH.PH_DATA	 >= 	%exp:cDataIni% )				
+		
+		UNION ALL
+		SELECT 	
+		%exp:cEmpAnt% M0_CODIGO,
+		%xFilial:SPH% APO_FILIAL, 	
+		SPH.PH_DATA AS DATAAPO,
+		SPH.PH_CC CTT_CUSTO,
+		SPH.PH_QUANTC  AS HRSNA0REAL,
+		0 AS HRSDIURNAS,
+		0  AS HRSNOTURN,
+		0 AS ATRASO,
+		0 AS FALTAS,
+		0 AS SANTECIP,
+		0 AS SEXPED,
+		0 AS HRSEXTRAS,
+		0 AS HRSEXTRABO,
+		0 AS FALTATRABO,
+		0 AS HRSAFAST,
+		0 AS HRSFERIAS,
+		PERAPON.PO_FILIAL AS PO_FILIAL, PERAPON.SEQUENCIA  AS SEQUENCIA, PERAPON.DESCPER  AS DESCPER, PERAPON.PO_DATAINI AS PO_DATAINI, PERAPON.PO_DATAFIM AS PO_DATAFIM  
+			FROM 	 %Table:SPH% SPH  
+			INNER JOIN %Table:SP9% SP9
+			ON 	( SPH.PH_PD = SP9.P9_CODIGO ) AND ( SP9.P9_FILIAL = %xFilial:SP9% )
+			INNER JOIN %exp:cNameFilePer% PERAPON
+			ON 	( SPH.PH_DATA BETWEEN  PERAPON.PO_DATAINI AND PERAPON.PO_DATAFIM) AND ( PERAPON.PO_FILIAL = SPH.PH_FILIAL )	
+			WHERE
+				SP9.P9_IDPON IN('005A','006A') AND    
+				SPH.%NotDel% AND
+				SP9.%NotDel% AND
+				(SPH.PH_FILIAL = %xFilial:SPH% ) AND
+				( SPH.PH_DATA	 >= 	%exp:cDataIni% )
+		
+		UNION ALL
+		SELECT 	
+		%exp:cEmpAnt% M0_CODIGO,
+		%xFilial:SPH% APO_FILIAL, 	
+		SPH.PH_DATA AS DATAAPO,
+		SPH.PH_CC CTT_CUSTO,
+		0 AS HRSNA0REAL,
+		0 AS HRSDIURNAS,
+		0  AS HRSNOTURN,
+		SPH.PH_QUANTC  AS ATRASO,
+		0 AS FALTAS,
+		0 AS SANTECIP,
+		0 AS SEXPED,
+		0 AS HRSEXTRAS,
+		0 AS HRSEXTRABO,
+		0 AS FALTATRABO,
+		0 AS HRSAFAST,
+		0 AS HRSFERIAS,
+		PERAPON.PO_FILIAL AS PO_FILIAL, PERAPON.SEQUENCIA  AS SEQUENCIA, PERAPON.DESCPER  AS DESCPER, PERAPON.PO_DATAINI AS PO_DATAINI, PERAPON.PO_DATAFIM AS PO_DATAFIM  
+			FROM 	 %Table:SPH% SPH 
+			INNER JOIN %Table:SP9% SP9
+			ON 	( SPH.PH_PD = SP9.P9_CODIGO ) AND ( SP9.P9_FILIAL = %xFilial:SP9% )
+			INNER JOIN %exp:cNameFilePer% PERAPON
+			ON 	( SPH.PH_DATA BETWEEN  PERAPON.PO_DATAINI AND PERAPON.PO_DATAFIM) AND ( PERAPON.PO_FILIAL = SPH.PH_FILIAL )	
+			WHERE
+				SP9.P9_IDPON IN('012A','011N' ) AND  
+				SPH.%NotDel% AND
+				SP9.%NotDel% AND
+				(SPH.PH_FILIAL = %xFilial:SPH% ) AND 
+				( SPH.PH_DATA	 >= 	%exp:cDataIni% )				
+		
+		UNION ALL
+		SELECT 	
+		%exp:cEmpAnt% M0_CODIGO,
+		%xFilial:SPH% APO_FILIAL, 	
+		SPH.PH_DATA AS DATAAPO,
+		SPH.PH_CC CTT_CUSTO,
+		0 AS HRSNA0REAL,
+		0 AS HRSDIURNAS,
+		0  AS HRSNOTURN,
+		0 AS ATRASO,
+		SPH.PH_QUANTC  AS FALTAS,
+		0 AS SANTECIP,
+		0 AS SEXPED,
+		0 AS HRSEXTRAS,
+		0 AS HRSEXTRABO,
+		0 AS FALTATRABO,
+		0 AS HRSAFAST,
+		0 AS HRSFERIAS,
+		PERAPON.PO_FILIAL AS PO_FILIAL, PERAPON.SEQUENCIA  AS SEQUENCIA, PERAPON.DESCPER  AS DESCPER, PERAPON.PO_DATAINI AS PO_DATAINI, PERAPON.PO_DATAFIM AS PO_DATAFIM  
+			FROM 	 %Table:SPH% SPH 
+			INNER JOIN %Table:SP9% SP9
+			ON 	( SPH.PH_PD = SP9.P9_CODIGO ) AND ( SP9.P9_FILIAL = %xFilial:SP9% )
+			INNER JOIN %exp:cNameFilePer% PERAPON
+			ON 	( SPH.PH_DATA BETWEEN  PERAPON.PO_DATAINI AND PERAPON.PO_DATAFIM) AND ( PERAPON.PO_FILIAL = SPH.PH_FILIAL )	
+			WHERE
+				SP9.P9_IDPON IN('010A','009N','008A','007N','032A','033N','034A','035N' ) AND 
+				SPH.%NotDel% AND
+				SP9.%NotDel% AND
+				(SPH.PH_FILIAL = %xFilial:SPH% ) AND 
+				( SPH.PH_DATA	 >= 	%exp:cDataIni% )
+				
+		UNION ALL
+		SELECT 	
+		%exp:cEmpAnt% M0_CODIGO,
+		%xFilial:SPH% APO_FILIAL, 	
+		SPH.PH_DATA AS DATAAPO,
+		SPH.PH_CC CTT_CUSTO,
+		0 AS HRSNA0REAL,
+		0 AS HRSDIURNAS,
+		0  AS HRSNOTURN,
+		0 AS ATRASO,
+		0 AS FALTAS,
+		SPH.PH_QUANTC   AS SANTECIP,
+		0 AS SEXPED,
+		0 AS HRSEXTRAS,
+		0 AS HRSEXTRABO,
+		0 AS FALTATRABO,
+		0 AS HRSAFAST,
+		0 AS HRSFERIAS,
+		PERAPON.PO_FILIAL AS PO_FILIAL, PERAPON.SEQUENCIA  AS SEQUENCIA, PERAPON.DESCPER  AS DESCPER, PERAPON.PO_DATAINI AS PO_DATAINI, PERAPON.PO_DATAFIM AS PO_DATAFIM  
+			FROM 	 %Table:SPH% SPH 
+			INNER JOIN %Table:SP9% SP9
+			ON 	( SPH.PH_PD = SP9.P9_CODIGO ) AND ( SP9.P9_FILIAL = %xFilial:SP9% )
+			INNER JOIN %exp:cNameFilePer% PERAPON
+			ON 	( SPH.PH_DATA BETWEEN  PERAPON.PO_DATAINI AND PERAPON.PO_DATAFIM) AND ( PERAPON.PO_FILIAL = SPH.PH_FILIAL )	
+			WHERE
+				SP9.P9_IDPON IN('014A','013N' ) AND  
+				SPH.%NotDel% AND
+				SP9.%NotDel% AND
+				(SPH.PH_FILIAL = %xFilial:SPH% ) AND 
+				( SPH.PH_DATA	 >= 	%exp:cDataIni% )
+		
+		UNION ALL
+		SELECT
+		%exp:cEmpAnt% M0_CODIGO,
+		%xFilial:SPH% APO_FILIAL, 	
+		SPH.PH_DATA AS DATAAPO,
+		SPH.PH_CC CTT_CUSTO,
+		0 AS HRSNA0REAL,
+		0 AS HRSDIURNAS,
+		0  AS HRSNOTURN,
+		0 AS ATRASO,
+		0 AS FALTAS,
+		0 AS SANTECIP,
+		SPH.PH_QUANTC   AS SEXPED,
+		0 AS HRSEXTRAS,
+		0 AS HRSEXTRABO,
+		0 AS FALTATRABO,
+		0 AS HRSAFAST,
+		0 AS HRSFERIAS,
+		PERAPON.PO_FILIAL AS PO_FILIAL, PERAPON.SEQUENCIA  AS SEQUENCIA, PERAPON.DESCPER  AS DESCPER, PERAPON.PO_DATAINI AS PO_DATAINI, PERAPON.PO_DATAFIM AS PO_DATAFIM  
+			FROM 	 %Table:SPH% SPH 
+			INNER JOIN %Table:SP9% SP9
+			ON 	( SPH.PH_PD = SP9.P9_CODIGO ) AND ( SP9.P9_FILIAL = %xFilial:SP9% )
+			INNER JOIN %exp:cNameFilePer% PERAPON
+			ON 	( SPH.PH_DATA BETWEEN  PERAPON.PO_DATAINI AND PERAPON.PO_DATAFIM) AND ( PERAPON.PO_FILIAL = SPH.PH_FILIAL )	
+			WHERE
+				SP9.P9_IDPON IN('020A','019N' ) AND 
+				SPH.%NotDel% AND
+				SP9.%NotDel% AND
+				(SPH.PH_FILIAL = %xFilial:SPH% ) AND     
+				( SPH.PH_DATA	 >= 	%exp:cDataIni% )
+			
+		UNION ALL
+		SELECT 	
+		%exp:cEmpAnt% M0_CODIGO,
+		%xFilial:SPH% APO_FILIAL, 	
+		SPH.PH_DATA AS DATAAPO,
+		SPH.PH_CC CTT_CUSTO,
+		0 AS HRSNA0REAL,
+		0 AS HRSDIURNAS,
+		0  AS HRSNOTURN,
+		0 AS ATRASO,
+		0 AS FALTAS,
+		0 AS SANTECIP,
+		0 AS SEXPED,
+		SPH.PH_QUANTC    AS HRSEXTRAS,
+		0 AS HRSEXTRABO,
+		0 AS FALTATRABO,
+		0 AS HRSAFAST,
+		0 AS HRSFERIAS,
+		PERAPON.PO_FILIAL AS PO_FILIAL, PERAPON.SEQUENCIA  AS SEQUENCIA, PERAPON.DESCPER  AS DESCPER, PERAPON.PO_DATAINI AS PO_DATAINI, PERAPON.PO_DATAFIM AS PO_DATAFIM  
+			FROM 	 %Table:SPH% SPH 
+			INNER JOIN %exp:cNameFilePer% PERAPON
+			ON 	( SPH.PH_DATA BETWEEN  PERAPON.PO_DATAINI AND PERAPON.PO_DATAFIM) AND ( PERAPON.PO_FILIAL = SPH.PH_FILIAL )	
+			WHERE
+				SPH.%NotDel% AND
+				SPH.PH_FILIAL = %xFilial:SPH% AND
+				( SPH.PH_DATA	 >= 	%exp:cDataIni% ) AND
+				(
+					SPH.PH_PD IN (  SELECT SP4.P4_CODAUT AS HRSEXTRAS 
+												FROM 	%Table:SP4% SP4
+												WHERE 	SP4.%NotDel% AND ( SP4.P4_FILIAL = %xFilial:SP4% )	
+											
+									    )
+					OR
+					SPH.PH_PD IN ( 	SELECT SP4.P4_CODNAUT AS HRSEXTRAS 
+												FROM 	%Table:SP4% SP4
+												WHERE 	SP4.%NotDel% AND ( SP4.P4_FILIAL = %xFilial:SP4% )			
+									    )  
+			    )
+				
+		
+	
+		UNION ALL
+		
+		SELECT
+		%exp:cEmpAnt% M0_CODIGO,
+		%xFilial:SPK% APO_FILIAL,
+		SPK.PK_DATA AS DATAAPO,
+		SPK.PK_CC CTT_CUSTO,
+		0 AS HRSNA0REAL,
+		0 AS HRSDIURNAS,
+		0 AS HRSNOTURN,
+		0 AS ATRASO,
+		0 AS FALTAS,
+		0 AS SANTECIP,
+		0 AS SEXPED,
+		0 AS HRSEXTRAS,
+		SPK.PK_HRSABO AS HRSEXTRABO,
+		0 AS FALTATRABO,
+		0 AS HRSAFAST,
+		0 AS HRSFERIAS,
+		PERAPON.PO_FILIAL AS PO_FILIAL, PERAPON.SEQUENCIA  AS SEQUENCIA, PERAPON.DESCPER  AS DESCPER, PERAPON.PO_DATAINI AS PO_DATAINI, PERAPON.PO_DATAFIM AS PO_DATAFIM  
+		FROM %Table:SPK% SPK     
+		INNER JOIN %exp:cNameFilePer% PERAPON
+		ON 	( SPK.PK_DATA BETWEEN  PERAPON.PO_DATAINI AND PERAPON.PO_DATAFIM) AND ( PERAPON.PO_FILIAL = SPK.PK_FILIAL )	
+		INNER JOIN %Table:SPH% SPH ON ( SPH.PH_PD = SPK.PK_CODEVE ) AND (SPK.PK_FILIAL = SPH.PH_FILIAL) AND  ( SPH.PH_MAT = SPK.PK_MAT ) 
+		INNER JOIN %Table:SP6% SP6 ON (SPK.PK_CODABO = SP6.P6_CODIGO) AND ( SP6.P6_FILIAL = %xFilial:SP6% )
+		WHERE
+			SPK.%NotDel% AND 
+			SPH.%NotDel% AND
+			SP6.%NotDel% AND
+			(SPH.PH_QTABONO > 0) AND
+			(SP6.P6_ABHORAS = 'S') AND
+			SPH.%NotDel% AND
+			(SPK.PK_FILIAL = %xFilial:SPK% ) AND
+			( SPH.PH_DATA	 >= 	%exp:cDataIni% ) AND
+			(
+				SPH.PH_PD IN (  SELECT SP4.P4_CODAUT AS HRSEXTRAS 
+											FROM 	%Table:SP4% SP4
+											WHERE 	SP4.%NotDel% AND ( SP4.P4_FILIAL = %xFilial:SP4% )	
+										
+								    )
+				OR
+				SPH.PH_PD IN ( 	SELECT SP4.P4_CODNAUT AS HRSEXTRAS 
+											FROM 	%Table:SP4% SP4
+											WHERE 	SP4.%NotDel% AND ( SP4.P4_FILIAL = %xFilial:SP4% )			
+								    )  
+			)
+		
+		
+								
+		UNION ALL
+		SELECT
+		%exp:cEmpAnt% M0_CODIGO,
+		%xFilial:SPK% APO_FILIAL,
+		SPK.PK_DATA AS DATAAPO,
+		SPK.PK_CC CTT_CUSTO,
+		0 AS HRSNA0REAL,
+		0 AS HRSDIURNAS,
+		0 AS HRSNOTURN,
+		0 AS ATRASO,
+		0 AS FALTAS,
+		0 AS SANTECIP,
+		0 AS SEXPED,
+		0 AS HRSEXTRAS,
+		0 AS HRSEXTRABO,
+		SPK.PK_HRSABO AS FALTATRABO,
+		0 AS HRSAFAST,
+		0 AS HRSFERIAS,
+		PERAPON.PO_FILIAL AS PO_FILIAL, PERAPON.SEQUENCIA  AS SEQUENCIA, PERAPON.DESCPER  AS DESCPER, PERAPON.PO_DATAINI AS PO_DATAINI, PERAPON.PO_DATAFIM AS PO_DATAFIM  
+		FROM %Table:SPK% SPK  
+		INNER JOIN %exp:cNameFilePer% PERAPON
+		ON 	( SPK.PK_DATA BETWEEN  PERAPON.PO_DATAINI AND PERAPON.PO_DATAFIM) AND ( PERAPON.PO_FILIAL = SPK.PK_FILIAL )	
+		INNER JOIN %Table:SPH% SPH ON ( SPH.PH_PD = SPK.PK_CODEVE ) AND (SPK.PK_FILIAL = SPH.PH_FILIAL) AND  ( SPH.PH_MAT = SPK.PK_MAT ) 
+		INNER JOIN %Table:SP6% SP6 ON SPK.PK_CODABO = SP6.P6_CODIGO AND ( SP6.P6_FILIAL = %xFilial:SP6% )
+		INNER JOIN %Table:SP9% SP9 ON SPK.PK_CODEVE = SP9.P9_CODIGO AND ( SP9.P9_FILIAL = %xFilial:SP9% )
+		WHERE
+			SPK.%NotDel% AND
+			SPH.%NotDel% AND
+			SP6.%NotDel% AND
+			(SPH.PH_QTABONO > 0) AND
+			(SP6.P6_ABHORAS = 'S') AND
+			( SP9.P9_IDPON IN ('012A','011N','010A','009N','008A','007N','032A','033N','034A','035N','014A','013N','020A','019N' ) )
+			AND
+			(SPK.PK_FILIAL = %xFilial:SPK%)  AND
+			( SPH.PH_DATA	 >= 	%exp:cDataIni% )
+
+		EndSql 
+
+	Endif	
+	
+	cLastChave	:= '!!!!'
+	cFilChave	:= '!!!!'
+	cFilOld		:= cFilAnt
+    While (cAliasQry)->( (!Eof()) )    
+	    //-- Em chamadas subsequentes de funcoes, se faz referencia a cFilAnt 
+	    //-- no nosso caso a cFilAnt devera ser a da filial lida
+	    cFilAnt := (cAliasQry)->APO_FILIAL
+    
+    	cChave := (cAliasQry)->(APO_FILIAL +  SEQUENCIA + PO_DATAINI +  CTT_CUSTO ) 
+	
+        If  ( cChave <> cLastChave) 
+        	If ( cLastChave	<> '!!!!') 
+	        	//-- Grava as Horas durante o Laco
+		    	PonDwGravaHoras(cAliasDW,cAliasQry,aSoma,cFilHrs, cFilApo, cCCHrs, dDataIni,dDataFim, cDescPer,dDataHrs, cSequencia)
+        	Endif
+        	cLastChave 	:= cChave  
+			cFilHrs		:= (cAliasQry)->APO_FILIAL
+			cCCHrs		:= (cAliasQry)->CTT_CUSTO
+			dDataIni	:= Stod((cAliasQry)->PO_DATAINI )
+			dDataFim	:= Stod((cAliasQry)->PO_DATAFIM ) 
+			cDescPer	:= (cAliasQry)->DESCPER
+			dDataHrs	:= Stod((cAliasQry)->DATAAPO )
+		    cSequencia	:= (cAliasQry)->SEQUENCIA
+		    cFilApo		:= (cAliasQry)->PO_FILIAL
+		    aSoma		:= {0,0,0,0,0,0,0,0,0,0,0,0}  
+        Endif 
+	
+		
+	    aSoma[01] := aSoma[01] + 	fConvHr((cAliasQry)->HRSNA0REAL 	, "D") 		
+  		aSoma[02] := aSoma[02] + 	fConvHr((cAliasQry)->HRSDIURNAS 	, "D") 		
+	    aSoma[03] := aSoma[03] + 	fConvHr((cAliasQry)->HRSNOTURN 		, "D") 		
+  		aSoma[04] := aSoma[04] + 	fConvHr((cAliasQry)->ATRASO 		, "D") 		
+		aSoma[05] := aSoma[05] + 	fConvHr((cAliasQry)->FALTAS			, "D") 		
+  		aSoma[06] := aSoma[06] + 	fConvHr((cAliasQry)->SANTECIP 		, "D") 		
+	    aSoma[07] := aSoma[07] + 	fConvHr((cAliasQry)->SEXPED 		, "D") 		
+  		aSoma[08] := aSoma[08] + 	fConvHr((cAliasQry)->HRSEXTRAS 		, "D") 		
+		aSoma[09] := aSoma[09] + 	fConvHr((cAliasQry)->HRSEXTRABO 	, "D") 		
+  		aSoma[10] := aSoma[10] + 	fConvHr((cAliasQry)->FALTATRABO 	, "D") 		
+	    aSoma[11] := aSoma[11] + 	fConvHr((cAliasQry)->HRSAFAST 		, "D") 		
+  		aSoma[12] := aSoma[12] + 	fConvHr((cAliasQry)->HRSFERIAS 		, "D") 		  		  			
+			
+		(cAliasQry)->(DbSkip())
+				
+	End While                 
+	
+    //-- Grava na Saida do Laco
+    PonDwGravaHoras(cAliasDW,cAliasQry,aSoma,cFilHrs, cFilApo, cCCHrs, dDataIni, dDataFim, cDescPer, dDataHrs, cSequencia) 		
+	
+	//-- Fecha a Query 
+	(cAliasQry)->(DbCloseArea()) 
+	
+	cFilAnt	:= cFilOld
+			
+cFilAnt	:= cFilOld		
+				
+RestArea(aArea)
+
+Return(.T.)  
+
+/*/
+ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿
+³Fun‡„o    ³PonDwGravaHoras 	 ³ Autor ³Mauricio MR  ³ Data ³16/03/2007³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´
+³Descri‡„o ³Grava horas do Apontamento para DW 				  			 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Sintaxe   ³<Vide Parametros Formais>									 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Parametros³<Vide Parametros Formais>									 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Retorno   ³NIL															 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Observa‡„o³                                                      	     ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Uso       ³SIGAPON     												 ³
+ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ/*/  
+Static Function PonDwGravaHoras(cAliasDW,cAliasQry,aSoma,cFilHrs, cFilApo, cCCHrs, dDataIni, dDataFim, cDescPer, dDataHrs, cSequencia) 
+
+If (	aSoma[01] + aSoma[02] + aSoma[03] + aSoma[04] + aSoma[05]+ aSoma[06] +;
+		aSoma[07] + aSoma[08] + aSoma[09] + aSoma[10] + aSoma[11]+ aSoma[12];
+    ) > 0    
+	(cAliasDW)->(RecLock(cAliasDW,.T.))   
+	
+	    (cAliasDW)->M0_CODIGO	:= cEmpAnt
+		(cAliasDW)->M0_CODFIL	:= cFilHrs
+		(cAliasDW)->CTT_CUSTO	:= cCCHrs 
+		(cAliasDW)->PO_FILIAL	:= cFilApo
+		(cAliasDW)->PO_DATAINI	:= dDataIni
+		(cAliasDW)->PO_DATAFIM	:= dDataFim
+		(cAliasDW)->DESCPER		:= cDescPer
+		(cAliasDW)->DATAAPO		:= dDataHrs		
+	    (cAliasDW)->SEQUENCIA	:= cSequencia
+		(cAliasDW)->HRSNA0REAL	:= aSoma[01] 
+		(cAliasDW)->HRSDIURNAS	:= aSoma[02]
+		(cAliasDW)->HRSNOTURN	:= aSoma[03]
+		(cAliasDW)->ATRASO		:= aSoma[04]
+		(cAliasDW)->FALTAS		:= aSoma[05]
+		(cAliasDW)->SANTECIP	:= aSoma[06]
+		(cAliasDW)->SEXPED		:= aSoma[07]
+		(cAliasDW)->HRSEXTRAS	:= aSoma[08]
+		(cAliasDW)->HRSEXTRABO	:= aSoma[09]
+		(cAliasDW)->FALTATRABO	:= aSoma[10]
+		(cAliasDW)->HRSAFAST	:= aSoma[11]
+		(cAliasDW)->HRSFERIAS	:= aSoma[12]
+							
+	(cAliasDW)->(MsUnlock())
+Endif   
+ 
+Return Nil   
+
+
+/*/
+ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿
+³Fun‡„o    ³PonDwAfasta    	     ³ Autor ³Mauricio MR  ³ Data ³16/03/2007³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´
+³Descri‡„o ³Monta query e faz chamada para calculo das horas   			 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Sintaxe   ³<Vide Parametros Formais>									 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Parametros³<Vide Parametros Formais>									 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Retorno   ³NIL															 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Observa‡„o³                                                      	     ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Uso       ³SIGAPON     												 ³
+ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ/*/  
+Static Function PonDwAfasta(	cAlias			,; //Alias da tabela de Origem de Dados
+								cAliasDW		,; //Alias da tabela temporaria
+								cNameFile		,; //Nome do arquivo da tabela temporaria 
+								cAliasPer		,;  //Alias do Periodo de Apontamento 
+							    aPeriodos		; //Periodos de Apontamento
+							  ) 					  
+Local aArea			:= GetArea()
+Local cAliasQry
+
+Local cCondFil		:= ''
+Local cOrdem         
+Local cDataAfast	:= '' //Data para considerar os afastamentos
+Local cEmptyData	:= '' //Data para ser considerada na ausencia de data final do afastamento   
+Local dPerIIni		:= Ctod('')
+Local dPerFIni		:= Ctod('')
+Local dPerFim		:= Ctod('')
+
+/*/
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Reformula as datas iniciais em funcao da origem dos dados (SPC/SPH) ³
+³ SPC - Valem as datas do Periodo Aberto.							  ³
+³ SPH - Data inicial do primeiro Periodo e data Final do ultimo perio ³
+³ do.																  ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ/*/  
+//-- Posiciona no Primeiro Registro do Periodo de Apontamento
+(cAliasPer)->(DbGotop()) 
+dPerIIni	:= (cAliasPer)->PO_DATAINI  
+//-- Posiciona no Ultimo registro do Periodo de Apontamento
+(cAliasPer)->(DbGoBottom())  
+dPerFIni	:= (cAliasPer)->PO_DATAINI  
+dPerFim		:= (cAliasPer)->PO_DATAFIM
+
+dPerIni				:= If(cAlias == "SPC", dPerFIni, dPerIIni ) 
+
+cDataAfast			:= "% '"+ Dtos(dPerIni) + "' %"         
+
+cEmptyData			:= "% '"+ Dtos(dPerFim) + "' %" 
+
+	/*/
+	ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	³ Horas de Afastamentos e Ferias							 		  ³
+	ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ/*/    
+	cAliasQry := GetNextAlias()
+   
+	//-- String da ordem 
+	//Turno Trab.+Seq.Ini.Turn+Regra Apont.+Matricula
+	cOrdem	:= '%'+SqlOrder( SRA->( IndexKey(4) ) )
+
+	cCondFil:= "% SRA.RA_FILIAL = '" + cFilant+ "' %"
+
+	BeginSql Alias cAliasQry	
+		SELECT  SRA.RA_FILIAL, SRA.RA_MAT, SRA.RA_CC, SRA.RA_TNOTRAB, SRA.RA_SEQTURN, SRA.RA_REGRA, SRA.RA_SITFOLH, 
+		        SRA.RA_DEMISSA, SRA.RA_ADMISSA, SR8.R8_DATA, SR8.R8_TIPO, SR8.R8_DATAINI, 
+			CASE SR8.R8_DATAFIM WHEN '        ' THEN %exp:cEmptyData% ELSE SR8.R8_DATAFIM END AS R8_DATAFIM
+		FROM %table:SRA% SRA
+		INNER JOIN
+			%table:SR8% SR8 
+		ON
+			SRA.RA_FILIAL 	= SR8.R8_FILIAL AND
+			SRA.RA_MAT 		= SR8.R8_MAT
+		WHERE 
+			%exp:cCondFil%  and
+			CASE SR8.R8_DATAFIM WHEN '        ' THEN %exp:cEmptyData% ELSE SR8.R8_DATAFIM END   >=  %exp:cDataAfast%
+		ORDER BY 
+			%exp:cOrdem%				
+	EndSql	 
+
+	/*/
+	ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	³ Gera horas de Afastamentos e Ferias								  ³
+	ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ/*/ 
+	PonDwGeraDiasAfast(cAliasDW, cAliasQry, cNameFile, dPerIni, dPerFim, aPeriodos )			
+	
+	//-- Fecha a Query 
+	(cAliasQry)->(DbCloseArea()) 
+		
+				
+RestArea(aArea)
+
+Return(.T.) 
+
+ 
+
+                                  
+/*/
+ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿
+³Fun‡„o    ³PonDwGeraDiasAfast 	 ³ Autor ³Mauricio MR  ³ Data ³14/03/2007³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´
+³Descri‡„o ³Carrega arquivo temporario com dados do DW   				 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Sintaxe   ³<Vide Parametros Formais>									 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Parametros³<Vide Parametros Formais>									 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Retorno   ³NIL															 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Observa‡„o³                                                      	     ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Uso       ³SIGAPON     												 ³
+ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ/*/  
+Static Function PonDwGeraDiasAfast(	 cAliasDW		,; // Alias da tabela temporaria
+									 cAliasQry		,; // Alias da origem de dados
+									 cNameFile		,; // Nome do arquivo
+									 dPerIni 		,; // Data Inicial do Periodo de Apontamento
+									 dPerFim        ,; // Data Final do Periodo de Apontamento 
+									 aPeriodos		;  // Periodos de Apontamento									    									                                      									 
+								 )
+
+Local aSRAArea	   	:= SRA->(GetArea())
+Local aTabCalend	:= {}				//-- Tabela Calendario
+Local aTabPadrao	:= {}   			//-- Tabela de Turnos/Horarios
+Local aTurnos      	:= {}				//-- Trocas de turno do periodo 
+
+ /*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Corre cada ocorrencia de afastamento para cada registro do SRA  ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/ 
+While (cAliasQry)->(!Eof()) 
+    
+     /*
+	ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	³ Posiciona no SRA											  ³
+	ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+    SRA->( DbSeek( (cAliasQry)->( RA_FILIAL+RA_MAT+RA_TNOTRAB+RA_SEQTURN+RA_REGRA ) ) )   
+    
+	/*
+	ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	³Reinicializa Variaveis                                                 ³
+	ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+	aTabCalend 	:= {}  
+	aTurnos		:= {} 
+	
+	
+	//-- Monta calendario com horarios de trabalho            
+	/*
+	ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	³Limita a data inicial a maior entre o afastamento e o inicio do periodo: ³
+	³1)Para periodo aberto, o calendario inicilizara a partir da data inicial ³
+	³do periodo de apontamento ou a data do afastamento no caso do afastamen  ³
+	³to iniciar depois do inicio do periodo de apontamento.                   ³
+	³2)Para periodo fechado, o calendario inicilizara a partir da data inicial³
+	³do periodo (conforme parametro MV_ABSINI ou o primeiro periodo de aponta-³
+	³mento do SPO) ou a data de afastamento no caso do afastamento iniciar de ³
+	³pois  do inicio do periodo inicial.                                      ³
+	ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+	
+	If !CriaCalend( Max(dPerIni,Stod((cAliasQry)->R8_DATAINI)),Min(dPerFim, Stod((cAliasQry)->R8_DATAFIM)),Nil,Nil,aTabPadrao,@aTabCalend,(cAliasQry)->RA_FILIAL,(cAliasQry)->RA_MAT,(cAliasQry)->RA_CC,@aTurnos,NIL,NIL,.F.)
+		(cAliasQry)->(DbSkip())
+		Loop
+	EndIf
+    
+    /*
+	ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	³ Gera Horas para dias de afastamento e ferias				  ³
+	ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/          
+    PonDwGravDiasAfast(cAliasDW, cAliasQry, aTabCalend, cNameFile, aPeriodos)
+    
+	(cAliasQry)->(DbSkip())
+	
+EndDo     
+                  
+//-- Restaura area do SRA
+RestArea(aSRAArea)
+
+Return (.T.)
+ 
+
+/*/
+ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿
+³Fun‡„o    ³PonDwGravDiasAfast 	 ³ Autor ³Mauricio MR  ³ Data ³14/03/2007³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´
+³Descri‡„o ³Gera horas de dias de Afastamento e Ferias 					 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Sintaxe   ³<Vide Parametros Formais>									 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Parametros³<Vide Parametros Formais>									 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Retorno   ³NIL															 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Observa‡„o³                                                      	     ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Uso       ³SIGAPON     												 ³
+ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ/*/  
+Static Function PonDwGravDiasAfast(	 cAliasDW		,; //Alias da Tabela temporaria
+									 cAliasQry		,; //Alias da query fonte de dados 
+									 aTabCalend		,; //Tabela calendario do funcionario
+									 cNameFile		,; //Nome do arquivo da Tabela temporaria 
+									 aPeriodos		;  //Periodos de Afastamentos
+								  )
+Local aArea			:= GetArea()
+Local cTipodia 		:= ''        
+Local cFRegra		:= '' 
+Local cFilRegra		:= fFilFunc("SPA")   
+Local cCCOld		:= ''
+Local cDescCC		:= ''
+Local cOrdem		:= '!!' 
+Local cTipAfast		:= ''  
+Local dData			:= Ctod('')
+Local lTrbFeriado	:=.F.
+Local lAppend   	:= .F. 
+Local lGrava    	:= .F. 
+Local nHrsAfast		:= 0
+Local nHrsFerias	:= 0
+Local nX       		:= 0 
+Local nSeq			:= 0
+
+//-- Corre todas as datas do Calendario
+For nX := 1 To Len(aTabCalend)
+		
+	/*/
+	ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	³ Verifica se houve Quebra de Data (conforme a ordem muda)     ³
+	ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ/*/  
+    If ( cOrdem <> aTabCalend[nX,	CALEND_POS_ORDEM] ) .or.  ( nX = Len(aTabCalend) )
+		lGrava	:= .T.
+		/*/
+		ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		³ Para uma quebra real de ordem grava os totais 			   ³
+		ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ/*/
+	   	If cOrdem <> "!!"  .and. ( nHrsAfast > 0 .or. nHrsFerias > 0 )
+	   	    
+			//-- Procura o centro de custo do funcionario na epoca do afastamento
+			fBuscaCC(dData, @cCCOld, @cDescCC, Nil, .F. , .T.  )       			
+	        
+	        //-- Verifica se trata-se de um novo registro       	
+            If (lAppend:= !(cAliasDW)->( DbSeek(cEmpAnt + (cAliasQry)->RA_FILIAL + If(Empty(cCCOld),(cAliasQry)->RA_CC,cCCOld ) + Dtos(dData) ) ))
+	             nSeq := Ascan(aPeriodos,; 
+										    {|x| (	(x[1] == cEmpAnt) .and. (x[2] == (cAliasQry)->RA_FILIAL)  .and. ;
+							     					( ( dData >= x[4]) .and. ;
+							     					  ( dData <= x[5]);
+							     					);
+						     					 );
+						     				};
+						     		)
+               	/*/
+				ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+				³ Descarta datas nao contidas pelos periodos de apontamento    ³
+				ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ/*/
+                 If Empty(nSeq)
+                    lGrava	:= .F.
+                 Endif
+                  
+            Endif
+            
+   			/*/
+			ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			³ Somente grava dados de periodos consistentes				   ³
+			ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ/*/
+            If lGrava
+			   	(cAliasDW)->(RecLock(cAliasDW,lAppend))  
+	            
+	           	/*/
+				ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+				³ Se for um novo registro alimenta campos chaves.		       ³
+				ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ/*/
+				If lAppend  
+			   		(cAliasDW)->M0_CODIGO	:= cEmpAnt
+					(cAliasDW)->M0_CODFIL	:= (cAliasQry)->RA_FILIAL
+					(cAliasDW)->CTT_CUSTO	:= cCCOld
+					(cAliasDW)->PO_FILIAL	:= aPeriodos[nSeq, 2]
+					(cAliasDW)->SEQUENCIA	:= aPeriodos[nSeq, 3]
+					(cAliasDW)->PO_DATAINI	:= aPeriodos[nSeq, 4]
+					(cAliasDW)->PO_DATAFIM	:= aPeriodos[nSeq, 5]
+					(cAliasDW)->DESCPER		:= aPeriodos[nSeq, 6]
+					(cAliasDW)->DATAAPO  	:= dData 
+				Endif    
+	
+				(cAliasDW)->HRSAFAST	:= (cAliasDW)->HRSAFAST +  	fConvHr(nHrsAfast , "D")
+				(cAliasDW)->HRSFERIAS	:= (cAliasDW)->HRSFERIAS + fConvHr(nHrsFerias, "D") 
+										
+				(cAliasDW)->(MsUnlock()) 
+			Endif	
+		Endif                                          
+
+		cOrdem		:= aTabCalend[nX,	CALEND_POS_ORDEM]  
+		cTipAfast	:= aTabCalend[nX,	CALEND_POS_TIP_AFAST]  		   
+		dData	 	:= aTabCalend[nX,	CALEND_POS_DATA]  		   
+		nHrsAfast	:= 0
+ 		nHrsFerias	:= 0					
+	                                
+	Endif    
+    
+    //Calcula as horas nao efetuadas em funcao do afastamento.
+    If  aTabCalend[ nX , CALEND_POS_AFAST ]
+       
+	    //-- Verifica se funcionario Trabalha em Feriado
+	    If cfRegra <> ( cFilRegra + aTabCalend[ nX , CALEND_POS_REGRA ] )
+	       cFRegra		:= ( cFilRegra + aTabCalend[ nX , CALEND_POS_REGRA ]  )
+	       lTrbFeriado	:= ( PosSPA(  aTabCalend[ nX , CALEND_POS_REGRA ] , cFilRegra , "PA_FERIADO" , 1 , .F. ) == "S" ) 
+		Endif
+	
+	    // *** Verifica Tipo Dia ***
+	    //-- Se Feriado 
+	         //-- Se Excecao
+	              //Tipo Dia da Excecao
+	         //--Senao Excecao     
+		         //-- Se NaoTrabalha Feriado
+		         //   Tipo dia  = "Feriado"
+		         //---Senao NaoTrabalha Feriado
+		         //   Tipo dia Original     
+		         //-- Fim se Nao Trabalha Feriado
+	         //-- Fim se Excecao
+	    //Senao
+	    //   Tipo Dia Original
+	    //-- Fim se Feriado
+	    
+		cTipoDia	:= IF( aTabCalend[ nX , CALEND_POS_FERIADO ] , IF(  aTabCalend[ nX , CALEND_POS_EXCECAO ]  == "E" , aTabCalend[ nX , CALEND_POS_TIPO_DIA ] , IF(!lTrbFeriado,"F",aTabCalend[ nX , CALEND_POS_TIPO_ORIG_DIA ] ) ) ,aTabCalend[ nX , CALEND_POS_TIPO_ORIG_DIA ] )                  
+	    
+	    //-- Descarta as Horas da Tabela para Dias diferentes de Trabalhado
+	    If cTipoDia !='S'                                                 
+	       Loop
+	    Endif
+	
+		//-- Verifica o total de horas previstas conforme o tipo de afastamento
+		If !Empty(aTabCalend[nX,CALEND_POS_HRS_TRABA])  
+		    If cTipAfast == 'F'
+				nHrsFerias := SomaHoras(nHrsFerias, aTabCalend[nX,CALEND_POS_HRS_TRABA])
+			Else 
+				nHrsAfast := SomaHoras(nHrsAfast, aTabCalend[nX,CALEND_POS_HRS_TRABA])
+			Endif	
+		Endif
+    Endif
+    
+Next nX        
+
+RestArea(aArea)
+
+Return (Nil)
+
+
+/*/
+ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿
+³Fun‡„o    ³PonDwPeriodos    	 ³ Autor ³Mauricio MR  ³ Data ³27/03/2007³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´
+³Descri‡„o ³Grava Periodos de Apontamento			 					 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Sintaxe   ³<Vide Parametros Formais>									 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Parametros³<Vide Parametros Formais>									 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Retorno   ³NIL															 ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Observa‡„o³                                                      	     ³
+ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³Uso       ³SIGAPON     												 ³
+ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ/*/  
+Static Function	PonDwPeriodos( cAliasPer 	,; 	//Alias da tabela temporaria de Periodos de Apontamento
+								cDataIni	,; 	//Data inicial para apuracao dos dados 
+								aPeriodos	;   //Array para identificar os periodos de afastamentos
+							  )   
+Local cAliasQuery		:=''		
+Local cFilSPO  
+Local cFilSPOCond		:=''  
+Local cDtFimCond		:='' 	 
+
+Local cAlias			:= Alias()
+
+Local dPerIni   		:= Ctod("//")
+Local dPerFim   		:= Ctod("//")  
+
+Local nSeq				:= 0  
+
+Local lEmptyData		:= Empty(cDataIni)
+
+/*/
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Obtem os Periodos de Apontamento							   ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ/*/
+//-- Obtem o periodo aberto
+GetPonMesDat( @dPerIni , @dPerFim , cFilAnt )
+
+If !lEmptyData
+	cDataIni				:=  Dtos(Min(dDatabase, Stod(cDataIni) ) )
+Endif
+
+//-- Obtem a Filial da tabela de Historico Periodos de Apontamento
+cFilSPO		:= xFilial('SPO', cFilAnt)  
+cFilSPOCond	:=  If(Empty(cFilSPO),  "% SPO.PO_FILIAL = '  ' %","% SPO.PO_FILIAL = '"+cFilSPO +"' %")	
+cDtFimCond	:=  If(lEmptyData,  '',"% 	SPO.PO_DATAFIM  >= '" +  cDataIni	 + "' %"  )	
+cOrdem		:= '% '+SqlOrder( SPO->( IndexKey(1) ) )+' %'
+		    
+cAliasQuery 	:= GetNextAlias()
+	
+BeginSql Alias cAliasQuery
+	SELECT 	SPO.PO_FILIAL, SPO.PO_DATAINI, SPO.PO_DATAFIM
+	FROM %table:SPO% SPO 
+	WHERE   %exp:cFilSPOCond% AND 
+			SPO.%NotDel% 
+ 		ORDER BY %exp:cOrdem%					 					  
+		 
+EndSql       
+
+(cAliasQuery)->(DBGOTOP())
+//-- Adiciona cada Periodo para a Filial, independente da tabela SPO ser exclusiva ou compartilhada.
+While (cAliasQuery)->( (!Eof()) .And.  ( PO_FILIAL == cFilSPO ) )
+            
+		(cAliasPer)->(RecLock(cAliasPer,.T.) ) 			
+	   	(cAliasPer)->M0_CODIGO	:= cEmpAnt
+		(cAliasPer)->PO_FILIAL	:= cFilAnt		
+		(cAliasPer)->SEQUENCIA	:= Strzero(++nSeq,6)			
+		(cAliasPer)->PO_DATAINI	:= Stod((cAliasQuery)->PO_DATAINI)
+		(cAliasPer)->PO_DATAFIM	:= Stod((cAliasQuery)->PO_DATAFIM) 
+		(cAliasPer)->DESCPER	:= Dtoc( Stod((cAliasQuery)->PO_DATAINI)) +"-"+Dtoc(Stod((cAliasQuery)->PO_DATAFIM))
+		(cAliasPer)->(MsUnlock())  
+ 	    (cAliasPer)->(FkCommit())
+
+		AADD(aPeriodos, {(cAliasPer)->M0_CODIGO,(cAliasPer)->PO_FILIAL,	(cAliasPer)->SEQUENCIA,	(cAliasPer)->PO_DATAINI,	(cAliasPer)->PO_DATAFIM, 	(cAliasPer)->DESCPER })	
+			
+	(cAliasQuery)->(DbSkip())
+			
+End While  
+
+//-- Fecha a Query 
+(cAliasQuery)->(DbCloseArea()) 
+	
+//-- Adiciona o Periodo Aberto se Nao houver
+IF 	!(cAliasPer)->(Dbseek(cEmpAnt + cFilAnt + Dtos(dPerIni) ))  			
+	(cAliasPer)->(RecLock(cAliasPer,.T.))  			
+   	(cAliasPer)->M0_CODIGO	:= cEmpAnt
+	(cAliasPer)->PO_FILIAL	:= cFilAnt		
+	(cAliasPer)->SEQUENCIA	:= Strzero(++nSeq,6)			
+	(cAliasPer)->PO_DATAINI	:= dPerIni
+	(cAliasPer)->PO_DATAFIM	:= dPerFim  
+	(cAliasPer)->DESCPER	:= Dtoc(dPerIni) +"-"+Dtoc(dPerFim)
+	(cAliasPer)->(MsUnlock()) 
+    (cAliasPer)->(FkCommit()) 
+
+	AADD(aPeriodos, {(cAliasPer)->M0_CODIGO,(cAliasPer)->PO_FILIAL,	(cAliasPer)->SEQUENCIA,	(cAliasPer)->PO_DATAINI,	(cAliasPer)->PO_DATAFIM, 	(cAliasPer)->DESCPER })	
+
+Endif
+
+If !Empty(cAlias)
+	DbSelectArea(cAlias)
+Endif
+
+
+Return (NIL) 
+

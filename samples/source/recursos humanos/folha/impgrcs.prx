@@ -1,0 +1,1657 @@
+#include "PROTHEUS.ch"        // incluido pelo assistente de conversao do AP5 IDE em 19/11/99
+#INCLUDE "IMPGRCS.CH"
+#IFNDEF WINDOWS
+	#DEFINE PSAY SAY
+#ENDIF
+
+/*                           
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ IMPGRCS  ³ Autor ³ R.H. - Natie               ³ Data ³ 06.03.01 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Guia de Recolhimento da Contribuicao Sindical -GRCS             ³±±
+±±³          ³ 						                                           ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe   ³ ImpGrcs()                                                       ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³                                                                 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                                        ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³            ATUALIZACOES SOFRIDAS DESDE A CONSTRU€AO INICIAL.               ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Programador ³ Data   ³ BOPS      ³  Motivo da Alteracao                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Natie       ³26/03/01³           ³ Consistencia na busca do Sindicato       ³±±
+±±³Natie       ³17/04/01³           ³ Carrega Empresa conforme Fil.Centralizad.³±±
+±±³Natie       ³05/06/01³           ³ Impressao Entid.sindical-12 digitos      ³±±
+±±³Natie       ³29/08/01³009963     ³ PrnFlush-Descarrega spool impressao teste³±±
+±±³Natie       ³11/12/01³009963     ³ Acerto Impressao-Teste                   ³±±
+±±|Priscila    ³07/10/02³059762     ³ Tratamento da Perg. Data Pagamento.      ³±±
+±±³            ³21/05/04³b69068     ³ Ano do Exercicio                         ³±±
+±±³Natie       ³12/02/07³118976     ³ Ajuste impressao CNAE-7 digitos          ³±±
+±±³Igor Franzoi³11/04/07³Melhor     ³ Impressao grafica c/ cod. de barras	   ³±±
+±±³Renata Elena³06/08/07³129577     ³ Ajuste na emissao grafica para SPOOL     ³±±
+±±³Tatiane V.M.³25/08/09³020388/2009³Compatibilizacao dos fontes  para aumento ³±±
+±±³            ³        ³           ³ do campo filial e gestão corporativa.    ³±±
+±±³Marcelo     ³26/08/09³019318/2009³ Ajuste na atribuicao do array aSindic    ³±±
+±±³            ³        ³           ³ quando nao tiver sindicado cadastrado.   ³±±
+±±³Luciana     ³12/05/10³008171/2010³Criacao de variavel nTotEmp para armazenar³±±
+±±³            ³        ³           ³o total de Funcionarios na empresa        ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Programador ³ Data   ³ FNC             ³  Motivo da Alteracao               ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Alceu P.    ³27/05/10³00000008197/2010 ³Ajuste para que os valores de Multa,³±±
+±±³			   ³		³				  ³Juros e Correcao monetaria sejam    ³±±
+±±³			   ³		³				  ³apresentados na impressao.          ³±±
+±±³Luis Ricardo³21/10/10³000000023280/2010³Ajustes no tamanho do campo Codigo  ³±± 
+±±³Cinalli	   ³		³	 			  ³Entid. Sind. (RCE_ENTSIN). Definicao³±± 
+±±³			   ³		³	 			  ³da mascara conforme tamanho do campo³±± 
+±±³			   ³		³	 			  ³RCE_ENTSIN. Independente do Pais.   ³±± 
+±±³Luis Ricardo³20/12/10³000000025817/2010³Ajuste para utilizar o telefone pa- ³±±
+±±³Cinalli     ³        ³                 ³dronizado do SIGAMAT (SM0).	       ³±±
+±±³Allyson M.  ³25/10/11³00000027543/2011 ³Ajuste p/ exibir o codigo sindical  ³±±
+±±³            ³        ³                 ³corretamente no campo Ag. Cod. Ced. ³±±
+±±³Leandro Dr. ³31/01/12³00000031517/2011 ³Ajuste formatar adequadamente o co- ³±±
+±±³            ³        ³TEDIHQ           ³digo de barras do boleto de pagto.  ³±±
+±±³Mauricio MR ³14/05/12³00000011034/2012 ³Ajuste p/ calcular corretamente 	   ³±±
+±±³            ³        ³                 ³a qtde de empregados p/ a impressao ³±±  
+±±³            ³        ³				  ³do boleto de pagamento da contribui-³±±   
+±±³            ³        ³TEXKAY			  ³cao sindical.					   ³±±   
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+User Function IMPGRCS()    
+Local aFoneSM0
+
+#IFNDEF WINDOWS
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 19/11/99 ==> 	#DEFINE PSAY SAY
+#ENDIF
+
+// Criacao da variavel private abaixo para IDENTIFICAR o tamanho do campo RCE_ENTSIN
+// e definir a mascara para impressao nas guias. Independente do pais.
+Private nTamEntSin	:= TamSX3( "RCE_ENTSIN" )[1]
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP5 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("ADRIVER,AINFO,CCGC,CRAZAO,CENDERECO")
+SetPrvt("CCEP,CCIDADE,CUF,CCNAE,CBAIRRO")
+SetPrvt("NLIN,NVIRGULA,CNUMERO,CNUMERO,TPESTAB")
+SetPrvt("NEMPRESA,NESTABEL,NCAPESTB,NNUMENPR,NCAPSOCI")   
+SetPrvt("NTBASESIN1,CCODESTA,WNREL")
+SetPrvt("NVEZ,CFILSINDI")
+
+cAno		:= "  "
+cAnoExerc	:= "  "
+Cdia		:= "  "
+cMes		:= "  " 
+cDataPg		:= "  "
+nEstbEmp	:= 0
+nEmpresa	:= 0
+aInfo      	:= {}
+aSindic		:= {}
+cCgc       	:= ""
+cRazao     	:= ""
+cEndereco  	:= ""
+cCep       	:= ""
+cCidade    	:= ""
+cUf        	:= ""
+cBairro		:= ""
+nLin 		:= 6
+CTpEstab	:= "  "
+aDriver    	:= ReadDriver()
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Carrega dados do Sindicato do RCE                            ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea("RCE")
+dbSetOrder(1)
+//-- se RCE for Exclusivo, procura pela filial do SRA->RA_SINDICA 
+cFilSindi	:= xFilial("RCE", cFilialAnt)
+
+If dbSeek( cFilSindi + cSinAnt )
+	Do While !eof() .and. cFilSindi + cSinAnt = RCE->RCE_FILIAL+ RCE->RCE_CODIGO
+		aAdd(aSindic,{RCE->RCE_DESCRI,RCE->RCE_CGC   ,StrZero( Val( RCE->RCE_ENTSIN ), nTamEntSin ),RCE->RCE_ENDER,RCE->RCE_NUMER,;
+                      RCE->RCE_COMPLE,RCE->RCE_BAIRRO,RCE->RCE_CEP   ,RCE->RCE_MUNIC,RCE->RCE_UF } ) 
+		                       
+		RCE->(dbSkip())
+	Enddo	
+Else
+	aAdd(aSindic,{"Sindicato nao Cadastrado !","","","","","","","","",""})
+Endif             
+
+dbSelectArea("SRA")
+dbSetOrder(1)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Numero de Empresas do Estabelecimento/Tipo Estabel           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+dbSelectArea("SM0")
+dbSeek(cEmpAnt)     
+If(FieldPos(SM0->M0_TPESTAB)=0,CtpEstab:= "  ",cTpEstab := SM0->MO_TPESTAB)
+Do while !eof() .and. cEmpAnt ==SM0->M0_CODIGO
+	nEstbEmp ++
+	SM0->(dbSkip())
+Enddo
+
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Carrega Dados da Empresa                                      ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³Separa o numero no endereco                                   ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If(cCentFil # space(2))
+		IF !fInfo(@aInfo,cCentFil)	
+			Return Nil
+		Endif
+	Else
+		IF !fInfo(@aInfo,cFilialAnt)
+			Return Nil
+		Endif
+	Endif	
+	nVirgula	:= Rat(",",aInfo[4])
+	cNumero 	:= AllTrim(SubStr(aInfo[4],nVirgula+1))               
+	nNumero 	:= Val(AllTrim(cNumero))
+	cEnder		:= subs(If(nNumero!=0,SubStr(aInfo[4],1,nVirgula-1),aInfo[4]),1,30)
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³Quando nao ha virgula no endereco procura-se o caracter branco³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If ( nVirgula == 0 )
+		nVirgula 	:= Rat(" ",AllTrim(aInfo[4]))
+		cNumero 	:= AllTrim(SubStr(aInfo[4],nVirgula+1))
+		nNumero 	:= Val(AllTrim(cNumero))
+		cEnder  	:= subs(If(nNumero!=0,SubStr(aInfo[4],1,nVirgula-1),aInfo[4]),1,30)
+	EndIf
+
+cCGC		:= aInfo[8]
+cRazao    	:= Subs(aInfo[3],1,40) 	// Razao Social
+
+aFoneSM0	:= FisGetTel( aInfo[10] )	//-- Obtem o telefone do SIGAMAT (DDI, DDD e Telefone)
+cTelefone	:= Alltrim(Str(aFoneSM0[02])) + '-' + Alltrim(Str(aFoneSM0[03]))		// DDD + Telefone
+
+cCep      	:= aInfo[7]
+cCidade   	:= Subs(aInfo[5],1,20)
+cBairro     := subs(aInfo[13],1,20) 				//Bairro
+cComple     := subs(aInfo[14],1,15)               //Comple
+cUf       	:= aInfo[6]
+cTipInsc  	:= If (aInfo[15] == 1 ,"2","1" )
+cCgc      	:= If (cTipInsc == "2",aInfo[8],Transform(cCgc,"@R ##.###.###/####-##")) // CGC
+cCNAE		:= aInfo[16]
+
+If Empty(cTpEstab) 
+	If(nEstbEmp =1,cTpEstab:="01",IF(substr(cCgc,12,4)="0001",cTpEstab :="02",cTpEstab:="03"))
+Endif
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³monta DATA para pagamento da GRCS                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If Empty(dDtPg)
+	cMes 		:= If (Month(dDataBase) + 1 > 12,"01" ,StrZero(Month(dDataBase)+1,2) ) 
+	cAno 		:= If (cMes = "01", StrZero(Year(dDataBase)+1,4),STrZero(Year(dDataBase),4) )
+	cDia        := Strzero(F_UltDia(Ctod("01"+"/"+cMes+"/"+cAno)),2)
+	cDataPg 	:= cDia +"/"+ cMes + "/" + cAno 
+	cAnoExerc	:= If(cMes= "01",STrZero(Year(dDataBase)-1,4), STrZero(Year(dDataBase),4)) 
+Else
+	//-- Entende-se que a data de pagamento eh sempre no mes posterior ao do desconto em folha 
+	cMes 		:= StrZero(Month(dDtPg),2) 
+	cDataPg		:= SUBSTR((DTOC(dDtPg)) + SPACE(2),1,10) 
+	cAnoExerc	:= If(cMes= "01",STrZero(Year(dDtPg)-1,4), STrZero(Year(dDtPg),4))
+Endif
+
+Do While .T.  
+	If nTpImpre ==2  
+		SetPrc(00,00)
+		nLin :=6
+		ImprP()		//Impressao Formulario Pre_impresso
+		If nVez == 0  .and. aReturn[5] # 1 
+			fImpTeste(cString)
+			If mv_par01 == 2
+				Loop 
+			Endif
+		Endif
+	elseIf nTpImpre ==3  
+		ImpGrf()
+	elseIf nTpImpre == 4
+		ImpGrf(.T.)		//Impressao Grafica / Bloqueto de Cobranca	
+	Endif
+	Exit
+Enddo        
+Return    
+	         
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ IMPRP()  ³ Autor ³ R.H. - Natie          ³ Data ³ 06.03.01 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Impressao da Guia em Formulario Pre Impresso               ³±± 
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe   ³ ImprP()                                                    ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³                                                            ³±±
+±±ÀÄÄÄÄÄÄ ÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+Function ImprP() 
+	/* DADOS DA ENTIDADE SINDICAL */
+    // Campo 03 
+    Set Device To Print
+	If aReturn[4] == 1  // Comprimido
+    	@ nlin,0 PSAY &(if(nTamanho=="P",aDriver[1],if(nTamanho=="G",aDriver[5],aDriver[3])))
+   	Else					  // Normal
+    	@ nlin,0 PSAY &(if(nTamanho=="P",aDriver[2],if(nTamanho=="G",aDriver[6],aDriver[4])))
+   	Endif                
+
+    @ nlin,073 PSAY  cCGC 
+    nLIn := nlin +2
+    //Campo 04 /  CAMPO 05
+	@ nlin,073 PSAY cDataPg +  Space(06) + cAnoExerc     //Data limite de Pagamento 
+    nLIn := nlin +3
+	// CAMPO 06 /  CAMPO 07       
+	@ nLin,02  psay aSindic[1,1]					//-- Desc.sindicato
+	@ nLin,073 psay aSindic[1,3]					//-- Cod.entidade sindical 
+    nLIn := nlin +2
+	// CAMPO 08/09/10/11     
+	@ nLIn,02  psay aSindic[1,4]					//--Endereco
+	@ nLin,42  psay aSindic[1,5]					//--Numer  
+	@ nLin,52  psay aSindic[1,6]					//--Comple 
+	@ nLin,073 pSay substr(aSindic[1,2],01,02)+"."+substr(aSindic[1,2],03,03)+"."+substr(aSindic[1,2],06,03)+"/" +substr(aSindic[1,2],09,04)+"-"+ substr(aSindic[1,2],13,02)
+    nLin := nlin +2
+	// CAMPO 12/13/14/15 - Bairro
+	@ nLin,02 psay aSindic[1,7]						//-- Bairro 
+	@ nLin,37 psay aSindic[1,8]						//-- Cep
+	@ nLin,052 psay space(17)+ aSindic[1,9]		//-- municipio
+	@ nLin,088 psay aSindic[1,10]					//-- UF
+    nLIn := nlin +3
+	/* DADOS DO CONTRIBUINTE */ 
+	//campo 16 - 17 
+	@ nLin,02  psay   cRazao 
+	@ nLin,073 psay   subs(cCodEsta,1,15)       // Razao Social + codigo do Estabelec. fornec.pelo sindicato
+    nLin := nlin +2
+	//CAMPO 18-19-20-21              
+	@ nLin,002 psay  cEnder 
+	@ nLin,042 psay  strzero(nNumero,5)
+	@ nLin,052 psay  cComple
+	@ nLin,073 psay  dtoc(dIniAtiv) 
+    nLIn := nlin +2
+   	// CAMPO 22-23-24-25
+
+	@ nLin,002 psay  cCep 
+	@ nLin,020 psay  cCidade
+	@ nLin,052 psay  cbairro
+	@ nLin,088 psay  cUF
+    nLIn := nlin +2
+    
+	// CAMPO 26-27-28-29     - //| 26- Atividade do contribuinte | 27-Cod.Ativ.|28- Subcodigo Ativid.|29- Cod.CBO| 30- Tipo      [ ]Unico[ ]Principal| 31- No Estabel.  |"
+	@ nLin,002 psay cDescAti
+	@ nLin,026 psay cCNAE 
+	@ nLin,035 psay cSubCod 
+	//CAMPO 30 Tipo de Estabelecimento -//Estabelec [ ]Filial [ ]Outros | da Empresa      |"
+	If  cTpEstab =="01"	  		//Unico
+		@ nLin,058 psay "X" 
+	ElseIf cTpEstab	=="02"     //Principal		 	
+		@ nLin,065 psay "X"  
+    ElseIF cTpEstab	=="03" .or. cTpEstab="04" 
+		@ nLin,072 psay "X"   
+	Else 
+		@ nLin,078 psay "X"   
+	Endif	       
+	//CAMPO 31 No Estabel. da Empresa 	
+	@ nLin,090 psay  strzero(nEstbEmp,3)
+    nLIn := nlin +3
+    
+	/*	DADOS DE REFERENCIA DA CONTRIBUICAO  */ 
+	//CAMPO 32  
+	//CAMPO 42 Valor da Contribuicao  
+	
+	@ nLin,34  psay "X"
+	@ nLin,073 psay  TRANSFORM(nTContrib,"@E 999,999,999.99")	
+    nLIn := nlin +2
+
+	//CAMPO 33 Capital Social da Empresa	                    
+	@ nLin,10 psay transform(nCapSocI,"@E 999,999,999.99")
+	//CAMPO 38 Num.empregado que contribuem  - quando guia de empregados
+	@ nLin,42 psay transform(nNumEmpr,"@E 999,999")
+	//CAMPO 43 MULTA                
+	@ nLin,075 psay transform(nMulta,"@e 999,999.99")
+	nLin := nLin +2
+		
+	// CAMPO 34 Total da Empresa 	
+    @ nLin,10 psay  transform(nEmpresa,"@E 999,999,999.99")
+    //CAMPO 39 Total da remuneracao
+	@ nLin,42 psay  TrANSFORM(nTBaseSin1,"@E 999,999,999.99")	
+	//CAMPO 44 Multa    
+	@ nLin,075 psay TRANSFORM(nJurosMo,"@E 999,999.99")
+    nLIn := nlin +2
+			
+	//CAMPO 35 Deste EStabelecimento  
+	@ nLin,10 psay Transform(nEstabel,"@E 999,999,999.99") 
+    //CAMPO 40 Total de Empregados
+	@ nLin,42 psay  transform(nNumEmpr,"999,999")
+	//CAMPO 45 CORRECAO MONETARIA     
+	@ nLIn,075 psay Transform(nCorrMon,"@E 999,999.99")
+    nLIn := nlin +2
+    	          
+	//CAMPO 36 Capital Atribuido a este Estabelecimento 
+	@ nLin,10 psay Transform(nCapEstb,"@E 999,999,999.99") 
+	//CAMPO 41 - Numero de Nao contribuintes  (campo 40 - campo 38) 	
+	//CAMPO 46  Total a Recolher 
+	@ nLin,073 psay TRANSFORM( ( nTContrib+nMulta+nJurosMo+nCorrMon),"@E 999,999,999.99") 
+    nLIn := nlin +2
+     	 	
+	//CAMPO 37 Valor Base de Calculo Contribuicao  -campo 35, se não houver, considerar campo 33
+	If nEstabel >0 
+		@ nLin,10  psay transform(nEstabel,"@E 999,999,999.99")
+	else 
+		@ nLin,10 psay transform(nCapSoci,"@E 999,999,999.99")
+	endif	
+    nLin := nlin +2	                                                                 
+ 	@ nLin,05 psay  cCidade 
+ 	@ nLin,28 psay  cDataPg 
+    nLin := nLin + 5
+    @ nLin,00 psay " " 
+ Return
+
+
+//"*--------------------------------------------------------------*----------------------------------*-----------------------------------*"//
+//"|                                                              |1-CPF ou Carimbo padronizado do   | 02-Reservado                      |"//
+//"|                                                              |  CGC do Estabelecimento          |                                   |"//
+//"|   MINISTERIO DO TRABALHO                                     |                                  |                                   |"//
+//"|                                                              |                                  |                                   |"//
+//"|                                                              |                                  *-----------------------------------|"//
+//"|   GUIA RECOLHIMENTO DA CONTRIBUICAO SINDICAL - GRCS          |                                  | 03- CPF/CGC do Estabelecimento    |"//
+//"|                                                              |                                  |     99.999.999/9999-99            |"//
+//"|                                                              |                                  | 04- Dt Limite de Pgto 05-Exercicio|"//
+//"|                                                              |                                  |     99/99/9999           9999     |"//
+//"*--------------------------------------------------------------*----------------------------------*-----------------------------------|"//
+//"|                                       D A D O S  D A   E N T I D A D E  S I N D I C A L                                             |"//
+//"*-------------------------------------------------------------------------------------------------------------------------------------|"//
+//"| 06- NOME DA ENTIDADE                                                                            | 07- Codigo da Entidade Sindical   |"//
+//"|     40xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx                                                     |     99                            |"//
+//"| 08- Endereco  (Rua,Av,praca,etc)            | 09- Numero |10- Complem(Andar,sala,etc)           | 11- CGC da Entidade               |"//
+//"|     123456789012345678901234567890          |     99999  |    10                                |     99.999.999/9999-99            |"//
+//"| 12- Bairro ou Distrito                      | 13- CEP    |14- Municipio(Cidade)                 | 15- Sigla UF                      |"//
+//"|     12345678901234567890                    | 99999-999  |    01234567890123456789              |     xx                            |"//
+//"*-------------------------------------------------------------------------------------------------------------------------------------|"//
+//"|                                     D A D O S  D O   C O N T R I B U I N T E                                                        |"//
+//"*--------------------------------------- ---------------------------------------------------------------------------------------------|"//
+//"| 16- NOME / RAZAO SOCIAL / DENOMINACAO SOCIAL                                                    | 17- Codigo do Estabelecimento     |"//
+//"|     12345678901234567890123456789012345678901234567890                                        41|     123456789012345               |"//
+//"| 18- Endereco (Rua,Av,praca,etc)             |19- Numero  |20- Complem(Andar,sala,etc)           | 21- Data Inicio da Atividade      |"//
+//"|     123456789012345678901234567890        09|    99999   |    12345678901234567890            13|     99/99/99999                 18|"//
+//"| 22- CEP        | 23- Municipio(Cidade)      |24- Bairro ou Distrito                             | 25- Sigla UF                      |"//
+//"|     99999-999  |     20345678901234567890   |    12345678901234567890                         27|     xx                            |"//
+//"|---------------------------------------------*---------------------------------------------------*-----------------------------------|"//
+//"| 26- Atividade do contribuinte | 27-Cod.Ativ.|28- Subcodigo Ativid.|29- Cod.CBO| 30- Tipo      [ ]Unico[ ]Principal| 31- No Estabel. |"//
+//"|     12345678901234567890      |    xx       |    xxxxxxxxxxxxxxx  |           |     Estabelec [ ]Filial [ ]Outros | da Empresa      |"//
+//"*-------------------------------*-------------*---------------------*-----------*-----------------------------------*-----------------|"//               
+//"|   D A D O S  D E  R E F E R E N C I A  D A  C O N T R I B U I C A O                     |   D A D O S  D A  C O N T R I B U I C A O |"//
+//"*--------------------------------------- -------------------------------------------------|-----------------------------------------43|"//
+//"| 32- 01[ ] Estabel.Empregador 02-[ ] Autonomo/Liberal 03-[ ]Empregados                   | 42- Vl.Contribuicao        999.999.999,99 |"//
+//"*-----------------------------------------------------------------------------------------|                                           |"//
+//"| 33- Capital Social da Empresa           | 38- No Empregados que Contribuem              | 43- Multa                      999.999,99 |"//
+//"|                          999.999.999,99 |                                    999.999    |                                           |"//
+//"|-----------------------------------------| 39- Total da Remuneracao    999.999.999,99    | 44- Juros de Mora              999.999,99 |"// 
+//"| Operacao Economica                      |                                               |                                           |"//
+//"| 34- Total da Empresa     999.999.999,99 | 40- Total de Empregados            999.999    | 45- Correcao Monetaria         999.999,99 |"//
+//"| 35- Deste Estabelec.     999.999.999,99 |                                               |                                           |"//
+//"|-----------------------------------------| 41- No de nao contribuintes        999.999    | 46- Total a Recolher       999.999.999,99 |"//
+//"| 36- Capital Atribuido a este Estabelec. |-------------------------------------------------------------------------------------------|"//
+//"|                          999.999.999,99 | 47- Local  / 48- Data                         |49- Autenticacao Mecanica                  |"//           
+//"| 37- Vl.Base de Calculo  Contribuicao    |                                               |                                           |"//
+//"|                          999.999.999,99 |                                               |                                           |"//
+//"*-------------------------------------------------------------------------------------------------------------------------------------|"// 
+//"1¦VIA - INSS - 2¦VIA - CONTRIBUINTE"//
+
+
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ IMPRZE() ³ Autor ³ R.H. - Natie          ³ Data ³ 06.03.01 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Impressoa da Guia em Formulario Continuo                   ³±± 
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe   ³ ImprZ()                                                    ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³                                                            ³±±
+±±ÀÄÄÄÄÄÄ ÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+Function ImprZe()
+
+    nLin := 0
+    Set Device To Print
+   	@ nlin,0 PSAY AvalImp(132) 
+	nLin ++
+	@ nLin,00 PSAY STR0001
+	nLin  ++
+	@ nLin,00 PSAY STR0002 
+	nLin  ++
+	@ nLin,00 PSAY STR0003
+	nLin  ++
+	@ nLin,00 PSAY STR0004
+	nLin  ++
+	@ nLin,00 PSAY STR0005
+	nLin  ++
+	@ nLin,00 PSAY STR0006
+	nLin  ++
+	@ nLin,00 PSAY STR0007
+	nLin  ++   
+	/* DADOS DA ENTIDADE SINDICAL */
+    // Campo 03 
+    @ nLin,00 PSAY  "|" + Space(62) +"|"+ space(34) + "|" + space(5) + cCGC +space(12)+"|"
+    nLin  ++ 
+	@ nLin,00 PSAY STR0008						
+	nLin  ++
+	//Campo 04 /  CAMPO 05
+	@ nLin,00 PSAY "|"+ space(62) + "|"+space(34) + "|" + space(5) + cDataPg + space(11) + cAnoExerc  +space(5) +"|"      //Data limite de Pagamento 
+	nLin ++
+    @ nLin,00 PSAY "*"+ repl("-",62) + "*"+ repl("-",34) +"*" + repl("-",35) + "*"  	
+    nLin ++
+	@ nLin,00 PSAY STR0009		//Dados da Entidade Sindical
+	nLIn ++
+    @ nLin,00 PSAY "*"+ repl("-",133)+ "*"  
+	nLin ++			
+	// CAMPO 06 /  CAMPO 07       
+    @ nLin,00 PSAY STR0010			//Nome Entidade Sindical
+	nLin ++
+
+	// Diminuicao da qtde de espacos apos codigo da entidade sindical (aSindic[1,3]) 
+	// de 18 para 14 se o tamanho do campo RCE_ENTSIN for 15 caracteres
+	If nTamEntSin == 15
+		@ nLin,00 PSAY "|"+ space(5)+ aSindic[1,1] + space(52) +"|"+ space(5) +  aSindic[1,3]+ space(14) +"|"
+	Else
+		@ nLin,00 PSAY "|"+ space(5)+ aSindic[1,1] + space(52) +"|"+ space(5) +  aSindic[1,3]+ space(18) +"|"
+	EndIf
+	nLin ++
+
+	// CAMPO 08/09/10/11     -Endereco
+	@ nLin,00 PSAY  "| 08- "+ STR0011+space(12) +  "| 09- " + STR0012	+space(1)+"| 10- "+ STR0013	+space(10)+"| 11- "+ STR0014+space(14)+ "|"
+	nLin ++ 		                                                                                                                                                                                      
+	cDet :=  "|" + space(05) + aSindic[1,4] + SPACE(10)+ "|"+space(5)	+aSindic[1,5] + SPACE(2) + "|"+ space(5)+ aSindic[1,6]+ space(23) + "|"+space(5)
+	cDet +=	  substr(aSindic[1,2],01,02)+"."+substr(aSindic[1,2],03,03)+"."+substr(aSindic[1,2],06,03)+"/" +substr(aSindic[1,2],09,04)+"-"+ substr(aSindic[1,2],13,02)+ space(12)+"|"
+	@ nLin,00 PSAY cDet
+	nLin ++                                                                                                                         
+
+	// CAMPO 12/13/14/15 - Bairro
+	@ nLin,00 psay "| 12- " + STR0015+ space(22) +"| 13- " + STR0016+SPACE(4)+"| 14- "+ STR0017 +space(16) +"| 15- "+STR0018+space(22) + "|"  
+	nLin ++	
+	@ nLin,00 psay "|" + space(4) + aSindic[1,7]+ space(21)+ "|"+space(4)+ aSindic[1,8] +"|" + space(5)+ aSindic[1,9] +space(13)+"|" +space(5)+aSindic[1,10]+ space(28) +"|" 
+	nLin ++
+	@ nLin,00 psay STR0001
+	nLin ++   
+	/* DADOS DO CONTRIBUINTE */
+	@ nLin,00 PSAY STR0019
+	nLin ++
+	@ nLin,00 PSAY STR0001
+	nLin ++
+	//campo 16 - 17 
+	@ nLin,00 psay STR0020
+	nLin ++                                                     
+	@ nLin,00 psay  "|"+space(5) + cRazao +space(52) +"|"+space(5)+ subs(cCodEsta,1,15)  +space(15)+ "|"     // Razao Social + codigo do Estabelec. fornec.pelo sindicato
+	nLin  ++  
+
+	//CAMPO 18-19-20-21              
+	@ nLin,00 PSAY  "| 18- "+ STR0011+space(12) + "| 19- " + STR0012	+space(1)+"| 20- "+ STR0013 + space(10) + STR0021
+	nLin ++	
+	@ nLin,00 PSAY  "|" +space(5) + SUBSTR(cEnder+ SPACE(30),1,30) + space(10) +"|" +space(4)+ STRZERO(nNumero,5) +space(3)+"|"+space(5)+cComple+ space(21)+"|"+space(5)+SUBSTR(dtoc(dIniAtiv)+SPACE(2),1,10)+space(20)+"|" 
+	nLin ++
+
+	// CAMPO 22-23-24-25
+	@ nLin,00 psay "| 22- " + STR0016 +space(8)+"| 23- " + STR0017+ SPACE(6) +"| 24- "+ STR0015+  SPACE(28) + "| 25- " +STR0018+  space(22)+"|"
+	nLin ++
+	@ nLin,00 psay "|"+ space(5) + cCep  + space(3)+"|"+ space(5)+ cCidade + space(3) +"|" +space(5)+ cbairro +space(26)+"|" + space(5)+ cUF+ space(28)+"|" 
+	nLin ++
+	@ nLin,00 psay "|"+ repl("-",45) + "*" + repl("-",51) +"*"+ repl("-",35)+"|" 
+	nLin ++	                                                                                                                
+	// CAMPO 26-27-28-29     - //| 26- Atividade do contribuinte | 27-Cod.Ativ.|28- Subcodigo Ativid.|29- Cod.CBO| 30- Tipo      [ ]Unico[ ]Principal| 31- No Estabel.  |"
+	If  cTpEstab =="01"	  		//Unico
+		cDet := substr(STR0022,1,96)
+		cDet += "X" + substr(STR0022,99,38) 
+	ElseIf cTpEstab	=="02"     //Principal		 	
+		cDet := substr(STR0022,1,96)
+		cDet += substr(STR0022,98,8)+ "X" + substr(STR0022,106,30) 
+    ElseIF cTpEstab	=="03" .or. cTpEstab="04"     
+		cDet := STR0022
+	Endif		
+	@ nLin,00 psay cDet 
+	nLin ++ 
+	            
+	cDet := "|" + space(5)+ SUBSTR(cDescAti+SPACE(5),1,20) + space(6) +"|"+SPACE(3)+SUBSTR(cCNAE+SPACE(5),1,10)+ "|" + space(4) +SUBSTR(cSubCod,1,15) + space(2) + "|"+ space(11)+"|" +space(1) 
+	//CAMPO 30 Tipo de Estabelecimento -//Estabelec [ ]Filial [ ]Outros | da Empresa      |"
+	If cTpEstab	=="03"     //Filial   	     
+		cDet += space(4) + substr(STR0023,1,11)
+		cDet += "X"+substr(STR0023,13,30)		 
+	ElseIf cTpEstab =="04"
+		cDet += space(4) + substr(STR0023,1,11)
+		cDet += substr(STR0023,12,10)+"X"+substr(STR0023,23,20)
+	ElseIf cTpEstab =="01" .or. cTpEstab =="02"
+		cDet += space(4)+substr(STR0023,1,43)	
+	Endif 
+	//CAMPO 31 No Estabel. da Empresa 
+	cDet += space(1) + strzero(nEstbEmp,3)+ space(01) + "|" 
+	@ nLin,00 psay cDet 
+	nLin  ++
+	
+	/*	DADOS DE REFERENCIA DA CONTRIBUICAO  */
+	@ nLin,00 psay "|" + repl("-",31)+"*"+ repl("-",13)+ "*" +repl("-",21)+ "*" + repl("-",11) +"*" + repl("-",34) +"*"+ repl("-",18)+"|"
+	nLin ++
+	@ nLin,00 psay STR0024
+	nLin ++
+	@ nLin,00 psay "|" + repl("-",89) + "|"+ repl("-",43)+"|"
+	nLin ++	
+	
+	//CAMPO 32  
+	//CAMPO 42 Valor da Contribuicao  
+	@ nLin,00 psay substr(STR0025,1,59)+"X"+substr(STR0025,60,61)  +SPACE(6)+ TRANSFORM(nTContrib,"@E 999,999,999.99")	+ space(2)+"|"
+	
+	nLin ++
+	@ nLin,00 psay "*-----------------------------------------------------------------------------------------|                                           |"
+	nLin ++
+	//CAMPO 43 MULTA	    
+	@ nLin,00 psay substr(STR0026,1,101) + Space(21)+ transform(nMulta,"@E 999,999.99") + space(2)+ "|"
+	nLin ++
+	
+	//CAMPO 33 Capital Social da Empresa	
+	cDet := "|"+ space(26)+ transform(nCapSocI,"@E 999,999,999.99")+ space(1)+"|" 
+	//CAMPO 38 Num.empregado que contribuem  - quando guia de empregados
+	cDet += space(36)+ transform(nNumEmpr,"999,999")+ space(4)+"|"+ space(43)+"|"  
+	@ nLin,00 psay  cDet
+	nLin ++	                     
+	
+	//CAMPO 39 Total da remuneracao
+	cDet := STR0027 + space(6) + TRANSFORM(nTBaseSin1,"@E 999,999,999.99")	+ space(2)
+	//CAMPO 44 JUROS DE MORA
+	cDet +=  STR0028+space(12)+transform(nJurosMo,"@E 999,999.99") + space(2) +"|"  
+	@ nLin,00 psay cDet  
+	nLin ++
+	
+	@ nLin,00 psay  STR0029
+  	nLin ++ 
+	// CAMPO 34 Total da Empresa 	
+    cDet := STR0030 + space(5) + transform(nEmpresa,"@E 999,999,999.99")+ space(1)
+    //CAMPO 40 Total de Empregados
+	cDet+=  STR0031 + space(12)+ transform(nNumEmpr,"999,999")+ space(4)
+	
+	//CAMPO 45 CORRECAO MONETARIA     
+	cDet += STR0032 +space(7)+ Transform(nCorrMon,"@ER 999,999.99")+ space(2)+"|" 
+	@ nLin,00 psay cDet 
+	nLin ++ 
+	
+	//CAMPO 35 Deste EStabelecimento  
+	@nLin,00 psay STR0033+space(5)+ Transform(nEstabel,"@E 999,999,999.99") +space(1)+"|"+ space(47)+"|" +space(43)+"|"
+	nLin ++
+           
+	//CAMPO 41 - Numero de Nao contribuintes  (campo 40 - campo 38) 
+	
+	cDet := STR0034 +  space(08)+ Transform((nNumEmpr - nNumEmpr),"@E 999,999")+space(4)
+	//CAMPO 46  Total a Recolher 
+	cDet += STR0035+  space(6)+ TRANSFORM(nTContrib+nMulta+nJurosMo+nCorrMon,"@E 999,999,999.99") + space(2) +"|" 
+	@ nLin,00 psay cDet
+ 	nLin ++
+ 	//CAMPO 36 Capital Atribuido a este Estabelecimento 
+	@ nLin,00 psay STR0036 
+	nLin ++
+	cDet := "|" + space(26)+Transform(nCapEstb,"@E 999,999,999.99") +space(1)
+	cDet +=  STR0037 					//Local e Data -Autenticacao
+	@ nLin,00 psay cDet 
+	nLin ++
+  	
+  	//CAMPO 37 Valor Base de Calculo Contribuicao  -campo 35, se não houver, considerar campo 33
+	@ nLin,00 psay  STR0038 	
+	nLin ++                                                                   
+	If nEstabel >0 
+		@ nLin,00 psay "|" 	+ space(26) + Transform(nEstabel,"@E 999,999,999.99")+space(1)+"|"+ space(2)+ cCidade+ space(2)+ cDataPg + space(13)+ "|"+space(43)+"|"
+	else 
+		@ nLin,00 psay "|" 	+ space(26) + transform(nCapSoci,"@E 999,999,999.99")+space(1)+"|"+ space(2)+ cCidade+ space(2)+ cDataPg + space(13)+ "|"+space(43)+"|"
+	endif		                                                                 
+	nLin ++
+	@ nLin,00 psay STR0001
+	nLin ++
+	@ nLin,00 psay STR0039	
+               
+Return   Nil
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³ImpGrf    ºAutor  ³R.H.Igor	         º Data ³  11/04/07   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Impressao grafica / Bloqueto de Cobranca					  º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP10                                                       º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function ImpGrf(lGrf,cMsnCtb)
+
+Local cImg			//caminho da imagem
+Local cMnsCxa		//mensagem destinada ao contribuinte
+Local cBco			//codigo do banco - para GRCSU FIXO 104
+Local cCodBar		//codigo de barra
+Local cNumSeq		//Numero sequencial da guia
+
+Local nCont
+
+Local oFont07
+Local oFont08
+Local oFont08n
+Local oFont10n
+
+Local nColIni := 080  //Coluna inicial geral
+Local nColFim := 2290 //Coluna final geral
+
+Local cRepNum := ""	  //Representacao Numerica
+Local cLinDig := ""   //Linha digitavel formatada
+
+Local nLin 	  := 050  //Representa a posicao da linha (Barra Horizontal)
+Local nSomLin := 0030 //Representa o fator de proxima linha (Barra Horizontal)
+Local nFrtLin := 0180 //Primeira linha
+
+Local nLinVer := 480  //Representa a posicao da linha vertical principal (Barra Vertical)
+Local nSubVer := 010  //Representa o fator de proxima linha (Barra Vertical)
+
+Local nIni := 1 	  //Inicial das instrucoes ao caixa
+Local nQbr := 090	  //Quebra para as linhas das instrucoes ao caixa
+
+//Dados da entidade sindical
+//--------------------------------------------------
+Local cNomEnt	:= "" //Nome 
+Local cCodEnt	:= "" //Codigo 
+Local cCgcEnt	:= "" //Cgc 
+Local cEndEnt	:= "" //Endereco 
+Local cNumEnt	:= "" //Numero 
+Local cComEnt	:= "" //Complemento 
+Local cBaiEnt	:= "" //Bairro 
+Local cCepEnt	:= "" //Cep 
+Local cCidEnt	:= "" //Cidade 
+Local cUfEnt	:= "" //UF
+//--------------------------------------------------
+
+//Dados do contribuinte
+//--------------------------------------------------
+Local cNomCon	:= "" //Nome
+Local cCgcCon	:= "" //CGC/CNPJ
+Local cEndCon	:= "" //Endereco
+Local cNumCon	:= "" //Numero
+Local cComCon	:= "" //Complemento
+Local cCepCon	:= "" //Cep
+Local cBaiCon	:= "" //Bairro
+Local cCidCon	:= "" //Cidade
+Local cUfCon	:= "" //UF
+//--------------------------------------------------
+
+Local nVCobr := 0
+Local nMor   := 0      
+Local nCor   := 0    
+Local nVCob  := 0 
+lGrf    := If( lGrf == NIL, .F., lGrf ) //Parametro para impressao do bloqueto de cobranca completo se .T.
+cMsnCtb := If( cMsnCtb == NIL, "", cMsnCtb ) //Parametro de mensagem destinada ao contribuinte
+
+//Fonte Comum
+oFont07 := TFont():New("Courier New",07,07,,.F.,,,,.T.,.F.) 
+oFont08 := TFont():New("Courier New",08,08,,.F.,,,,.T.,.F.) 
+oFont09 := TFont():New("Courier New",08,08,,.F.,,,,.T.,.F.) 
+oFont10 := TFont():New("Courier New",10,10,,.F.,,,,.T.,.F.)	
+
+//Fonte Negrito
+oFont07n := TFont():New("Courier New",07,07,,.T.,,,,.T.,.F.) 
+oFont08n := TFont():New("Courier New",08,08,,.T.,,,,.T.,.F.) 
+oFont09n := TFont():New("Courier New",08,08,,.T.,,,,.T.,.F.) 
+oFont10n := TFont():New("Courier New",10,10,,.T.,,,,.T.,.F.)	
+oFont12n := TFont():New("Courier New",12,12,,.T.,,,,.T.,.F.)	
+
+cMnsCxa := "BLOQUETO DE CONTRIBUIÇÃO SINDICAL URBANA"
+cBco	:= "104-0"
+cCodBar := ""
+
+//-- Objeto para impressao grafica
+//oPrint 	:= TMSPrinter():New( STR0007 ) //GRCS - Guia de Recolhimento da Contribuição Sindical                             
+oPrint:SetPortrait()                 
+oPrint:StartPage() //Inicio da Pagina
+
+cImg := BmpBco("104")
+
+cRepNum := LinDgt()
+
+//Imprime o logo do banco no caso de bloqueto de cobranca
+If lGrf
+	//Bitmap
+	If File(cImg)
+		oPrint:SayBitmap(nLin,080,cImg,600,200)
+	Endif
+EndIf
+
+//Entidade Sindical
+cNomEnt	:=   If ( !Empty(aSindic[1,1]), SubStr( AllTrim(aSindic[1,1]),1,86 ), "" ) //Nome
+
+// Devido ao Aumento do codigo da entidade sindical (aSindic[1,3]) de 12 para 15 no Brasil
+// foi criada a variavel private nTamEntSin para dar tratamento ao campo RCE_ENTSIN
+cCodEnt	:=   If ( !Empty(aSindic[1,3]), SubStr( AllTrim(aSindic[1,3]),1,nTamEntSin ), "" ) //Codigo
+//cCodEnt := 	 StrZero( Val( cCodEnt ), 15 )
+
+cCgcEnt	:=   If ( !Empty(aSindic[1,2]), SubStr(aSindic[1,2],01,02)+"."+SubStr(aSindic[1,2],03,03)+"."+SubStr(aSindic[1,2],06,03)+"/" +SubStr(aSindic[1,2],09,04)+"-"+ SubStr(aSindic[1,2],13,02), "" ) //Cgc
+cEndEnt	:=   If ( !Empty(aSindic[1,4]), SubStr( AllTrim(aSindic[1,4]),1,40), "" ) //Endereco
+cNumEnt	:=   If ( !Empty(aSindic[1,5]), AllTrim(aSindic[1,5]), "" ) //Numero
+//cComEnt	:=   If ( !Empty(), , "" ) //Complemento
+cBaiEnt	:=   If ( !Empty(aSindic[1,7]), SubStr(AllTrim(aSindic[1,7]),1,30), "" ) //Bairro
+cCepEnt	:=   If ( !Empty(aSindic[1,8]), SubStr(AllTrim(aSindic[1,8]),1,5)+"-"+SubStr(AllTrim(aSindic[1,8]),6,3), "" ) //Cep
+cCidEnt	:=   If ( !Empty(aSindic[1,9]), AllTrim(aSindic[1,9]), "" ) //Cidade
+cUfEnt	:=   If ( !Empty(aSindic[1,10]), AllTrim(aSindic[1,10]) , "" ) //UF
+
+//Contribuinte
+cNomCon	:=   If ( !Empty(cRazao), SubStr( AllTrim(cRazao),1,86 ), "" )//Nome
+cCgcCon	:=   If ( !Empty(cCGC), AllTrim(cCGC), "" )//CGC/CNPJ
+cEndCon	:=   If ( !Empty(cEnder), SubStr( AllTrim(cEnder),1,40), "") //Endereco
+cNumCon	:=   If ( !Empty(nNumero), STRZERO(nNumero,5), "") //Numero
+cComCon	:=   If ( !Empty(cComple), AllTrim(cComple), "") //Complemento
+cCepCon	:=   If ( !Empty(cCep), SubStr(AllTrim(cCep),1,5)+"-"+SubStr(AllTrim(cCep),6,3), "") //Cep
+cBaiCon	:=   If ( !Empty(cBairro), AllTrim(cBairro), "") //Bairro
+cCidCon	:=   If ( !Empty(cCidade), AllTrim(cCidade), "") //Cidade
+cUfCon	:=   If ( !Empty(cUF), Alltrim(cUF) , "") //UF
+
+//GRCS - Guia de Recolhimento da Contribuição Sindical
+oPrint:Say( nLin+150, 780 ,STR0001,oFont12n)
+
+//Box mensagem destinada ao contribuinte
+oPrint:Box(nLin+nFrtLin+(nSomLin*27),nColIni,nLin+nFrtLin+(nSomLin*33),nColFim)
+
+/*cMsnCtb := "PRIMEIRO................................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."+;
+			"SEGUNDO.................................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."+;         
+			"TERCEIRO................................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."+;         
+			"QUARTO..................................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."+;         
+			"QUINTO..................................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."+;         
+			"SEXTO...................................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."+;         
+			"SETIMO..................................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."+;         
+			"OITAVO..................................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."+;         
+			"NONO....................................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."+;         
+			"DECIMO.................................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE..."+;         
+			"DECIMO PRIMEIRO........................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE..."+;         
+			"DECIMO SEGUNDO..........................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."+;         
+			"DECIMO TERCEIRO.........................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."*/
+
+For nCont := nLin+nFrtLin+(nSomLin*29) To nLin+nFrtLin+(nSomLin*33) 
+	oPrint:Say(nCont,085,SubStr(cMsnCtb,nIni,nQbr),oFont08) //Substituir por var (cInst)
+	nCont := nCont+30
+	nIni := nIni+86
+Next
+
+//--------------------------------------------------------------------------------------------------------------
+
+//Vencimento
+oPrint:Line(nLin+nFrtLin+nSomLin,nColFim-nLinVer,nLin+nFrtLin+(nSomLin*4),nColFim-nLinVer) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+nSomLin,nColFim-(nLinVer-nSubVer),STR0004,oFont08n)
+oPrint:Say(nLin+nFrtLin+(nSomLin*2),nColFim-(nLinVer-nSubVer),cDataPg,oFont08)
+oPrint:Line(nLin+nFrtLin+(nSomLin*4),nColFim-nLinVer,nLin+nFrtLin+(nSomLin*4),nColFim)//Barra horizontal Linha1
+
+//Exercicio
+oPrint:Line(nLin+nFrtLin+nSomLin,nColFim-(nLinVer-200),nLin+nFrtLin+(nSomLin*4),nColFim-(nLinVer-200)) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+nSomLin,nColFim-(nLinVer-200),STR0005,oFont08n) //Exercicio
+oPrint:Say(nLin+nFrtLin+(nSomLin*2),nColFim-(nLinVer-200),cAnoExerc,oFont08)
+
+//Codigo da Entidade Sindical
+oPrint:Line(nLin+nFrtLin+(nSomLin*6),nColFim-nLinVer,nLin+nFrtLin+(nSomLin*8),nColFim-nLinVer) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*5),nColFim-(nLinVer-nSubVer),STR0006,oFont08n)
+
+// Aumento no inicio da mascara do codigo da entidade sindical (cCodEnt) em mais um conjunto de
+// 3 caracteres SE houve o aumento no tamanho do campo RCE_ENTSIN de 12 para 15 caracteres
+If nTamEntSin == 15
+	oPrint:Say(nLin+nFrtLin+(nSomLin*6),nColFim-(nLinVer-nSubVer),SubStr(cCodEnt,1,3)+"."+SubStr(cCodEnt,4,3)+"."+SubStr(cCodEnt,7,3)+"."+SubStr(cCodEnt,10,5)+"-"+SubStr(cCodEnt,15,1),oFont08)
+Else
+	oPrint:Say(nLin+nFrtLin+(nSomLin*6),nColFim-(nLinVer-nSubVer),SubStr(cCodEnt,1,3)+"."+SubStr(cCodEnt,4,3)+"."+SubStr(cCodEnt,7,5)+"-"+SubStr(cCodEnt,12,1),oFont08)
+EndIf
+
+//CNPJ da Entidade
+oPrint:Line(nLin+nFrtLin+(nSomLin*8),nColFim-nLinVer,nLin+nFrtLin+(nSomLin*9),nColFim-nLinVer) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*7),nColFim-(nLinVer-nSubVer),STR0010,oFont08n) 
+oPrint:Say(nLin+nFrtLin+(nSomLin*8),nColFim-(nLinVer-nSubVer),cCgcEnt,oFont08)
+
+//Numero Entidade Sindical
+oPrint:Line(nLin+nFrtLin+(nSomLin*8),nColFim-nLinVer-660,nLin+nFrtLin+(nSomLin*9),nColFim-nLinVer-660) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*7),nColFim-(nLinVer-nSubVer+660),STR0008,oFont08n)
+oPrint:Say(nLin+nFrtLin+(nSomLin*8),nColFim-(nLinVer-nSubVer+660),cNumEnt,oFont08)
+
+//Complemento Entidade Sindical
+oPrint:Line(nLin+nFrtLin+(nSomLin*8),nColFim-nLinVer-400,nLin+nFrtLin+(nSomLin*9),nColFim-nLinVer-400) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*7),nColFim-(nLinVer-nSubVer+400),STR0009,oFont08n)
+oPrint:Say(nLin+nFrtLin+(nSomLin*8),nColFim-(nLinVer-nSubVer+400),SubStr(cComEnt,1,75),oFont08)
+
+//CEP Entidade Sindical
+oPrint:Line(nLin+nFrtLin+(nSomLin*10),nColFim-nLinVer-710,nLin+nFrtLin+(nSomLin*11),nColFim-nLinVer-710) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*9),nColFim-(nLinVer-nSubVer+700),STR0064,oFont08n)
+oPrint:Say(nLin+nFrtLin+(nSomLin*10),nColFim-(nLinVer-nSubVer+700),cCepEnt,oFont08)
+
+//Cidade/MunicipioEntidade Sindical
+oPrint:Line(nLin+nFrtLin+(nSomLin*10),nColFim-nLinVer-400,nLin+nFrtLin+(nSomLin*11),nColFim-nLinVer-400) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*9),nColFim-(nLinVer-nSubVer+400),STR0012,oFont08n) 
+oPrint:Say(nLin+nFrtLin+(nSomLin*10),nColFim-(nLinVer-nSubVer+400),SubStr(cCidEnt,1,28),oFont08)
+
+//UF Entidade Sindical
+oPrint:Line(nLin+nFrtLin+(nSomLin*10),nColFim-(nLinVer-080),nLin+nFrtLin+(nSomLin*11),nColFim-(nLinVer-080)) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*9),nColFim-(nLinVer-080),STR0013,oFont08n) 
+oPrint:Say(nLin+nFrtLin+(nSomLin*10),nColFim-(nLinVer-080),cUfEnt,oFont08)
+
+//CPF/CNPJ/Codigo do Contribuinte
+oPrint:Line(nLin+nFrtLin+(nSomLin*12),nColFim-nLinVer,nLin+nFrtLin+(nSomLin*14),nColFim-nLinVer) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*12),nColFim-(nLinVer-nSubVer),STR0016,oFont08n)
+oPrint:Say(nLin+nFrtLin+(nSomLin*13),nColFim-(nLinVer-nSubVer),cCgcCon,oFont08)
+
+//Numero Contribuinte
+oPrint:Line(nLin+nFrtLin+(nSomLin*15),nColFim-nLinVer-660,nLin+nFrtLin+(nSomLin*16),nColFim-nLinVer-660) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*14),nColFim-(nLinVer-nSubVer+660),STR0008,oFont08n)
+oPrint:Say(nLin+nFrtLin+(nSomLin*15),nColFim-(nLinVer-nSubVer+660),cNumCon,oFont08)
+
+//Complemento Contribuinte
+oPrint:Line(nLin+nFrtLin+(nSomLin*15),nColFim-nLinVer-400,nLin+nFrtLin+(nSomLin*16),nColFim-nLinVer-400) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*14),nColFim-(nLinVer-nSubVer+400),STR0009,oFont08n)
+oPrint:Say(nLin+nFrtLin+(nSomLin*15),nColFim-(nLinVer-nSubVer+400),cComCon,oFont08)
+
+//Cidade/Municipio Contribuinte
+oPrint:Line(nLin+nFrtLin+(nSomLin*17),nColFim-nLinVer-400,nLin+nFrtLin+(nSomLin*18),nColFim-nLinVer-400) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*16),nColFim-(nLinVer-nSubVer+400),STR0012,oFont08n) 
+oPrint:Say(nLin+nFrtLin+(nSomLin*17),nColFim-(nLinVer-nSubVer+400),SubStr(cCidCon,1,25),oFont08)
+
+//Bairro/Distrito Contribuinte
+oPrint:Line(nLin+nFrtLin+(nSomLin*17),nColFim-nLinVer-1500,nLin+nFrtLin+(nSomLin*18),nColFim-nLinVer-1500) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*16),nColFim-(nLinVer-nSubVer+1500),STR0011,oFont08n) 
+oPrint:Say(nLin+nFrtLin+(nSomLin*17),nColFim-(nLinVer-nSubVer+1500),SubStr(cBaiCon,1,40),oFont08)
+
+//UF Contribuinte
+oPrint:Line(nLin+nFrtLin+(nSomLin*17),nColFim-(nLinVer-050),nLin+nFrtLin+(nSomLin*18),nColFim-(nLinVer-050)) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*16),nColFim-(nLinVer-050),STR0013,oFont08n) 
+oPrint:Say(nLin+nFrtLin+(nSomLin*17),nColFim-(nLinVer-050),cUfCon,oFont08)
+
+//Codigo de Atividade
+oPrint:Line(nLin+nFrtLin+(nSomLin*17),nColFim-(nLinVer-130),nLin+nFrtLin+(nSomLin*18),nColFim-(nLinVer-130)) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*16),nColFim-(nLinVer-130),STR0017,oFont08n) 
+oPrint:Say(nLin+nFrtLin+(nSomLin*17),nColFim-(nLinVer-130),cCNAE,oFont08)
+
+//Dados da Contribuicao
+oPrint:Line(nLin+nFrtLin+(nSomLin*19),nColFim-nLinVer,nLin+nFrtLin+(nSomLin*22),nColFim-nLinVer) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*18),nColFim-(nLinVer-nSubVer),STR0029,oFont08n)
+
+//Valor do Documento
+oPrint:Say(nLin+nFrtLin+(nSomLin*19),nColFim-(nLinVer-nSubVer),"(=)"+STR0030,oFont08n) 
+oPrint:Say(nLin+nFrtLin+(nSomLin*20),nColFim-(nLinVer-nSubVer),TRANSFORM(nTContrib,"@E 999,999,999.99"),oFont08)
+
+oPrint:Line(nLin+nFrtLin+(nSomLin*22),nColFim-nLinVer,nLin+nFrtLin+(nSomLin*22),nColFim)//Barra horizontal Linha1
+
+//Desconto/Abatimento
+oPrint:Line(nLin+nFrtLin+(nSomLin*23),nColFim-nLinVer,nLin+nFrtLin+(nSomLin*25),nColFim-nLinVer) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*23),nColFim-(nLinVer-nSubVer),"(-)"+STR0031+"/"+STR0032,oFont08n)
+oPrint:Say(nLin+nFrtLin+(nSomLin*24),nColFim-(nLinVer-nSubVer),"",oFont08)
+
+//N. de Empregados Contribuintes
+oPrint:Line(nLin+nFrtLin+(nSomLin*23),nColFim-nLinVer-660,nLin+nFrtLin+(nSomLin*25),nColFim-nLinVer-660) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*23),nColFim-(nLinVer-nSubVer+660),STR0025,oFont08n)
+oPrint:Say(nLin+nFrtLin+(nSomLin*24),nColFim-(nLinVer-nSubVer+660),Transform(nNumEmpr,"999,999"),oFont08)
+
+//Total Remuneracao - Contribuintes
+oPrint:Line(nLin+nFrtLin+(nSomLin*26),nColFim-nLinVer-660,nLin+nFrtLin+(nSomLin*28),nColFim-nLinVer-660) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*25),nColFim-(nLinVer-nSubVer+660),STR0027,oFont08n)
+oPrint:Say(nLin+nFrtLin+(nSomLin*26),nColFim-(nLinVer-nSubVer+660),TRANSFORM(nTBaseSin1,"@E 999,999,999.99"),oFont08)
+
+//Total de Empregados - Estabelecimentos
+oPrint:Line(nLin+nFrtLin+(nSomLin*27),nColFim-nLinVer-660,nLin+nFrtLin+(nSomLin*29),nColFim-nLinVer-660) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*27),nColFim-(nLinVer-nSubVer+660),STR0028,oFont08n)
+oPrint:Say(nLin+nFrtLin+(nSomLin*28),nColFim-(nLinVer-nSubVer+660),Transform((nTotEmp),"999,999"),oFont08) 
+//oPrint:Say(nLin+nFrtLin+(nSomLin*28),nColFim-(nLinVer-nSubVer+660),Transform(nNumEmpr,"999,999"),oFont08)
+oPrint:Line(nLin+nFrtLin+(nSomLin*29),nColFim-nLinVer-660,nLin+nFrtLin+(nSomLin*29),nColFim)//Barra horizontal Linha1
+
+//Outras Deducoes
+oPrint:Line(nLin+nFrtLin+(nSomLin*26),nColFim-nLinVer,nLin+nFrtLin+(nSomLin*27),nColFim-nLinVer) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*25),nColFim-(nLinVer-nSubVer),"(-)"+STR0033+" "+STR0035,oFont08n)
+oPrint:Say(nLin+nFrtLin+(nSomLin*26),nColFim-(nLinVer-nSubVer),"",oFont08)
+
+//Mora/Multa
+oPrint:Line(nLin+nFrtLin+(nSomLin*28),nColFim-nLinVer,nLin+nFrtLin+(nSomLin*29),nColFim-nLinVer) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*27),nColFim-(nLinVer-nSubVer),"(+)"+STR0036+"/"+STR0037,oFont08n) 
+nMor := If ( !Empty(nJurosMo) .or. !Empty(nMulta), Transform(nJurosMo+nMulta,"@E 999,999,999.99"), "" )
+oPrint:Say(nLin+nFrtLin+(nSomLin*28),nColFim-(nLinVer-nSubVer),nMor,oFont08) 
+oPrint:Line(nLin+nFrtLin+(nSomLin*29),nColFim-nLinVer,nLin+nFrtLin+(nSomLin*29),nColFim)//Barra horizontal Linha1
+
+//Outros Acrescimos
+oPrint:Line(nLin+nFrtLin+(nSomLin*30),nColFim-nLinVer,nLin+nFrtLin+(nSomLin*31),nColFim-nLinVer) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*29),nColFim-(nLinVer-nSubVer),"(+)"+STR0034+"/"+STR0038,oFont08n)
+nCor := If ( !Empty(nCorrMon), Transform(nCorrMon,"@E 999,999,999.99"), "" )
+oPrint:Say(nLin+nFrtLin+(nSomLin*30),nColFim-(nLinVer-nSubVer),nCor,oFont08)
+
+oPrint:Line(nLin+nFrtLin+(nSomLin*31),nColFim-nLinVer,nLin+nFrtLin+(nSomLin*31),nColFim)//Barra horizontal Linha1
+
+nVCobr := (nTContrib+nMulta+nJurosMo+nCorrMon)
+//Valor Cobrado
+oPrint:Say(nLin+nFrtLin+(nSomLin*31),nColFim-(nLinVer-nSubVer),"(=)"+STR0039,oFont08n)
+nVCob := If ( !Empty(nVCobr), Transform(nVCobr,"@E 999,999,999.99"), "" )
+oPrint:Say(nLin+nFrtLin+(nSomLin*32),nColFim-(nLinVer-nSubVer),nVCob,oFont08)
+oPrint:Line(nLin+nFrtLin+(nSomLin*32),nColFim-nLinVer,nLin+nFrtLin+(nSomLin*33),nColFim-nLinVer) //Barra vertical1
+
+
+//--------------------------------------------------------------------------------------------------------------
+
+//Dados da Entidade Sindical
+oPrint:Say(nLin+nFrtLin+(nSomLin*4),nColIni,STR0002,oFont09n) 
+//Nome da Entidade
+oPrint:Line(nLin+nFrtLin+(nSomLin*6),nColIni,nLin+nFrtLin+(nSomLin*7),nColIni) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*5),nColIni+010,STR0003,oFont08n) 
+oPrint:Say(nLin+nFrtLin+(nSomLin*6),nColIni+010,SubStr(cNomEnt,1,80),oFont08) 
+oPrint:Line(nLin+nFrtLin+(nSomLin*7),nColIni,nLin+nFrtLin+(nSomLin*7),nColFim)//Barra horizontal Linha2
+
+//Endereco
+oPrint:Line(nLin+nFrtLin+(nSomLin*8),nColIni,nLin+nFrtLin+(nSomLin*9),nColIni) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*7),nColIni+010,STR0007,oFont08n) 
+oPrint:Say(nLin+nFrtLin+(nSomLin*8),nColIni+010,cEndEnt,oFont08)
+oPrint:Line(nLin+nFrtLin+(nSomLin*9),nColIni-0005,nLin+nFrtLin+(nSomLin*9),nColFim)//Barra horizontal Linha3
+
+//Bairro/Distrito
+oPrint:Line(nLin+nFrtLin+(nSomLin*10),nColIni,nLin+nFrtLin+(nSomLin*11),nColIni) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*9),nColIni+010,STR0011,oFont08n) 
+oPrint:Say(nLin+nFrtLin+(nSomLin*10),nColIni+010,SubStr(cBaiEnt,1,40),oFont08)
+oPrint:Line(nLin+nFrtLin+(nSomLin*11),nColIni-0005,nLin+nFrtLin+(nSomLin*11),nColFim)//Barra horizontal Linha4
+
+//Dados do Contribuinte
+oPrint:Say(nLin+nFrtLin+(nSomLin*11),nColIni,STR0014,oFont09n)
+//Nome/Razao Social/Denominacao Social
+oPrint:Line(nLin+nFrtLin+(nSomLin*12),nColIni,nLin+nFrtLin+(nSomLin*14),nColIni) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*12),nColIni+010,STR0015,oFont08n)
+oPrint:Say(nLin+nFrtLin+(nSomLin*13),nColIni+010,SubStr(cNomCon,1,80),oFont08)
+oPrint:Line(nLin+nFrtLin+(nSomLin*14),nColIni-0005,nLin+nFrtLin+(nSomLin*14),nColFim)//Barra horizontal Linha5
+
+//Endereco
+oPrint:Line(nLin+nFrtLin+(nSomLin*15),nColIni,nLin+nFrtLin+(nSomLin*16),nColIni) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*14),nColIni+010,STR0007,oFont08n) 
+oPrint:Say(nLin+nFrtLin+(nSomLin*15),nColIni+010,cEndCon,oFont08)
+oPrint:Line(nLin+nFrtLin+(nSomLin*16),nColIni,nLin+nFrtLin+(nSomLin*16),nColFim)//Barra horizontal Linha6
+
+//CEP
+oPrint:Line(nLin+nFrtLin+(nSomLin*17),nColIni,nLin+nFrtLin+(nSomLin*18),nColIni) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*16),nColIni+010,STR0064,oFont08n) 
+oPrint:Say(nLin+nFrtLin+(nSomLin*17),nColIni+010,cCepCon,oFont08)
+oPrint:Line(nLin+nFrtLin+(nSomLin*18),nColIni,nLin+nFrtLin+(nSomLin*18),nColFim)//Barra horizontal Linha7
+
+//Dados da Referencia da Contribuicao
+oPrint:Say(nLin+nFrtLin+(nSomLin*18),nColIni,STR0018,oFont09n)
+//Categoria
+oPrint:Say(nLin+nFrtLin+(nSomLin*19),nColIni+010,STR0019,oFont08n)
+//Box1 categoria / box pequeno / Patronal-Empregador
+oPrint:Box(nLin+nFrtLin+(nSomLin*21),nColIni+010,nLin+nFrtLin+(nSomLin*21)+040,nColIni+050)
+oPrint:Say(nLin+nFrtLin+(nSomLin*21),nColIni+050,STR0020,oFont08)
+
+//Box2 categoria / box pequeno / Empregados
+oPrint:Box(nLin+nFrtLin+(nSomLin*21),nColIni+400,nLin+nFrtLin+(nSomLin*21)+040,nColIni+440)
+oPrint:Say(nLin+nFrtLin+(nSomLin*21),nColIni+405,"X",oFont08)
+oPrint:Say(nLin+nFrtLin+(nSomLin*21),nColIni+440,STR0021,oFont08)
+
+//Box3 categoria / box pequeno / Prof. Liberal
+oPrint:Box(nLin+nFrtLin+(nSomLin*21),nColIni+700,nLin+nFrtLin+(nSomLin*21)+040,nColIni+740)
+oPrint:Say(nLin+nFrtLin+(nSomLin*21),nColIni+740,STR0022,oFont08)
+
+//Box4 categoria / box pequeno / Prof. Liberal
+oPrint:Box(nLin+nFrtLin+(nSomLin*21),nColIni+1100,nLin+nFrtLin+(nSomLin*21)+040,nColIni+1140)
+oPrint:Say(nLin+nFrtLin+(nSomLin*21),nColIni+1140,STR0023,oFont08)
+
+//Capital Social - Empresa
+oPrint:Line(nLin+nFrtLin+(nSomLin*23),nColIni,nLin+nFrtLin+(nSomLin*25),nColIni) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*23),nColIni+010,STR0024,oFont08n)
+oPrint:Say(nLin+nFrtLin+(nSomLin*24),nColIni+010,Transform(nCapSocI,"@E 999,999,999.99"),oFont08)
+oPrint:Line(nLin+nFrtLin+(nSomLin*25),nColIni,nLin+nFrtLin+(nSomLin*25),nColFim)//Barra horizontal Linha8
+
+//Capital Social do Estabelecimento
+oPrint:Line(nLin+nFrtLin+(nSomLin*26),nColIni,nLin+nFrtLin+(nSomLin*27),nColIni) //Barra vertical1
+oPrint:Say(nLin+nFrtLin+(nSomLin*25),nColIni+010,STR0026,oFont08n)
+oPrint:Say(nLin+nFrtLin+(nSomLin*26),nColIni+010,Transform(nCapEstb,"@E 999,999,999.99"),oFont08)
+
+//Imprime a parte fixa mais o codigo de barras no caso de bloqueto de cobranca
+If lGrf
+
+	//Codigo do banco
+	oPrint:Line(nLin+nFrtLin+(nSomLin*34),nColIni,nLin+nFrtLin+(nSomLin*36),nColIni) //Barra vertical1
+	oPrint:Say(nLin+nFrtLin+(nSomLin*34),nColIni+010,AllTrim(cBco),oFont10n)
+	oPrint:Line(nLin+nFrtLin+(nSomLin*36),nColIni,nLin+nFrtLin+(nSomLin*36),nColFim)//Barra horizontal Linha9
+	
+	//Representacao numerica
+	cLinDig := SubStr(cRepNum,1,5)+"."+SubStr(cRepNum,6,5)+" "+SubStr(cRepNum,11,5)+"."+SubStr(cRepNum,16,6)+" "+;
+				SubStr(cRepNum,22,5)+"."+SubStr(cRepNum,27,6)+" "+SubStr(cRepNum,33,1)+" "+SubStr(cRepNum,34,15)
+				
+	//Representacao Numerica
+	oPrint:Line(nLin+nFrtLin+(nSomLin*34),nColIni+140,nLin+nFrtLin+(nSomLin*36),nColIni+140) //Barra vertical1
+	oPrint:Say(nLin+nFrtLin+(nSomLin*34),nColIni+300,cLinDig,oFont10n)
+
+	//Codigo do cedente
+    oPrint:Line(nLin+nFrtLin+(nSomLin*37),nColIni,nLin+nFrtLin+(nSomLin*38),nColIni) //Barra vertical1
+	oPrint:Say(nLin+nFrtLin+(nSomLin*36),nColIni+010,STR0040,oFont08n)
+
+	// Aumento no inicio da mascara do codigo da entidade sindical (cCodEnt) em mais um conjunto de
+	// 3 caracteres SE houve o aumento no tamanho do campo RCE_ENTSIN de 12 para 15 caracteres
+	if nTamEntSin == 15
+		oPrint:Say(nLin+nFrtLin+(nSomLin*37),nColIni+010,SubStr(cCodEnt,1,3)+"."+SubStr(cCodEnt,4,3)+"."+SubStr(cCodEnt,7,3)+"."+SubStr(cCodEnt,10,5)+"-"+SubStr(cCodEnt,15,1),oFont08)
+	Else
+		oPrint:Say(nLin+nFrtLin+(nSomLin*37),nColIni+010,SubStr(cCodEnt,1,3)+"."+SubStr(cCodEnt,4,3)+"."+SubStr(cCodEnt,7,5)+"-"+SubStr(cCodEnt,12,1),oFont08)
+	EndIf
+
+	oPrint:Line(nLin+nFrtLin+(nSomLin*38),nColIni,nLin+nFrtLin+(nSomLin*38),nColFim)//Barra horizontal Linha10
+	
+	//Nosso Numero
+	oPrint:Line(nLin+nFrtLin+(nSomLin*37),nColFim-nLinVer-1200,nLin+nFrtLin+(nSomLin*38),nColFim-nLinVer-1200) //Barra vertical1
+	oPrint:Say(nLin+nFrtLin+(nSomLin*36),nColFim-(nLinVer-nSubVer+1200),STR0041,oFont08n)
+	oPrint:Say(nLin+nFrtLin+(nSomLin*37),nColFim-(nLinVer-nSubVer+1200),SubStr(cCgc,1,2)+SubStr(cCgc,4,3)+SubStr(cCgc,8,3)+SubStr(cCgc,12,4),oFont08)
+
+	//Valor do Documento
+	oPrint:Line(nLin+nFrtLin+(nSomLin*37),nColFim-nLinVer-660,nLin+nFrtLin+(nSomLin*38),nColFim-nLinVer-660) //Barra vertical1
+	oPrint:Say(nLin+nFrtLin+(nSomLin*36),nColFim-(nLinVer-nSubVer+660),STR0030,oFont08n)
+	oPrint:Say(nLin+nFrtLin+(nSomLin*37),nColFim-(nLinVer-nSubVer+660),TRANSFORM(nTContrib,"@E 999,999,999.99"),oFont08)
+
+	//Data de Vencimento
+	oPrint:Line(nLin+nFrtLin+(nSomLin*37),nColFim-(nLinVer-nSubVer+100),nLin+nFrtLin+(nSomLin*38),nColFim-(nLinVer-nSubVer+100)) //Barra vertical1
+	oPrint:Say(nLin+nFrtLin+(nSomLin*36),nColFim-(nLinVer-nSubVer+100),STR0065,oFont08n)
+	oPrint:Say(nLin+nFrtLin+(nSomLin*37),nColFim-(nLinVer-nSubVer+100),cDataPg,oFont08)
+	
+	//Exercicio
+	oPrint:Line(nLin+nFrtLin+(nSomLin*37),nColFim-(nLinVer-(nSubVer+300)),nLin+nFrtLin+(nSomLin*38),nColFim-(nLinVer-(nSubVer+300))) //Barra vertical1
+	oPrint:Say(nLin+nFrtLin+(nSomLin*36),nColFim-(nLinVer-(nSubVer+300)),STR0005,oFont08n) //Exercicio
+	oPrint:Say(nLin+nFrtLin+(nSomLin*37),nColFim-(nLinVer-(nSubVer+300)),AllTrim(cAnoExerc),oFont08)
+
+	//Autenticacao Mecanica
+	oPrint:Line(nLin+nFrtLin+(nSomLin*37),nColFim-nLinVer-660,nLin+nFrtLin+(nSomLin*44),nColFim-nLinVer-660) //Barra vertical1
+	oPrint:Say(nLin+nFrtLin+(nSomLin*38),nColFim-(nLinVer-nSubVer+660),STR0043+" "+STR0044,oFont07n)
+
+	cCodBar := CbGrcsu(cRepNum)
+	cNumSeq := GETSX8NUM("RCE","RCE_ENTSIN",aSindic[1,3])
+	
+	nVCobr := (nTContrib+nMulta+nJurosMo+nCorrMon)
+		//Bloco fixo
+	
+		//Objeto de Impressao / Logo Banco / Local de Pagamento / Cedente Nome / Data do Documento / Numero do documento / Espécie do Documento / Aceite
+		//Data Processamento  / Uso do Banco / Carteira / Especie / Quatidade / Valor / Data de Vencimento / Agencia / Codigo Cedente / Nosso Numero
+		//Valor do Documento / Valor de Desconto / Abatimento / Outras Deducoes / Valor de Mora / Valor de Multa Acrescimos / Valor Cobrado 
+		//Mensagem que ira aparecer na primeira linha do quadro instrucoes / Instrucoes ao Caixa / Sacado / Sacador-Avalista / Banco
+		//Tipo Boleto / Representacao Numerica
+		BlCob( @oPrint,cImg,cLocPgt,aSindic[1,1], Date(), AllTrim(cNumSeq) , "GRCSU", "",;
+				Date(), "", "", , "", "", cDataPg, cAgcCxe, cCodEnt, SubStr(cCgc,1,2)+SubStr(cCgc,4,3)+SubStr(cCgc,8,3)+SubStr(cCgc,12,4),;
+				 nTContrib, "", "", "", nJurosMo, nMulta, nCorrMon , nVCobr,;
+				 cMnsCxa, "", cNomCon + " - " + cEndCon +","+cNumCon, "", cBco,,cCodBar,cLinDig)
+		
+		//Fim de bloco fixo
+	
+EndIf
+	
+oPrint:EndPage()  //Finaliza a Impressao
+
+ConfirmSX8()
+
+Return Nil
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³BlCob	    ºAutor  ³R.H.Igor            º Data ³  11/04/07   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Desenha parte gráfica padrao de bloquetos de cobrança		  º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP5                                                        º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function BlCob(oPrint,cBmp,cLocal,cCed,dDtDoc,cNumDoc,cEspDoc,cAc,dDtProc,cUsBan,cCart,cEsp,nQtd,nVal,dDtVenc,cAg,cCodCed,cNosNum,nValDoc,nDesc,nAbat,nOutDed,nMor,nMul,nAcre,nValCob,cMens,cInst,cSac,cAva,cBco,cTpBol,cCodBar,cLin)
+
+//oPrint -- Objeto de impressao
+//cBmp 	 -- Caminho da imagem
+
+//cLocal -- Local de Pagamento
+//cCed	 -- Cedente Nome
+//dDtDoc -- Data do Documento
+//cNumDoc-- Numero do documento
+//cEspDoc-- Espécie do Documento
+//cAc	 -- Aceite
+//dDtProc-- Data Processamento
+//cUsBan -- Uso do Banco
+//cCart	 -- Carteira
+//cEsp	 -- DEFAULT R$
+//nQtd	 -- DEFAULT BRANCO
+//nVal	 -- Valor
+
+//dDtVenc-- Data de Vencimento
+//cAg	 -- Agencia(Codigo)
+//cCodCed-- Codigo Cedente (junto com agencia)
+//cNosNum-- Nosso Numero
+//nValDoc-- Valor do Documento
+//nDesc  -- Valor de Desconto
+//nAbat	 -- Abatimento (junto com desconto/soma com valor de desconto)
+//nOutDed-- Outras Deducoes
+//nMor	 -- Valor de Mora
+//nMul	 -- Valor de Multa (junto com mora/soma com o valor de mora)
+//nAcre	 -- Outros Acrescimos (Valor de Acrescimos)
+//nValCob-- Valor Cobrado
+
+//cMens  -- Mensagem que ira aparecer na primeira linha do quadro instrucoes
+//cInst	 -- Instrucoes ao Caixa
+//cSac	 -- Sacado
+//cAva	 -- Sacador Avalista
+//cLin	 -- Linha Digitavel
+
+Local nCont
+
+Local oFont06
+Local oFont07
+Local oFont08
+Local oFont08n
+Local oFont10n
+
+Local nColIni := 080  //Coluna inicial geral
+Local nColFim := 2290 //Coluna final geral
+
+Local nLin 	  := 1820 //Representa a posicao da linha (Barra Horizontal)
+Local nSomLin := 0030 //Representa o fator de proxima linha (Barra Horizontal)
+
+Local nLinVer := 470  //Representa a posicao da linha vertical principal (Barra Vertical)
+Local nSubVer := 010  //Representa o fator de proxima linha (Barra Vertical)
+
+Local nIni := 1 	  //Inicial das instrucoes ao caixa
+Local nQbr := 90	  //Quebra para as linhas das instrucoes ao caixa
+
+Local cPictCodCed:= ''
+
+cTpBol := If( cTpBol == NIL, "1", cTpBol )
+cEsp   := If( cEsp == NIL, "R$", cEsp )
+nQtd   := If( nQtd == NIL, 0, nQtd )
+//Fonte Comum
+oFont06 := TFont():New("Courier New",06,06,,.F.,,,,.T.,.F.)
+oFont07 := TFont():New("Courier New",07,07,,.F.,,,,.T.,.F.) 
+oFont08 := TFont():New("Courier New",08,08,,.F.,,,,.T.,.F.) 
+oFont10 := TFont():New("Courier New",10,10,,.F.,,,,.T.,.F.)
+
+//Fonte Negrito
+oFont07n := TFont():New("Courier New",07,07,,.T.,,,,.T.,.F.) 
+oFont08n := TFont():New("Courier New",08,08,,.T.,,,,.T.,.F.) 
+oFont10n := TFont():New("Courier New",10,10,,.T.,,,,.T.,.F.)
+oFont12n := TFont():New("Courier New",12,12,,.T.,,,,.T.,.F.)
+
+
+Do Case
+	//Caso impressao GRCSU ajustar as variaveis conforme especificacao
+	Case cTpBol == "1"
+		//Codigo do Cedente    
+		// Aumento no inicio da mascara do codigo da entidade sindical (cCodEnt) em mais um conjunto de
+		//-----------------------------------
+		// 3 caracteres SE houve o aumento no tamanho do campo RCE_ENTSIN de 12 para 15 caracteres
+		If nTamEntSin == 15
+			cPictCodCed:= "@R 999.999.999.99999-9"
+		Else
+			cPictCodCed:= "@R 999.999.99999-9"
+		EndIf
+		//-----------------------------------	
+		If ( !Empty(cCodCed), cCodCed := Transform( cCodCed, cPictCodCed ), cCodCed := "" )
+		//Carteira fixo SIND
+		cCart := "SIND"
+		//GRCSU Nosso numero igual a CPF/CNPJ/Codigo do Contribuinte
+		cNosNum := If ( !Empty(cNosNum), Transform( SubStr(AllTrim(cNosNum),1,12), "@E 999999999999" ), "" )
+		//Informar ano em exercicio
+		cUsBan := "EXERC - "+cAnoExerc
+		//Agencia onde o sindicato tem conta na Caixa
+		If ( !Empty(cAg), cAg := SubStr(AllTrim(cAgcCxe),1,4), cAg := "" )
+		//Quantidade
+		If( !Empty(nQtd), AllTrim(Transform(nQtd,"@E 999,999,999")), nQtd := "")
+		//Valor
+		If ( !Empty(nVal), AllTrim(Transform(nVal,"@E 999,999,999.99")), nVal := "" )
+		//Numero do Documento
+		If ( !Empty(cNumDoc), AllTrim(cNumDoc), "" )
+EndCase
+
+//----------------------------------------------------------------------------------------------------------------
+
+For nCont := 80 To nColFim Step 20
+	oPrint:Line(nLin-200,nCont,nLin-200,nCont+20) //Recorte
+	nCont := nCont+20
+Next
+
+//Bitmap
+If File(cBmp)
+	oPrint:SayBitmap(nLin-100,nColIni,cBmp,500,090)
+Endif
+
+//Logo+Banco+RepresentacaoNumerica
+			//linha inicial,coluna inicial, linha final, coluna final
+oPrint:Line(nLin-50,650,nLin,650) //Barra vertical pequena
+oPrint:Say(nLin-50,670,SubStr(AllTrim(cBco),1,5),oFont12n) //Substituir 104-0 pela variavel cod. do banco (cBco)
+oPrint:Line(nLin-50,800,nLin,800) //Barra vertical pequena
+oPrint:Say(nLin-50,805,cLin,oFont12n)
+
+//Local de Pagamento
+oPrint:Line(nLin,nColIni,nLin,nColFim)//Barra horizontal Linha1
+oPrint:Say(nLin,nColIni,STR0045,oFont10n) //Local de Pagamento
+oPrint:Say(nLin+nSomLin,nColIni,SubStr( Upper(AllTrim(cLocal)),1,82 ),oFont10) //Substituir por var (cLocal)
+
+//Cedente
+oPrint:Line(nLin+(nSomLin*3),nColIni,nLin+(nSomLin*3),nColFim) //Linha2
+oPrint:Say(nLin+(nSomLin*3),nColIni,STR0046,oFont10n) //Cedente
+oPrint:Say(nLin+(nSomLin*4),nColIni,SubStr( Upper(AllTrim(cCed)),1,82 ),oFont10) //Substituir por var (cCed)
+
+//Data do Documento
+oPrint:Line(nLin+(nSomLin*6),nColIni,nLin+(nSomLin*6),nColFim) //Linha3
+oPrint:Say(nLin+(nSomLin*6),nColIni,STR0047,oFont10n) //Data do Documento
+oPrint:Say(nLin+(nSomLin*7),nColIni,AllTrim(DToc(dDtDoc)),oFont10) //Substituir por var (dDtDoc)
+
+//Uso do Banco
+oPrint:Line(nLin+(nSomLin*9),nColIni,nLin+(nSomLin*9),nColFim) //Linha4
+oPrint:Say(nLin+(nSomLin*9),nColIni,STR0056,oFont10n) //Uso do Banco
+oPrint:Say(nLin+(nSomLin*10),nColIni,SubStr(Upper(AllTrim(cUsBan)),1,20),oFont10) //Substituir por var (cUsBan)
+
+//Numero do Documento
+oPrint:Line(nLin+(nSomLin*6) ,nColFim-1750 , nLin+(nSomLin*12) , nColFim-1750 )
+oPrint:Say(nLin+(nSomLin*6),nColFim-1745,STR0048,oFont10n) //Numero do Documento
+oPrint:Say(nLin+(nSomLin*7),nColFim-1745,SubStr(AllTrim(cNumDoc),1,18),oFont10) //Substituir por var (cNumDoc)
+
+//Carteira
+oPrint:Say(nLin+(nSomLin*9),nColFim-1745,STR0057,oFont10n) 
+oPrint:Say(nLin+(nSomLin*10),nColFim-1745,SubStr(AllTrim(cCart),1,9),oFont10) //Substituit por var (cCart)
+
+//Espécie
+oPrint:Line(nLin+(nSomLin*9),nColFim-1550,nLin+(nSomLin*12),nColFim-1550)
+oPrint:Say(nLin+(nSomLin*9),nColFim-1545,STR0059,oFont10n) 
+oPrint:Say(nLin+(nSomLin*10),nColFim-1545,AllTrim(cEsp),oFont10) //Substituir por var (cEsp)
+
+//Especie Documento
+oPrint:Line(nLin+(nSomLin*6),nColFim-1310,nLin+(nSomLin*12),nColFim-1310) 
+oPrint:Say(nLin+(nSomLin*6),nColFim-1300,STR0049,oFont10n) 
+oPrint:Say(nLin+(nSomLin*7),nColFim-1300,SubStr(Upper(AllTrim(cEspDoc)),1,11),oFont10) //Substituir por var (cEspDoc)
+
+//Quantidade
+oPrint:Say(nLin+(nSomLin*9),nColFim-1300,STR0060,oFont10n) 
+oPrint:Say(nLin+(nSomLin*10),nColFim-1300,nQtd,oFont10) //Substituir por var(nQtd)
+
+//Aceite
+oPrint:Line(nLin+(nSomLin*6),nColFim-1060,nLin+(nSomLin*9),nColFim-1060) 
+oPrint:Say(nLin+(nSomLin*6),nColFim-1050,STR0050,oFont10n) 
+oPrint:Say(nLin+(nSomLin*7),nColFim-1050,SubStr(Upper(AllTrim(cAc)),1,7),oFont10) //Substituir por var (cAc)
+
+//Data Processamento
+oPrint:Line(nLin+(nSomLin*6),nColFim-900,nLin+(nSomLin*9),nColFim-900) 
+oPrint:Say(nLin+(nSomLin*6),nColFim-895,STR0051,oFont10n) 
+oPrint:Say(nLin+(nSomLin*7),nColFim-900,DToc(dDtProc),oFont10) //Substituir por var (dDtProc)
+
+//Valor
+oPrint:Line(nLin+(nSomLin*9),nColFim-1000,nLin+(nSomLin*12),nColFim-1000) 
+oPrint:Say(nLin+(nSomLin*9),nColFim-995,STR0061,oFont10n) 
+oPrint:Say(nLin+(nSomLin*10),nColFim-995,nVal,oFont10) //Substituir por var(nVal)
+
+//Instrucoes ao caixa
+oPrint:Line(nLin+(nSomLin*12),nColIni,nLin+(nSomLin*12),nColFim) //Linha5
+oPrint:Say(nLin+(nSomLin*12),nColIni,STR0052,oFont10n) //Instrucoes ao caixa
+oPrint:Say(nLin+(nSomLin*12),350,SubStr( AllTrim(cMens),1,70 ),oFont10) //Substituir por var (cMens)
+
+/*Para TESTE
+cInst := "PRIMEIRO................................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."+;
+"SEGUNDO.................................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."+;
+"TERCEIRO................................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."+;
+"QUARTO..................................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."+;
+"QUINTO..................................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."+;
+"SEXTO...................................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."+;
+"SETIMO..................................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."+;
+"OITAVO..................................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."+;         
+"NONO....................................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."+;         
+"DECIMO.................................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE..."+;         
+"DECIMO PRIMEIRO........................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE..."+;         
+"DECIMO SEGUNDO..........................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."+;         
+"DECIMO TERCEIRO.........................TESTEPAGAMENTOLOCALTESTEPAGAMENTOLOCALTESTE.."*/
+
+//Faz a impressao do bloco de instrucoes ao caixa
+For nCont := 14 To 26
+	oPrint:Say(nLin+(nSomLin*nCont),nColIni,SubStr(cInst,nIni,nQbr),oFont08) //Substituir por var (cInst)
+	nCont++
+	nIni := nIni+100
+Next
+
+//Sacado
+oPrint:Line(nLin+(nSomLin*(nCont)),nColIni,nLin+(nSomLin*(nCont)),nColFim) //Linha6
+oPrint:Say(nLin+(nSomLin*(nCont)),nColIni,STR0053+":",oFont10n) //Sacado
+oPrint:Say(nLin+(nSomLin*(nCont)),280,SubStr(cSac,1,80),oFont10) //Substituir por var (cSac)
+
+//Sacador/Avalista
+oPrint:Say(nLin+(nSomLin*(nCont+3)),nColIni,STR0054+"/"+STR0055+":",oFont10n) 
+oPrint:Say(nLin+(nSomLin*(nCont+3)),480,SubStr(cAva,1,80),oFont10) //Substituir por var (cAva)
+
+oPrint:Line(nLin+(nSomLin*(nCont+5)),nColIni,nLin+(nSomLin*(nCont+5)),nColFim) //Linha7
+oPrint:Say(nLin+(nSomLin*(nCont+5)),nColIni,STR0058,oFont07n) //Msg Codigo de barras
+oPrint:Say(nLin+(nSomLin*(nCont+5)),nColFim-(nLinVer+100),STR0063+"/"+STR0043+" "+STR0044,oFont07n) //Ficha de Compensacao/Autenticacao Mecanica
+
+//--------------------------------------------------------------------------------------------------------------
+
+//Barra vertical principal
+oPrint:Line(nLin,nColFim-nLinVer,nLin+(nSomLin*(nCont)),nColFim-nLinVer)
+
+//Vencimento
+oPrint:Say(nLin,nColFim-(nLinVer-nSubVer),STR0004,oFont10n) 
+oPrint:Say(nLin+nSomLin,nColFim-(nLinVer-nSubVer),dDtVenc,oFont10) //Substituir por var (dDtVenc)
+
+// Agencia/Codigo Cedente
+oPrint:Say(nLin+(nSomLin*3),nColFim-(nLinVer-nSubVer),STR0062+"/"+STR0040,oFont10n) 
+oPrint:Say(nLin+(nSomLin*4),nColFim-(nLinVer-nSubVer),SubStr(AllTrim(cAg),1,4)+"/"+SubStr(cCodCed,1,21),oFont10) //Substituir por var (cAg/cCodCed)
+
+//Nosso Numero
+oPrint:Say(nLin+(nSomLin*6),nColFim-(nLinVer-nSubVer),STR0041,oFont10n)
+oPrint:Say(nLin+(nSomLin*7),nColFim-(nLinVer-nSubVer),AllTrim(cNosNum),oFont10) //Substituir por var (cNosNum)
+
+//Valor do Documento
+oPrint:Say(nLin+(nSomLin*9),nColFim-(nLinVer-nSubVer),"(=)"+STR0030,oFont10n) 
+nValDoc := If ( !Empty(nValDoc),Transform(nValDoc,"@E 999,999,999.99"),"" )
+oPrint:Say(nLin+(nSomLin*10),nColFim-(nLinVer-nSubVer),nValDoc,oFont10) //Substituir por var (nVal)
+
+//Desconto/Abatimento
+oPrint:Say(nLin+(nSomLin*12),nColFim-(nLinVer-nSubVer),"(-)"+STR0031+"/"+STR0032,oFont10n)
+nDesc := If ( !Empty(nDesc) .or. !Empty(nAbat), Transform(nDesc+nAbat,"@E 999,999,999.99"), "") 
+oPrint:Say(nLin+(nSomLin*13),nColFim-(nLinVer-nSubVer),nDesc,oFont10) //Substituir por var (nDesc+nAbat)
+
+//Outras Deducoes
+oPrint:Line(nLin+(nSomLin*15),nColFim-nLinVer,nLin+(nSomLin*15),nColFim)
+oPrint:Say(nLin+(nSomLin*15),nColFim-(nLinVer-nSubVer),"(-)"+STR0033+" "+STR0035,oFont10n) 
+nOutDed := If ( !Empty(nOutDed), Transform(nOutDed,"@E 999,999,999.99"), "")
+oPrint:Say(nLin+(nSomLin*16),nColFim-(nLinVer-nSubVer),nOutDed,oFont10) //Substituir por var (nOutDed)
+
+//Mora/Multa
+oPrint:Line(nLin+(nSomLin*18),nColFim-nLinVer,nLin+(nSomLin*18),nColFim)
+oPrint:Say(nLin+(nSomLin*18),nColFim-(nLinVer-nSubVer),"(+)"+STR0036+"/"+STR0037,oFont10n) 
+nMor := If ( !Empty(nJurosMo) .or. !Empty(nMulta), Transform(nJurosMo+nMulta,"@E 999,999,999.99"), "" )
+oPrint:Say(nLin+(nSomLin*19),nColFim-(nLinVer-nSubVer),nMor,oFont10) //Substituir por var (nMor+nMul)
+
+//Outros Acrescimos
+oPrint:Line(nLin+(nSomLin*21),nColFim-nLinVer,nLin+(nSomLin*21),nColFim)
+oPrint:Say(nLin+(nSomLin*21),nColFim-(nLinVer-nSubVer),"(+)"+STR0034+"/"+STR0038,oFont10n)
+nAcre := If ( !Empty(nAcre),Transform(nAcre,"@E 999,999,999.99"), "" )
+oPrint:Say(nLin+(nSomLin*22),nColFim-(nLinVer-nSubVer),nAcre,oFont10) //Substituir por var (nAcre)
+
+//Valor Cobrado
+oPrint:Line(nLin+(nSomLin*24),nColFim-nLinVer,nLin+(nSomLin*24),nColFim)
+oPrint:Say(nLin+(nSomLin*24),nColFim-(nLinVer-nSubVer),"(=)"+STR0039,oFont10n) 
+nValCob := If ( !Empty(nValCob), Transform(nValCob,"@E 999,999,999.99"), "" )
+oPrint:Say(nLin+(nSomLin*25),nColFim-(nLinVer-nSubVer),nValCob,oFont10) //Substituir por var (nValCob)
+
+MSBAR("INT25",25.5,1,cCodBar,oPrint,.F.,Nil,Nil,0.025,1.5,Nil,Nil,"A",.F.)
+
+Return Nil
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ LinDgt	³ Autor ³ Microsiga             ³ Data ³ 20/04/07 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Montagem da representacao numerica / linha digitavel		  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico para Clientes Microsiga / GRCSU                 ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+Static Function LinDgt()
+
+//Linha digitavel apenas para GRCSU
+
+Local cLinDig
+Local nCont
+
+Local cBco := "104" 						//Banco
+Local cMoe := "9"							//Moeda
+Local cSicob := "97"  						//SICOB - Fixo 97
+
+// Alterada a posicao inicial para a Linha Digitavel de 7 para 10 SE houve aumento
+// no tamanho do campo do codigo da entidade sindical de 12 para 15 caracteres
+// Codigo da Entidade
+Local cCodEnt := IIF(nTamEntSin == 15, AllTrim(SubStr(aSindic[1,3],10,5)), AllTrim(SubStr(aSindic[1,3],07,5)) )
+
+Local cPo1Cnae := SubStr( AllTrim(cCNAE),1,1 )			  //Codigo CNAE
+Local cTipEnt := "1" 									//Tipo de Entidade
+Local cSitcs  := "77" 									//SITCS - Fixo 77
+Local cCodCon := SubStr(cCgc,1,2)+SubStr(cCgc,4,3)+SubStr(cCgc,8,3)+SubStr(cCgc,12,4)
+Local cPo2Cnae := SubStr( AllTrim(cCNAE),2,2 )			  //Codigo CNAE
+Local cFator   := SubStr( StrZero( CTod(cDataPg) - CTod("07/10/97"),4),1,4)  //Fator de Vencimento
+Local cValor   := SubStr( StrZero( nTContrib,10,2 ),1,10 )//Valor
+
+Local cDv1 := ""	//Primeiro digito verificador
+Local cDv2 := ""	//Segundo digito verificador
+Local cDv3 := ""	//Terceiro digito verificador
+Local cDG  := ""	//Digito verificador GERAL
+
+//cCodEnt:= StrZero( Val( cCodEnt ), 15 )
+cValor := StrTran(cValor, ",", "")
+cValor := StrTran(cValor, ".", "")
+
+For nCont := 1 To 10-Len(cValor)
+	cValor := "0"+cValor
+Next
+
+cDv1 := RetMod10( AllTrim(cBco)+AllTrim(cMoe)+AllTrim(cSicob)+AllTrim(SubStr(cCodEnt,1,3)) )
+cDv2 := RetMod10( AllTrim(SubStr(cCodEnt,4,2))+AllTrim(cPo1Cnae)+AllTrim(cTipEnt)+AllTrim(cSitcs)+SubStr(cCodCon,1,4 ) )
+cDv3 := RetMod10( AllTrim(SubStr(cCodCon,5,8))+AllTrim(cPo2Cnae) )
+
+cDG  := AllTrim(cBco)+AllTrim(cMoe)+AllTrim(cFator)+AllTrim(cValor)+cSicob
+cDG  += AllTrim(cCodEnt)+AllTrim(cPo1Cnae)+AllTrim(cTipEnt)+AllTrim(cSitcs)
+cDG	 += AllTrim(SubStr(cCodCon,1,12))+AllTrim(cPo2Cnae)
+
+cDG	 := RetMod11(cDG)
+
+cLinDig :=	cBco+cMoe+cSicob+AllTrim(SubStr(cCodEnt,1,3))+AllTrim(Str( cDv1 ))
+cLinDig +=	AllTrim(SubStr(cCodEnt,4,2))+AllTrim(cPo1Cnae)+AllTrim(cTipEnt)+AllTrim(cSitcs)
+cLinDig +=  AllTrim(SubStr(AllTrim(cCodCon),1,4 ))+AllTrim(Str(cDv2))+AllTrim(SubStr(cCodCon,5,8))
+cLinDig +=	AllTrim(cPo2Cnae)+AllTrim(Str(cDv3))+AllTrim(Str(cDG))+AllTrim(cFator)+AllTrim(cValor)
+
+Return cLinDig
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ CbGrcsu  |       ³ Microsiga             ³ Data ³ 20/04/07 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Montagem da representacao numerica / linha digitavel		  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico para Clientes Microsiga / GRCSU                 ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+Static Function CbGrcsu(cLinDig)
+
+Local cCodBar
+Local nCont
+
+Local cBco := "104" 						//Banco
+Local cMoe := "9"							//Moeda
+Local cDG  := SubStr(cLinDig,33,1)			//Digito verificador geral
+Local cValor := SubStr( StrZero( nTContrib,10,2 ),1,10 )//Valor
+Local cSicob := "97"  						//SICOB - Fixo 97
+
+// Alterada a posicao inicial para a Linha Digitavel de 7 para 10 SE houve aumento
+// no tamanho do campo do codigo da entidade sindical de 12 para 15 caracteres
+// Codigo da Entidade
+Local cCodEnt := IIF(nTamEntSin == 15, SubStr( AllTrim(aSindic[1,3]),10,5 ), SubStr( AllTrim(aSindic[1,3]),07,5 ) )
+
+Local cPo1Cnae := SubStr( AllTrim(cCNAE),1,1 )			  //Codigo CNAE
+Local cTipEnt := "1" 									//Tipo de Entidade
+Local cSitcs  := "77" 									//SITCS - Fixo 77
+Local cCodCon := SubStr(cCgc,1,2)+SubStr(cCgc,4,3)+SubStr(cCgc,8,3)+SubStr(cCgc,12,4)
+Local cPo2Cnae := SubStr( AllTrim(cCNAE),2,2 )			  //Codigo CNAE
+Local cFator  := SubStr( AllTrim(cLinDig),34,4 )		  //Fator de Vencimento
+
+cValor := StrTran(cValor, ",", "")
+cValor := StrTran(cValor, ".", "")
+
+For nCont := 1 To 10-Len(cValor)
+	cValor := "0"+cValor
+Next
+
+cCodBar := cBco+cMoe+cDG+cFator+cValor+cSicob+cCodEnt+cPo1Cnae+cTipEnt+cSitcs+cCodCon+cPo2Cnae
+
+Return cCodBar
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ RetMod10 ³ Autor ³ Microsiga             ³ Data ³ 20/04/07 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Retorna o DV calculado p/ modulo 10 					      ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico para Clientes Microsiga                         ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+Static Function RetMod10(cData)
+LOCAL L,D,P := 0
+LOCAL B     := .F.
+L := Len(cData)
+B := .T.
+D := 0
+While L > 0
+	P := Val(SubStr(cData, L, 1))
+	If (B)
+		P := P * 2
+		If P > 9
+			P := P - 9
+		End
+	End
+	D := D + P
+	L := L - 1
+	B := !B
+End
+D := 10 - (Mod(D,10))
+If D = 10
+	D := 0
+End
+Return(D)
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ RetMod11 ³ Autor ³ Microsiga             ³ Data ³ 20/04/07 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Retorna o DV calculado p/ modulo 11 					      ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Especifico para Clientes Microsiga                         ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+Static Function RetMod11(cData)
+LOCAL L, D, P := 0
+L := Len(cdata)
+D := 0
+P := 1
+While L > 0
+	P := P + 1
+	D := D + (Val(SubStr(cData, L, 1)) * P)
+	If P = 9
+		P := 1
+	End
+	L := L - 1
+End
+D := 11 - (mod(D,11))
+If (D == 0 .Or. D == 1 .Or. D == 10 .Or. D == 11)
+	D := 1
+End
+Return(D)
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³BmpBco    ºAutor  ³R.H.Igor            º Data ³  11/04/07   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Seleciona o bitmap do banco correspondente				  º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP5                                                        º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function BmpBco(cBco)
+
+Local cBmp  := ""
+Local cPath	:= GetSrvProfString("StartPath","")
+
+If ( Right(cPath,1) == "\" , cPath, cPath+"\" )
+Do Case
+	Case cBco == "104"
+		cBmp := If ( File(cPath+"caixa.bmp"), cPath+"caixa.bmp", cPath+"caixa.jpg" )
+	OtherWise
+		cBmp := If ( File(cPath+"caixa.bmp"), cPath+"caixa.bmp", cPath+"caixa.jpg" )
+EndCase
+
+Return cBmp
+                                                          
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³fImpTeste ºAutor  ³R.H. - Natie        º Data ³  11/29/01   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Testa impressao de Formulario Teste                         º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP5                                                        º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+
+Static function fImpTeste(cString)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Descarrega teste de impressao                                ³ 
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+MS_Flush()
+fInicia(cString)
+
+Pergunte("GPR30A",.T.)
+nVez	:= If(mv_par01 = 1 ,1, 0)
+
+Return nVez
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³fInicia   ºAutor  ³R.H.Natie           º Data ³  11/12/01   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Inicializa Impressao                                        º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP5                                                        º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function fInicia(cString)
+
+aDriver	:= ReadDriver()
+If	nLastKey == 27
+	Return .F.
+Endif
+
+If !(mv_par16 = 3)
+	SetDefault(aReturn,cString)
+EndIf
+
+If	nLastKey == 27
+	Return .F.
+Endif  
+
+Return .T.

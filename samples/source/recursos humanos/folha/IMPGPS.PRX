@@ -1,0 +1,710 @@
+
+#Include "rwmake.ch"        // incluido pelo assistente de conversao do AP5 IDE em 14/04/00
+#INCLUDE "IMPGPS.CH"
+#INCLUDE "protheus.CH"
+
+User Function impgps()        // incluido pelo assistente de conversao do AP5 IDE em 14/04/00
+Local aFoneSM0 := {}
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP5 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("AINFO,CCGC,CRAZAO,CENDERECO,CTELEFONE,CSTRING")
+SetPrvt("CCEP,CCIDADE,CUF,CCEI,CFONE,CBAIRRO")
+SetPrvt("CMUNICIPIO,N6,N9,N10,CSAVEMENUH,NOPCA")
+SetPrvt("NVEZ,NLIN")
+SetPrvt("nDeduz")
+
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³RdMake    ³ IMPGPS   ³ Autor ³ Kleber Dias Gomes     ³ Data ³ 17.05.99 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Impressao da GUIA DA PREVIDENCIA SOCIAL - GPS              ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe e ³ ImpGPS                                                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                                   ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³         ATUALIZACOES SOFRIDAS DESDE A CONSTRU€AO INICIAL.             ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Programador ³ Data   ³ BOPS ³  Motivo da Alteracao                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³--------    ³11/04/00³002334³Acerto da impressÆo da CEI por Centro de  ³±±
+±±³            ³        ³      ³Custo.                                    ³±±
+±±³--------    ³30/08/00³------³Retirada da parte DOS.                    ³±±
+±±³--------    ³24/05/01³008445³1-Impressao de Campo livre  para textos   ³±±
+±±³            ³28/05/01³      ³2-Acerto Impressao GPS Formul.Zebrado     ³±±
+±±³--------    ³29/08/01³009963³PrnFlush-Descarrega spool impressao teste ³±±
+±±³--------    ³19/09/01³------³Acerto Salto pagina na Impressao GPS      ³±±
+±±³Natie       ³11/12/01³009963³Acerto impressao Teste                    ³±±
+±±³Andreia     ³21/01/03³060051³Ajuste no layout formulario zebrado       ³±±
+±±³Emerson     ³17/10/03³------³Zerar o valor do Inss devido a previdencia³±±
+±±³            ³        ³------³caso resulte negativo - recolher terceiros³±±
+±±³Emerson	   ³05/05/04³070650³ Quando optante pelo simples, utilizar o  ³±±
+±±³            ³        ³      ³ parametro 15 para recolhimento.		  ³±±
+±±³Emerson	   ³21/07/04³------³Utilizar o parametro 15 quando for simples³±±
+±±³            ³        ³      ³independente se recolhimento ou deducao.  ³±±
+±±³Andreia	   ³23/11/05³085207³Gerar um log no final da impressão quando ³±±
+±±³            ³        ³      ³houver residuos.                          ³±±
+±±³Andreia     ³23/08/06³102595³Ajuste no salto de pagina quando a impres-³±±
+±±|            |        |      |sao for pre-impressa, direto na porta.    ³±±
+±±|Pedro Eloy  |02/10/07|130795|tratado a condicao para geracao tp grafica³±±
+±±|Bruno       ³29/04/08³144733³Ajustada rotina para quando a inscricao   ³±±
+±±|   		   ³		³	   ³esteja como CNPJ o mesmo traga os dados da³±±
+±±³   		   ³		³	   ³filial e não do centro de custo.          ³±±
+±±|Leandro Dr. ³30/03/09³004298³Ajuste na rotina para que valor do INSS   ³±±
+±±|   		   ³		³	   ³nunca seja negativo.                      ³±±
+±±³Reginaldo   ³21/08/09³020039³Ajuste no Grupo de Campos filial          ³±±
+±±³            ³        ³      ³tratamento para não considerar 2 posições ³±±
+±±³            ³        ³      ³fixas.                                    ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programador ³ Data	³ FNC	         ³  Motivo da Alteracao 			        ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Luis Ricardo³15/12/10³00000026158/2010³Ajustes na rotina para tratamento da nova	³±±
+±±³Cinalli     ³        ³				 ³regra do telefone do sigamat SM0->M0_FONE	³±±
+±±³            ³        ³				 ³utilizando a funcao FisGetTel da rotina	³±± 
+±±³            ³        ³				 ³Mata950 para retornar o telefone em um	³±± 
+±±³            ³        ³				 ³vetor com 3 elementos:					³±± 
+±±³            ³        ³				 ³	1o Elemento - Refere-se ao DDI			³±± 
+±±³            ³        ³				 ³	2o Elemento - Refere-se ao DDD			³±± 
+±±³            ³        ³				 ³	3o Elemento - Refere-se ao TELEFONE		³±± 
+±±³            ³        ³				 ³Deve-se enviar o conteudo do campo 		³±± 
+±±³            ³        ³				 ³SM0->M0_FONE em uma variavel caracter.	³±± 
+±±³Allyson M   ³09/06/11³00000014237/2011³Ajuste para nao efetuar a geracao da guia	³±±
+±±³            ³        ³				 ³quando o campo 11 - valor total estiver 	³±±
+±±³            ³        ³				 ³com valor zerado.							³±± 
+±±³Natie       ³27/01/12³00000009739/2012³Gera Log quando vlr INSS for menor que o  ³±± 
+±±³            ³        ³TEVHSQ          ³minimo pra recolhimento.                  ³±±
+±±³Leandro Dr. ³18/05/12³TF1898		 	 ³- Ajuste p/ considerar o campo CTT_RECFAT ³±±
+±±³            ³        ³        		 ³na verificacao dos dados do tomador.      ³±±
+±±³Luis Ricardo³21/05/12³013275/2012     ³Ajuste na exibicao do telefone na guia    ³±± 
+±±³Artuso      ³        ³TFASTZ   	     ³devido resolucao da Anatel que insere o 9 ³±± 
+±±³            ³        ³        		 ³digito nos telefones moveis no Est. de SP.³±± 
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+
+cString	   := "SRZ"					
+aInfo      := {}
+cCgc       := ""
+cRazao     := ""
+cEndereco  := ""
+cTelefone  := ""
+cCep       := ""
+cCidade    := ""
+cUf        := ""
+cCei       := Space(14)
+
+dbSelectArea( "SRZ" )
+
+IF !fInfo(@aInfo,cFil)
+	Return Nil
+Endif
+
+cCgc      	:= aInfo[8]                      // CGC
+cRazao    	:= PadR(aInfo[3],40) // Razao Social
+
+/*ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³ Funcao para desmembrar o telefone em um vetor com 3 elementos:		³
+  ³		1o Elemento - Refere-se ao DDI									³
+  ³		2o Elemento - Refere-se ao DDD									³
+  ³		3o Elemento - Refere-se ao TELEFONE								³
+  ³ Deve-se enviar o telefone em uma variavel caracter com o conteudo	³
+  ³ do campo SM0->M0_FONE.												³
+  ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+aFoneSM0	:= FisGetTel( aInfo[10] )
+nTam := LEN(ALLTRIM(STR(aFoneSM0[03]))) 
+cFone		:= PadR( "(" + Str(aFoneSM0[02],2) +") "+ Str(aFoneSM0[03], nTam), 14 )
+//cFone		:= PadR( Str(aFoneSM0[01],2) +"-"+ Str(aFoneSM0[02],2) +"-"+ Str(aFoneSM0[03],8), 14 )
+
+cEndereco 	:= PadR(aInfo[4],30)
+cBairro   	:= PadR(aInfo[13],20)
+cCep      	:= PadR(aInfo[7],8)
+cMunicipio	:= PadR(aInfo[5],20)                                  
+cUf       	:= PadR(aInfo[6],2)
+n6        	:= 0
+n9        	:= 0
+n10       	:= 0                     
+nDeduz		:= 0
+
+oFont07    	:= TFont():New("Arial",07,10,,.F.,,,,.T.,.F.)
+oFont09    	:= TFont():New("Arial",09,09,,.F.,,,,.T.,.F.)  
+oFont10    	:= TFont():New("Arial",10,10,,.F.,,,,.T.,.F.)
+oFont10n   	:= TFont():New("Arial",10,10,,.T.,,,,.T.,.F.)
+oFont11    	:= TFont():New("Courier New",10,10,,.F.,,,,.T.,.F.)
+oFont12n   	:= TFont():New("Arial",12,12,,.T.,,,,.T.,.F.)
+oFont15    	:= TFont():New("Arial",15,15,,.F.,,,,.T.,.F.)
+
+// Imprime cei por centro de custo
+
+If nPorCc == 1 .OR. nPorCc == 2
+	dbSelectArea("SI3")
+	dbSeek(If(XFILIAL("SI3")==Space(FWGETTAMFILIAL),XFILIAL("SI3"),cFil)+cParam)
+	//Se I3_TIPO for igual a "2" E I3_RECFAT for diferente de "S", pega dados do tomador
+	If TYPE("SI3->I3_CEI") #"U" .And. SI3->I3_TIPO == "2" .and. ( (TYPE("SI3->I3_RECFAT") #"U" .and. SI3->I3_RECFAT <> "S") .or. (TYPE("SI3->I3_RECFAT") == "U") ) //Cei
+		cCei := Left(SI3->I3_CEI,14)
+	EndIf	
+dbSelectArea("SRZ")
+EndIf
+
+// Se Zebrado	
+If nTipRel ==  2
+	If !Empty(cCei)
+		cCei := Transform(cCei,"@R ##.###.###/####-##")
+	Else	
+		cCGC := PadR(If (aInfo[15] == 1 ,aInfo[8],Transform(cCgc,"@R ##.###.###/####-##")),18) // CGC
+	Endif
+	
+Else
+	If !Empty(cCei)
+		cCei := Transform(cCei,"@R ##.###.###/####-##")
+	Else	
+		cCGC := PadR(If (aInfo[15] == 1 ,aInfo[8],Transform(cCgc,"@R ########/####-##")),18) // CGC
+	EndIf
+EndIf	
+
+//--Setar impressora
+If lImpVez 
+	If nTipRel = 2 
+		@ nLin , 0 PSAY AvalImp(nColunas) 
+	Endif 
+	lImpVez := .F. 
+EndIf 
+	
+While .T.
+
+   // CAMPO 6
+	If cEscolha == "1"
+		If n16 #0 .And. n16 # Nil
+			n6 := n6 + n16
+			nDeduz := If( n6 < 0, n6, 0)
+		Endif
+		If ( n17 #0 .And. n17 # Nil ) .Or. ( n17a # 0 )
+			nDeduz := If((n6 + (n17 + n17a)) < 0, (n6 + (n17 + n17a)), 0)
+			n6 := n6 + (n17 + n17a)
+		Endif
+		If n21 #0 .And. n21 # Nil
+			nDeduz 	:= If( (n6 - n21) < 0, (n6 - n21), 0)
+			n6 		:= Max( n6 - n21, 0 )
+		Endif
+		n6 	:= Max( n6, 0 )	
+	Else
+		If n16Fil #0 .And. n16Fil # Nil
+			nDeduz 	:= If( (n6 + n16Fil) < 0, (n6 + n16Fil), 0)
+			n6 := n6 + n16Fil
+		Endif
+		If ( n17Fil #0 .And. n17Fil # Nil ) .Or. ( n17aFil # 0 )
+			nDeduz 	:= If( (n6 + (n17Fil + n17aFil)) < 0, (n6 + (n17Fil + n17aFil)), 0)
+			n6 := n6 + (n17Fil + n17aFil)
+		Endif
+		If n21Fil #0 .And. n21Fil # Nil
+			nDeduz 	:= If( (n6 - n21Fil) < 0, (n6 - n21Fil), 0)
+			n6 		:= Max( n6 - n21Fil, 0 )
+		Endif
+		n6 	:= Max( n6, 0 )	
+	Endif
+	
+	// CAMPO 9
+	If cEscolha == "1"
+		If n18 #0 .And. n18 # Nil
+			n9 := n9 + n18
+		Endif
+	Else
+		If n18Fil #0 .And. n18Fil # Nil
+			n9 := n9 + n18Fil
+		Endif
+	Endif
+
+	// CAMPO 10
+	If nValJuros #0 .And. nValJuros # Nil
+		n10 := n10 + nValJuros
+	EndIf
+    
+	If nDeduz < 0 
+		IF ( aScan( aLog, { |x | x[1]+x[3]  == cParam + ' - ' + AllTrim(DescCc(cParam,cFil,26)) + "1"   } ) == 0 )
+			Aadd(aLog,{cParam + ' - ' + AllTrim(DescCc(cParam,cFil,26))   , Transform(nDeduz,"@E 999,999,999,999.99"), "1"})
+		Endif 	
+	EndIf
+	    
+	//Nao gera guia com valor total igual a zero ou nao atinge o valor minimo de recolhimento da GPS 
+	If (n6+n9+n10) == 0 
+		Exit 
+	Endif 
+		
+	If ( nVlrMinGPS> 0 .and. (n6+n9+n10) < nVlrMinGPS ) 
+		IF ( aScan( aLog, { |x| x[1]+x[3]  == cParam + ' - ' + AllTrim(DescCc(cParam,cFil,26))+ "2" } ) == 0 )			
+			Aadd(aLog,{cParam+ ' - ' + AllTrim(DescCc(cParam,cFil,26)) , Transform((n6+n9+n10),"@E 999,999,999,999.99"),"2"}) 
+		Endif 
+		Exit
+	Endif 
+
+	If nTipRel == 3
+		fGPSGrafica()
+	Else
+		If nTipRel == 1
+			fCImpressao()   // Impressao do Recibo de Pagamento Formulario Continuo
+			If nVez == 0 .and. aReturn[5] # 1 
+				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+				//³ Descarrega teste de impressao                                ³ 
+				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+				fImpTeste(cString,nTipRel)
+				If nOpcA == 2
+					Set Device to Print
+					nVez := 0
+					n6   := 0
+					n9   := 0
+					n10  := 0
+					nLin := nLin + 3
+					Loop
+				ElseIf nOpcA == 1
+					nVez := 1    
+				Endif		
+			Endif	
+		ElseIf nTipRel == 2
+			fZImpressao()   // Impressao do Recibo de Pagamento Formulario Zebrado 
+		Endif
+		If nTipRel = 1
+			nLin := nLin + 5
+		ElseIf nTipRel = 2
+			nLin := nLin + 3
+		Endif
+	EndIf
+	Exit
+Enddo    
+
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ fZImpressao   ³ Autor ³ Kleber Dias Gomes³ Data ³ 21.06.99 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ IMRESSAO DO RECIBO FORMULARIO ZEBRADO                      ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe   ³ fZImpressao()                                              ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                                   ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 14/04/00 ==> Function fZImpressao
+Static Function fZImpressao()                                                                                                                 
+//         10        20        30        40        50        60        70        80        90       100       110       120       130       140
+// 12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+//"*---------------------------------------------------------------------------------*------------------------*---------------------------*"//
+//"|                            Ministerio da Previdencia e Assistencia Social-MPAS  | 3 - CODIGO DE          |                           |"//
+//"|                                                                                 |     PAGAMENTO          |                           |"//
+//"|                            Instituto Nacional do Seguro Social-INSS             *------------------------*---------------------------*"//
+//"|                                                                                 | 4 - COMPETENCIA        |                           |"//
+//"|                                                                                 *------------------------*---------------------------*"//
+//"|                            GUIA DA PREVIDENCIA SOCIAL - GPS                     | 5 - IDENTIFICADOR      |                           |"//
+//"*---------------------------------------------------------------------------------*------------------------*---------------------------*"//
+//"| 1 - NOME OU RAZAO SOCIAL / FONE / ENDERECO:                                     | 6 - VALOR DO INSS      |                           |"//
+//"|                                                                                 *------------------------*---------------------------*"//
+//"|                                                                                 | 7 -                    |                           |"//
+//"|                                                                                 *------------------------*---------------------------*"//
+//"|                                                                                 | 8 -                    |                           |"//
+//"*-------------------------------*-------------------------------------------------*------------------------*---------------------------*"//
+//"| 2 - VENCIMENTO                |                                                 | 9 - VALOR DE OUTRAS    |                           |"//
+//"| (Uso Exclusivo do INSS)       |                                                 | ENTIDADES              |                           |"//
+//"*-------------------------------*-------------------------------------------------*------------------------*---------------------------*"//
+//"| ATENCAO: E vedada a utilizacao de GPS  para  recolhimento de  receita de  valor |                        |                           |"//
+//"| inferior ao estipulado  em   Resolucao  publicada  pelo  INSS,  A  receita  que | 10 - ATM/MULTA E JUROS |                           |"//
+//"| resultar  valor  inferior devera  ser adicionada  a contribuicao ou importancia |                        |                           |"//
+//"| correspondente nos meses subsequentes, ate que o  tal seja  igual  ou  superior *------------------------*---------------------------*"//
+//"| valor minimo fixado                                                             | 11 - TOTAL             |                           |"//
+//"*---------------------------------------------------------------------------------*------------------------*---------------------------*"//
+//"|                                                                                   12 - AUTENTICACAO BANCARIA                         |"//
+//"|                                                                                                                                      |"//
+//"|                                                                                                                                      |"//
+//"*--------------------------------------------------------------------------------------------------------------------------------------*"//
+//"1¦VIA - INSS - 2¦VIA - CONTRIBUINTE"//
+
+@ nLin , 0 PSAY "*" + Repl("-",81) + "*" + Repl("-",24) + "*" + Repl("-",23) + "*"
+nLin := nLin + 1
+@ nLin , 0 PSAY "|" + Space(28) + STR0002 + Space(2) + "| " + STR0003 + Space(10) + "|" + Space(23) + "|" //"Ministerio da Previdencia e Assistencia Social-MPAS"###"3 - CODIGO DE"
+nLin := nLin + 1
+
+// CAMPO 3	
+@ nLin , 0 PSAY "|" + Space(81) + "|" + Space(5) + STR0004 + Space(10) + "|" + Space(18) + cCodPag + " |" //"PAGAMENTO"
+nLin := nLin + 1
+@ nLin , 0 PSAY "|" + Space(28) + STR0005 + Space(13) + "*" + Repl("-",24) + "*" + Repl("-",23) + "*" //"Instituto Nacional do Seguro Social-INSS"
+nLin := nLin + 1
+
+// CAMPO 4
+If cTipo == 2
+   @ nLin , 0 PSAY "|" + Space(81) + "| " + STR0006 + Space(8) + "|" + Space(15) + PadR("13"+"/"+Subs(mv_par07,3,4),7) + " |" //"4 - COMPETENCIA"
+Else
+   @ nLin , 0 PSAY "|" + Space(81) + "| " + STR0006 + Space(8) + "|" + Space(15) + PadR(Subs(mv_par07,1,2)+"/"+Subs(mv_par07,3,4),7)  + " |" //"4 - COMPETENCIA"
+EndIf
+nLin := nLin + 1
+@ nLin , 0 PSAY "|" + Space(81) + "*" + Repl("-",24) + "*" + Repl("-",23) + "*"
+nLin := nLin + 1
+
+// CAMPO 5
+If !Empty(cCei)                                                                                         
+	@ nLin , 0 PSAY "|" + Space(28) + STR0007 + Space(21) + "| " + STR0008 + Space(6) + "|" + Space(04) + cCei + " |" //"GUIA DA PREVIDENCIA SOCIAL - GPS"###"5 - IDENTIFICADOR"
+Else
+	@ nLin , 0 PSAY "|" + Space(28) + STR0007 + Space(21) + "| " + STR0008 + Space(6) + "|" + Space(04) + cCGC + " |" //"GUIA DA PREVIDENCIA SOCIAL - GPS"###"5 - IDENTIFICADOR"
+EndIf
+nLin := nLin + 1
+@ nLin , 0 PSAY "*" + Repl("-",81) + "*" + Repl("-",24) + "*" + Repl("-",23) + "*"
+nLin := nLin + 1
+
+// CAMPO 6
+@ nLin , 0 PSAY "| " + STR0009 + Space(37) + "| " + STR0010 + Space(6) + "|" + Space(04) + Transform(n6,"@E 999,999,999,999.99")  +  " |" //"1 - NOME OU RAZAO SOCIAL / FONE / ENDERECO:"###"6 - VALOR DO INSS"
+nLin := nLin + 1
+
+// CAMPO 1 
+@ nLin , 0 PSAY "| " + cRazao + " / " + cFone + Space(23) + "*" + Repl("-",24) + "*" + Repl("-",23) + "*"
+nLin := nLin + 1
+@ nLin , 0 PSAY "| " + cEndereco + " - " + cBairro + Space(27) + "| 7 -" + Space(20) + "|" + Space(23) + "|"
+nLin := nLin + 1
+@ nLin , 0 PSAY "| " + cCep + " - " + cMunicipio + " - " + cUF + Space(44) + "*" + Repl("-",24) + "*" + Repl("-",23) + "*"
+nLin := nLin + 1
+@ nLin , 0 PSAY "|" + Space(81) + "| 8 -" + Space(20) + "|" + Space(23) + "|"
+nLin := nLin + 1 
+@ nLin , 0 PSAY "*" + Repl("-",31) + "*" + Repl("-",49) + "*" + Repl("-",24) + "*" + Repl("-",23) + "*"
+nLin := nLin + 1
+@ nLin , 0 PSAY "| " + STR0011 + Space(16) + "|" + Space(49) + "| " + STR0012 + Space(4) + "|" + Space(23) + "|" //"2 - VENCIMENTO"###"9 - VALOR DE OUTRAS"
+nLin := nLin + 1
+
+// CAMPO 9
+@ nLin , 0 PSAY "| " + STR0013 + Space(7) + "|" + Space(49) + "| " + STR0014 + Space(14) + "|" + Space(04) + Transform(n9,"@E 999,999,999,999.99")  +  " |" //"(Uso Exclusivo do INSS)"###"ENTIDADES"
+nLin := nLin + 1
+@ nLin , 0 PSAY "*" + Repl("-",31) + "*" + Repl("-",49) + "*" + Repl("-",24) + "*" + Repl("-",23) + "*"
+nLin := nLin + 1
+@ nLin , 0 PSAY "| " + STR0015 + " |" + Space(24) + "|" + Space(23) + "|" //"ATENCAO: E vedada a utilizacao de GPS  para  recolhimento de  receita de  valor"
+nLin := nLin + 1
+@ nLin , 0 PSAY "| " + STR0016 + " | " + STR0017 + " |" + Space(04) + Transform(n10,"@E 999,999,999,999.99") + " |" //"inferior ao estipulado  em   Resolucao  publicada  pelo  INSS,  A  receita  que"###"10 - ATM/MULTA E JUROS"
+nLin := nLin + 1
+@ nLin , 0 PSAY "| " + STR0018 + " |" + Space(24) + "|" + Space(23) + "|" //"resultar  valor  inferior devera  ser adicionada  a contribuicao ou importancia"
+nLin := nLin + 1
+@ nLin , 0 PSAY "| " + STR0019 + " *" + Repl("-",24) + "*" + Repl("-",23) + "*" //"correspondente nos meses subsequentes, ate que o  tal seja  igual  ou  superior"
+nLin := nLin + 1
+@ nLin , 0 PSAY "| " + STR0020 + Space(61) + "| " + STR0021 + Space(13) + "|" + Space(04) + Transform(n6+n9+n10,"@E 999,999,999,999.99") + " |" //"valor minimo fixado"###"11 - TOTAL"
+nLin := nLin + 1
+@ nLin , 0 PSAY "*" + Repl("-",81) + "*" + Repl("-",24) + "*" + Repl("-",23) + "*"
+nLin := nLin + 1
+@ nLin , 0 PSAY "|" + cTexto1 + cTexto2 + space(32) + STR0022 + Space(12) + "|"  //"12 - AUTENTICACAO BANCARIA"
+nLin := nLin + 1
+@ nLin , 0 PSAY "|" + cTexto3 + ctexto4 + space(70) + "|"
+nLin := nLin + 1
+// CODIGO E DESCRICAO DO CENTRO DE CUSTO
+If Upper(cParam) #Replicate('\',Len(cParam))
+	@ nLin,  0 PSAY "| " + PadR(AllTrim(cParam) + ' - ' + AllTrim(DescCc(cParam,cFil,26)),41) + Space(88) + "|"
+Else
+	@ nLin , 0 PSAY "|" + cFil + "-" + aInfo[1]+Space(127-Len(aInfo[1])) + "|" 
+	
+EndIf
+
+nLin := nLin + 1
+@ nLin , 0 PSAY "*" + Repl("-",130) + "*"
+nLin := nLin + 1
+If nLin < 40 
+	@ nLin , 0 PSAY STR0034 // 1a. VIA - INSS
+Else
+	@ nLin , 0 PSAY STR0035 // 2a. VIA - CONTRIBUINTE
+EndIf
+nLin := nLin + 1
+
+Return Nil
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ fCImpressao   ³ Autor ³ Kleber Dias Gomes³ Data ³ 21.06.99 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ IMRESSAO DO RECIBO FORMULARIO ZEBRADO                      ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe   ³ fCImpressao()                                              ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                                   ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 14/04/00 ==> Function fCImpressao
+Static Function fCImpressao()        
+
+@ nlin, 0 PSAY " "
+nLin := nLin + 1
+@ nLin , 0 PSAY + Space(68) + cCodPag
+nLin := nLin + 2
+If cTipo == 2
+   @ nLin , 0 PSAY  Space(65) + PadR("13"+"/"+Subs(mv_par07,3,4),7)
+Else
+   @ nLin , 0 PSAY  Space(65) + PadR(Subs(mv_par07,1,2)+"/"+Subs(mv_par07,3,4),7)
+EndIf
+nLin := nLin + 2
+If !Empty(cCei)
+	@ nLin , 0 PSAY Space(56) + cCei
+Else
+	@ nLin , 0 PSAY Space(56) + cCGC
+EndIf
+nLin := nLin + 2
+@ nLin , 0 PSAY Space(54) + Transform(n6,"@E 999,999,999,999.99")
+nLin := nLin + 1
+@ nLin , 0 PSAY Space(2) + cRazao
+nLin := nLin + 1
+@ nLin , 0 PSAY Space(2) + cFone
+nLin := nLin + 1
+@ nLin , 0 PSAY Space(2) + cEndereco + " - " + cBairro
+nLin := nLin + 1
+@ nLin , 0 PSAY Space(2) + cCep + " - " + cMunicipio + " - " + cUF
+nLin := nLin + 2
+@ nLin , 0 PSAY Space(54) + Transform(n9,"@E 999,999,999,999.99")
+nLin := nLin + 2
+@ nLin , 0 PSAY Space(54) + Transform(n10,"@E 999,999,999,999.99")
+nLin := nLin + 2
+@ nLin , 0 PSAY Space(54) + Transform(n6+n9+n10,"@E 999,999,999,999.99")
+nLin := nLin + 1
+@ nLin , 0 PSAY cTexto1 + cTexto2
+nLin := nLin + 1
+@ nlin,  0 PSAY cTexto3 + cTexto4 
+nLin := nLin + 1
+// CODIGO E DESCRICAO DO CENTRO DE CUSTO
+If Upper(cParam) #Replicate('\',Len(cParam))
+	@ nLin, 2 PSAY AllTrim(cParam) + ' - ' + AllTrim(DescCc(cParam,cFil,26))
+EndIf
+
+Return Nil
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³fImpTeste ºAutor  ³R.H. - Natie        º Data ³  11/29/01   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Testa impressao de Formulario Teste                         º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP5                                                        º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+Static function fImpTeste(cString,nTipoRel)
+//--Comando para nao saltar folha apos o MsFlush.
+SetPgEject(.F.)
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Descarrega teste de impressao                                ³ 
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+MS_Flush()  
+fInicia(cString)
+nlin := _Prow()
+If nTipRel == 2
+	@ nLin , 0 PSAY AvalImp( nColunas )
+EndIf
+
+Pergunte("GPR30A",.T.)
+nOpca	:= If(mv_par01 = 1 ,1, 2)
+    
+Return nOpca
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³fInicia   ºAutor  ³R.H.Natie           º Data ³  11/12/01   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Inicializa Impressao                                        º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP5                                                        º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function fInicia(cString)
+
+If nLastKey == 27
+	Return .F. 
+Endif
+SetDefault(aReturn,cString)
+If nLastKey == 27
+	Return .F. 
+Endif
+
+Return .T.
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³IMPGPS    ºAutor  ³Microsiga           º Data ³  06/29/06   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³                                                            º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP                                                        º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+static Function fGPSGrafica()
+
+Local cStartPath := GetSrvProfString("StartPath","")
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Inicializacao do objeto grafico                                         ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cBmp := cStartPath + "GPS.BMP" //Logo da Receita Federal
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Definicao do Box principal                                              ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+oPrint:Box(nLin,0030,nLin+1100,2350)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Inclusao do logotipo do Ministerio da Fazenda                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If File(cBmp)
+	oPrint:SayBitmap(nLin+10,040,cBmp,200,180)
+EndIf
+oPrint:Say(nLin+020,270,STR0002,oFont07) //"Ministerio da Previdencia e Assistencia Social-MPAS"
+oPrint:Say(nLin+070,270,STR0024,oFont07) //"Secretaria da Receita Previdenciária - SRP"
+oPrint:Say(nLin+120,270,STR0005,oFont07) //"Instituto Nacional do Seguro Social-INSS"
+oPrint:Say(nLin+170,270,STR0007,oFont12n) //"GUIA DA PREVIDENCIA SOCIAL - GPS"
+
+oPrint:Line(nLin,1300,nLin+850,1300)
+oPrint:Line(nLin,1800,nLin+850,1800)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Definicao do Quadro 01                                                  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+oPrint:Line(nLin+270,030,nLin+270,1300) 
+oPrint:Say(nLin+280,040,"1 - ",oFont10)
+oPrint:Say(nLin+280,110,STR0025,oFont09) //"NOME OU RAZÃO SOCIAL / ENDEREÇO / TELEFONE"
+oPrint:Say(nLin+345,110,cRazao + " / " + cFone,oFont09)               
+oPrint:Say(nLin+380,110,cEndereco + " - " + cBairro,oFont09)
+oPrint:Say(nLin+415,110,cCep + " - " + cMunicipio + " - " + cUf,oFont09)
+
+oPrint:Line(nLin+540,030,nLin+540,1300)
+oPrint:Say(nLin+552,040,STR0011,oFont09) //"2 - VENCIMENTO"
+oPrint:Say(nLin+582,040,STR0013,oFont09) //"(Uso exclusivo do INSS)"
+oPrint:Line(nLin+540,450,nLin+630,450)
+oPrint:Line(nLin+630,030,nLin+630,1300)
+
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Definicao do Quadro 03                                                  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+//oPrint:Line(nLin+650,030,nLin+650,1300)
+oPrint:Say(nLin+020,1305,STR0026,oFont09)//"3 - CÓDIGO DE PAGAMENTO"
+oPrint:Say(nLin+030,2010, cCodPag,oFont10)
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Definicao do Quadro 04                                                  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+oPrint:Line(nLin+090,1300,nLin+90,2350)
+oPrint:Say(nLin+120,1305,STR0006,oFont09) //"4 - COMPETÊNCIA"
+
+If cTipo == 2
+	oPrint:Say(nLin+130,2010,PadR("13"+"/"+Subs(mv_par07,3,4),7),oFont10)  
+Else
+	oPrint:Say(nLin+130,2010,PadR(Subs(mv_par07,1,2)+"/"+Subs(mv_par07,3,4),7),oFont10)  
+EndIf
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Definicao do Quadro 05                                                  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+oPrint:Line(nLin+180,1300,nLin+180,2350)
+oPrint:Say(nLin+200,1305,STR0008,oFont09) //"5 - IDENTIFICADOR"
+If !Empty(cCei)                                                                                         
+	oPrint:Say(nLin+210,2010,cCei,oFont10)
+Else
+	oPrint:Say(nLin+210,2010,cCgc,oFont10)
+EndIf
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Definicao do Quadro 06                                                  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+oPrint:Line(nLin+270,1300,nLin+270,2350)
+oPrint:Say(nLin+290,1305,STR0010,oFont09) //"6 - VALOR DO INSS"
+oPrint:Say(nLin+300,1900,Transform(n6,"@E 999,999,999,999.99"),oFont11)
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Definicao do Quadro 07                                                  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+oPrint:Line(nLin+360,1300,nLin+360,2350)
+oPrint:Say(nLin+380,1305,"7 -",oFont09)
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Definicao do Quadro 08                                                  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+oPrint:Line(nLin+450,1300,nLin+450,2350)
+oPrint:Say(nLin+470,1305,"8 - ",oFont09)
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Definicao do Quadro 09                                                  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+oPrint:Line(nLin+ 540,1300,nLin+540,2350)
+oPrint:Say(nLin+552,1303,STR0012,oFont09) //"9 - VALOR DE OUTRAS"
+oPrint:Say(nLin+582,1350,STR0014,oFont09) //"ENTIDADES"
+oPrint:Say(nLin+582,1900,Transform(n9,"@E 999,999,999,999.99"),oFont11)
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Definicao do Quadro 10                                                  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+oPrint:Line(nLin+630,1300,nLin+630,2350)
+oPrint:Say(nLin+650,1305,STR0017,oFont09) //"10 - ATM/MULTA E JUROS"
+oPrint:Say(nLin+670,1900,Transform(n10,"@E 999,999,999,999.99"),oFont11)
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Definicao do Quadro 11                                                  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+oPrint:Line(nLin+720,1300,nLin+720,2350)
+oPrint:Say(nLin+760,1305,STR0021,oFont10) //"11 - TOTAL"
+oPrint:Say(nLin+770,1900,Transform(n6+n9+n10,"@E 999,999,999,999.99"),oFont11)
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Definicao do Quadro de aviso                                            ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+oPrint:Say(nLin+0650,040,STR0028,oFont10n) //"ATENÇÃO:"
+oPrint:Say(nLin+0650,270,STR0029,oFont07) //"É vedada a utilização de GPS para recolhimento de receita de "
+oPrint:Say(nLin+0690,040,STR0030,oFont07) //"valor inferior ao estipulado em Resolução publicada pela SRP. A receita que   "
+oPrint:Say(nLin+0730,040,STR0031,oFont07) //"resultar valor inferior, deverá ser adicionada a contribuição ou importância  "
+oPrint:Say(nLin+0770,040,STR0032,oFont07) //"correspondente nos meses subsequentes, até que o total seja igual ou superior "
+oPrint:Say(nLin+0810,040,STR0033,oFont07) //"ao valor mínimo fixado."
+//oPrint:Say(nLin+0940,040,"Valores expressos em reais",oFont07)
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Definicao do Quadro 12                                                  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+oPrint:Line(nLin+850,030,nLin+850,2350)
+oPrint:Say(nLin+870,1305,"12-",oFont10)
+oPrint:Say(nLin+870,1370,STR0027,oFont10n) //"AUTENTICAÇÃO BANCÁRIA (SOMENTE NAS 1 E 2 VIAS)"
+
+oPrint:Say(nLin+0870,0040,substr(cTexto1+cTexto2+cTexto3+cTexto4,1,76),oFont07)
+oPrint:Say(nLin+0910,0040,substr(cTexto1+cTexto2+cTexto3+cTexto4,77),oFont07)
+
+// CODIGO E DESCRICAO DO CENTRO DE CUSTO
+If Upper(cParam) #Replicate('\',Len(cParam))
+	oPrint:Say(nLin+1000,0040, PadR(AllTrim(cParam) + ' - ' + AllTrim(DescCc(cParam,cFil,26)),41),oFont10)
+Else
+	oPrint:Say(nLin+1000,0040, cFil + "-" + aInfo[1],oFont10)
+EndIf
+
+nQtdGps ++
+
+If nQtdGps == 1
+	oPrint:Say(nLin+1110,040,STR0034,oFont09)
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³Definicao do picote                                                     ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	oPrint:Say(nLin+1250,000,Replicate("-",132),oFont11)
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³Segunda via                                                             ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ 
+	nLin := 1480
+EndIf
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Finaliza a pagina                                                       ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ 	
+If nQtdGps == 2
+	oPrint:Say(nLin+1120,040,STR0035,oFont09)
+	oPrint:EndPage()
+EndIf	
+
+
+Return .T.

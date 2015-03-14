@@ -1,0 +1,111 @@
+#INCLUDE "PROTHEUS.CH"
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+
+/*
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programador  ³ Data     ³ FNC            ³  Motivo da Alteracao                      ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³±±
+±±³Tatiane V. M.³25/08/2009³00000020388/2009³Compatibilizacao dos fontes para aumento do³±±
+±±³             ³          ³                ³campo filial e gestão corporativa.         ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+User Function Geravt()        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP5 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("CALIAS,CMATRICULA,CNOME,CFUNCAO,CDEPTO,CCODVALE")
+SetPrvt("CQTVALE,CFILEMP,CRAZAO,CENDERECO,CCIDADE,CCGC")
+SetPrvt("LGRAVA,AINFO,CDETALHE,LBREAK,CFILIALANT,")
+
+cAlias     := Alias( )
+cMatricula := Space(06)
+cNome      := Space(25)
+cFuncao    := Space(10)
+cDepto     := Space(10)
+cCodVale   := Space(04)
+cQtVale    := Space(06)
+cFilEmp    := Space(FWGETTAMFILIAL)
+cRazao     := Space(50)
+cEndereco  := Space(50)
+cCidade    := Space(10)
+cCGC       := Space(20)
+lGrava     := .T.
+aInfo      := {}
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Lay-Out do Arquivo MOV.TXT                            ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SR0" )
+If dbSeek( SRA->RA_FILIAL + SRA->RA_MAT )
+	While !EOF() .And. ( SRA->RA_FILIAL + SRA->RA_MAT == SR0->R0_FILIAL + SR0->R0_MAT )
+		If SR0->R0_QDIACAL > 0
+			dbSelectArea( "SRN" )
+			If dbSeek( If(xFilial() == Space(FWGETTAMFILIAL),Space(FWGETTAMFILIAL),SR0->R0_FILIAL ) + SR0->R0_MEIO )
+				cCodVale := SubStr(AllTrim(SRN->RN_ITEMPED),01,04)
+			Endif
+			dbSelectArea( "SR0" )
+			cMatricula := Left(SR0->R0_MAT ,06)
+			cQtVale    := Str(SR0->R0_QDIACAL,06)
+			cFilEmp    := SR0->R0_FILIAL
+			cDetalhe   := cMatricula + cCodVale + cQtVale + cFilEmp
+			If !GPEGRV410( cDetalhe , 18  , "2" )
+				lBreak := .T.
+			Endif
+			If lBreak
+				Exit
+			Endif
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³ Define Lay-Out do Arquivo CAD.TXT                            ³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+			If lGrava
+				cMatricula := Left(SRA->RA_MAT ,06)
+				cNome      := Left(SRA->RA_NOME,25)
+				cFuncao    := StrZero(Val(SRA->RA_CODFUNC),10)
+				cDepto     := StrZero(Val(SRA->RA_CC),10)
+				cFilEmp    := SRA->RA_FILIAL
+				cDetalhe   := cMatricula + cNome + cFuncao + cDepto + cFilEmp
+				lGrava := .F.
+				If !lBreak
+					If !GPEGRV410( cDetalhe , 53  , "1" )
+						lBreak := .T.
+					Endif
+				Endif					
+			Endif
+		Endif
+		dbSkip()
+	Enddo
+Endif
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Lay-Out do Arquivo EMP.TXT                            ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If !lBreak
+	If lFatura .And. cFilialAnt #SRA->RA_FILIAL  
+	   fInfo(@aInfo,SRA->RA_FILIAL)
+		cFilEmp   := Left(SRA->RA_FILIAL,FWGETTAMFILIAL)
+		cRazao    := Left( aInfo[3] + Space(50) , 50 )
+		cEndereco := Left( aInfo[4] + Space(50) , 50 )
+		cCidade   := Left( aInfo[5] + Space(10) , 10 )
+		cCGC      := Left( aInfo[8] + Space(20) , 20 )  
+		cDetalhe  := cFilEmp + cRazao + cEndereco + cCidade + cCGC
+		If !lBreak
+			If !GPEGRV410( cDetalhe , 132 , "3" )
+				lBreak := .T.
+			Endif
+		Endif			
+		cFilialAnt := SRA->RA_FILIAL
+	Endif
+Endif	
+
+dbSelectArea( cAlias )
+
+// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==> __Return( .T. )
+Return( .T. )        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00

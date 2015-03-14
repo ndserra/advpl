@@ -1,0 +1,201 @@
+#INCLUDE "PROTHEUS.CH"
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+
+/*
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programador  ³ Data     ³ FNC            ³  Motivo da Alteracao                      ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³±±
+±±³Tatiane V. M.³25/08/2009³00000020388/2009³Compatibilizacao dos fontes para aumento do³±±
+±±³             ³          ³                ³campo filial e gestão corporativa.         ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+User Function Geratt()        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP5 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("CALIAS,CMATRICULA,CNOME,CFUNCAO,CDEPTO,CCODVALE")
+SetPrvt("CQTVALE,CFILEMP,CRAZAO,CENDERECO,CBAIRRO,CCIDADE")
+SetPrvt("CCEP,CUF,CRAMAL,CHORARIO,CCODDEP,CDESDEP")
+SetPrvt("CLOCDEP,CNOMFUN,CBRANCO,CDTAINI,CDTAFIM,CDIATRA")
+SetPrvt("CPRODUTO,CQUANVIA,CDIAUTIL,CDESCOND,CVALTARI,CDTAVIGE")
+SetPrvt("CCGC,LGRAVA,AINFO,CCONTATO,CFONE,CDETALHE")
+SetPrvt("LBREAK,CFILIALANT,CCODFUN,LEMP,")
+
+cAlias     := Alias( )
+cMatricula := Space(06)
+cNome      := Space(25)
+cFuncao    := Space(10)
+cDepto     := Space(10)
+cCodVale   := Space(04)
+cQtVale    := Space(06)
+cFilEmp    := Space(FWGETTAMFILIAL)
+cRazao     := Space(50)
+cEndereco  := Space(50)
+cBairro    := Space(15)
+cCidade    := Space(10)
+cCep       := Space(09)
+cUf        := Space(02)
+cRamal     := Space(04)
+cHorario   := Space(40)
+cCodDep    := Space(06)
+cDesDep    := Space(26)
+cLocDep    := Space(20)
+cNomFun    := Space(30)
+cBranco    := Space(16)
+cDtaIni    := Space(08)
+cDtaFim    := Space(08)
+cDiaTra    := Space(01)
+cProduto   := Space(22)
+cQuanVia   := Space(08)
+cDiaUtil   := Space(02)
+cDesCond   := Space(30)
+cValTari   := Space(09)
+cDtaVige   := Space(08)
+cCgc       := Space(18)
+lGrava     := .T.
+aInfo      := {}
+
+dbSelectArea( "SR0" )
+If dbSeek( SRA->RA_FILIAL + SRA->RA_MAT )
+	If cFilialAnt #SRA->RA_FILIAL
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Define Lay-Out do Arquivo WUN.TXT (Unidade De Entrega)       ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	   fInfo(@aInfo,SRA->RA_FILIAL)
+		cFilEmp   := StrZero(Val(SRA->RA_FILIAL),06)
+		cRazao    := Left( aInfo[3]  + Space(26) , 26 )
+		cEndereco := Left( aInfo[4]  + Space(50) , 50 )
+		cBairro   := Left( aInfo[13] + Space(15) , 15 )
+		cCidade   := Left( aInfo[5]  + Space(25) , 25 )
+		cCep      := SubStr( aInfo[7],1,5) + "-" + SubStr( aInfo[7],6,3)
+		cUf       := Left( aInfo[6]  + Space(02) , 02 )
+		cContato  := Left( cContato,20)
+		cFone     := Left( cTelefone + Space(11) , 11 )
+		cRamal    := Space(04)
+		cHorario  := Space(40)
+		cDetalhe  := cFilEmp + cRazao + cEndereco + cBairro + cCidade + cCep + cUf + cContato + cFone + cRamal + cHorario
+		If !GPEGRV410( cDetalhe , 208 , "1" )
+			lBreak := .T.
+		Endif
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Define Lay-Out do Arquivo WEM.TXT (Empresas p/ Faturamento)  ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If lFatura .And. cFilialAnt #SRA->RA_FILIAL  
+			cFilEmp   := StrZero(Val(SRA->RA_FILIAL),06)			
+			cCodDep   := StrZero(0,06)				
+			cCGC      := SubStr( aInfo[08],1,2 ) + "." + SubStr( aInfo[08],3,3 ) + "." + SubStr( aInfo[08],6,3 ) + "/" + SubStr( aInfo[08],9,4 ) + "-" + SubStr( aInfo[08],13,2 )	
+			cDetalhe  := cFilEmp + cCodDep + cCGC
+			If !lBreak			
+				If !GPEGRV410( cDetalhe , 30 , "6" )
+					lBreak := .T.
+				Endif
+			Endif				
+		Endif			
+		cFilialAnt := SRA->RA_FILIAL
+	Endif				
+Endif
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Lay-Out do Arquivo WDE.TXT (Departamento)             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cFilEmp   := StrZero(Val(SRA->RA_FILIAL),06)
+cCodDep   := StrZero(Val(SRA->RA_CC ),06)
+cDesDep   := DescCC(SRA->RA_CC,SRA->RA_FILIAL,25) + Space(01)
+cLocDep   := Space(20)
+cDetalhe  := cFilEmp + cCodDep + cDesDep + cLocDep
+If !lBreak
+	If !GPEGRV410( cDetalhe , 58 , "2" )
+		lBreak := .T.
+	Endif
+Endif
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Lay-Out do Arquivo WFU.TXT (Funcionarios)             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SR0" )
+If dbSeek( SRA->RA_FILIAL + SRA->RA_MAT )
+	cFilEmp   := StrZero(Val(SRA->RA_FILIAL),06)
+	cCodDep   := StrZero(Val(SRA->RA_CC ),06)
+	cCodFun   := StrZero(Val(SRA->RA_MAT),08)
+	cNomFun   := Left( SRA->RA_NOME,30 )
+	cBranco   := Space(16)
+	cDtaIni   := DtoS(dDataIni)
+	cDtaFim   := DtoS(dDataFim)
+	cDiaTra   := cDiaTrab
+	cDetalhe  := cFilEmp + cCodDep + cCodFun + cNomFun + cBranco + cDtaIni + cDtaFim + cDiaTra
+	If !lBreak	
+		If !GPEGRV410( cDetalhe , 83 , "3" )
+			lBreak := .T.
+		Endif
+	Endif		
+Endif	
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Lay-Out do Arquivo WIT.TXT (Itens do Pedido)          ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If !lBreak
+dbSelectArea( "SR0" )
+If dbSeek( SRA->RA_FILIAL + SRA->RA_MAT )
+	While !EOF() .And. ( SRA->RA_FILIAL + SRA->RA_MAT == SR0->R0_FILIAL + SR0->R0_MAT )
+		If SR0->R0_QDIACAL > 0
+			cFilEmp   := StrZero(Val(SRA->RA_FILIAL),06)		
+			cCodDep   := StrZero(Val(SRA->RA_CC ),06)			
+			cCodFun   := StrZero(Val(SRA->RA_MAT),08)
+			dbSelectArea( "SRN" )
+			If dbSeek( If(xFilial() == Space(FWGETTAMFILIAL),Space(FWGETTAMFILIAL),SR0->R0_FILIAL ) + SR0->R0_MEIO )
+				cProduto := SubStr(AllTrim(SRN->RN_ITEMPED),01,22)
+			Endif
+			cQuanVia  := StrZero(SR0->R0_QDIACAL,08)
+			cDiaUtil  := StrZero(0,02)
+			cDetalhe := cFilEmp + cCodDep + cCodFun + cProduto + cQuanVia + cDiaUtil
+			If !GPEGRV410( cDetalhe , 52  , "4" )
+				lBreak := .T.
+			Endif
+			If lBreak
+				Exit
+			Endif
+		Endif
+		dbSelectArea( "SR0" )							
+		dbSkip()
+	Enddo
+Endif
+Endif
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Lay-Out do Arquivo WIE.TXT (Condu‡äes/Tarifas)        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+lEmp := lEmp + 1
+dbSelectArea( "SRN" )
+If !lBreak
+	If lEmp == 1
+		If dbSeek( If(xFilial() == Space(FWGETTAMFILIAL),Space(FWGETTAMFILIAL),SRA->RA_FILIAL ) )
+			While !EOF() .And. ( If(xFilial() == Space(FWGETTAMFILIAL),Space(FWGETTAMFILIAL),SRA->RA_FILIAL ) = SRN->RN_FILIAL )
+				cProduto := SubStr(AllTrim(SRN->RN_ITEMPED),01,22)
+				cDesCond := Left(SRN->RN_DESC + Space(30),30)
+				cValTari := StrZero(SRN->RN_VUNIATU,09,02)
+				cDtaVige := DtoS(SRN->RN_DATVIGE)  
+				cDetalhe := cProduto + cDesCond + cValTari + cDtaVige
+				If !GPEGRV410( cDetalhe , 69  , "5" )
+					lBreak := .T.
+				Endif
+				If lBreak
+					Exit
+				Endif
+				dbSelectArea( "SRN" )							
+				dbSkip()
+			Enddo
+		Endif		
+	Endif
+Endif
+dbSelectArea( cAlias )
+
+// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==> __Return( .T. )
+Return( .T. )        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00

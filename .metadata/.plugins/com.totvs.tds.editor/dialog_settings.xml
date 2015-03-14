@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="com.totvs.tds.editor.core.texthover.ExpressionFocusedInformationControlCreator$ExpressionFocusedInformationControl">
+		<item value="200" key="SashWeightDetails"/>
+		<item value="200" key="SashWeightTree"/>
+		<item value="263" key="HEIGHT"/>
+		<item value="400" key="WIDTH"/>
+	</section>
+</section>

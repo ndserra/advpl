@@ -1,0 +1,2942 @@
+#INCLUDE "Protheus.CH"
+#INCLUDE "GPERPPP.CH"
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³ GPERPPP  ³ Autor ³ Desenvolvimento R.H.    ³ Data ³ 09/12/02 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Perfil Profissiografico Previdenciario                       ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe   ³ GPERPPP(void)                                                ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Rdmake                                                       ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±       
+±±³         ATUALIZACOES SOFRIDAS DESDE A CONSTRU€AO INICIAL.               ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Programador ³ Data     ³ BOPS ³  Motivo da Alteracao                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±± 
+±±³Emerson     ³06/01/03  ³------³Buscar o codigo CBO no cadastro de funcoes³±±
+±±³            ³          ³------³de acordo com os novos codigos CBO/2002.  ³±±
+±±³Andreia     ³21/05/03  ³------³Acerto na impressao do exame audiometrico ³±±
+±±³            ³          ³------³de referencia.                            ³±±
+±±³Andreia     ³05/06/03  ³------³Acerto na impressao da descricao das ativi³±±
+±±³            ³          ³------³des, porque estava sendo repetida para to-³±±
+±±³            ³          ³------³dos os funcionarios.                      ³±±
+±±³Andreia     ³07/01/04  ³------³Adaptacao ao novo layot. IN 99/03 INSS/DC.³±±
+±±³Andreia     ³24/03/04  ³070139³Criacao da pergunta "Observacoes" e impr. ³±±
+±±³Andreia     ³16/04/04  ³070826³Acerto na impressao do resultado de exames³±±
+±±³            ³          ³069673³porque quando o campo estava em branco es-³±±
+±±³            ³          ³------³tava sendo impresso como "Alterado".      ³±±
+±±³Andreia     ³16/04/04  ³069964³Acerto na impressao do agente de risco    ³±±
+±±³            ³          ³------³quando o nome for muito extenso e nao ti- ³±±
+±±³            ³          ³------³ver espacos( uma so palavra).             ³±±
+±±³Andreia     ³24/05/04  ³071561³Acerto na formatacao do CEI.              ³±±
+±±³Andreia     ³07/06/04  ³071807³Criacao do campo RJ_PPPIMP para determinar³±±
+±±³            ³          ³------³se a descricao da funcao sera impressa.   ³±±
+±±³Andreia     ³25/06/04  ³071793³Criacao de indice temporario no TMK para  ³±±
+±±³            ³          ³------³que o Engenheiro e o Medico sejam impres- ³±±
+±±³            ³          ³------³sos por ordem de data.                    ³±±
+±±³Andreia     ³28/06/04  ³072406³Acerto na busca do medico e do engenheiro ³±±
+±±³            ³          ³------³por filial do funcionario corrente.       ³±±
+±±³Andreia     ³14/01/05  ³073394³Quando existirem os campos "R8_CODCAT"  e ³±±
+±±³            ³          ³------³"R8_DTCAT", imprimir os dados referentes a³±±
+±±³            ³          ³------³CAT a partir do cadastro de afastamentos. ³±±
+±±³Andreia     ³14/01/05  ³077270³Imprimir o CBO com 6 digitos, sendo que a-³±±
+±±³            ³          ³------³queles relativos ao CBO 1994 serao impres-³±±
+±±³            ³          ³------³sos com 5 digitos e um zero a esquerda.   ³±±
+±±³Andreia     ³21/03/05  ³QNC   ³Correcao para respeitar o periodo passado ³±±
+±±³            ³          ³329/05³nas perguntas.                            ³±±
+±±³Tania       ³26/07/2005³084598³Acerto do Sx1 para imprimir campo memo nas³±±
+±±³            ³          ³/2005 ³observacoes, ao inves dos 5 campos texto. ³±±
+±±³Andreia     ³18/08/05  ³084899³somente imprimir engenheiros que trabalha-³±±
+±±³            ³          ³      ³ram durante o periodo profissiografico do ³±±
+±±³            ³          ³      ³funcionario.                              ³±±
+±±³Natie       ³16/11/05  ³088466³Ajuste na impressao modo retrato- A impres³±±
+±±³            ³          ³      ³sao deve ter tam="M" pois tem 132 colunas ³±±
+±±³Natie       ³23/01/06  ³091079³Testa o array aCargos                     ³±±
+±±³Tania       ³13/04/2006³094202³Criadas duas novas opcoes para o responsa-³±±
+±±³            ³          ³------³vel: se tem que ser engenheiro, ou quais  ³±±
+±±³            ³          ³------³as funcoes que deve considerar.           ³±±
+±±³Andreia     ³09/05/06  ³096009³Impressao grafica.                        ³±±
+±±³Renata Elena³03/08/07  ³129577³Ajuste na emissao grafica para SPOOL      ³±±
+±±³Alexandre   ³23/11/07  ³136582³Ajuste de Layout grafica e zebrado para o ³±±
+±±³Conselvan   ³          ³------³campo CEI e descricao do setor.           ³±±
+±±³Pedro Eloy  ³19/12/2007³136109³Criaçao do protocolo grafico e simples.   ³±±
+±±³Pedro Eloy  ³20/12/2007³136265³Tratamento na emissão do resultado exame. ³±±
+±±³Pedro Eloy  ³24/01/2008³139437³Feito o ajuste no recibo de entrega do PPP³±±
+±±³Kelly       ³31/01/2008³140263³Ajuste na utilizacao do CBO para conside- ³±±
+±±³            ³          ³      ³rar data final da atividade; Ajuste nos   ³±±
+±±³            ³          ³      ³campos de Fatores de Risco, que devem     ³±±
+±±³            ³          ³      ³apresentar NA quando nao ha preenchimento.³±±
+±±³Marcelo     ³05/03/08  ³140600³Alteracao das funcoes	fPPPGraf e fPerfil  ³±±
+±±³            ³          ³      ³para selecionar adequadamente os dados    ³±±
+±±³            ³          ³      ³referentes a CAT.                         ³±±
+±±³Marcelo     ³03/07/2008³148269³Ajuste nas funcoes fPerfil() e fPPPGraf() ³±±
+±±³            ³          ³      ³para imprimir a Descricao das atividades  ³±±
+±±³            ³          ³      ³conforme os dados existentes na tabela RC6³±±
+±±³Marcelo     ³20/10/2008³149810³Ajuste em fLayout, fPerfil e fPPPGraf     ³±±
+±±³            ³          ³      ³para imprimir o item 15.9, e impressao da ³±±
+±±³            ³          ³      ³descricao da Funcao c/ 30 caracteres para ³±±
+±±³            ³          ³      ³atender a Instrucao Normativa No.20/INSS. ³±±
+±±³Marcelo     ³06/11/2008³005204³Ajuste na chave de pesquisa da tabela SQ3 ³±±
+±±³            ³          ³      ³p/ localizar cargos s/ C.Custo cadastrado.³±±
+±±³Marcelo     ³10/12/2008³007841³Ajustes para imprimir "NA" nos campos que ³±±
+±±³            ³          ³      ³estiverem sem conteudo. Alteracao de todas³±±
+±±³            ³          ³      ³as Function para User ou Static Function. ³±±
+±±³Marcelo     ³12/03/2009³007841³Correcao na chamadas das funcoes nos      ³±±
+±±³            ³          ³  2008³parametros e impressao de itens s/conteudo³±±
+±±³Alex        ³23/07/2009³      ³Campo Filial no Grupo de Campos,          ³±±
+±±³            ³          ³      ³tratamento com tamanho flexivel.          ³±±
+±±³Andreia     ³01/12/2009³026463³Tratamento para respeitar o filtro na im- ³±±         
+±±³            ³          ³  2009³pressao grafica.                          ³±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿±± 
+±±³Programador ³ Data     ³ FNC            ³  Motivo da Alteracao                              ³±± 
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±± 
+±±³Alceu P.    ³25/10/2010³00000024549/2010³Ajuste para respeitar o campo TMK->TMK_MONBIO sera ³±± 
+±±³            ³          ³                ³preenchido o campo 18 quando o conteudo deste campo³±± 
+±±³            ³          ³                ³estiver como SIM e funcao for Medico ou Med. Trab. ³±± 
+±±³Emerson C.  ³27/10/2010³00000024822/2010³Ajuste para Nova Interface 11 Projeto Versao 11.5  ³±±
+±±³Mauricio MR ³ 29/08/11 ³00000022480/2011³Realizados ajustes para apenas listar as ocorencias³±± 
+±±³            ³          ³                ³de Lotacao/Atribuicao se existir pelo menos uma al-³±± 
+±±³            ³          ³                ³teracao entre os campos 13.2 e 13.7.               ³±± 
+±±³Allyson M.  ³ 01/12/11 ³00000031079/2011³Realizados ajustes para imprimir texto padrao no   ³±± 
+±±³            ³          ³          TECREQ³campo 17 quando nao ha' exame cadastrado.          ³±±
+±±³Gustavo M.  ³ 02/03/12 ³00000004963/2012³Ajuste para corrigir a queda do smart client quando³±± 
+±±³            ³          ³          TEPJ23³há troca de impressora (Grafico,Disco e Cliente)   ³±±   
+±±³Luis Artuso ³28/06/2012³00000016271/2012³Ajuste para impressao de texto no cabelho/rodape   ³±±  
+±±³            ³          ³          TFFZ83³do relatorio P.P.P. fazendo referencia ao ANEXO XV,³±±  
+±±³            ³          ³                ³Instrucao Normativa.                               ³±±
+±±³Allyson M.  ³ 09/08/12 ³00000020379/2012³Realizados ajustes para imprimir texto em branco no³±± 
+±±³            ³          ³          TFOC76³campo 13.7 casp esteka vazio.			           ³±±
+±±³Luis Ricardo³05/11/2012³00000028338/2012³Ajuste no acesso de usuario da funcao fImprime qdo ³±±
+±±³Cinalli	   ³		  ³Chamado: TGBIUO ³ha filtro do parametro aReturn[7]. 				   ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/ 
+User Function GPERPPP()
+                                                                         
+/*ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³ Define Variaveis Locais (Basicas)                            ³
+  ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+LOCAL cDesc1	:=	OemToAnsi (STR0001)		//"Perfil Profissiografico Previdenciario"
+LOCAL cDesc2 	:=	OemToAnsi (STR0002)		//"Ser  impresso de acordo com os parametros solicitados pelo"
+LOCAL cDesc3 	:=	OemToAnsi (STR0003)		//"usuario."
+LOCAL cString	:=	"SRA"					// alias do arquivo principal (Base)
+LOCAL aOrd 		:=	{STR0004,STR0005}		//"Matricula"#"Centro de Custo"
+Local aDriver   := ReadDriver()
+Local cFile		:= "GPRPPOBS.MSG"			//Arquivo que contem o texto das observacoes
+
+/*ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³ Define Variaveis PRIVATE(Programa)                           ³
+  ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+SetPrvt("ADRIVER,NCONTAR")
+PRIVATE cIndCond	:= ""
+PRIVATE cFor		:= ""
+PRIVATE nOrdem		:= 0
+PRIVATE aRegs 		:= {}
+Private aInfo  		:= {}       								// Matriz com dados da empresa                       
+Private aReturn		:= {STR0007, 1,STR0008, 1, 2, 1, "",1 }	//"Zebrado"###"Administra‡„o"
+Private nLi			:= 1
+Private nLi1	 	:= 0
+Private nLiM   		:= 0
+Private nLiM1 		:= 0
+Private lPrimeira	:= .T.        
+Private cMessage	:= space(1)				//Campo que contem as observacoes para impressao
+
+/*ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³ Variaveis UtinLizadas na funcao IMPR                         ³
+  ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+Private Titulo  := OemToAnsi (STR0006)							//"PERFIL PROFISSIOGRAFICO PREVIDENCIARIO"
+Private wCabec0 := 3
+Private wCabec1 := ""
+Private wCabec2 := ""
+Private wCabec3 := ""
+Private Contfl  := 1
+Private nTamanho:= "M"
+Private cPerg   := "GPRPPP    "
+PRIVATE	AL		:=	{}
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Objetos p/ Impresssao Grafica  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+Private oFont07
+Private oFont07i
+Private oFont08
+Private oFont08n
+Private oFont10
+Private oFont14
+Private oFont15
+Private oFont10n
+Private oFont21
+Private oFont12
+Private oFont16
+Private oPrint
+Private lFirst	:= .F. 
+
+oFont07	:= TFont():New("Arial",07,07,,.F.,,,,.T.,.F.)
+oFont07i:= TFont():New("Arial",07,07,,.F.,,,,.F.,.F.)
+oFont08	:= TFont():New("Arial",08,08,,.F.,,,,.T.,.F.)		//negrito 
+oFont08n:= TFont():New("Arial",08,08,,.T.,,,,.T.,.F.)		//negrito 
+oFont10	:= TFont():New("Arial",10,10,,.F.,,,,.T.,.F.)
+oFont10n:= TFont():New("Arial",10,10,,.T.,,,,.T.,.F.)
+oFont12	:= TFont():New("MonoAs",12,12,,.F.,,,,.T.,.F.)	//Normal s/negrito
+oFont12n:= TFont():New("Arial",12,12,,.T.,,,,.T.,.F.)		//Negrito
+oFont13n:= TFont():New("Arial",13,13,,.T.,,,,.T.,.F.)		//Negrito
+oFont13 := TFont():New("Arial",13,13,,.F.,,,,.T.,.F.)		//Negrito
+oFont14	:= TFont():New("Courier New",10,10,,.F.,,,,.T.,.F.)
+oFont15	:= TFont():New("Arial",15,15,,.T.,,,,.T.,.F.)
+oFont21 := TFont():New("Arial",21,21,,.T.,,,,.T.,.T.)
+oFont16	:= TFont():New("Arial",16,16,,.T.,,,,.T.,.F.)
+
+
+AjustaSx1PPP()
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+pergunte(cPerg,.F.)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a funcao SETPRINT                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+wnrel:="GPERPPP"            //Nome Default do relatorio em Disco
+wnrel:=SetPrint(cString,wnrel,cPerg,@Titulo,cDesc1,cDesc2,cDesc3,.F.,aOrd,.F.,nTamanho)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Carregando variaveis mv_par?? para Variaveis do Sistema.     ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nOrdem  		    := aReturn[8]
+Private FilDe		:=	mv_par01   					//  Filial De
+Private FilAte		:=	mv_par02					//  Filial Ate
+Private CustoDe		:=	mv_par03					//  Centro de Custo De    
+Private CustoAte	:=	mv_par04					//  Centro de Custo Ate                      
+Private MatDe		:=	mv_par05					//  Matricula De                         
+Private MatAte		:=	mv_par06   					//  Matricula Ate  
+Private NomeDe		:=	mv_par07 					//  Nome De     				
+Private NomeAte		:=	mv_par08					//  Nome Ate  
+Private FuncaoDe	:=	mv_par09					//  Funcao De  
+Private FuncaoAte	:=	mv_par10					//  Funcao Ate  
+Private dDataDe		:= 	mv_par11					//  Data De         
+Private dDataAte	:= 	mv_par12					//  Data Ate        
+Private cRepresentante:=	mv_par13				//  Nome do Representante
+Private cNIT		:=	mv_par14					//  NIT do representante
+Private DtEmissa	:=	mv_par15					//  Data de Emissao
+Private cObs		:=  mv_par16					// Observacoes para o relatorio PPP
+Private lEngenheiro	:=	IIF(mv_par17==1,.T.,.F.)	//	Indica ser o Responsavel deve ser engenheiro
+Private cResponsa	:=	mv_par18
+Private nTipoRel 	:=	mv_par19 					// 1= impressao Grafica; 2= Impressao Zebrada
+Private nImpProtoc 	:=	mv_par20 					// Emissao do protocolo de entrega - NAO / SIM
+Private nImpResEx	:=  mv_par21					//Imp. Result. Exames 
+Private cReqsEPI    :=  mv_par22                    //  Atendimento aos Requisitos pelos EPIS Informados
+
+IF !Empty(cObs)
+	cMessage		:=	MemoRead( cFile )
+EndIF
+
+If nLastKey = 27
+	Return
+Endif  
+
+If !(mv_par19 == 1 )
+	SetDefault(aReturn,cString)
+Endif
+
+If nLastKey = 27
+	Return
+Endif
+
+If nTipoRel == 1
+	If !lFirst
+		lFirst	:= .T.
+		oPrint 	:= TMSPrinter():New("PERFIL PROFISSIOGRAFICO PREVIDENCIARIO")
+		oPrint	:SetPortrait()
+	Endif
+Endif	
+
+//--Setar impressora
+Set Device to Print
+If nTipoRel == 2
+	If aReturn[4]==1
+		@ nLi,00 pSay AvalImp(132)
+	EndIf	
+Endif
+RptStatus({|lEnd| fImprime(@lEnd,wnRel,cString)},Titulo)
+
+If nTipoRel == 1
+	oPrint:Preview()  		// Visualiza impressao grafica antes de imprimir
+Endif
+
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºFuncao    ³fImprime  ºAutor  ³Equipe RH Microsiga º Data ³  09/12/02   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³ Impressao do Perfil Profissigrafico Previdencario - PPP    º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP6                                                        º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+Static Function fImprime(lEnd,wnRel,cString)
+
+Local cFiltro   := aReturn[7]
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis de Acesso do Usuario                               ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+Local cAcessaSRA := ""
+         
+If !Empty(cFiltro)  
+	cAcessaSRA	:= &( " { || " + ChkRH( "GPERPPP" , "SRA" , "2" ) + " .And. " + cFiltro + " } " )     
+Else
+	cAcessaSRA	:= &( " { || " + ChkRH( "GPERPPP" , "SRA" , "2" ) + " } ")     
+Endif
+
+Private cDescDet := ""
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³MUDAR ANO PARA 4 DIGITOS³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+SET CENTURY ON
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Ordem Do Relatorio                                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nOrdem  := aReturn[8]
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Posiciona no Primeiro Registro Selecionado                   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea("SRA")
+nSavRec   := RecNo()
+nSavOrdem := IndexOrd()
+
+If nOrdem == 1
+	dbSetOrder(1)
+ElseIf nOrdem == 2
+	dbSetOrder(2)
+Endif
+If nOrdem == 1
+	dbSeek( FilDe + MatDe, .T. )
+	cInicio  := "SRA->RA_FILIAL + SRA->RA_MAT"
+	cFim     := FilAte + MatAte
+ElseIf nOrdem == 2
+	dbSeek( FilDe  + CustoDe + MatDe, .T. )
+	cInicio  := "SRA->RA_FILIAL + SRA->RA_CC + SRA->RA_MAT"
+	cFim     := FilAte + CustoAte + MatAte
+Endif
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Carrega layout do relatorio.³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+fLayout()  
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Carrega Regua de Processamento                               ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+SetRegua(RecCount())
+
+While !Eof() .And. &cInicio <= cFim
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Movimenta Regua de Processamento                             ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	IncRegua()
+
+	If lEnd
+		@Prow()+1,0 PSAY cCancel
+		Exit
+    Endif
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Consiste Parametrizacao do Intervalo de Impressao            ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If 	(SRA->RA_MAT < MatDe) 	.Or. (SRA->RA_MAT > MatAte)		.Or. ;    
+		(SRA->RA_NOME < NomeDe)	.Or. (SRA->RA_NOME > NomeAte)  	.Or. ;
+		(SRA->RA_CC  < CustoDe)	.Or. (SRA->RA_CC  > CustoAte)
+		dbSelectArea("SRA")
+		dbSkip()		
+		Loop
+	EndIf
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Consiste controle de acessos e filiais validas               ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If !(SRA->RA_FILIAL $ fValidFil()) .Or. !Eval(cAcessaSRA)
+		dbSelectArea("SRA")
+		dbSkip()
+		Loop
+	EndIf
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Carregando array com os dados da empresa                     ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	fInfo(@aInfo,SRA->RA_FILIAL)	
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Carregando as Funcoes de Impressao                           ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If nTipoRel == 1
+		fPPPGraf()
+	Else
+	 	fPerfil()
+	EndIf	 	
+	
+	dbSelectArea("SRA")
+	dbSkip()
+	nLi:=1
+	lPrimeira:= .T.
+Enddo
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Termino do relatorio                                         ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+Set Device To Screen
+dbSelectArea("SRA")
+dbSetOrder(1)
+dbgotop()
+
+If aReturn[5] == 1 .and. nTipoRel # 1
+	Set Printer To
+	dbCommit()
+	OurSpool(WnRel)
+Endif
+MS_FLUSH()
+If nTdata > 8
+	SET CENTURY ON
+Else
+	SET CENTURY OFF
+Endif
+Return
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºFuncao    ³fLayout   ºAutor  ³Equipe RH Microsiga º Data ³  09/04/03   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³ Laytout do   Perfil Profissigrafico Previdencario - PPP    º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP6                                                        º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+Static Function fLayout()
+
+aL		:=	Array(167)
+aL[001]	:= PADC("PERFIL PROFISSIOGRAFICO PREVIDENCIARIO" , 132)         
+aL[002]	:= "|----------------------------------------------------------------------------------------------------------------------------------"
+aL[003]	:= "| I  |  SECAO DE DADOS ADMINISTRATIVOS                                                                                             |"
+aL[004]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[005]	:= "| 1 - CNPJ do Domicilio  | 2 - Nome Empresarial                                                 | 3 - CNAE                         |"
+aL[006]	:= "|     Tributario/CEI     |                                                                      |                                  |"  
+aL[007]	:= "|     ################   |     ########################################                         |     #######                      |"
+aL[008]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[009]	:= "| 4 - Nome do Trabalhador                                              | 5 - BR/PDH             | 6 - NIT                          |"
+aL[010]	:= "|     ########################################                         |      ###               |     ##############               |"      
+aL[011]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[012]	:= "| 7 - Data do Nascimento | 8 - Sexo  | 9 - CTPS(No, Serie e UF )       | 10 - Data de Admissao  |11 - Regime Revezamento           |"
+aL[013]	:= "|     ##########         |     #     |     ################            |      ##########        |     ###############              |"      
+aL[014]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[015]	:= "|12 | CAT REGISTRADA                                                                                                               |"
+aL[016]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[017]	:= "|12.1 - Data do Registro |12.2 - Numero da CAT           | 12.1 - Data do Registro | 12.2 - Numero da CAT                          |"
+aL[018]	:= "|------------------------|-------------------------------|-------------------------|-----------------------------------------------|"
+aL[019]	:= "|     ##########         |       ###############         |        ##########       |        ###############                        |"
+aL[020]	:= "|                        |                               |                         |                                               |"
+aL[021]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[022]	:= "|13 | LOTACAO E ATRIBUICAO                                                                                                         |"
+aL[023]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[024]	:= "|13.1 - Periodo         |13.2-CNPJ/CEI     |13.3-Setor     |13.4-Cargo                  |13.5-Funcao                   |13.6- |13.7|"
+aL[025]	:= "|                       |                  |               |                            |                              |CBO   |Cod.|"
+aL[026]	:= "|                       |                  |               |                            |                              |      |GFIP|"
+aL[027]	:= "|-----------------------|------------------|---------------|----------------------------|------------------------------|------|----|"
+aL[028]	:= "|########## a ##########|##################|###############|############################|##############################|######|##  |"
+aL[029]	:= "|                       |                  |               |                            |                              |      |    |"
+aL[030]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[031]	:= "|14 |PROFISSIOGRAFIA                                                                                                               |"
+aL[032]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[033]	:= "|14.1 - Periodo         | 14.2 - Descricao das Atividades                                                                          |"        
+aL[034]	:= "|-----------------------|----------------------------------------------------------------------------------------------------------|"
+aL[035]	:= "|########## a ##########|##########################################################################################################|"
+aL[036]	:= "|                       |##########################################################################################################|"
+aL[037]	:= "|                       |                                                                                                          |"
+aL[038]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+   
+aL[039]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[040]	:= "| II | SECAO DE REGISTROS AMBIENTAIS                                                                                               |"
+aL[041]	:= "|----|-----------------------------------------------------------------------------------------------------------------------------|"
+aL[042]	:= "| 15 | EXPOSICAO A FATORES DE RISCOS                                                                                               |"
+aL[043]	:= "|----|-----------------------------------------------------------------------------------------------------------------------------|"
+aL[044]	:= "|15.1-Periodo           |15.2|15.3-Fator de Risco |15.4-Intens./  |15.5-Tecnica Utilizada                  |15.6-EPC|15.7-EPI|15.8-|"
+aL[045]	:= "|                       |Tipo|                    |Concentracao   |                                        |Eficaz  |EFicaz  |CA-  |"
+aL[046]	:= "|                       |    |                    |               |                                        |(S/N))  |(S/N)   |EPI  |"
+aL[047]	:= "|-----------------------|----|--------------------|---------------|----------------------------------------|--------|--------|-----|"
+aL[048]	:= "|########## a ##########|  # |####################|###############|########################################|    #   |    #   |#####|"
+aL[049]	:= "|                       |    |####################|               |                                        |        |        |     |"
+aL[050]	:= "|                       |    |                    |               |                                        |        |        |     |"
+aL[051]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[052]	:= "| 15.9 - ATENDIMENTO AOS REQUISITOS DAS NR-06 E NR-09 DO MTE PELOS EPI INFORMADOS:                                         |SIM/NÃO|"
+aL[053]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[054]	:= "| Foi tentada a implementacao de medidas de protecao coletiva, de carater administrativo ou de organizacao do trabalho,      |  #  |"
+aL[055]	:= "| optando-se pelo EPI por inviabilidade tecnica, insuficiencia ou interinidade, ou ainda em carater complementar ou          |     |"
+aL[056]	:= "| emergencial.                                                                                                               |     |"
+aL[057]	:= "| Foram observadas as condicoes de funcionamento e do uso ininterrupto do EPI ao longo do tempo, conforme especificacao      |  #  |"
+aL[058]	:= "| tecnica do fabricante, ajustada as condicoes de campo.                                                                     |     |"
+aL[059]	:= "| Foi observado o prazo de validade, conforme Certificado de Aprovacao-CA do MTE.                                            |  #  |"
+aL[060]	:= "| Foi observada a periodicidade de troca definida pelos programas ambientais, comprovada mediante recibo assinado pelo       |  #  |"
+aL[061]	:= "| usuario em epoca propria.                                                                                                  |     |"
+aL[062]	:= "| Foi observada a higienizacao.                                                                                              |  #  |"
+aL[064]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"    
+aL[065]	:= "| 16 | RESPONSAVEL PELOS REGISTROS AMBIENTAIS                                                                                      |"
+aL[066]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[067]	:= "|16.1-Periodo           |16.2-NIT      |16.3-Registro Conselho|16.4-Nome do Profissional Legalmente Habilitado                     |"
+aL[068]	:= "|                       |              |de Classe             |                                                                    |"     
+aL[069]	:= "|-----------------------|--------------|----------------------|--------------------------------------------------------------------|"
+aL[070]	:= "|########## a ##########|##############| ###########          | ########################################                           |"
+aL[071]	:= "|                       |              |                      |                                                                    |"
+aL[072]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+
+aL[073]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[074]	:= "|III | SECAO DE RESULTADOS DE MONITORACAO BIOLOGICA                                                                                |"
+aL[075]	:= "|----|-----------------------------------------------------------------------------------------------------------------------------|"
+aL[076]	:= "| 17 | EXAMES MEDICOS CLINICOS E COMPLEMENTARES( Quadro I e II, da NR-07 )                                                         |"
+aL[077]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[078]	:= "|17.1-Data   |17.2- Tipo  |17.3-Natureza                                      |17.4-Exame(R/S)|17.5-Indicacao de Resultados        |"
+aL[079]	:= "|------------|------------|---------------------------------------------------|---------------|------------------------------------|"
+aL[080]	:= "| ########## |     #      |################################################## |     #         | (#)Normal  |(#)Alterado            |"
+aL[081]	:= "|            |            |                                                   |               |            |   (#)Estavel          |"
+aL[082]	:= "|            |            |                                                   |               |            |   (#)Agravamento      |"
+aL[083]	:= "|            |            |                                                   |               |            |     (#)Ocupacional    |"
+aL[084]	:= "|            |            |                                                   |               |            |     (#)Nao Ocupacional|"
+aL[085]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[086]	:= "| 18 | RESPONSAVEL PELA MONITORACAO BIOLOGICA                                                                                      |"
+aL[087]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[088]	:= "| 18.1 - Periodo        | 18.2 - NIT     |18.3 - Registro Conselho de Classe  |18.4- Nome do Profissional Legalmente Habilitado    |"
+aL[089]	:= "|-----------------------|----------------|------------------------------------|----------------------------------------------------|"
+aL[090]	:= "|########## a ##########| ############## |      ###########                   |      ########################################      |"
+aL[091]	:= "|                       |                |                                    |                                                    |"
+aL[092]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+   
+aL[093]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[094]	:= "|IV | RESPONSAVEIS PELAS INFORMACOES                                                                                               |"
+aL[095]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[096]	:= "| Declaramos, para todos os fins de direito, que as informacoes prestadas neste documento sao veridicas e foram transcritas        |"
+aL[097]	:= "|fielmente dos registros administrativos, das demonstracoes ambientais e dos programas medicos de responsabilidade da empresa.     |"
+aL[098]	:= "|E de nosso conhecimento que a prestacao de informacoes falsas neste documento constitui crime de falsificacao de documento        |"
+aL[099]	:= "|publico, nos termos do art. 297 do Codigo Penal, e tambem, que tais informacoes sao de carater privativo do trabalhador,          |"
+aL[100]	:= "|constituindo crime, nos termos da Lei no. 9.029/95, praticas discriminatorias decorrentes de sua exigibilidade por outrem, bem    |"
+aL[101]	:= "|como de sua divulgacao para terceiros, ressalvado quando exigida pelos orgaos publicos competentes.                               |"
+aL[102]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[103]	:= "|19 - Data Emissao PPP | 20- REPRESENTANTE LEGAL DA EMPRESA                                                                        |"
+aL[104]	:= "|----------------------|-----------------------------------------------------------------------------------------------------------|"
+aL[106]	:= "|                      | 20.1 - NIT                                        |20.2 - NOME                                            |"
+aL[107]	:= "|                      |   ##############                                  |     ########################################          |"
+aL[108]	:= "|                      |---------------------------------------------------|-------------------------------------------------------|"
+aL[109]	:= "|                      |                                                   |                                                       |"
+aL[110]	:= "|                      |                                                   |                                                       |"
+aL[111]	:= "|                      |                                                   |                                                       |"
+aL[112]	:= "|     ##########       |                                                   |                                                       |"
+aL[113]	:= "|                      |                                                   |                                                       |"
+aL[114]	:= "|                      |                                                   |                                                       |"
+aL[115]	:= "|                      |                                                   |                                                       |"
+aL[116]	:= "|                      |                                                   |       ______________________________________          |"
+aL[117]	:= "|                      |                   (Carimbo)                       |                    (Assinatura)                       |"
+aL[118]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+	
+aL[119]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[120]	:= "| OBSERVACOES                                                                                                                      |"
+aL[121]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[122]	:= "| #################################################################################################################################|"
+aL[123]	:= "|                                                                                                                                  |"
+aL[124]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+
+
+aL[125]	:= "                         COMPROVANTE DE ENTREGA DO PERFIL PROFISSIOGRAFICO PREVIDENCIARIO (PPP)"         
+aL[126]	:= "|----------------------------------------------------------------------------------------------------------------------------------"
+aL[127]	:= "| DADOS ADMINISTRATIVOS                                                                                                            |"
+aL[128]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[129]	:= "|     CNPJ do Domicilio  |     Nome Empresarial                                                 |     CNAE                         |"
+aL[130]	:= "|     Tributario/CEI     |                                                                      |                                  |"  
+aL[131]	:= "|     ################   |     ########################################                         |     #######                      |"
+aL[132]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[133]	:= "|     Nome do Trabalhador                                              |     BR/PDH             |     NIT                          |"
+aL[134]	:= "|     ########################################                         |      ###               |     ##############               |"      
+aL[135]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[136]	:= "|     Data do Nascimento |    Sexo   |     CTPS(No, Serie e UF )       |      Data de Admissao  |     Regime Revezamento           |"
+aL[137]	:= "|     ##########         |     #     |     ################            |      ##########        |     ###############              |"      
+aL[138]	:= "|----------------------------------------------------------------------------------------------------------------------------------|"
+aL[139]	:= "|     Matricula          |   Centro de Custo                           |      Função                                               |"
+aL[140]	:= "|     ##########         |   ##########################                |      ##############################                       |"
+aL[141]	:= "|----------------------------------------------------------------------------------------------------------------------------------+"
+aL[142]	:= "|                                                                                                                                  |"
+aL[143]	:= "|     #################################################                                                                            |"
+aL[144]	:= "|                                                                                                                                  |"
+aL[145]	:= "|                                                                                                                                  |"
+aL[146]	:= "|                                                                                                                                  |"
+aL[147]	:= "|                                                                                                                                  |"
+aL[148]	:= "|                                                        ____________________________________                                      |"
+aL[149]	:= "|                                                             Assinatura do Funcionário                                            |"
+aL[150]	:= "|                                                                                                                                  |"
+aL[151]	:= "|                                                                                                                                  |"
+aL[152]	:= "|----------------------------------------------------------------------------------------------------------------------------------"
+aL[153] := PADC( STR0134 , 132 ) // "ANEXO XV - INSTRUÇÃO NORMATIVA Nº 45 INSS/PRES, DE 6 DE AGOSTO DE 2010."
+aL[154] := PADC( STR0135 , 132 ) //"É facultada a inclusão de informações complementares ou adicionais ao PPP."
+
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºfPerfil   ³GPERPPP   ºAutor  ³Equipe RH Microsiga º Data ³  09/12/02   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³ Impressao do Cabecalho - PPP                               º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP6                                                        º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+Static Function fPerfil()
+Local cCTPS 	:= SRA->RA_NUMCP + "-" + SRA->RA_SERCP + "/" + SRA->RA_UFCP
+Local cSexo 	:= SRA->RA_SEXO
+Local cCNPJ		:= ""
+Local aGetArea 	:= GetArea()
+Local nLinha
+Local cLinha
+Local aPeriodo 	:= array(8)
+Local aLotacao 	:= {}   
+Local lAdiciona := .F.
+Local cChave	:= ''
+Local aAgente 	:= array(9)	
+Local aExame	:= array(4)
+Local aCargos	:= {}
+Local nX		:= 0
+Local nI		:= 0
+Local nReq1     := 0
+Local aCat		:= {}
+Local cPIS		:= ""
+Local cRevez	:= ""
+Local cFilTMK	:= space(FWGETTAMFILIAL)
+Local cNitAux	:= ""
+Local lParEnd 	:= "C"
+Local cDataCid 	:= ""
+Local aReqEPIFim:= {}
+Local lTemCatSR8:= .F.     
+Local lImprimiu	:= .F.
+Local aDados    := {}
+
+If aInfo[15] == 1 //CEI                                           
+	cCnpj := Transform(SUBSTR(aInfo[8],3,12),"@R 99.999.99999/99")
+Else
+	cCnpj := Transform(SUBSTR(aInfo[8]+Space(16),1,16),"@R 99999999/9999-99")
+EndIF	
+
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ I - SECAO DE DADOS ADMINISTRATIVOS     ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nLin:= 1
+FmtLin(,{aL[1],aL[153],aL[2],aL[3],aL[4],aL[5],aL[6]},,,@nLin)
+//1-CNPJ/2-Nome Empresarial/ 3-CNAE
+FmtLin({cCnPj,aInfo[03],Transform(Subs(aInfo[16],1,7),"@R 999999-9")},aL[07],,,@nLin) 
+
+FmtLin(,{aL[8],al[9]},,,@nLin)       
+                                   
+ //4-Nome do Trabalhador/5-BR/PDH/6-NIT
+ If SRA->RA_BRPDH =="1"
+ 	cBRPDH := "BR"
+ ElseIf SRA->RA_BRPDH =="2"
+ 	cBRPDH := "PDH"
+ Else	
+ 	cBRPDH := "NA"
+ EndIf	
+
+cPis := If( Empty(SRA->RA_PIS), "NA", Transform(SRA->RA_PIS,"@R 999.99999.99-9") )
+FmtLin({Subs(SRA->RA_NOME,1,40),cBRPDH,cPIS},aL[10],,,@nLin)       
+
+FmtLin(,{aL[11],aL[12]},,,@nLin)                              
+
+//7-Data Nascimento/8-Sexo/9-CTPS/10-ADMISSAO/ Regime Revezamento 
+SR6->( dbSeek( xFilial("SR6")+SRA->RA_TNOTRAB ) )
+cRevez := If(empty(SR6->R6_REVEZAM),"NA",SR6->R6_REVEZAM)
+FmtLin({DTOC(SRA->RA_NASC),cSexo,cCTPS,DTOC(SRA->RA_ADMISSA),cRevez},aL[13],,,@nLin) 
+FmtLin(,{aL[14],aL[15],aL[16],aL[17],aL[18]},,,@nLin)          
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³CAT Emitidas no Periodo³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Estrutura do array aCAT³
+//³=======================³
+//³[1] Data da 1a coluna  ³
+//³[2] Cod.CAT 1a Coluna  ³
+//³[3] Data da 2a Coluna  ³
+//³[4] Cod.CAT 2a Coluna  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+dbSelectArea("SR8") 					
+If SR8->(dbSeek(SRA->RA_FILIAL+SRA->RA_MAT))
+	While SR8->(!EOF()) .and. (SR8->R8_FILIAL + SR8->R8_MAT) == (SRA->RA_FILIAL + SRA->RA_MAT)
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³Se houver CAT no cadastro imprime data e Numero do Docto³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If ! Empty (SR8->R8_DTCAT) .and. (SR8->R8_DTCAT>= dDataDe .and. SR8->R8_DTCAT<= dDataAte)
+			nX := len(aCat) 
+			If nX == 0 .or. !empty(aCat[nX,3])
+		        AADD(aCat,{DTOC(SR8->R8_DTCAT),Transform(SR8->R8_CODCAT,"@R 9999999999-9/99"),"",""})
+		    Else
+				aCat[nX,3] 	:= DTOC(SR8->R8_DTCAT)
+				aCat[nX,4]	:= Transform(SR8->R8_CODCAT,"@R 9999999999-9/99")
+	        EndIf
+		Endif			
+		SR8->( dbSkip())
+	EndDo
+EndIf
+
+//-- Testa a existencia de itens de CAT no cadastro de afastamentos
+lTemCatSR8:= Len(aCat) > 0
+
+dbSelectArea("RC9") 					
+If RC9->(dbSeek(SRA->RA_FILIAL+SRA->RA_MAT))
+	While RC9->(!EOF()) .and. (RC9->RC9_FILIAL + RC9->RC9_MAT) == (SRA->RA_FILIAL + SRA->RA_MAT)
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³Imprime CATS cadastradas com o campo Afastamento igual a 'NAO'. Se nao ³
+		//³houver CATS no cadastro de Afastamento, as CATS cadastradas com o campo³
+		//³Afastamento igual a 'SIM' tambem serao impressas.  			          ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If lTemCatSR8 .And. RC9->RC9_AFAST == "1"
+			RC9->(dbSkip())   
+			Loop
+		Endif
+		If !Empty (RC9->RC9_DATA) .And. (RC9->RC9_DATA>= dDataDe .and. RC9->RC9_DATA<= dDataAte)
+			nX := len(aCat) 
+			If nX == 0 .Or. !empty(aCat[nX,3])
+	        	AADD(aCat,{DTOC(RC9->RC9_DATA),Transform(RC9->RC9_NUMERO,"@R 9999999999-9/99"),"",""})
+ 	        Else
+				aCat[nX,3] 	:= DTOC(RC9->RC9_DATA)
+				aCat[nX,4]	:= Transform(RC9->RC9_NUMERO,"@R 9999999999-9/99")
+        	EndIf
+		Endif	
+		RC9->(dbSkip())
+	Enddo	
+EndIf
+
+If len(aCat) > 0
+	For nX := 1 to len(aCat)
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³Verifica Salto de Pagina³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		fPulaPag()
+		//|12.1-Data Reg./12.2-Numero da CAT/12.1-Data Reg./12.2-Numero da CAT
+		FmtLin({aCat[nX,1],aCat[nX,2],aCat[nX,3],aCat[nX,4]},aL[19],,,@nLin)
+	Next	  
+Else
+	FmtLin({"","NA","NA","NA"},aL[19],,,@nLin)
+	FmtLin(,{aL[20]},,,@nLin) //linha em branco da CAT
+EndIf
+
+fPulaPag()
+FmtLin(,{aL[21],aL[22],aL[23],aL[24],aL[25],aL[26],aL[27]},,,@nLin)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³13- LOTACAO E ATRIBUICAO                ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea("RC6")	
+dbSetOrder(1)
+If dbSeek(SRA->RA_FILIAL+ SRA->RA_MAT)
+	While RC6->(!EOF()) .and. (RC6->RC6_FILIAL + RC6->RC6_MAT) == (SRA->RA_FILIAL + SRA->RA_MAT)
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³Verifica Salto de Pagina³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		fPulaPag()
+	                 
+		aFill(aPeriodo,"")
+		
+		aPeriodo[1] := DtoC(RC6->RC6_DATAIN)        
+		aPeriodo[2] := DtoC(RC6->RC6_DATAFI)
+		
+		If RC6->RC6_DATAIN < dDataDe .or. RC6->RC6_DATAIN > dDataAte
+			RC6->( dbSkip() )
+			Loop
+		EndIf	
+		
+		SI3->( dbSeek(xFilial("SI3")+RC6->RC6_CC))
+		If TYPE("SI3->I3_CEI") # "U" .and. TYPE("SI3->I3_TIPO") # "U"
+			aPeriodo[3] := If(SI3->I3_TIPO=="1",Transform(SI3->I3_CEI,"@R 99999999/9999-99"),Transform(SI3->I3_CEI,"@R 99.999.999/9999-99")) //CNPJ/CEI
+		Else
+			aPeriodo[3] := ""
+		Endif
+		aPeriodo[3] := If( empty(val(aPeriodo[3])),cCnPj,aPeriodo[3] )//CNPJ/CEI			
+		
+		aPeriodo[4] := SUBS(FDESC("SI3",RC6->RC6_CC,"I3_DESC"),1,15) //SETOR
+		aPeriodo[5] := SUBS(RC6->RC6_DESCCA,1,27) //CARGO
+		
+		SRJ->( dbSeek(xFilial("SRJ")+RC6->RC6_CODFUN))
+		If TYPE("SRJ->RJ_PPPIMP") # "U" .AND. SRJ->( !EOF() )
+			If  TYPE("SRJ->RJ_LIDER") # "U" 			
+				aPeriodo[6] := If( SRJ->RJ_PPPIMP # "1","NA",If( Empty(SRJ->RJ_LIDER) .Or. SRJ->RJ_LIDER # "1","NA",SUBS(RC6->RC6_DESCFUN,1,30)))
+			Else
+				aPeriodo[6] := If( SRJ->RJ_PPPIMP # "1","NA",SUBS(RC6->RC6_DESCFUN,1,30))				
+			EndIf
+		Else
+			aPeriodo[6] := SUBS(RC6->RC6_DESCFUN,1,30) //FUNCAO
+		EndIf	
+		aPeriodo[7] := Strzero(val(fCodCBO(RC6->RC6_FILIAL,RC6->RC6_CODFUN,If(!Empty(RC6->RC6_DATAFI),RC6->RC6_DATAFI,DtEmissa))),6) //CBO
+		aPeriodo[8]	:= If( Empty(RC6->RC6_GFIP), "", RC6->RC6_GFIP) //Cod.GFIP
+	        
+		// 		 13.2-CNPJ/CEI /13.3-Setor    /13.4-Cargo   /13.5-Funcao  /13.6-CBO    /13.7-Cod.GFIP
+		cChave:= aPeriodo[3]  + aPeriodo[4] + aPeriodo[5] + aPeriodo[6] + aPeriodo[7] + aPeriodo[8] 
+		nPos:= Ascan(aLotacao,{|x| ( x[3] + x[4] + x[5] + x[6] + x[7] +  x[8] ) == ;
+		                            ( cChave  )	;
+	                          };
+                    )
+                   
+		IF Empty(nPos)
+			lAdiciona:= .T.			 
+		Else    
+		    //-- Verifica se eh continuacao da lotação/atribuicao
+		    lAdiciona:=.F. 
+		    For nX:= nPos To len(aLotacao)
+    	    	IF cChave == ( aLotacao[nX,3] + aLotacao[nX,4] + aLotacao[nX,5] + aLotacao[nX,6] + aLotacao[nX,7] + aLotacao[nX,8]  )
+	    	    	IF ( Dtoc(Ctod (aLotacao[nPos,2]) + 1 )) == aPeriodo[1]
+	    	    	   //-- Amplia o periodo em que o funcionario esteve lotado/atribuida a funcao
+	    	    	   aLotacao[nPos,2] := aPeriodo[2]
+	    	    	   Exit
+	    	    	ElseIF aLotacao[nX,1] > aPeriodo[1]
+  		    	    	   lAdiciona:= .T.
+		    	    	   Exit  
+	       	    	Endif  
+	       	    Endif	 
+		    Next nX 
+		Endif			           
+		
+		IF lAdiciona
+			aADD(aLotacao,aClone(aPeriodo))
+		Endif
+	
+		AADD(aCargos,{RC6->RC6_DATAIN,RC6->RC6_DATAFI,RC6->RC6_CARGO,RC6->RC6_CC})
+					    
+	   	dbSelectArea("RC6")
+		dbSkip()
+	EndDo  
+	For nX :=1 to Len(aLotacao)
+		FmtLin({aLotacao[nX,1],aLotacao[nX,2],aLotacao[nX,3],aLotacao[nX,4],aLotacao[nX,5],aLotacao[nX,6],aLotacao[nX,7],aLotacao[nX,8]},aL[28],,,@nLin) 
+	Next nX	
+Else 
+	FmtLin(,{aL[29]},,,@nLin)
+	FmtLin(,{aL[29]},,,@nLin)
+EndIf
+
+fPulaPag()
+FmtLin(,{aL[30],aL[31],aL[32],aL[33],aL[34]},,,@nLin)          
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³14 -PROFISSIOGRAFIA                     ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+//14.1 - Periodo/ 14.2 - Descricao das Atividades                                                                          |        
+cDescDet := ""
+If len(aCargos) >0
+	For nI := 1 to len(aCargos)
+		dbSelectArea("SQ3")
+		dbSetOrder(1)
+		If dbSeek(xFilial("SQ3",SRA->RA_FILIAL) + aCargos[nI,3] + aCargos[nI,4]) .Or. ;
+			dbSeek(xFilial("SQ3",SRA->RA_FILIAL) + aCargos[nI,3])
+			
+			cDescDet  := MSMM(SQ3->Q3_DESCDET,,,,3)
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³Carrega as informacoes do campo Memo - Descricao das Atividades³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		EndIf
+		                                    
+		nLinha := MlCount(cDescDet,77)
+		If nLinha > 0
+			For nX := 1 to nLinha
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³Verifica Salto de Pagina³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+				fPulaPag()
+				cLinha:=  Space(01)+Memoline(cDescDet,77,nX,,.T.)
+				If nx == 1
+					//14.1 -Dt.Inicio - Dt.Final/ 14.2 - Descricao das Atividades                                                                          |        
+					FmtLin({aCargos[nI,1],aCargos[nI,2],cLinha},aL[35],,,@nLin)  
+				Else
+					FmtLin({cLinha},aL[36],,,@nLin)   //Descricao das atividades
+				EndIf	
+			Next i     
+		Else
+			FmtLin({aCargos[nI,1],aCargos[nI,2],Space(40)},aL[35],,,@nLin) 
+		EndIf	
+	Next nI
+Else
+	FmtLin(,{aL[37]},,,@nLin)
+EndIf
+
+fPulaPag()
+FmtLin(,{aL[38]},,,@nLin)
+
+nLin++
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ II | SECAO DE REGISTROS AMBIENTAIS     ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//| 15 | EXPOSICAO A FATORES DE RISCOS     ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+fPulaPag()
+
+FmtLin(,{aL[39],aL[40],aL[41],aL[42],aL[43],aL[44],aL[45],aL[46],aL[47]},,,@nLin)
+
+//15.1-Periodo/15.2-Tipo/15.3-Fator de Risco/15.4-Intens.Conc./15.5-Tecnica Utilizada/15.6-EPC/15.7-EPI/15.8-CA-EPI
+dbSelectArea("RC7")	
+dbSetOrder(1)
+If dbSeek(SRA->RA_FILIAL + SRA->RA_MAT)
+
+	While RC7->(!EOF()) .and. (RC7->RC7_FILIAL + RC7->RC7_MAT) == (SRA->RA_FILIAL +SRA->RA_MAT)
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³Verifica Salto de Pagina³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		fPulaPag()
+	            
+       	If ! Empty (RC7->RC7_DATAIN)
+
+			aAgente[1] := DtOC(RC7->RC7_DATAIN)
+			aAgente[2] := Dtoc(RC7->RC7_DATAFI) 	//CRIAR CAMPO  
+			
+			If RC7->RC7_TIPO=="1"		 	//CRIAR CAMPO	
+				aAgente[3] := "F" //Fisico
+			ElseIf RC7->RC7_TIPO=="2"
+				aAgente[3] := "Q" //Quimico
+			ElseIf RC7->RC7_TIPO=="3"
+				aAgente[3] := "B" //Biologico
+			ElseIf RC7->RC7_TIPO=="4"
+				aAgente[3] := "E" //Ergonomico
+			ElseIf RC7->RC7_TIPO=="5"
+				aAgente[3] := "M" //Mecanico
+			EndIf	
+			
+			cAgente1 := Substr(RC7->RC7_NOMEAG,1,20)	 	//Fator de Risco  		
+			nLoop := Len(cAgente1)
+
+			While .T.
+			
+				If Len(RC7->RC7_NOMEAG) == Len(cAgente1) .and. Len(cAgente1)+1 <= 20
+					Exit
+				EndIf
+			
+				If SubStr(RC7->RC7_NOMEAG,Len(cAgente1),1) == " " .and. Len(cAgente1)+1 <= 20
+					Exit
+				EndIf                                                           
+				
+			    If Len(cAgente1)+1 <= 20
+			    	Exit
+			    EndIf	
+				cAgente1 := SubStr(RC7->RC7_NOMEAG,1,nLoop )
+				nLoop --
+			Enddo
+            
+ 			cAgente	 := SubStr(RC7->RC7_NOMEAG,Len(cAgente1)+1,40)
+			
+			cAgente2 := SubStr(cAgente,1,20)
+			nLoop 	 := Len(cAgente2)
+
+			While .T.
+			
+				If Len(cAgente) == Len(cAgente2) .and. Len(cAgente2)+1 <= 20
+					Exit
+				EndIf
+			
+				If SubStr(cAgente,Len(cAgente2),1) == " " .and. Len(cAgente2)+1 <= 20
+					Exit
+				EndIf
+			    If Len(cAgente2)+1 <= 20
+			    	Exit
+			    EndIf	
+				
+				cAgente2 := SubStr(cAgente,1,nLoop )
+				nLoop --
+			Enddo
+			
+			cAgente3 := SubStr(cAgente,Len(cAgente2)+1,20) // 3.a linha do extenso
+			If !empty(cAgente3)
+				cAgente2 := StrTran(cAgente2," ","  ",,20 - Len(cAgente2) - 1 + 1)
+            EndIf                          
+
+			aAgente[4] := cAgente1
+			aAgente[5] := If(Empty(RC7->RC7_CONCENTR),"NA",RC7->RC7_CONCENTR)		//Intensidade/conc. //Exclui campo e cria novo
+			aAgente[6] := If(Empty(RC7->RC7_TECUTI),"NA",RC7->RC7_TECUTI)			//CRIAR campo e excluir campo RC7_TECNICA
+			aAgente[7] := If(RC7->RC7_EPC=="1","S","N")								//Excluir o campo RC7_EPIEPC e criar RC7_EQPI e RC7_EPC
+			aAgente[8] := If(RC7->RC7_EQPI	=="1","S","N")							//Criar campo
+			aAgente[9] := If(Empty(RC7->RC7_CAEPI),"NA",RC7->RC7_CAEPI)				//CRIAR CAMPO 
+									
+			FmtLin({aAgente[1],aAgente[2],aAgente[3] ,aAgente[4],aAgente[5],aAgente[6],aAgente[7],aAgente[8],aAgente[9]},aL[48],,,@nLin) 
+			If !empty(cAgente2)
+				FmtLin({cAgente2},aL[49],,,@nLin) 
+			EndIf	
+			If !empty(cAgente3)
+				FmtLin({cAgente3},aL[49],,,@nLin) 
+			EndIf	
+		Else
+			FmtLin(,{aL[50]},,,@nLin)
+		EndIf	
+		dbSelectArea("RC7")
+		dbSkip()  
+	EndDo
+Else
+	aAgente[3] := aAgente[4] := aAgente[5] := aAgente[6] := aAgente[7] := aAgente[8] := aAgente[9] := "NA" 
+	FmtLin({aAgente[1],aAgente[2],aAgente[3] ,aAgente[4],aAgente[5],aAgente[6],aAgente[7],aAgente[8],aAgente[9]},aL[48],,,@nLin)
+	FmtLin(,{aL[50]},,,@nLin)
+Endif    
+
+fPulaPag()
+
+FmtLin(,{aL[51],aL[52],aL[53]},,,@nLin)
+
+//Formata os tipos de Requisitos Selecionados
+If !Empty( cReqsEPI )
+	For nReq1 := 1 To Len( cReqsEPI )
+		If SubStr( cReqsEPI, nReq1, 1 ) == '*'
+			aAdd( aReqEPIFim, "N" )
+		Else                           
+			aAdd( aReqEPIFim, "S" )		
+		EndIf
+	Next 
+Else
+	aReqEPIFim := {"N","N","N","N","N"}
+EndIf                              
+
+FmtLin({ aReqEPIFim[1] },aL[54],,,@nLin)
+FmtLin(,{aL[55],aL[56]},,,@nLin)       
+FmtLin({ aReqEPIFim[2] },aL[57],,,@nLin)
+FmtLin(,{aL[58]},,,@nLin)       
+FmtLin({ aReqEPIFim[3] },aL[59],,,@nLin)
+FmtLin({ aReqEPIFim[4] },aL[60],,,@nLin)
+FmtLin(,{aL[61]},,,@nLin)       
+FmtLin({ aReqEPIFim[5] },aL[62],,,@nLin)
+
+fPulaPag()
+FmtLin(,{aL[65],aL[66],aL[67],aL[68],aL[69]},,,@nLin)
+	
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³16| RESPONSAVEL PELOS REGISTROS AMBIENTAIS  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+//16.1-Periodo/16.2-NIT/16.3-Registro Conselho/16.4-Nome do Profissional Legalmente Habilitado 
+
+dbSelectArea("TMK")
+dbSetOrder(1)
+
+cFilTMK :=  xFilial("TMK",SRA->RA_FILIAL)
+TMK->( DbGoTop() )
+
+cArqTMK := criatrab("",.F.)
+IndRegua (	"TMK" , cArqTMK , "TMK_FILIAL" , , , STR0009)  //"Selecionando Registros..." 
+TMK->( dbSeek( cFilTMK ) )  
+
+If TMK->( eof() )
+	FmtLin(,{aL[71]},,,@nLin)  //imprime linha em branco
+EndIf                                 
+cPIS := "NA"
+
+Asort(aCargos,,,{|x,y|x[1]<y[1]})
+
+lImprimiu := .F.
+While TMK->( !eof()) .and. TMK->TMK_FILIAL ==  cFilTMK 
+
+	If (lEngenheiro .And. TMK->TMK_INDFUN == "4") .Or. (!lEngenheiro .And. TMK->TMK_INDFUN $ cResponsa) 
+		//Engenheiro obrigatorio ou nao, e quais as funcoes permitidas
+		If (empty(TMK->TMK_DTTERM) .or. ( Len(aCargos) > 0 .AND. TMK->TMK_DTTERM >= aCargos[1,1]) )
+			cPis := If( Empty(TMK->TMK_NIT), "NA", Transform(TMK->TMK_NIT,"@R 999.99999.99-9") )			
+			
+			//Adiciona Informacoes do responsavel
+			Aadd(aDados,{TMK->TMK_DTINIC,;
+					TMK->TMK_DTTERM,; 
+					cPIS,;       			  
+					TMK->TMK_NUMENT,;		  								  
+              		TMK->TMK_NOMUSU})						
+		EndIf
+	EndIf
+	TMK->( dbskip())              
+	lImprimiu := .T.
+
+EndDo	
+//Ordena registros pela data inicial
+Asort(aDados,,,{|x,y|x[1]<y[1]})
+
+For nI := 1 To Len(aDados)
+	fPulaPag()
+	//16.1-Data Inicial  - Data Final /16.2-NIT/16.3-Registro Conselho/16.4-Nome do Profissional Legalmente Habilitado 
+	FmtLin({aDados[nI][1],aDados[nI][2],aDados[nI][3],aDados[nI][4],aDados[nI][5] },aL[70],,,@nLin) 
+Next nI	
+
+If !lImprimiu
+	FmtLin({"","",cPIS,"NA","NA" },aL[70],,,@nLin)  
+EndIf
+                              
+fPulaPag()
+FmtLin(,{aL[72]},,,@nLin) 
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³III | SECAO DE RESULTADOS DE MONITORACAO BIOLOGICA ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//| 17 | EXAMES MEDICOS CLINICOS E COMPLEMENTARES( Quadro I e II, da NR-07 )|
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+fPulaPag()
+
+FmtLin(,{aL[73],aL[74],aL[75],aL[76],aL[77],aL[78],aL[79]},,,@nLin) 
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³RESULTADO DE EXAMES³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea("RC8")	
+dbSetOrder(1)
+If dbSeek(SRA->RA_FILIAL+ SRA->RA_MAT)
+	
+	While ! Eof() .AND. (RC8->RC8_FILIAL + RC8->RC8_MAT) == (SRA->RA_FILIAL + SRA->RA_MAT)
+
+		If ! Empty (RC8->RC8_DATA) .and. (RC8->RC8_DATA >= dDataDe .and. RC8->RC8_DATA <= dDataAte)       
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³Verifica Salto de Pagina³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+			fPulaPag()
+            aFill(aExame,"")
+			aExame[1]	:= 	DTOC(RC8->RC8_DATA)
+			If RC8->RC8_EXTIPO == "1"
+				aExame[2]	:="A" //Admissional
+			ElseIf RC8->RC8_EXTIPO == "2"
+				aExame[2]	:="P" //Periodico
+			ElseIf RC8->RC8_EXTIPO == "3"
+				aExame[2]	:="R" //Retorno
+			ElseIf RC8->RC8_EXTIPO == "4"
+				aExame[2]	:="M" //Mudanca Funcao
+			ElseIf RC8->RC8_EXTIPO == "5"
+				aExame[2]	:="D" //Demissional"
+   	        EndIf
+   	    	aExame[3]   :=	RC8->RC8_NOMEEX 
+				 
+			If RC8->RC8_EXAME == "1" 
+				aExame[4]	:= "R" //Referencial
+			ElseIf RC8->RC8_EXAME == "2"
+			 	aExame[4]	:= "S" //Sequencial
+			EndIf	
+    	    
+			If nImpResEx = 2 
+			cNormaL  := If( RC8->RC8_INDRES =="1","X","")
+			cAlterado:= If( !empty(RC8->RC8_INDRES) .and. RC8->RC8_INDRES # "1","X","")
+			Else
+				cNormaL  := ""
+				cAlterado:= ""
+            EndIf
+			//17.1-Data /17.2- Tipo  /17.3-Natureza/17.4-Exame(R/S)/17.5-Indicacao de Resultados 
+			FmtLin({aExame[1],aExame[2],aExame[3],aExame[4],cNormal,cAlterado},aL[080],,,@nLin) 
+			If nImpResEx = 2
+				FmtLin({""},aL[81],,,@nLin) 
+				fPulaPag()
+				FmtLin({""},aL[82],,,@nLin) 
+				fPulaPag()
+				FmtLin({""},aL[83],,,@nLin) 
+				fPulaPag()
+				FmtLin({""},aL[84],,,@nLin) 
+			
+			If RC8->RC8_INDRES $ "12 " //1- Normal; 2- Alterado 
+				FmtLin({""},aL[81],,,@nLin) 
+				fPulaPag()
+				FmtLin({""},aL[82],,,@nLin) 
+				fPulaPag()
+				FmtLin({""},aL[83],,,@nLin) 
+				fPulaPag()
+				FmtLin({""},aL[84],,,@nLin) 
+			ElseIf RC8->RC8_INDRES == "3" //Alterado Estavel
+				FmtLin({"X"},aL[81],,,@nLin) 
+				fPulaPag()
+				FmtLin({""},aL[82],,,@nLin) 
+				fPulaPag()
+				FmtLin({""},aL[83],,,@nLin) 
+				fPulaPag()
+				FmtLin({""},aL[84],,,@nLin) 
+			ElseIf RC8->RC8_INDRES == "4" //Alterado Agravamento
+				FmtLin({""},aL[81],,,@nLin) 
+				fPulaPag()
+				FmtLin({"X"},aL[82],,,@nLin) 
+				fPulaPag()
+				FmtLin({""},aL[83],,,@nLin) 
+				fPulaPag()
+				FmtLin({""},aL[84],,,@nLin) 
+			ElseIf RC8->RC8_INDRES == "5" //Alterado Agravamento Ocupacional
+				FmtLin({""},aL[81],,,@nLin) 
+				fPulaPag()
+				FmtLin({"X"} ,aL[82],,,@nLin) 
+				fPulaPag()
+				FmtLin({"X"},aL[83],,,@nLin) 
+				fPulaPag()
+				FmtLin({""},aL[84],,,@nLin) 
+			ElseIf RC8->RC8_INDRES == "6" //Alterado Agravamento Nao ocupacional
+				FmtLin({""},aL[81],,,@nLin) 
+				fPulaPag()
+				FmtLin({"X"},aL[82],,,@nLin) 
+				fPulaPag()
+				FmtLin({""},aL[83],,,@nLin) 
+				fPulaPag()
+				FmtLin({"X"},aL[84],,,@nLin) 
+			EndIf                 
+		    EndIf
+			FmtLin(,aL[85],,,@nLin) 
+		EndIf
+		dbSelectArea("RC8")
+		dbSkip()
+    EndDo
+Else
+	fPulaPag()
+	FmtLin({OemtoAnsi(STR0133+Space(10))},aL[080],,,@nLin)//"Item não preenchido, conforme a resolução  nº 1715, de 8 de Janeiro de 2004, do conselho federal de medicina." 
+	fPulaPag()
+	FmtLin(,aL[85],,,@nLin) 
+EndIf 
+                               
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//| 18 | RESPONSAVEL PELA MONITORACAO BIOLOGICA |
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+fPulaPag()
+FmtLin(,{aL[86],aL[87],aL[88],aL[89]},,,@nLin) 
+
+cFilTMK :=  xFilial("TMK",SRA->RA_FILIAL)
+TMK->( dbSeek( cFilTMK ) )
+
+If TMK->( eof() )
+	FmtLin(,{aL[91]},,,@nLin)  //imprime linha em branco
+EndIf
+cPIS := "NA"     
+
+aDados := {}
+lImprimiu := .F.
+While TMK->( !eof()) .and. TMK->TMK_FILIAL ==  cFilTMK 
+
+	If TMK->TMK_INDFUN $"1#6" .AND. TMK->TMK_MONBIO == "1" //Medico do trabalho e Medico
+
+		cPis := If( Empty(TMK->TMK_NIT), "NA", Transform(TMK->TMK_NIT,"@R 999.99999.99-9") )		
+		
+		//Adiciona Informacoes do responsavel
+		Aadd(aDados,{TMK->TMK_DTINIC,;
+				TMK->TMK_DTTERM,; 
+				cPIS,;       			  
+				TMK->TMK_NUMENT,;		  								  
+           		TMK->TMK_NOMUSU})	
+    EndIf
+	TMK->( dbskip())              
+	lImprimiu := .T. 
+EndDo	
+//Ordena registros pela data inicial
+Asort(aDados,,,{|x,y|x[1]<y[1]})
+
+For nI := 1 To Len(aDados)
+	fPulaPag()
+	//16.1-Data Inicial  - Data Final /16.2-NIT/16.3-Registro Conselho/16.4-Nome do Profissional Legalmente Habilitado 
+	FmtLin({aDados[nI][1],aDados[nI][2],aDados[nI][3],aDados[nI][4],aDados[nI][5] },aL[90],,,@nLin) 
+Next nI	
+
+If !lImprimiu
+	FmtLin({"","",cPIS,"NA","NA" },aL[90],,,@nLin)
+EndIf
+
+fPulaPag()
+FmtLin(,{aL[92]},,,@nLin)
+RetIndex("TMK")
+dbSetOrder(1)
+Ferase(cArqTMK+OrdBagExt())
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//|IV - RESPONSAVEIS PELAS INFORMACOES          |
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+fPulaPag()
+FmtLin(,{aL[93],aL[94],aL[95]},,,@nLin)
+fPulaPag()
+FmtLin(,{aL[96],aL[97],aL[98]},,,@nLin)
+fPulaPag()
+FmtLin(,{aL[99],aL[100],aL[101]},,,@nLin)
+fPulaPag()
+FmtLin(,{aL[102],aL[103],aL[104]},,,@nLin)
+fPulaPag()
+FmtLin(,{aL[106] }      ,,,@nLin)
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//|19 - Data Emissao PPP |20- REPRESENTANTE LEGAL DA EMPRESA |
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+// 20.1 - NIT /20.2 - NOME
+fPulaPag()
+cNitAux := Transform(cNIT,"@R 999.99999.99-9") 			
+FmtLin({cNitAux,cRepresentante},aL[107],,,@nLin)
+
+fPulaPag()
+FmtLin(,{aL[108],aL[109],aL[110],aL[111]},,,@nLin)
+
+//19 - Data Emissao PPP
+fPulaPag()
+FmtLin({DtEmissa},aL[112],,,@nLin)
+
+fPulaPag()
+FmtLin(,{aL[113],aL[114],aL[115],aL[116],aL[117]},,,@nLin)
+fPulaPag()
+FmtLin(,{aL[118]},,,@nLin)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//|OBSERVACOES               |
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+FmtLin(,{aL[119],aL[120],aL[121]},,,@nLin)
+
+nLinha := MlCount(cMessage,127)
+If nLinha > 0
+	For nX := 1 to nLinha
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³Verifica Salto de Pagina³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		fPulaPag()
+		cLinha:=  Space(01)+Memoline(cMessage,127,nX,,.T.)
+		FmtLin({cLinha},aL[122],,,@nLin)
+	Next i     
+Else
+	FmtLin(,{aL[123]},,,@nLin)
+
+EndIf	
+FmtLin(,{aL[124],al[154]},,,@nLin)
+                                                
+// rotina para emissao do protocolo
+If nImpProtoc = 2
+	nLin := 01
+	lRet := .T.
+
+	//1-CNPJ/2-Nome Empresarial/ 3-CNAE
+  	FmtLin(,{aL[125],aL[153],aL[126],aL[127],aL[128],aL[129],aL[130]},,,@nLin)	
+	FmtLin({cCnPj,aInfo[03],Transform(Subs(aInfo[16],1,7),"@R 999999-9")},aL[131],,,@nLin) 
+
+	 //4-Nome do Trabalhador/5-BR/PDH/6-NIT
+	FmtLin(,{aL[132],aL[133]},,,@nLin)
+
+
+	cPis := If( Empty(SRA->RA_PIS), "NA", Transform(SRA->RA_PIS,"@R 999.99999.99-9") )
+	FmtLin({Subs(SRA->RA_NOME,1,40),cBRPDH,cPIS},aL[134],,,@nLin)       
+	
+	//7-Data Nascimento/8-Sexo/9-CTPS/10-ADMISSAO/ Regime Revezamento 
+	FmtLin(,{aL[135],aL[136]},,,@nLin)
+
+	//SR6->( dbSeek( xFilial("SR6")+SRA->RA_TNOTRAB ) )
+	//cRevez := If(empty(SR6->R6_REVEZAM),"NA",SR6->R6_REVEZAM)
+	FmtLin({DTOC(SRA->RA_NASC),cSexo,cCTPS,DTOC(SRA->RA_ADMISSA),cRevez},aL[137],,,@nLin) 
+	
+	FmtLin(,{aL[138],aL[139]},,,@nLin)
+	FmtLin({Subs(SRA->RA_MAT,1,40),fDesc("SI3",SRA->RA_CC,"I3_DESC",,SRA->RA_FILIAL),fDesc("SRJ",SRA->RA_CODFUNC,"RJ_DESC")},aL[140],,,@nLin)       
+
+	FmtLin(,{aL[141],aL[142]},,,@nLin)
+
+	If Alltrim(GETMV("MV_PAREND")) == "F"
+		lParEnd := "F"
+	Endif
+
+	cDataCid := alltrim(IF(lParEnd=="C",SM0->M0_CIDCOB,SM0->M0_CIDENT))+", "+StrZero(Day(dDataBase),2)+" de "
+	cDataCid += MesExtenso(Month(dDataBase))+" de "+Str(Year(dDataBase),4)
+
+	FmtLin({cDataCid},aL[143],,,@nLin) 
+
+	FmtLin(,{aL[144],aL[145],aL[146],aL[147],aL[148],aL[149],aL[150],aL[151],aL[152],aL[154]},,,@nLin)
+
+Endif
+RestArea(aGetArea)
+RETURN NIL
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³GPERPPP   ºAutor  ³Microsiga           º Data ³  12-18-02   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³                                                            º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP6                                                        º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+Static Function fPulaPag(nLinha)
+Local lRet :=.F.      
+
+If nTipoRel == 1
+	If nLinha > 2970		
+		oPrint:EndPage() 			// Finaliza a pagina
+		//-- CABECALHO 
+		oPrint:StartPage() 			// Inicia uma nova paginaElse
+		nLin := 030
+		nLinI:= 150
+		lRet := .T.
+	EndIf
+Else
+	If  nLin >= 58
+		FmtLin(,{aL[2]},,,@nLin)
+		nLin := 01
+		lRet := .T.
+	EndIf						
+	If lRet
+		FmtLin(,{aL[1],aL[153],aL[2]},,,@nLin)
+	EndIf
+EndIf
+Return(lRet)
+      
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³GPRPOBS   ºAutor  ³Tania Bronzeri      º Data ³ 25/07/2005  º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Funcao para gravacao do memo observacoes para o relatorio   º±±
+±±º          ³do PPP.                                                     º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³SX1-Valid do campo GPRPPP-16                                º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+User Function GPRPOBS()
+
+Local aAdvSize		:= {}
+Local aInfoAdvSize	:= {}
+Local aObjCoords	:= {}	
+Local aObjSize		:= {}
+Local bSet15		:= { || NIL }
+Local bSet24		:= { || NIL }
+Local cMsg			:= Space( 01 )
+Local cFile			:= "GPRPPOBS.MSG"
+Local nOk			:= 0.00
+Local oFont
+Local oDlg
+Local oMemo
+
+Private cCadastro := OemtoAnsi( STR0093 ) //"Observacao do PPP"
+
+IF File( cFile )
+	IF Empty( cMsg := MemoRead( cFile ) )
+		cMsg := Space( 01 )
+	EndIF
+EndIF
+
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Monta as Dimensoes dos Objetos         					   ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+aAdvSize		:= MsAdvSize()
+aAdvSize[6] := 210
+aAdvSize[5] := 538
+aInfoAdvSize	:= { aAdvSize[1] , aAdvSize[2] , aAdvSize[3] , aAdvSize[4] , 0 , 0 }
+aAdd( aObjCoords , { 000 , 000 , .T. , .T. } )
+aObjSize		:= MsObjSize( aInfoAdvSize , aObjCoords )
+
+DEFINE FONT oFont NAME "Arial" SIZE 0,-11 BOLD
+
+DEFINE MSDIALOG oDlg TITLE cCadastro From aAdvSize[7],0 TO aAdvSize[6],aAdvSize[5] OF oMainWnd PIXEL
+@ aObjSize[1][1]+8,aObjSize[1][2]+5 GET oMemo VAR cMsg MEMO SIZE 260 , 070 FONT oFont OF oDlg PIXEL
+
+bSet15	:= { || nOk:=1 , oDlg:End() }
+bSet24	:= { || oDlg:End() }
+
+ACTIVATE MSDIALOG oDlg ON INIT EnchoiceBar( oDlg , bSet15 , bSet24 ) CENTERED
+
+//Gravando a mensagem
+IF ( nOk == 1 )
+	While ( !( MemoWrit( cFile , cMsg ) ) .or. ( fError() != 0.00 ) )
+		//"N„o Foi Possivel Gravar o Arquivo de Observacoes: "###
+		//" Tentar Novamente? "###
+		//"Aviso!"
+		IF !( MsgYesNo( OemToAnsi( STR0094 ) + cFile + "." + OemToAnsi( STR0095 )  , OemToAnsi( STR0096 ) ) )
+			//"A nova Observacao n„o ser  gravada. " ### "Confirma?"
+			IF ( MsgYesNo( OemToAnsi( STR0097 ) , OemToAnsi( STR0098 ) ) )
+				Exit
+			EndIF
+		EndIF
+	End While
+EndIF
+
+Return .T.
+      
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³AjustaSx1PPPºAutor  ³Tania Bronzeri      º Data ³ 25/07/2005  º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Funcao para ajustar o SX1 das observacoes para emissao do re- º±±
+±±º          ³latorio do PPP.                                               º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³SX1-Valid do campo GPRPPP-16                                  º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+Static Function AjustaSx1PPP()
+
+Local aArea := GetArea()
+Local aHelp		:= 	{} 
+Local aHelpE	:=	{}
+LOcal aHelpI	:=	{}
+Local cHelp		:=	""                       
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Inclusao das Perguntas                                ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aRegs := {}
+
+SX1->( dbSetOrder(1))
+IF SX1->( dbSeek("GPRPPP    16") )
+	If AllTrim(Upper(SX1->X1_CNT01)) # "MEMO" .Or. AllTrim(Upper(SX1->X1_VALID)) # "U_GPRPOBS()"
+		FDelSX1(cPerg,"Observacoes?","20","20",.T.)
+		FDelSX1(cPerg,"Observacoes?","19","19",.T.)
+		FDelSX1(cPerg,"Observacoes ?","16","16",.T.)		
+	EndIf
+EndIf		
+IF SX1->( dbSeek("GPRPPP    18") )
+	If AllTrim(Upper(SX1->X1_VALID)) # "U_FRESPONSA()"
+		FDelSX1(cPerg,"Funcoes para o Responsavel ?","18","18",.T.)
+	EndIf
+EndIf
+IF SX1->( dbSeek("GPRPPP    22") )
+	If AllTrim(Upper(SX1->X1_VALID)) # "U_FREQEPI()"
+		FDelSX1(cPerg,"Requisit. dos EPIS ?","22","22",.T.)
+	EndIf
+EndIf
+
+aHelp := {	"Informe texto para impressao campo OBS ",;
+			"do Relat.PPP, p/todos os Funcionarios."}
+cHelp := ".GPRPPP16."
+Aadd(aRegs,{cPerg,"16","Observacoes ?"             ,"¿Observaciones ?"          ,"Notes ?"                   ,"MV_CHG","C",06,0,00,"G","U_GPRPOBS()"     ,"MV_PAR16","","","","Memo"              ,"","","","","","","","","","","","","","","","","","","","",""   ,"","S",aHelp,"","",cHelp})
+                     
+aHelp := {	"Informe se o Responsavel pelos",;
+			"Registros Ambientais deve ser,",;
+			"obrigatoriamente, um Engenheiro ",;
+			"de Segurança do Trabalho, ou po-",;
+			"de exercer outra funcao relaciona-",;
+			"da a area." }
+aHelpE:= {	"Informe se o Responsavel pelos",;
+			"Registros Ambientais deve ser,",;
+			"obrigatoriamente um Engenheiro ",;
+			"de Segurança do Trabalho, ou po-",;
+			"de exercer outra funcao relaciona-",;
+			"da a area." }
+aHelpI:= {	"Informe se o Responsavel pelos",;
+			"Registros Ambientais deve ser,",;
+			"obrigatoriamente um Engenheiro ",;
+			"de Segurança do Trabalho, ou po-",;
+			"de exercer outra funcao relaciona-",;
+			"da a area." }
+cHelp := ".GPRPPP17."
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³             Grupo   Ordem Pergunta Portugues               Pergunta Espanhol  		    Pergunta Ingles                  Variavel Tipo Tamanho Decimal Presel  GSC   Valid      Var01      Def01  DefSPA1  DefEng1  Cnt01  Var02  Def02  DefSpa2 DefEng2 Cnt02 Var03 Def03  DefSpa3  DefEng3  Cnt03 Var04 Def04 DefSpa4 DefEng4 Cnt04  Var05  Def05  DefSpa5 DefEng5 Cnt05  XF3 GrgSxg  cPyme aHelpPor aHelpEng  aHelpSpa cHelp ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+Aadd(aRegs,{cPerg,"17","Obriga Responsavel Engenheiro?" ,"¿Obriga Respons. Engenheiro?","Obriga Responsavel Engenheiro?","MV_CHH","N"  ,1       ,0     ,0     ,"C"  ,"NaoVazio","MV_PAR17","Sim" ,"Si"    ,"Yes"   ,""   ,""    ,"Nao" ,"No"   ,"No"   ,""  ,""   ,""    ,""      ,""      ,""   ,""   ,""   ,""     ,""     ,""   ,""    ,""    ,""     ,""     ,""   ,""  ,""    ,"S"  ,aHelp   ,aHelpI   ,aHelpE  ,cHelp})
+
+                     
+aHelp := {	"Caso a opcao anterior seja 'Nao', ",;
+			"informe aqui quais as funcoes que ",;
+			"deseja considerar para impressao do ",;
+			"Responsavel pelos Registros Ambientais." }
+aHelpE:= {	"Caso a opcao anterior seja 'Nao', ",;
+			"informe aqui quais as funcoes que ",;
+			"deseja considerar para impressao do ",;
+			"Responsavel pelos Registros Ambientais." }
+aHelpI:= {	"Caso a opcao anterior seja 'Nao', ",;
+			"informe aqui quais as funcoes que ",;
+			"deseja considerar para impressao do ",;
+			"Responsavel pelos Registros Ambientais." }
+cHelp := ".GPRPPP18."
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³            Grupo   Ordem Pergunta Portugues              Pergunta Espanhol  		       Pergunta Ingles                Variavel Tipo Tamanho Decimal Presel  GSC   Valid          Var01      Def01 DefSPA1 DefEng1 Cnt01  Var02  Def02 DefSpa2 DefEng2 Cnt02 Var03 Def03 DefSpa3 DefEng3 Cnt03 Var04 Def04 DefSpa4 DefEng4 Cnt04  Var05 Def05 DefSpa5 DefEng5 Cnt05 XF3 GrgSxg cPyme aHelpPor aHelpEng  aHelpSpa cHelp ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+Aadd(aRegs,{cPerg,"18","Funcoes para o Responsavel ?" ,"¿Funcoes para o Responsavel ?","Funcoes para o Responsavel ?","MV_CHI","C"  ,9       ,0     ,0     ,"G"  ,"U_FRESPONSA()","MV_PAR18",""    ,""     ,""     ,""   ,""    ,""    ,""    ,""     ,""   ,""   ,""   ,""     ,""     ,""   ,""   ,""   ,""     ,""     ,""   ,""   ,""   ,""     ,""     ,""  ,""  ,""   ,"S"  ,aHelp   ,aHelpI   ,aHelpE  ,cHelp})
+
+
+aHelp := {	"Selecione o formato do formulario ",;
+			"onde sera impresso o relatorio.   ",;
+													 }
+aHelpE:= {	"Selecione o formato do formulario ",;
+			"onde sera impresso o relatorio.   ",;
+													 }
+aHelpI:= {	"Selecione o formato do formulario ",;
+			"onde sera impresso o relatorio.   ",;
+													 }
+cHelp := ".GPRPPP19." 
+
+Aadd(aRegs,{cPerg,"19","Tipo de Impressao ?" ,"¿Tipo de Impressao ?","Tipo de Impressao ?","MV_CHJ","N"  ,1       ,0     ,2     ,"C"  ,"" ,"MV_PAR19","Grafico","Grafico"	,"Grafico"  ,""   ,""    ,"Zebrado"    ,"Zebrado"	,"Zebrado"  ,""   ,""   ,""   ,""     ,""     ,""   ,""   ,""   ,""     ,""     ,""   ,""   ,""   ,""     ,""     ,""  ,""  	 ,""   ,"S"  ,aHelp   ,aHelpI   ,aHelpE  ,cHelp})
+Aadd(aRegs,{cPerg,"09","Cod. Funcao De    ?" ,"¿De Funcion        ?","From Position     ?","MV_CHA","C"  ,5       ,0     ,0     ,"C"  ,"" ,"MV_PAR09",""		,""			,""  		,""   ,""    ,""    		,""    		,""     	,""   ,""   ,""   ,""     ,""     ,""   ,""   ,""   ,""     ,""     ,""   ,""   ,""   ,""     ,""     ,""  ,"SRJ"  ,""   ,"S"  })
+Aadd(aRegs,{cPerg,"10","Cod. Funcao Ate   ?" ,"¿A Funcion         ?","To Position       ?","MV_CHB","C"  ,5       ,0     ,0     ,"C"  ,"" ,"MV_PAR10",""		,""			,""  		,""   ,""    ,""    		,""    		,""     	,""   ,""   ,""   ,""     ,""     ,""   ,""   ,""   ,""     ,""     ,""   ,""   ,""   ,""     ,""     ,""  ,"SRJ"  ,""   ,"S"  })
+
+aHelp := {	"Selecione SIM para emissão do     ",;
+			"protocolo de entrega.             ",;
+													 }
+aHelpE:= {	"Selecione SIM para emissão do     ",;
+			"protocolo de entrega.             ",;
+													 }
+aHelpI:= {	"Selecione SIM para emissão do     ",;
+			"protocolo de entrega.             ",;
+													 }
+cHelp := ".GPRPPP20." 
+
+Aadd(aRegs,{cPerg,"20","Imprimir Recibo   ?" ,"¿Imprimir Recibo   ?","Imprimir Recibo   ?","MV_CHL","N"  ,1       ,0     ,2     ,"C"  ,"" ,"MV_PAR20","Não","Não","Não"  ,""   ,""    ,"Sim","Sim","Sim"  ,""   ,""   ,""   ,""     ,""     ,""   ,""   ,""   ,""     ,""     ,""   ,""   ,""   ,""     ,""     ,""  ,""  	 ,""   ,"S"  ,aHelp   ,aHelpI   ,aHelpE  ,cHelp})
+
+
+aHelp := {	"Selecione SIM para emissão do     ",;
+			"resultados dos Exames.            ",;
+													 }
+aHelpE:= {	"Selecione SIM para emissão do     ",;
+			"resultados dos Exames.            ",;
+													 }
+aHelpI:= {	"Selecione SIM para emissão do     ",;
+			"resultados dos Exames.            ",;
+													 }
+cHelp := ".GPRPPP21." 
+
+Aadd(aRegs,{cPerg,"21","Imprimir Resul. Exames ?" ,"¿Imprimir Resul. Exames ?","Imprimir Resul. Exames ?","MV_CHM","N"  ,1       ,0     ,2     ,"C"  ,"" ,"MV_PAR21","Não","Não","Não"  ,""   ,""    ,"Sim","Sim","Sim"  ,""   ,""   ,""   ,""     ,""     ,""   ,""   ,""   ,""     ,""     ,""   ,""   ,""   ,""     ,""     ,""  ,""  	 ,""   ,"S"  ,aHelp   ,aHelpI   ,aHelpE  ,cHelp})
+
+                    
+//aHelpE := {	"                                        ",;
+aHelp  := {	"Atendimento aos requisitos das NR-06 e  ",;
+            "NR-09 do MTE pelos EPI Informados.      ",;
+            "Marque as opções que serão impressas    ",;
+            "como 'SIM'. As opcões que não estiverem ",;
+            "marcadas serão impressas como 'Nao'.    " }
+aHelpE := {	"Atencion a los requisitos de las NR-06 y",;
+			"NR-09 del MTE por los EPI informados.   ",;
+			"Senale las opciones que se imprimiran   ",;
+			"como 'SI'. Las opciones que no esten    ",;
+			"senaladas se imprimiran como 'NO'.      " }
+aHelpI := {	"Informed IPE's compliance with          ",;
+			"requirements of NR-06 and NR-09 of MTE. ",;
+			"Check options that will be printed with ",;
+			"'Yes'. Options which are not checked    ",;
+			"will be printed with 'No'.              " }
+cHelp := ".GPRPPP22."
+PutSX1Help("P"+cHelp,aHelp,aHelpI,aHelpE)
+//           Grupo   Ordem Pergunta Portugues     Pergunta Espanhol        Pergunta Ingles     Variavel  Tipo Tamanho Decimal Presel  GSC   Valid         Var01       Def01  DefSPA1  DefEng1  Cnt01 Var02 Def02 DefSpa2  DefEng2  Cnt02 Var03 Def03 DefSpa3 DefEng3 Cnt03 Var04 Def04 DefSpa4 DefEng4 Cnt04  Var05  Def05  DefSpa5 DefEng5 Cnt05 XF3 GrgSxg  cPyme aHelpPor aHelpEng aHelpSpa cHelp
+Aadd(aRegs,{cPerg,"22","Requisit. dos EPIS ?" ,"¿Requisit. de los EPIS ?" ,"EPIS Requirem." ,"MV_CHX" ,"C" ,5      ,0      ,1     ,"G"  ,"U_FREQEPI()" ,"MV_PAR22" ,""    ,""      ,""      ,""   ,""   ,""   ,""     ,""      ,""   ,""   ,""   ,""     ,""     ,""   ,""  ,""   ,""     ,""     ,""	,""     ,""    ,""    ,""     ,""   ,""  ,""    ,"S"  ,""      ,""      ,""     ,cHelp})
+
+ValidPerg(aRegs,cPerg,.T.)
+
+RestArea( aArea )
+
+Return 
+       
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o	 ³fResponsa ³ Autor ³ Tania Bronzeri	    ³ Data ³13/04/2006³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³Selecionar Funcao do Responsavel	 	 					  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe	 ³ fResponsa()											 	  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso		 ³ Generico 												  ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß/*/
+User Function fResponsa(l1Elem,lForca)
+
+Local cTitulo:=""
+Local MvPar
+Local MvParDef:=""
+
+Private aResp:={}
+Default	lForca	:= .F.
+l1Elem := If (l1Elem = Nil , .F. , .T.)
+
+cAlias := Alias() 					 // Salva Alias Anterior
+MvPar:=&(Alltrim(ReadVar()))		 // Carrega Nome da Variavel do Get em Questao
+mvRet:=Alltrim(ReadVar())			 // Iguala Nome da Variavel ao Nome variavel de Retorno
+
+aResp := {	"1 = " + STR0099 , "2 = " + STR0100 , "3 = " + STR0101 , "4 = " + STR0102 , "5 = " + STR0103 , ;
+			"6 = " + STR0104 , "7 = " + STR0105 , "8 = " + STR0106 , "9 = " + STR0107 }
+		//"Medico Trabalho"##"Enfermeiro Trabalho"##"Auxiliar Enferm. Trab."##"Eng. Seguranca Trabalho"##"Tec. Seguranca Trabalho"##"Medico"##"Enfermeiro"##"Aux. Enfermagem"##"Outros"
+MvParDef:="123456789"
+cTitulo :=STR0108  //"Funcao do Responsavel"
+
+IF f_Opcoes(@MvPar,cTitulo,aResp,MvParDef,12,49,Iif(lForca,!lForca,l1Elem),Iif(lForca,1,nil),Iif(lForca,2,nil))  // Chama funcao f_Opcoes
+	&MvRet := mvpar					 // Devolve Resultado
+EndIF                           
+
+dbSelectArea(cAlias) 				 // Retorna Alias
+
+Return( .T. )
+
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o	 ³fReqEPI   ³ Autor ³ Marcelo Silveira      ³ Data ³13/10/2006³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³Selecionar Requisitos do EPI                                ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe	 ³ fReqEPI()                                                  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso		 ³ Generico 												  ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß/*/
+User Function fReqEPI(l1Elem,lForca)
+
+Local cTitulo:=""
+Local MvPar
+Local MvParDef:="" 
+Local i := 1
+
+Private aReq:={}
+Default	lForca	:= .F.
+l1Elem := If (l1Elem = Nil , .F. , .T.)
+
+cAlias := Alias()               // Salva Alias Anterior
+MvPar:=&(Alltrim(ReadVar()))   // Carrega Nome da Variavel do Get em Questao
+mvRet:=Alltrim(ReadVar())      // Iguala Nome da Variavel ao Nome variavel de Retorno
+
+aReq := {	STR0124 ,; //"Foi tentada a implementacao de medidas de protecao coletiva, de carater administrativo ou de organizacao do trabalho, optando-se pelo EPI por inviabilidade tecnica, insuficiencia ou interinidade, ou ainda em carater complementar ou emergencial"
+			STR0125 ,; //"Foram observadas as condicoes de funcionamento e do uso ininterrupto do EPI ao longo do tempo, conforme especificacao tecnica do fabricante, ajustada as condicoes de campo."
+			STR0126 ,; //"Foi observado o prazo de validade, conforme Certificado de Aprovacao-CA do MTE."
+			STR0127 ,; //"Foi observada a periodicidade de troca definida pelos programas ambientais, comprovada mediante recibo assinado pelo usuario em epoca propria."
+			STR0128  } //"Foi observada a higienizacao."
+
+MvParDef:= "12345"
+cTitulo := STR0129 //"Atendimento aos requisitos pelos EPIS informados"
+
+IF f_Opcoes(@MvPar,cTitulo,aReq,MvParDef,12,49,Iif(lForca,!lForca,l1Elem),Iif(lForca,1,nil),Iif(lForca,2,nil))  // Chama funcao f_Opcoes
+	&MvRet := mvpar
+EndIF                           
+
+dbSelectArea(cAlias) // Retorna Alias
+
+Return( .T. )
+
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºFuncao    ³fPPPGraf  ºAutor  ³Andreia dos Santos  º Data ³  04/27/06   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³ Impressao grafica                                          º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP                                                         º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function fPPPGraf()
+Local cCTPS 	:= SRA->RA_NUMCP + "-" + SRA->RA_SERCP + "/" + SRA->RA_UFCP
+Local cSexo 	:= SRA->RA_SEXO
+Local cCnpj		:= ""
+Local cPIS		:= ""
+Local cRevez	:= ""
+Local cBRPDH	:= ""
+Local aPeriodo 	:= array(8)
+Local aLotacao 	:= {}   
+Local lAdiciona := .F.
+Local cChave	:= ''
+Local aAgente 	:= array(9)	
+Local aExame	:= array(4)
+Local aCargos	:= {}
+Local nX		:= 0
+Local nI		:= 0
+Local nReq1     := 0
+Local aCat		:= {}
+Local cDescDet 	:= ""
+Local lImprimiu	:= .F.
+Local cStartPath := GetSrvProfString("StartPath","")
+Local cBmp		:= ""
+Local lParEnd   := "C"
+Local cDataCid  := ""
+Local lTemCatSR8:= .F.
+Local aReqEPIFim:= {}
+
+oPrint:StartPage() 			// Inicia uma nova pagina
+
+nLin := 010
+nLinI:= 150
+//ÚÄÄÄÄÄÄÄÄÄ¿
+//³Quadro I ³
+//ÀÄÄÄÄÄÄÄÄÄÙ
+oPrint:say(nLin-10,350 ,STR0134,oFont13n)	//"ANEXO XV - INSTRUÇÃO NORMATIVA Nº 45 INSS/PRES, DE 6 DE AGOSTO DE 2010."
+nLin += 40
+cStartPath += "LogoPrev"
+oPrint:SayBitmap(80,1000,cStartPath + ".BMP",370,480)
+oPrint:say(nLin+470,650 ,STR0010,oFont13n)	//"PERFIL PROFISSIOGRAFICO PREVIDENCIARIO - PPP" //"PERFIL PROFISSIOGRAFICO PREVIDENCIARIO - PPP"
+nLinI += 450
+nLin  += 500
+oPrint:Box( nLinI,030,nLin+360,2350)  		// box secao I
+oPrint:Line(nLin+200,030,nLin+200,2350) 	// Linha
+
+oPrint:say(nLin+50,100, "I",oFont13n)		
+oPrint:Say(nLin+50,200,STR0011,oFont13n) 	//"SECAO DE DADOS ADMINISTRATIVOS" //"SECAO DE DADOS ADMINISTRATIVOS"
+
+nLin := 400
+nLinI += 150
+oPrint:Line(nLinI,780,nLin+250,780)			// Linha Div.Cabecalho
+oPrint:Line(nLin+250,030,nLin+250,2350)    // Linha
+oPrint:Line(nLinI,2000,nLin+250,2000)		// Linha Div.Cabecalho
+nLin +=200
+oPrint:say(nLin+50,0050, STR0012,oFont10n)	//"1 - CNPJ do Domicilio Tributario/CEI"
+oPrint:say(nLin+50,0850, STR0013,oFont10n)	//"2 - Nome Empresarial"
+oPrint:say(nLin+50,2050, STR0014,oFont10n)	//"3 - CNAE"
+
+If aInfo[15] == 1 //CEI                                           
+	cCnpj := Transform(SUBSTR(aInfo[8],3,12),"@R 99.999.99999/99")
+Else
+	cCnpj := Transform(SUBSTR(aInfo[8]+Space(16),1,16),"@R 99999999/9999-99")
+EndIF	
+nLin += 110
+oPrint:say(nLin,0050, cCnPj ,oFont07)			
+oPrint:say(nLin,0850, aInfo[03] ,oFont07)			
+oPrint:say(nLin,2050, Transform(Subs(aInfo[16],1,7),"@R 999999-9") ,oFont07)			
+
+oPrint:Line(nLinI,1500,nLin+200,1500)			// Linha Div.Cabecalho
+oPrint:Line(nLinI,1900,nLin+200,1900)			// Linha Div.Cabecalho
+
+oPrint:say(nLin+50,0050, STR0015,oFont10n)			 //"4 - Nome do Trabalhador"
+oPrint:say(nLin+50,1550, STR0016,oFont10n)			 //"5 - BR/PDH"
+oPrint:say(nLin+50,1950, STR0017,oFont10n)			 //"6 - NIT"
+
+cBRPDH := If( SRA->RA_BRPDH =="1",STR0018,If( SRA->RA_BRPDH =="2",STR0019,STR0020) ) //"BR"###"PDH"###"NA"
+cPis := If( Empty(SRA->RA_PIS), "NA", Transform(SRA->RA_PIS,"@R 999.99999.99-9") )
+
+nLin += 140
+oPrint:say(nLin,0050, Subs(SRA->RA_NOME,1,40) ,oFont07)			
+oPrint:say(nLin,1550, cBRPDH 	,oFont07)			
+oPrint:say(nLin,1950, cPis 		,oFont07)			
+
+nLinI += 160  
+oPrint:Line(nLinI,0030,nLin+300,0030)			// Coluna Inicio
+oPrint:Line(nLinI,2349,nLin+360,2349)			// Coluna Final
+oPrint:Line(nLin+200,030,nLin+200,2350)        // Linha
+oPrint:Line(nLinI,0500,nLin+200,0500)			// Linha Div.Cabecalho
+oPrint:Line(nLinI,0800,nLin+200,0800)		  	// Linha Div.Cabecalho
+oPrint:Line(nLinI,1300,nLin+200,1300)			// Linha Div.Cabecalho
+oPrint:Line(nLinI,1800,nLin+200,1800)		  	// Linha Div.Cabecalho
+
+nLin +=30
+oPrint:say(nLin+50,0050, STR0021,oFont10n)			 //"7 - Data do Nascimento"
+oPrint:say(nLin+50,0520, STR0022,oFont10n)			 //"8 - Sexo(F/M)"
+oPrint:say(nLin+50,0830, STR0023,oFont10n)			 //"9 - CTPS(No, Serie e UF)"
+oPrint:say(nLin+50,1350, STR0024,oFont10n)			 //"10 - Data de Admissao"
+oPrint:say(nLin+50,1830, STR0025,oFont10n)			 //"11 - Regime Revezamento"
+
+nLin += 130
+SR6->( dbSeek( xFilial("SR6")+SRA->RA_TNOTRAB ) )
+cRevez := If(empty(SR6->R6_REVEZAM),"NA",SR6->R6_REVEZAM)
+
+oPrint:say(nLin,0100, DTOC(SRA->RA_NASC) ,oFont07)			
+oPrint:say(nLin,0570, cSexo ,oFont07)			
+oPrint:say(nLin,0830, cCTPS ,oFont07)			
+oPrint:say(nLin,1370, DTOC(SRA->RA_ADMISSA),oFont07)		
+oPrint:say(nLin,1830, cRevez ,oFont07)			
+
+//12 - CAT REGISTRADA
+nLinI += 140
+oPrint:Line(nLinI,0030,nLin+120,0030)			// Coluna Inicio
+oPrint:Line(nLinI,2349,nLin+120,2349)			// Coluna Final
+oPrint:Line(nLin+120,030,nLin+120,2350)        // Linha
+oPrint:Line(nLinI,150,nLin+120,150)				// Linha Div.Cabecalho
+nLin +=20
+oPrint:say(nLin+50,0050, "12"		,oFont12n)			
+oPrint:say(nLin+50,0200, STR0026	,oFont12n)			 //"CAT REGISTRADA"
+
+nLinI += 150
+oPrint:Line(nLinI,500,nLin+100,500)				// Linha Div.Cabecalho
+oPrint:Line(nLinI,1175,nLin+100,1175)			// Linha Div.Cabecalho
+oPrint:Line(nLinI,1675,nLin+100,1675)			// Linha Div.Cabecalho
+nLin +=60
+oPrint:say(nLin+50,0050, STR0027,oFont10n)			 //"12.1 - Data do Registro"
+oPrint:say(nLin+50,0550, STR0028,oFont10n)			 //"12.2 - Numero da CAT "
+oPrint:say(nLin+50,1225, STR0027,oFont10n)			 //"12.1 - Data do Registro"
+oPrint:say(nLin+50,1725, STR0028,oFont10n)			 //"12.2 - Numero da CAT "
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³CAT Emitidas no Periodo³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Estrutura do array aCAT³
+//³=======================³
+//³[1] Data da 1a coluna  ³
+//³[2] Cod.CAT 1a Coluna  ³
+//³[3] Data da 2a Coluna  ³
+//³[4] Cod.CAT 2a Coluna  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+dbSelectArea("SR8") 					
+If SR8->(dbSeek(SRA->RA_FILIAL+SRA->RA_MAT))
+	While SR8->(!EOF()) .and. (SR8->R8_FILIAL + SR8->R8_MAT) == (SRA->RA_FILIAL + SRA->RA_MAT)
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³Se houver CAT no cadastro imprime data e Numero do Docto³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If ! Empty (SR8->R8_DTCAT) .and. (SR8->R8_DTCAT>= dDataDe .and. SR8->R8_DTCAT<= dDataAte)
+			nX := len(aCat) 
+			If nX == 0 .or. !empty(aCat[nX,3])
+		        AADD(aCat,{DTOC(SR8->R8_DTCAT),Transform(SR8->R8_CODCAT,"@R 9999999999-9/99"),"",""})
+		    Else
+		        aCat[nX,3] 	:= DTOC(SR8->R8_DTCAT)
+		        aCat[nX,4]	:= Transform(SR8->R8_CODCAT,"@R 9999999999-9/99")
+	        EndIf
+		Endif			
+		SR8->( dbSkip())
+	EndDo
+EndIf
+
+//-- Testa a existencia de itens de CAT no cadastro de afastamentos
+lTemCatSR8:= Len(aCat) > 0
+
+dbSelectArea("RC9") 					
+If RC9->(dbSeek(SRA->RA_FILIAL+SRA->RA_MAT))
+	While RC9->(!EOF()) .and. (RC9->RC9_FILIAL + RC9->RC9_MAT) == (SRA->RA_FILIAL + SRA->RA_MAT)
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³Imprime CATS cadastradas com o campo Afastamento igual a 'NAO'. Se nao ³
+		//³houver CATS no cadastro de Afastamento, as CATS cadastradas com o campo³
+		//³Afastamento igual a 'SIM' tambem serao impressas.  			          ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If lTemCatSR8 .And. RC9->RC9_AFAST == "1"
+			RC9->(dbSkip())   
+			Loop
+		Endif
+		If !Empty (RC9->RC9_DATA) .And. (RC9->RC9_DATA>= dDataDe .and. RC9->RC9_DATA<= dDataAte)
+			nX := len(aCat) 
+			If nX == 0 .Or. !empty(aCat[nX,3])
+	        	AADD(aCat,{DTOC(RC9->RC9_DATA),Transform(RC9->RC9_NUMERO,"@R 9999999999-9/99"),"",""})
+ 	        Else
+		        aCat[nX,3] 	:= DTOC(RC9->RC9_DATA)
+		        aCat[nX,4]	:= Transform(RC9->RC9_NUMERO,"@R 9999999999-9/99")
+        	EndIf
+		Endif	
+		RC9->(dbSkip())
+	Enddo	
+EndIf
+
+If len(aCat) > 0     
+	For nX := 1 to len(aCat)
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³Verifica Salto de Pagina³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		fPulaPag(nLin+0100)
+		nLin +=60
+		nLinI := nLin
+		oPrint:Line(nLinI,0030,nLin+100,0030)		// Coluna Inicio
+ 		oPrint:Line(nLinI+40,0500,nLin+100,0500)		// Linha Div.Cabecalho
+		oPrint:Line(nLinI+40,1175,nLin+100,1175)		// Linha Div.Cabecalho
+		oPrint:Line(nLinI+40,1675,nLin+100,1675)		// Linha Div.Cabecalho
+		oPrint:Line(nLinI+40,2349,nLin+100,2349)		// Coluna Final
+		oPrint:Line(nLin+0100,030,nLin+0100,2349) 		// Linha
+
+		oPrint:say(nLin+50,0050,aCat[nX,1],oFont07)			
+		oPrint:say(nLin+50,0550,aCat[nX,2],oFont07)			
+		oPrint:say(nLin+50,1225,aCat[nX,3],oFont07)			
+		oPrint:say(nLin+50,1725,aCat[nX,4],oFont07)			
+	Next	  
+Else
+	nLin +=60
+	nLinI := nLin
+	oPrint:Line(nLinI,0030,nLin+100,0030)		// Coluna Inicio
+	oPrint:Line(nLinI+40,0500,nLin+100,0500)		// Linha Div.Cabecalho
+	oPrint:Line(nLinI+40,1175,nLin+100,1175)		// Linha Div.Cabecalho
+	oPrint:Line(nLinI+40,1675,nLin+100,1675)		// Linha Div.Cabecalho
+	oPrint:Line(nLinI+40,2349,nLin+100,2349)		// Coluna Final
+	oPrint:Line(nLin+0100,030,nLin+0100,2349) 		// Linha
+
+	oPrint:say(nLin+50,0550,"NA",oFont07)			
+	oPrint:say(nLin+50,1225,"NA",oFont07)			
+	oPrint:say(nLin+50,1725,"NA",oFont07)				
+EndIf
+
+//LOTACAO E ATRIBUICAO
+nLinI 	+= 100
+nLin  	+= 50	
+oPrint:Line(nLinI,0030,nLin+120,0030)			// Coluna Inicio
+oPrint:Line(nLinI,2349,nLin+120,2349)			// Coluna Final
+oPrint:Line(nLin+120,030,nLin+120,2350)        // Linha
+oPrint:Line(nLinI,150,nLin+120,150)				// Linha Div.Cabecalho
+nLin 	+= 20
+oPrint:say(nLin+50,0050, "13"		,oFont12n)			
+oPrint:say(nLin+50,0200, STR0029	,oFont12n)			 //"LOTACAO E ATRIBUICAO"
+
+nLinI 	+= 70
+
+oPrint:Line(nLinI,0030,nLin+225,0030)			// Coluna Inicio
+oPrint:Line(nLinI,2349,nLin+225,2349)			// Coluna Final
+oPrint:Line(nLin+230,030,nLin+230,2350)        // Linha
+
+oPrint:Line(nLinI,0420,nLin+225,0420)			// Linha Div.Cabecalho
+oPrint:Line(nLinI,0670,nLin+225,0670)			// Linha Div.Cabecalho
+oPrint:Line(nLinI,0920,nLin+225,0920)			// Linha Div.Cabecalho
+oPrint:Line(nLinI,1400,nLin+225,1400)			// Linha Div.Cabecalho
+oPrint:Line(nLinI,1896,nLin+225,1896)			// Linha Div.Cabecalho
+oPrint:Line(nLinI,2110,nLin+225,2110)			// Linha Div.Cabecalho
+nLin +=60
+oPrint:say(nLin+50,0050, STR0030		,oFont10n)	//"13.1 - Periodo"
+oPrint:say(nLin+50,0450, STR0031		,oFont10n)	//"13.2 - CNPJ/"
+oPrint:say(nLin+50,0700, STR0032		,oFont10n)	//"13.3 - Setor"
+oPrint:say(nLin+50,0940, STR0033		,oFont10n)	//"13.4 - Cargo "
+oPrint:say(nLin+50,1430, STR0034		,oFont10n)	//"13.5 - Funcao"
+oPrint:say(nLin+50,1910, STR0035		,oFont10n)	//"13.6 - CBO"	
+oPrint:say(nLin+50,2130, "13.7 - Cod."	,oFont10n)		 
+nLin += 50
+oPrint:say(nLin+50,0500, STR0036,oFont10n)			 //"CEI "
+oPrint:say(nLin+50,2130, STR0037,oFont10n)			 //"GFIP"
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³13- LOTACAO E ATRIBUICAO                ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea("RC6")	
+dbSetOrder(1)
+If dbSeek(SRA->RA_FILIAL+ SRA->RA_MAT)
+	While RC6->(!EOF()) .and. (RC6->RC6_FILIAL + RC6->RC6_MAT) == (SRA->RA_FILIAL + SRA->RA_MAT)
+	                 
+		aFill(aPeriodo,"")
+		
+		aPeriodo[1] := DtoC(RC6->RC6_DATAIN)        
+		aPeriodo[2] := DtoC(RC6->RC6_DATAFI)
+		  
+		If RC6->RC6_DATAIN < dDataDe .or. RC6->RC6_DATAIN > dDataAte
+			RC6->( dbSkip() )
+			Loop
+		EndIf	
+		
+		SI3->( dbSeek(xFilial("SI3")+RC6->RC6_CC))
+		If TYPE("SI3->I3_CEI") # "U" .and. TYPE("SI3->I3_TIPO") # "U"
+			aPeriodo[3] := If(SI3->I3_TIPO=="1",Transform(SI3->I3_CEI,"@R 99999999/9999-99"),Transform(SI3->I3_CEI,"@R 99.999.999/9999-99")) //CNPJ/CEI
+		Else
+			aPeriodo[3] := ""
+		Endif
+		aPeriodo[3] := If( empty(val(aPeriodo[3])),cCnPj,aPeriodo[3] )//CNPJ/CEI			
+		
+		aPeriodo[4] := SUBS(FDESC("SI3",RC6->RC6_CC,"I3_DESC"),1,14) //SETOR
+		aPeriodo[5] := SUBS(RC6->RC6_DESCCA,1,27) //CARGO
+		
+		SRJ->( dbSeek(xFilial("SRJ")+RC6->RC6_CODFUN))
+		If TYPE("SRJ->RJ_PPPIMP") # "U" .AND. SRJ->( !EOF() )		
+			If  TYPE("SRJ->RJ_LIDER") # "U" 			
+				aPeriodo[6] := If( SRJ->RJ_PPPIMP # "1","NA",If( Empty(SRJ->RJ_LIDER) .Or. SRJ->RJ_LIDER # "1","NA",SUBS(RC6->RC6_DESCFUN,1,30)))
+			Else
+				aPeriodo[6] := If( SRJ->RJ_PPPIMP # "1","NA",SUBS(RC6->RC6_DESCFUN,1,30))
+			EndIf		
+		Else
+			aPeriodo[6] := SUBS(RC6->RC6_DESCFUN,1,30) //FUNCAO
+		EndIf	
+		aPeriodo[7] := Strzero(val(fCodCBO(RC6->RC6_FILIAL,RC6->RC6_CODFUN,If(!Empty(RC6->RC6_DATAFI),RC6->RC6_DATAFI,DtEmissa))),6) //CBO
+		aPeriodo[8]	:= If( Empty(RC6->RC6_GFIP), "", RC6->RC6_GFIP) //Cod.GFIP
+	        
+		//       13.2-CNPJ/CEI /13.3-Setor    /13.4-Cargo   /13.5-Funcao  /13.6-CBO     /13.7-Cod.GFIP
+		cChave:= aPeriodo[3]  + aPeriodo[4] + aPeriodo[5] + aPeriodo[6] + aPeriodo[7] + aPeriodo[8] 
+		nPos:= Ascan(aLotacao,{|x| ( x[3] + x[4] + x[5] + x[6] + x[7] +  x[8] ) == ;
+		                            ( cChave  )	;
+	                          };
+                    )
+                   
+		IF Empty(nPos)
+			lAdiciona:= .T.			 
+		Else    
+		    //-- Verifica se eh continuacao da lotação/atribuicao
+		    lAdiciona:=.F. 
+		    For nX:= nPos To len(aLotacao)
+    	    	IF cChave == ( aLotacao[nX,3] + aLotacao[nX,4] + aLotacao[nX,5] + aLotacao[nX,6] + aLotacao[nX,7] + aLotacao[nX,8]  )
+	    	    	IF ( Dtoc(Ctod (aLotacao[nPos,2]) + 1 )) == aPeriodo[1]
+	    	    	   //-- Amplia o periodo em que o funcionario esteve lotado/atribuida a funcao
+	    	    	   aLotacao[nPos,2] := aPeriodo[2]
+	    	    	   Exit
+	    	    	ElseIF aLotacao[nX,1] > aPeriodo[1]
+  		    	    	   lAdiciona:= .T.
+		    	    	   Exit  
+	       	    	Endif  
+	       	    Endif	 
+		    Next nX 
+		Endif			           
+		
+		IF lAdiciona
+			aADD(aLotacao,aClone(aPeriodo))
+		Endif
+		
+		AADD(aCargos,{RC6->RC6_DATAIN,RC6->RC6_DATAFI,RC6->RC6_CARGO,RC6->RC6_CC})
+					    
+	   	dbSelectArea("RC6")
+		dbSkip()
+	EndDo    
+	
+	For nX :=1 to Len(aLotacao)
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³Verifica Salto de Pagina³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	  	fPulaPag(nLin+170)
+
+		nLin 	+= 20
+		nLinI	:= nLin
+		oPrint:Line(nLinI+090,0030,nLin+170,0030)			// Coluna Inicio
+		oPrint:Line(nLinI+090,2349,nLin+170,2349)			// Coluna Final
+		oPrint:Line(nLin+170,0030,nLin+170,2350)   	    // Linha
+		
+		oPrint:Line(nLinI+090,0420,nLin+170,0420)			// Linha Div.Cabecalho
+		oPrint:Line(nLinI+090,0670,nLin+170,0670)			// Linha Div.Cabecalho
+		oPrint:Line(nLinI+090,0920,nLin+170,0920)			// Linha Div.Cabecalho/Cargo
+		oPrint:Line(nLinI+090,1400,nLin+170,1400)			// Linha Div.Cabecalho
+		oPrint:Line(nLinI+090,1896,nLin+170,1896)			// Linha Div.Cabecalho
+		oPrint:Line(nLinI+090,2110,nLin+170,2110)			// Linha Div.Cabecalho
+		nLin +=60
+		
+		oPrint:say(nLin+50,0050,aLotacao[nX,1],oFont07)	//Periodo inicio
+		oPrint:say(nLin+50,0220,"a"        ,oFont07)	//
+		oPrint:say(nLin+50,0270,aLotacao[nX,2],oFont07)	//Periodo Final
+		oPrint:say(nLin+50,0430,aLotacao[nX,3],oFont07)	//cnpj/cei
+		oPrint:say(nLin+50,0680,aLotacao[nX,4],oFont07)	//Setor
+		oPrint:say(nLin+50,0930,aLotacao[nX,5],oFont07)	//Cargo
+		oPrint:say(nLin+50,1410,aLotacao[nX,6],oFont07)	//Funcao
+		oPrint:say(nLin+50,1946,aLotacao[nX,7],oFont07)	//CBO
+		oPrint:say(nLin+50,2170,aLotacao[nX,8],oFont07)	//Cod. GFIP
+	Next nX		
+Else 
+	nLin += 60
+	oPrint:Line(nLinI+090,0030,nLin+170,0030)			// Coluna Inicio
+	oPrint:Line(nLinI+090,2349,nLin+170,2349)			// Coluna Final
+	oPrint:Line(nLin+170,0030,nLin+170,2350)   	    // Linha
+	
+	oPrint:Line(nLinI+090,0420,nLin+170,0420)			// Linha Div.Cabecalho
+	oPrint:Line(nLinI+090,0670,nLin+170,0670)			// Linha Div.Cabecalho
+	oPrint:Line(nLinI+090,0920,nLin+170,0920)			// Linha Div.Cabecalho/Cargo
+	oPrint:Line(nLinI+090,1400,nLin+170,1400)			// Linha Div.Cabecalho
+	oPrint:Line(nLinI+090,1896,nLin+170,1896)			// Linha Div.Cabecalho
+	oPrint:Line(nLinI+090,2110,nLin+170,2110)			// Linha Div.Cabecalho
+	nLinI 	+= 70       
+	nLin	+= 60
+EndIf
+
+nLin	+= 60
+nLinI 	+= 70
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³14. PROFISSIOGRAFIA³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+//14.1 - Periodo/ 14.2 - Descricao das Atividades                                                                          |        
+oPrint:Line(nLinI+090,0030,nLin+170,0030)			// Coluna Inicio
+oPrint:Line(nLinI+090,2349,nLin+170,2349)			// Coluna Final
+oPrint:Line(nLin+120,030,nLin+120,2350)        	// Linha
+
+oPrint:Line(nLinI+100,150,nLin+120,150)			// Linha Div.Cabecalho
+nLin += 60
+oPrint:say(nLin,0050, "14"		,oFont10n)			
+oPrint:say(nLin,0200, STR0038	,oFont10n)			 //"PROFISSIOGRAFIA"
+
+nLin += 60
+oPrint:Line(nLinI+090,0030,nLin+060,0030)			// Coluna Inicio
+oPrint:Line(nLinI+090,2349,nLin+060,2349)			// Coluna Final
+//oPrint:Line(nLin+060,030,nLin+060,2350)        	// Linha
+
+oPrint:Line(nLinI+170,450,nLin+060,450)			// Linha Div.Cabecalho
+
+oPrint:say(nLin+20,0050, STR0039	,oFont10n)			 //"14.1 - Periodo"
+oPrint:say(nLin+20,0470, STR0040	,oFont10n)			 //"14.2 - Descricao das Atividades"
+
+cDescDet := ""
+If len(aCargos) >0
+	For nI := 1 to len(aCargos)
+		dbSelectArea("SQ3")
+		dbSetOrder(1)
+		If dbSeek(xFilial("SQ3",SRA->RA_FILIAL) + aCargos[nI,3] + aCargos[nI,4])  .Or. ;
+			dbSeek(xFilial("SQ3",SRA->RA_FILIAL) + aCargos[nI,3])
+
+			cDescDet  := MSMM(SQ3->Q3_DESCDET,,,,3)
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³Carrega as informacoes do campo Memo - Descricao das Atividades³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		EndIf
+		                                    
+		nLinha := MlCount(cDescDet,150)
+		If nLinha > 0
+			For nX := 1 to nLinha
+				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+				//³Verifica Salto de Pagina³
+				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+				fPulaPag(nLin+80)
+				cLinha:=  Space(01)+Memoline(cDescDet,150,nX,,.T.)
+
+				oPrint:Line(nLin+060,0030,nLin+110,0030)				// Coluna Inicio
+				oPrint:Line(nLin+060,2349,nLin+110,2349)				// Coluna Final
+				oPrint:Line(nLin+060,0450,nLin+110,0450)				// Linha Div.Cabecalho
+				If nx == 1
+					//14.1 -Dt.Inicio - Dt.Final/ 14.2 - Descricao das Atividades                                                                          |        
+
+					oPrint:say(nLin+80,0050,dtoc(aCargos[nI,1]),oFont07)	//Periodo inicio
+					oPrint:say(nLin+80,0220,"a"        ,oFont07)
+					oPrint:say(nLin+80,0270,dtoc(aCargos[nI,2]),oFont07)	//Periodo Final
+					oPrint:say(nLin+80,0470,cLinha,oFont07)					//Descricao das atividades
+				Else
+					oPrint:say(nLin+80,0470,cLinha,oFont07)					//Descricao das atividades
+				EndIf	
+ 				nLin += 30
+			Next i     
+			oPrint:Line(nLin+080,030,nLin+080,2350)        		// Linha
+		Else
+			oPrint:Line(nLin+060,0030,nLin+120,0030)				// Coluna Inicio
+			oPrint:Line(nLin+060,2349,nLin+120,2349)				// Coluna Final
+			oPrint:Line(nLin+060,0450,nLin+120,0450)				// Linha Div.Cabecalho
+			oPrint:Line(nLin+120,030,nLin+120,2350)        		// Linha
+		EndIf	
+	Next nI
+Else
+	oPrint:Line(nLin+060,0030,nLin+120,0030)				// Coluna Inicio
+	oPrint:Line(nLin+060,2349,nLin+120,2349)				// Coluna Final
+	oPrint:Line(nLin+060,0450,nLin+120,0450)				// Linha Div.Cabecalho
+	oPrint:Line(nLin+120,0030,nLin+120,2350)				// Linha Div.Cabecalho
+	nLin += 30
+EndIf
+nLin += 100
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Quadro II - secao de registros ambientais³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+oPrint:Box( nLin,030,nLin+280,2350)  			// box secao II
+oPrint:Line(nLin+100,030,nLin+100,2350)        		// Linha
+oPrint:Line(nLin,150,nLin+100,150)				// Linha Div.Cabecalho
+
+oPrint:say(nLin+20,100, "II"	,oFont13n)			// I
+oPrint:Say(nLin+20,200,STR0041	,oFont13n)              //"SECAO DE REGISTROS AMBIENTAIS"
+
+
+nLin += 60
+oPrint:Line(nLin,150,nLin+120,150)				// Linha Div.Cabecalho
+oPrint:Line(nLin+120,030,nLin+120,2350)        // Linha
+
+oPrint:say(nLin+060,0050, "15"		,oFont10n)			
+oPrint:say(nLin+060,0200, STR0042	,oFont10n)			 //"EXPOSICAO A FATORES DE RISCO"
+
+nLin += 80
+
+oPrint:Line(nLin+040,0420,nLin+140,0420)				// Linha Div.PERIODO
+oPrint:Line(nLin+040,0630,nLin+140,0630)				// Linha Div.TIPO
+oPrint:Line(nLin+040,0930,nLin+140,0930)				// Linha Div.FATOR DE RISCO
+oPrint:Line(nLin+040,1170,nLin+140,1170)				// Linha Div.INTENS.CONC
+oPrint:Line(nLin+040,1740,nLin+140,1740)				// Linha Div.TC.UTILIZ
+oPrint:Line(nLin+040,1960,nLin+140,1960)				// Linha Div.EPC    
+oPrint:Line(nLin+040,2180,nLin+140,2180)				// Linha Div.EPI    
+  
+oPrint:say(nLin+050,0050, STR0043		,oFont10n)			 //"15.1 - Periodo"
+oPrint:say(nLin+050,0440, STR0044		,oFont10n)			 //"15.2 - Tipo"
+oPrint:say(nLin+050,0640, STR0045		,oFont10n)			 //"15.3 - Fator"
+oPrint:say(nLin+050,0950, STR0046		,oFont10n)			 //"15.4 - Intens/"
+oPrint:say(nLin+050,1190, STR0047		,oFont10n)			 //"15.5 - Tecnica Utilizada"
+oPrint:say(nLin+050,1760, STR0048		,oFont10n)			 //"15.6 - EPC "
+oPrint:say(nLin+050,1980, STR0049		,oFont10n)			 //"15.7 - EPI "
+oPrint:say(nLin+050,2210, "15.8 - "		,oFont10n)			
+
+oPrint:say(nLin+100,0640, STR0050		,oFont10n)			 //"de Risco"
+oPrint:say(nLin+100,0950, STR0051		,oFont10n)			 //"Conc."
+oPrint:say(nLin+100,1760, STR0052		,oFont10n)			 //"Eficaz(S/N)"
+oPrint:say(nLin+100,1980, STR0052		,oFont10n)			 //"Eficaz(S/N)"
+oPrint:say(nLin+100,2210, STR0053 		,oFont10n)			 //"CA-EPI"
+
+nLin += 70
+dbSelectArea("RC7")	
+dbSetOrder(1)
+If dbSeek(SRA->RA_FILIAL + SRA->RA_MAT)
+
+	While RC7->(!EOF()) .and. (RC7->RC7_FILIAL + RC7->RC7_MAT) == (SRA->RA_FILIAL +SRA->RA_MAT)
+	            
+       	If ! Empty (RC7->RC7_DATAIN)
+
+			aAgente[1] := DtOC(RC7->RC7_DATAIN)
+			aAgente[2] := Dtoc(RC7->RC7_DATAFI) 	//CRIAR CAMPO  
+			
+			If RC7->RC7_TIPO=="1"		 	//CRIAR CAMPO	
+				aAgente[3] := "F" //Fisico
+			ElseIf RC7->RC7_TIPO=="2"
+				aAgente[3] := "Q" //Quimico
+			ElseIf RC7->RC7_TIPO=="3"
+				aAgente[3] := "B" //Biologico
+			ElseIf RC7->RC7_TIPO=="4"
+				aAgente[3] := "E" //Ergonomico
+			ElseIf RC7->RC7_TIPO=="5"
+				aAgente[3] := "M" //Mecanico
+			EndIf	
+			
+			cAgente1 := Substr(RC7->RC7_NOMEAG,1,20)	 	//Fator de Risco  		
+			nLoop := Len(cAgente1)
+
+			While .T.
+			
+				If Len(RC7->RC7_NOMEAG) == Len(cAgente1) .and. Len(cAgente1)+1 <= 20
+					Exit
+				EndIf
+			
+				If SubStr(RC7->RC7_NOMEAG,Len(cAgente1),1) == " " .and. Len(cAgente1)+1 <= 20
+					Exit
+				EndIf                                                           
+				
+			    If Len(cAgente1)+1 <= 20
+			    	Exit
+			    EndIf	
+				cAgente1 := SubStr(RC7->RC7_NOMEAG,1,nLoop )
+				nLoop --
+			Enddo
+            
+ 			cAgente	 := SubStr(RC7->RC7_NOMEAG,Len(cAgente1)+1,40)
+			
+			cAgente2 := SubStr(cAgente,1,20)
+			nLoop 	 := Len(cAgente2)
+
+			While .T.
+			
+				If Len(cAgente) == Len(cAgente2) .and. Len(cAgente2)+1 <= 20
+					Exit
+				EndIf
+			
+				If SubStr(cAgente,Len(cAgente2),1) == " " .and. Len(cAgente2)+1 <= 20
+					Exit
+				EndIf
+			    If Len(cAgente2)+1 <= 20
+			    	Exit
+			    EndIf	
+				
+				cAgente2 := SubStr(cAgente,1,nLoop )
+				nLoop --
+			Enddo
+
+			cTecnic1 := Substr(RC7->RC7_TECUTI,1,30)	 	//tecnica utilizada
+			cTecnic2 := AllTrim(Substr(RC7->RC7_TECUTI,31,10))	 	//tecnica utilizada
+			
+			aAgente[4]	:= cAgente1
+			aAgente[5] := If(Empty(RC7->RC7_CONCENTR),"NA",RC7->RC7_CONCENTR)
+			aAgente[6] := If(Empty(cTecnic1),"NA",cTecnic1)			
+			aAgente[7] := If(RC7->RC7_EPC=="1","S","N")				
+			aAgente[8] := If(RC7->RC7_EQPI	=="1","S","N")				
+			aAgente[9] := If(Empty(RC7->RC7_CAEPI),"NA",RC7->RC7_CAEPI)
+
+			
+			nTLin := If( Empty( cAgente2 ),0,30)
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³Verifica Salto de Pagina³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+			fPulaPag(nLin+110+nTLin)
+            
+            oPrint:Line(nLin+110+nTLin,030,nLin+110+nTLin,2350)        		// Linha
+			nTLin -=10
+			oPrint:Line(nLin+070,0030,nLin+120+nTLin,0030)				// Coluna Inicio
+			oPrint:Line(nLin+070,2349,nLin+120+nTLin,2349)				// Coluna Final
+			oPrint:Line(nLin+070,0420,nLin+120+nTLin,0420)				// Linha Div.PERIODO
+			oPrint:Line(nLin+070,0630,nLin+120+nTLin,0630)				// Linha Div.TIPO
+			oPrint:Line(nLin+070,0930,nLin+120+nTLin,0930)				// Linha Div.Fator deRisco
+			oPrint:Line(nLin+070,1170,nLin+120+nTLin,1170)				// Linha Div.Intens./Concentracao
+			oPrint:Line(nLin+070,1740,nLin+120+nTLin,1740)				// Linha Div.TC.UTILIZ
+			oPrint:Line(nLin+070,1960,nLin+120+nTLin,1960)				// Linha Div.EPC    
+			oPrint:Line(nLin+070,2180,nLin+120+nTLin,2180)				// Linha Div.EPI    
+									
+			oPrint:say(nLin+80,0050,aAgente[1] ,oFont07)	//Periodo inicio
+			oPrint:say(nLin+80,0220,"a"        ,oFont07)	//
+			oPrint:say(nLin+80,0270,aAgente[2] ,oFont07)	//Periodo Final
+			oPrint:say(nLin+80,0450,aAgente[3] ,oFont07)	//15.2 Tipo
+			oPrint:say(nLin+80,0640,aAgente[4]	,oFont07)	//15.3 Fator de Risco
+			oPrint:say(nLin+80,0950,aAgente[5]	,oFont07)	//15.4 Intens./Concentracao
+			oPrint:say(nLin+80,1190,aAgente[6]	,oFont07)	//15.5 Tecnica utilizada
+			oPrint:say(nLin+80,1770,aAgente[7]	,oFont07)	//15.6 EPC Eficaz
+			oPrint:say(nLin+80,1980,aAgente[8]	,oFont07)	//15.7 EPI Eficaz
+			oPrint:say(nLin+80,2210,aAgente[9]	,oFont07)	//15.8 CA - EPI
+            nLin += 30
+
+			If !empty(cAgente2) .or. !empty(cTecnic2)
+				If !empty(cAgente2)
+					oPrint:say(nLin+80,0640,cAgente2,oFont07)		//15.3 Fator de Risco
+				EndIf	
+				If !empty(cTecnic2)
+					oPrint:say(nLin+80,1190,cTecnic2,oFont07)		//15.3 Fator de Risco
+		        EndIf
+		        nLin += 30
+			EndIf	              
+		EndIf	
+		dbSelectArea("RC7")
+		dbSkip()  
+	EndDo
+Else
+	oPrint:say(nLin+80,0450,"NA",oFont07)	//15.2 Tipo
+	oPrint:say(nLin+80,0640,"NA",oFont07)	//15.3 Fator de Risco
+	oPrint:say(nLin+80,0950,"NA",oFont07)	//15.4 Intens./Concentracao
+	oPrint:say(nLin+80,1190,"NA",oFont07)	//15.5 Tecnica utilizada
+	oPrint:say(nLin+80,1770,"NA",oFont07)	//15.6 EPC Eficaz
+	oPrint:say(nLin+80,1980,"NA",oFont07)	//15.7 EPI Eficaz
+	oPrint:say(nLin+80,2210,"NA",oFont07)	//15.8 CA - EPI
+
+	fPulaPag(nLin+110)
+            
+   	oPrint:Line(nLin+110,0030,nLin+110,2350)        		// Linha
+	oPrint:Line(nLin+070,0030,nLin+110,0030)				// Coluna Inicio
+	oPrint:Line(nLin+070,2349,nLin+110,2349)				// Coluna Final
+	oPrint:Line(nLin+070,0420,nLin+110,0420)				// Linha Div.PERIODO
+	oPrint:Line(nLin+070,0630,nLin+110,0630)				// Linha Div.TIPO
+	oPrint:Line(nLin+070,0930,nLin+110,0930)				// Linha Div.Fator deRisco
+	oPrint:Line(nLin+070,1170,nLin+110,1170)				// Linha Div.Intens./Concentracao
+	oPrint:Line(nLin+070,1740,nLin+110,1740)				// Linha Div.TC.UTILIZ
+	oPrint:Line(nLin+070,1960,nLin+110,1960)				// Linha Div.EPC    
+	oPrint:Line(nLin+070,2180,nLin+110,2180)				// Linha Div.EPI    
+    nLin += 30
+Endif    
+
+nLin += 30
+
+
+//15.9 - Atendimento aos requisitos das NR-06 e NR-09 do MTE pelos EPI informados
+
+oPrint:say(nLin+060,0050, STR0130	,oFont10n) //"15.9 - Atendimento aos requisitos pelos EPI informados"
+
+oPrint:Line(nLin+110,0030,nLin+110,2350)        		// Linha Titulo       
+oPrint:Line(nLin+050,0030,nLin+110,0030)				// Coluna Inicio
+oPrint:Line(nLin+050,2180,nLin+110,2180)				// Coluna Div. S/N    
+oPrint:Line(nLin+050,2349,nLin+110,2349)				// Coluna Final
+
+oPrint:say(nLin+80,2240,"SIM/NÃO"    ,oFont07)				// Texto SIM/NAO
+nLin += 30
+
+oPrint:Line(nLin+330,0030,nLin+330,2350)        		// Linha Dados
+oPrint:Line(nLin+070,0030,nLin+330,0030)				// Coluna Inicio
+oPrint:Line(nLin+050,2180,nLin+330,2180)				// Coluna Div. S/N    			
+oPrint:Line(nLin+070,2349,nLin+330,2349)				// Coluna Final
+nLin += 70
+                  
+//Formata os tipos de Requisitos Selecionados
+If !Empty( cReqsEPI )
+	For nReq1 := 1 To Len( cReqsEPI )
+		If SubStr( cReqsEPI, nReq1, 1 ) == '*'
+			aAdd( aReqEPIFim, "N" )
+		Else                           
+			aAdd( aReqEPIFim, "S" )		
+		EndIf
+	Next 
+Else
+	aReqEPIFim := {"N","N","N","N","N"}
+EndIf  
+
+cReqInfo1 := STR0131 //"Foi tentada a implementacao de medidas de protecao coletiva, de carater administrativo ou de organizacao do trabalho optando-se pelo EPI por inviabilidade tecnica, insuficiencia ou" 
+cReqInfo2 := STR0132 //"interinidade, ou ainda em carater complementar ou emergencial."
+cReqInfo3 := STR0125 //"Foram observadas as condicoes de funcionamento e do uso ininterrupto do EPI ao longo do tempo, conforme especificacao tecnica do fabricante, ajustada as condicoes de campo."
+cReqInfo4 := STR0126 //"Foi observado o prazo de validade, conforme Certificado de Aprovacao-CA do MTE."
+cReqInfo5 := STR0127 //"Foi observada a periodicidade de troca definida pelos programas ambientais, comprovada mediante recibo assinado pelo usuario em epoca propria."
+cReqInfo6 := STR0128 //"Foi observada a higienizacao." 
+
+oPrint:Say(nLin+020,050,cReqInfo1,oFont07i)
+oPrint:Say(nLin+060,050,cReqInfo2,oFont07i)
+oPrint:Say(nLin+100,050,cReqInfo3,oFont07i)
+oPrint:Say(nLin+140,050,cReqInfo4,oFont07i)
+oPrint:Say(nLin+180,050,cReqInfo5,oFont07i)
+oPrint:Say(nLin+220,050,cReqInfo6,oFont07i)  
+
+oPrint:say(nLin+020,2240,aReqEPIFim[1]	,oFont07i)  //Sim/Nao
+oPrint:say(nLin+100,2240,aReqEPIFim[2]	,oFont07i)  //Sim/Nao
+oPrint:say(nLin+140,2240,aReqEPIFim[3]	,oFont07i)  //Sim/Nao
+oPrint:say(nLin+180,2240,aReqEPIFim[4]	,oFont07i)  //Sim/Nao
+oPrint:say(nLin+220,2240,aReqEPIFim[5]	,oFont07i)  //Sim/Nao
+nLin += 200
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³16. RESPONSAVEL PELOS REGISTROS AMBIENTAIS³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+oPrint:Line(nLin+050,0030,nLin+100,0030)				// Coluna Inicio
+oPrint:Line(nLin+050,2349,nLin+100,2349)				// Coluna Final
+oPrint:Line(nLin+060,0150,nLin+100,0150)				// Linha Div.Cabecalho
+oPrint:Line(nLin+100,0030,nLin+100,2350)       		// Linha
+
+oPrint:say(nLin+060,0050, "16"	,oFont10n)			
+oPrint:say(nLin+060,0200, STR0054	,oFont10n)			 //"RESPONSAVEL PELOS REGISTROS AMBIENTAIS"
+
+nLin += 60
+
+oPrint:Line(nLin+090,030,nLin+090,2350)        		// Linha
+oPrint:Line(nLin+040,0030,nLin+080,0030)				// Coluna Inicio
+oPrint:Line(nLin+040,2349,nLin+080,2349)				// Coluna Final
+oPrint:Line(nLin+040,0420,nLin+080,0420)				// Linha Div.PERIODO
+oPrint:Line(nLin+040,0800,nLin+080,0800)				// Linha Div.NIT
+oPrint:Line(nLin+040,1450,nLin+080,1450)				// Linha Div.REG.CONS.CLASSE
+nLin+=20
+oPrint:say(nLin+030,0050, STR0055	,oFont10n)			 //"16.1 - Periodo"
+oPrint:say(nLin+030,0450, STR0056	,oFont10n)			 //"16.2 - NIT"
+oPrint:say(nLin+030,0840, STR0057	,oFont10n)			 //"16.3 - Registro Conselho de Classe"
+oPrint:say(nLin+030,1480, STR0058	,oFont10n)			 //"16.4 - Nome do Profissional Legalmente Habilitado"
+
+dbSelectArea("TMK")
+dbSetOrder(1)
+
+cFilTMK :=  xFilial("TMK",SRA->RA_FILIAL)
+
+cArqTMK := criatrab("",.F.)
+IndRegua (	"TMK" , cArqTMK , "TMK_FILIAL" , , , STR0009)  //"Selecionando Registros..." 
+TMK->( dbSeek( cFilTMK ) )
+
+cPIS := "NA"
+nLIn += 20
+
+lImprimiu := .F.
+Asort(aCargos,,,{|x,y|x[1]<y[1]})
+While TMK->( !eof()) .and. TMK->TMK_FILIAL ==  cFilTMK 
+
+	If (lEngenheiro .And. TMK->TMK_INDFUN == "4") .Or. (!lEngenheiro .And. TMK->TMK_INDFUN $ cResponsa) 
+		//Engenheiro obrigatorio ou nao, e quais as funcoes permitidas
+		If (empty(TMK->TMK_DTTERM) .or. ( Len(aCargos) > 0 .AND. TMK->TMK_DTTERM >= aCargos[1,1]) )
+			If fPulaPag(nLin+120)
+				oPrint:Line(nLin+040,030,nLin+040,2350)        		// Linha
+			EndIf                              
+			cPis := If( Empty(TMK->TMK_NIT), "NA", Transform(TMK->TMK_NIT,"@R 999.99999.99-9") )
+
+			oPrint:Line(nLin+120,030,nLin+120,2350)        		// Linha
+			oPrint:Line(nLin+040,0030,nLin+120,0030)				// Coluna Inicio
+			oPrint:Line(nLin+040,2349,nLin+120,2349)				// Coluna Final
+			oPrint:Line(nLin+040,0420,nLin+120,0420)				// Linha Div.PERIODO
+			oPrint:Line(nLin+040,0800,nLin+120,0800)				// Linha Div.NIT
+			oPrint:Line(nLin+040,1450,nLin+120,1450)				// Linha Div.REG.CONS.CLASSE
+
+			oPrint:say(nLin+80,0050,dtoc(TMK->TMK_DTINIC) 	,oFont07)	//Periodo inicio
+			oPrint:say(nLin+80,0220,"a"        				,oFont07)	//
+			oPrint:say(nLin+80,0270,dtoc(TMK->TMK_DTTERM) 	,oFont07)	//Periodo Final
+			oPrint:say(nLin+80,0450,cPIS       				,oFont07)	// PIS/NIT
+			oPrint:say(nLin+80,0910,TMK->TMK_NUMENT			,oFont07)	//Registro de classe
+			oPrint:say(nLin+80,1500,TMK->TMK_NOMUSU			,oFont07)	//Nome do profissional
+			nLin += 60
+			lImprimiu := .T.
+		EndIf
+	EndIf
+	TMK->( dbskip())              
+EndDo	
+
+If !lImprimiu
+	oPrint:say(nLin+80,0450,"NA",oFont07)	//PIS/NIT
+	oPrint:say(nLin+80,0910,"NA",oFont07)	//Registro de classe
+	oPrint:say(nLin+80,1500,"NA",oFont07)	//Nome do profissional
+
+	oPrint:Line(nLin+120,0030,nLin+120,2350)        		// Linha
+	oPrint:Line(nLin+040,0030,nLin+120,0030)				// Coluna Inicio
+	oPrint:Line(nLin+040,2349,nLin+120,2349)				// Coluna Final
+	oPrint:Line(nLin+040,0420,nLin+120,0420)				// Linha Div.PERIODO
+	oPrint:Line(nLin+040,0800,nLin+120,0800)				// Linha Div.NIT
+	oPrint:Line(nLin+040,1450,nLin+120,1450)				// Linha Div.REG.CONS.CLASSE
+	nLin += 60
+EndIf
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Secao de resultados de monitoracao Biologica³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nLin += 080
+fPulaPag(nLin+250)
+oPrint:Box( nLin,030,nLin+250,2350)  			// box secao III
+oPrint:Line(nLin+100,030,nLin+100,2350)        // Linha
+oPrint:Line(nLin,150,nLin+100,150)				// Linha Div.Cabecalho
+
+oPrint:say(nLin+20,100, "III",oFont13n)			// I
+oPrint:Say(nLin+20,200,STR0059,oFont13n)              //"SECAO DE RESULTADOS DE MONITORACAO BIOLOGICA"
+
+
+nLin += 60
+oPrint:Line(nLin,150,nLin+120,150)				// Linha Div.Cabecalho
+oPrint:Line(nLin+120,030,nLin+120,2350)        // Linha
+
+oPrint:say(nLin+060,0050, "17"		,oFont10n)			
+oPrint:say(nLin+060,0200, STR0060	,oFont10n)			 //"EXAMES MEDICOS CLINICOS E COMPLEMENTARES( Quadros I e II, da NR-07)"
+
+nLin += 80
+
+oPrint:Line(nLin+040,0260,nLin+110,0260)				// Linha Div Tipo
+oPrint:Line(nLin+040,0480,nLin+110,0480)				// Linha Div.Natureza
+oPrint:Line(nLin+040,1320,nLin+110,1320)				// Linha Div.Exame
+oPrint:Line(nLin+040,1660,nLin+110,1660)				// Linha Div.indicacao de Resultados
+
+oPrint:say(nLin+060,0050, STR0061	,oFont10n) //"17.1 - DATA "
+oPrint:say(nLin+060,0280, STR0062	,oFont10n) //"17.2 - TIPO "
+oPrint:say(nLin+060,0510, STR0063	,oFont10n) //"17.3 - NATUREZA "
+oPrint:say(nLin+060,1340, STR0064	,oFont10n) //"17.4 - EXAME(R/S)"
+oPrint:say(nLin+060,1690, STR0065	,oFont10n) //"17.5 - INDICACAO DE RESULTADOS"
+
+
+dbSelectArea("RC8")	
+dbSetOrder(1)
+nLin += 60
+If dbSeek(SRA->RA_FILIAL+ SRA->RA_MAT)
+	While ! Eof() .AND. (RC8->RC8_FILIAL + RC8->RC8_MAT) == (SRA->RA_FILIAL + SRA->RA_MAT)
+
+		If ! Empty (RC8->RC8_DATA) .and. (RC8->RC8_DATA >= dDataDe .and. RC8->RC8_DATA <= dDataAte)       
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³Verifica Salto de Pagina³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+            aFill(aExame,"")
+			aExame[1]	:= 	DTOC(RC8->RC8_DATA)
+			If RC8->RC8_EXTIPO == "1"
+				aExame[2]	:="A" //Admissional
+			ElseIf RC8->RC8_EXTIPO == "2"
+				aExame[2]	:="P" //Periodico
+			ElseIf RC8->RC8_EXTIPO == "3"
+				aExame[2]	:="R" //Retorno
+			ElseIf RC8->RC8_EXTIPO == "4"
+				aExame[2]	:="M" //Mudanca Funcao
+			ElseIf RC8->RC8_EXTIPO == "5"
+				aExame[2]	:="D" //Demissional"
+   	        EndIf
+   	    	aExame[3]   :=	RC8->RC8_NOMEEX 
+				 
+			If RC8->RC8_EXAME == "1" 
+				aExame[4]	:= "R" //Referencial
+			ElseIf RC8->RC8_EXAME == "2"
+			 	aExame[4]	:= "S" //Sequencial
+			EndIf	
+    	    
+			If fPulaPag(nLin+270)
+				oPrint:Line(nLin+50,0030,nLin+50,2350)      		// Linha
+			EndIf
+			If nImpResEx = 2  // Imprime resultado de exame
+			oPrint:Line(nLin+270,0030,nLin+270,2350)      		// Linha
+			oPrint:Line(nLin+050,0030,nLin+270,0030)			// Coluna Inicio
+			oPrint:Line(nLin+050,2349,nLin+270,2349)			// Coluna Final
+			oPrint:Line(nLin+050,0260,nLin+270,0260)			// Linha Div Tipo
+			oPrint:Line(nLin+050,0480,nLin+270,0480)			// Linha Div.Natureza
+			oPrint:Line(nLin+050,1320,nLin+270,1320)			// Linha Div.Exame
+			oPrint:Line(nLin+050,1660,nLin+270,1660)			// Linha Div.indicacao de Resultados
+			Else // quando nao imprimir a emissao dos resultados
+				oPrint:Line(nLin+050,0030,nLin+270,0030)			// Coluna Inicio
+				oPrint:Line(nLin+050,2349,nLin+270,2349)			// Coluna Final
+			Endif
+  
+			cNormaL  := If( RC8->RC8_INDRES =="1","X","")
+			cAlterado:= If( !empty(RC8->RC8_INDRES) .and. RC8->RC8_INDRES # "1","X","")
+
+			oPrint:say(nLin+060,0050,aExame[1]	,oFont07) 	// DATA 
+			oPrint:say(nLin+060,0280,aExame[2]	,oFont07)	//TIPO 
+			oPrint:say(nLin+060,0510,aExame[3]	,oFont07)	// NATUREZA
+			oPrint:say(nLin+060,1370,aExame[4]	,oFont07)	//EXAME(R/S)  
+			
+			oPrint:say(nLin+060,1690, STR0066	,oFont08n) //"(  ) Normal"
+			oPrint:say(nLin+060,1890, STR0067	,oFont08n) //"(  ) Alterado"
+			If nImpResEx = 2  // Imprime resultado de exame
+			oPrint:say(nLin+060,1700, cNormal	,oFont08)
+			oPrint:say(nLin+060,1900, cAlterado	,oFont08)
+            nLin += 40
+			
+			If RC8->RC8_INDRES $ "12 " //1- Normal; 2- Alterado 
+				oPrint:say(nLin+060,1940, STR0068	,oFont08n) //"(  ) Estavel"
+				oPrint:say(nLin+100,1940, STR0069	,oFont08n) //"(  ) Agravamento"
+				oPrint:say(nLin+140,1990, STR0070	,oFont08n) //"(  ) Ocupacional"
+				oPrint:say(nLin+180,1990, STR0071	,oFont08n) //"(  ) Nao Ocupacional"
+			ElseIf RC8->RC8_INDRES == "3" //Alterado Estavel
+				oPrint:say(nLin+060,1940, STR0068	,oFont08n)	//"( X) Estavel"
+				oPrint:say(nLin+060,1950, "X"		,oFont08)
+				oPrint:say(nLin+100,1940, STR0069	,oFont08n)	//(  ) Agravamento"	
+				oPrint:say(nLin+140,1990, STR0070	,oFont08n)	//"(  ) Ocupacional"	
+				oPrint:say(nLin+180,1990, STR0071	,oFont08n)	//"(  ) Nao Ocupacional"
+			ElseIf RC8->RC8_INDRES == "4" //Alterado Agravamento
+				oPrint:say(nLin+060,1940, STR0068	,oFont08n)	//"(  ) Estavel"
+				oPrint:say(nLin+100,1940, STR0069	,oFont08n)	//"(X ) Agravamento"
+				oPrint:say(nLin+100,1950, "X"		,oFont08)
+				oPrint:say(nLin+140,1990, STR0070	,oFont08n)	//"(  ) Ocupacional"	
+				oPrint:say(nLin+180,1990, STR0071	,oFont08n)	//"(  ) Nao Ocupacional"		
+			ElseIf RC8->RC8_INDRES == "5" //Alterado Agravamento Ocupacional
+				oPrint:say(nLin+060,1940, STR0068	,oFont08n)	//"(  ) Estavel"
+				oPrint:say(nLin+100,1940, STR0069	,oFont08n)	//"(X ) Agravamento"
+				oPrint:say(nLin+100,1950, "X"		,oFont08)
+				oPrint:say(nLin+140,1990, STR0070	,oFont08n)	//"(X ) Ocupacional"
+				oPrint:say(nLin+140,2000, "X"		,oFont08)
+				oPrint:say(nLin+180,1990, STR0071	,oFont08n)	//"(  ) Nao Ocupacional"
+			ElseIf RC8->RC8_INDRES == "6" //Alterado Agravamento Nao ocupacional
+				oPrint:say(nLin+060,1940, STR0068	,oFont08n)	//"(  ) Estavel"
+				oPrint:say(nLin+100,1940, STR0069	,oFont08n)	//"(X ) Agravamento"
+				oPrint:say(nLin+100,1950, "X"		,oFont08)
+				oPrint:say(nLin+140,1990, STR0070	,oFont08n)	//"(  ) Ocupacional"
+				oPrint:say(nLin+180,1990, STR0071	,oFont08n)	//"(X ) Nao Ocupacional"
+				oPrint:say(nLin+180,2000, "X"		,oFont08)
+			EndIf                 
+				nLin += 180
+			Else			
+				nLin += 40			
+			Endif
+		EndIf
+		dbSelectArea("RC8")
+		dbSkip()
+    EndDo
+Else
+	If fPulaPag(nLin+270)
+		oPrint:Line(nLin+50,0030,nLin+50,2350)      		// Linha
+	EndIf
+
+	oPrint:say(nLin+060,0050,OemtoAnsi(STR0133),oFont07)	//"Item não preenchido, conforme a resolução  nº 1715, de 8 de Janeiro de 2004, do conselho federal de medicina."
+
+	oPrint:Line(nLin+050,0030,nLin+270,0030)			// Coluna Inicio
+	oPrint:Line(nLin+050,2349,nLin+270,2349)			// Coluna Final
+    nLin += 40
+EndIf 
+                               
+
+nLin += 60
+oPrint:Line(nLin-010,0030,nLin+060,0030)		// Coluna Inicio
+oPrint:Line(nLin-010,2349,nLin+060,2349)		// Coluna Final
+oPrint:Line(nLin,150,nLin+60,150)			// Linha Div.Cabecalho
+oPrint:Line(nLin+060,030,nLin+060,2350)        // Linha
+oPrint:Line(nLin,030,nLin,2350)        // Linha
+
+oPrint:say(nLin+010,0050, "18"	,oFont10n)			
+oPrint:say(nLin+010,0200, STR0072	,oFont10n)			 //"RESPONSAVEL PELA MONITORACAO BIOLOGICA"
+
+nLin += 60
+
+oPrint:Line(nLin+060,030,nLin+060,2350)        		// Linha
+oPrint:Line(nLin    ,0030,nLin+060,0030)				// Coluna Inicio
+oPrint:Line(nLin    ,2349,nLin+060,2349)				// Coluna Final
+oPrint:Line(nLin    ,0420,nLin+060,0420)				// Linha Div.PERIODO
+oPrint:Line(nLin    ,0800,nLin+060,0800)				// Linha Div.NIT
+oPrint:Line(nLin    ,1450,nLin+060,1450)				// Linha Div.REG.CONS.CLASSE
+
+oPrint:say(nLin+010,0050, STR0073	,oFont10n)			//"18.1 - Periodo"
+oPrint:say(nLin+010,0450, STR0074	,oFont10n)			//"18.2 - NIT"
+oPrint:say(nLin+010,0840, STR0075	,oFont10n)			//"18.3 - Registro Conselho de Classe"
+oPrint:say(nLin+010,1480, STR0076	,oFont10n)			//"18.4 - Nome do Profissional Legalmente Habilitado"
+
+cFilTMK :=  xFilial("TMK",SRA->RA_FILIAL)
+TMK->( dbSeek( cFilTMK ) )
+nLin += 60
+
+cPIS := "NA"     
+lImprimiu := .F.
+While TMK->( !eof()) .and. TMK->TMK_FILIAL ==  cFilTMK 
+
+	If TMK->TMK_INDFUN $"1#6" //Medico do trabalho e Medico
+
+		cPis := If( Empty(TMK->TMK_NIT), "NA", Transform(TMK->TMK_NIT,"@R 999.99999.99-9") )		
+		// 18.1-Periodo/18.2-NIT/18.3-Reg.Conselho de Classe/18.4-Nome do Profissional Legalmente Habilitado
+		fPulaPag(nLin+050)
+
+		oPrint:Line(nLin+050,030,nLin+050,2350)        		// Linha
+		oPrint:Line(nLin+000,0030,nLin+050,0030)				// Coluna Inicio
+		oPrint:Line(nLin+000,2349,nLin+050,2349)				// Coluna Final
+		oPrint:Line(nLin+000,0420,nLin+050,0420)				// Linha Div.PERIODO
+		oPrint:Line(nLin+000,0800,nLin+050,0800)				// Linha Div.NIT
+		oPrint:Line(nLin+000,1450,nLin+050,1450)				// Linha Div.REG.CONS.CLASSE
+
+		oPrint:say(nLin+10,0050,dtoc(TMK->TMK_DTINIC) 	,oFont07)	//Periodo inicio
+		oPrint:say(nLin+10,0220,"a"        				,oFont07)	//
+		oPrint:say(nLin+10,0270,dtoc(TMK->TMK_DTTERM) 	,oFont07)	//Periodo Final
+		oPrint:say(nLin+10,0450,cPIS       				,oFont07)	//PIS/NIT
+		oPrint:say(nLin+10,0910,TMK->TMK_NUMENT			,oFont07)	//Registro de classe
+		oPrint:say(nLin+10,1500,TMK->TMK_NOMUSU			,oFont07)	//Nome do profissional
+		nLin += 60
+		lImprimiu := .T.
+    EndIf
+	TMK->( dbskip())              
+EndDo	    
+
+If !lImprimiu
+	oPrint:say(nLin+10,0450,"NA",oFont07)	//PIS/NIT
+	oPrint:say(nLin+10,0910,"NA",oFont07)	//Registro de classe
+	oPrint:say(nLin+10,1500,"NA",oFont07)	//Nome do profissional
+
+	oPrint:Line(nLin+050,030,nLin+050,2350)        		// Linha
+	oPrint:Line(nLin+000,0030,nLin+050,0030)				// Coluna Inicio
+	oPrint:Line(nLin+000,2349,nLin+050,2349)				// Coluna Final
+	oPrint:Line(nLin+000,0420,nLin+050,0420)				// Linha Div.PERIODO
+	oPrint:Line(nLin+000,0800,nLin+050,0800)				// Linha Div.NIT
+	oPrint:Line(nLin+000,1450,nLin+050,1450)				// Linha Div.REG.CONS.CLASSE
+	nLin += 60
+EndIf
+
+RetIndex("TMK")
+dbSetOrder(1)
+Ferase(cArqTMK+OrdBagExt())
+
+fPulaPag(nLin+680)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Quadro IV - RESPONSAVEIS PELAS INFORMACOES ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+oPrint:Box( nLin,030,nLin+680,2350)  			// box secao IV
+oPrint:Line(nLin+100,030,nLin+100,2350)      	// Linha
+oPrint:Line(nLin,150,nLin+100,150)				// Linha Div.Cabecalho
+
+oPrint:say(nLin+20,100, "IV",oFont13n)			// I
+oPrint:Say(nLin+20,200,STR0077,oFont13n)              //"RESPONSAVEIS PELAS INFORMACOES"
+
+oPrint:Line(nLin+250,030,nLin+250,2350)      	// Linha
+
+nLin += 80           
+
+cInfo1 :=STR0078 //" Declaramos, para todos os fins de direito, que as informacoes prestadas neste documento sao veridicas e foram transcritas"
+cInfo1 +=STR0079 //" fielmente dos registros administrativos, das demonstracoes ambientais e dos "
+cInfo2 :=STR0080 //"programas medicos de responsabilidade da empresa."
+cInfo2 +=STR0081 //" E de nosso conhecimento que a prestacao de informacoes falsas neste documento constitui crime de falsificacao de documento"
+cInfo3 :=STR0082 //"publico, nos termos do art. 297 do Codigo Penal, e tambem, que tais "
+cInfo3 +=STR0083 //"informacoes sao de carater privativo do trabalhador, constituindo crime, nos termos da Lei no. 9.029/95, praticas discriminatorias"
+cInfo4 :=STR0084 //" decorrentes de sua exigibilidade por outrem, bem como de sua divulgacao para terceiros, ressalvado quando exigida"
+cInfo4 +=STR0085 //" pelos orgaos publicos competentes."
+oPrint:Say(nLin+020,050,cInfo1,oFont07i)
+oPrint:Say(nLin+060,050,cInfo2,oFont07i)
+oPrint:Say(nLin+100,050,cInfo3,oFont07i)
+oPrint:Say(nLin+140,050,cInfo4,oFont07i)
+nLin += 180
+
+oPrint:Line(nLin+060,030,nLin+060,2350)// Linha
+oPrint:Line(nLin-010,450,nLin+060,0450)// Linha DIV
+
+oPrint:say(nLin+010,0050, STR0086				,oFont10n)			 //"19- Data Emissao PPP"
+oPrint:say(nLin+010,0470, STR0087	,oFont10n)			 //"20- REPRESENTANTE LEGAL DA EMPRESA"
+
+oPrint:Line(nLin+190,0450,nLin+190,2350)// Linha
+oPrint:Line(nLin+060,0450,nLin+420,0450)// Linha DIV
+oPrint:Line(nLin+060,1450,nLin+420,1450)// Linha DIV
+
+oPrint:say(nLin+080,0470, STR0088,oFont10n)			 //"20.1 - NIT"
+oPrint:say(nLin+080,1500, STR0089,oFont10n)			 //"20.2 - NOME"
+
+cNitAux := Transform(cNIT,"@R 999.99999.99-9") 			
+oPrint:say(nLin+160,0470, cNitAux,oFont07)
+oPrint:say(nLin+160,1500, cRepresentante,oFont07)
+
+nLin += 120
+
+oPrint:say(nLin+120,100, dtoC(DtEmissa) ,oFont07)
+
+nLin += 120
+oPrint:say(nLin+120,0850,STR0090,oFont10n) //"(Carimbo)"
+
+oPrint:Line(nLin+100,1600,nLin+100,2200)// Linha
+
+oPrint:say(nLin+120,1800,STR0091,oFont10n) //"(Assinatura)"
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄ¿
+//³OBSERVACOES³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÙ          
+nLin 	+= 200
+nLinha 	:= MlCount(cMessage,127)
+        
+fPulaPag(nLin+(nLinha*40)+90)
+
+oPrint:Box( nLin,030,nLin+060,2350)  			// box secao IV
+oPrint:say(nLin+10,050,STR0092,oFont10n) //"OBSERVACOES"
+
+nLin += 50
+If nLinha > 0
+	For nX := 1 to nLinha
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³Verifica Salto de Pagina³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		oPrint:Line(nLin+010,0030,nLin+060,0030)				// Coluna Inicio
+		oPrint:Line(nLin+010,2349,nLin+060,2349)				// Coluna Final
+		fPulaPag(nLin+100)
+		cLinha:=  Space(01)+Memoline(cMessage,127,nX,,.T.)
+		oPrint:say(nLin+060 ,050, cLinha ,oFont10)
+		nLin += 40
+	Next i     
+	oPrint:Line(nLin+020,0030,nLin+060,0030)				// Coluna Inicio
+	oPrint:Line(nLin+020,2349,nLin+060,2349)				// Coluna Final
+	oPrint:Line(nLin+060,030,nLin+060,2350)        		// Linha
+Else
+	oPrint:Line(nLin+060,0030,nLin+100,0030)				// Coluna Inicio
+	oPrint:Line(nLin+060,2349,nLin+100,2349)				// Coluna Final
+	oPrint:Line(nLin+100,030,nLin+100,2350)        		// Linha
+EndIf	
+
+oPrint:say(nLin+200,0050, STR0135,oFont10n)			 //"É facultada a inclusão de informações complementares ou adicionais ao PPP."
+
+oPrint:EndPage() 			// Finaliza a pagina
+
+If nImpProtoc = 2
+	oPrint:StartPage() 			// Inicia uma nova pagina
+	
+	nLin := 030
+	nLinI:= 150
+	nLin +=20 
+	
+	oPrint:Box( nLinI,030,nLin+1200,2350)  		// box secao I
+	
+	oPrint:say(nLin-10,220 ,STR0109,oFont13n)	//"COMPROVANTE DE ENTREGA DO PERFIL PROFISSIOGRAFICO PREVIDENCIARIO (PPP)"
+	oPrint:say(nLin+40,290 ,STR0134,oFont13n)	//"ANEXO XV - INSTRUÇÃO NORMATIVA Nº 45 INSS/PRES, DE 6 DE AGOSTO DE 2010."
+	
+	oPrint:Line(nLin+190,030,nLin+190,2350) 	// Linha
+	
+	nLin +=70
+	oPrint:Say(nLin+50,050,STR0110,oFont13n) 	//"DADOS ADMINISTRATIVOS"
+	
+	nLinI += 90
+	oPrint:Line(nLinI,780,nLin+250,780)			// Linha Div.Cabecalho
+	oPrint:Line(nLin+250,030,nLin+250,2350)    // Linha
+	oPrint:Line(nLinI,2000,nLin+250,2000)		// Linha Div.Cabecalho
+	nLin +=70
+	oPrint:say(nLin+50,0050, STR0111,oFont10n)	//"CNPJ do Domicilio Tributario/CEI"
+	oPrint:say(nLin+50,0850, STR0112,oFont10n)	//"Nome Empresarial"
+	oPrint:say(nLin+50,2050, STR0113,oFont10n)	//"CNAE"
+	
+	If aInfo[15] == 1 //CEI                                           
+		cCnpj := Transform(SUBSTR(aInfo[8],3,12),"@R 99.999.99999/99")
+	Else
+		cCnpj := Transform(SUBSTR(aInfo[8]+Space(16),1,16),"@R 99999999/9999-99")
+	EndIF	
+	nLin += 130
+	oPrint:say(nLin,0050, cCnPj ,oFont07)			
+	oPrint:say(nLin,0850, aInfo[03] ,oFont07)			
+	oPrint:say(nLin,2050, Transform(Subs(aInfo[16],1,7),"@R 999999-9") ,oFont07)			
+	
+	nLinI += 130
+	oPrint:Line(nLin+200,030,nLin+200,2350)        // Linha
+	oPrint:Line(nLinI,1500,nLin+200,1500)			// Linha Div.Cabecalho
+	oPrint:Line(nLinI,1900,nLin+200,1900)			// Linha Div.Cabecalho
+
+	nLin +=20
+	oPrint:say(nLin+50,0050, STR0114,oFont10n)			 //"Nome do Trabalhador"
+	oPrint:say(nLin+50,1550, STR0115,oFont10n)			 //"BR/PDH"
+	oPrint:say(nLin+50,1950, STR0116,oFont10n)			 //"NIT"
+	
+	cBRPDH := If( SRA->RA_BRPDH =="1",STR0018,If( SRA->RA_BRPDH =="2",STR0019,STR0020) ) //"BR"###"PDH"###"NA"
+	cPis := If( Empty(SRA->RA_PIS), "NA", Transform(SRA->RA_PIS,"@R 999.99999.99-9") )	
+	
+	nLin += 130
+	oPrint:say(nLin,0050, Subs(SRA->RA_NOME,1,40) ,oFont07)			
+	oPrint:say(nLin,1550, cBRPDH 	,oFont07)			
+	oPrint:say(nLin,1950, cPis 		,oFont07)			
+	
+	nLinI += 150
+	oPrint:Line(nLin+200,030,nLin+200,2350)        // Linha
+	oPrint:Line(nLinI,0500,nLin+200,0500)			// Linha Div.Cabecalho
+	oPrint:Line(nLinI,0800,nLin+200,0800)		  	// Linha Div.Cabecalho
+	oPrint:Line(nLinI,1300,nLin+200,1300)			// Linha Div.Cabecalho
+	oPrint:Line(nLinI,1800,nLin+200,1800)		  	// Linha Div.Cabecalho
+	
+	nLin +=20
+	oPrint:say(nLin+50,0050, STR0117,oFont10n)			 //"Data do Nascimento"
+	oPrint:say(nLin+50,0520, STR0118,oFont10n)			 //"Sexo(F/M)"
+	oPrint:say(nLin+50,0830, STR0119,oFont10n)			 //"CTPS(No, Serie e UF)"
+	oPrint:say(nLin+50,1350, STR0120,oFont10n)			 //"Data de Admissao"
+	oPrint:say(nLin+50,1830, STR0121,oFont10n)			 //"Regime Revezamento"
+
+	nLin += 130
+	SR6->( dbSeek( xFilial("SR6")+SRA->RA_TNOTRAB ) )
+	cRevez := If(empty(SR6->R6_REVEZAM),"NA",SR6->R6_REVEZAM)
+	
+	oPrint:say(nLin,0100, DTOC(SRA->RA_NASC) ,oFont07)			
+	oPrint:say(nLin,0570, cSexo ,oFont07)			
+	oPrint:say(nLin,0830, cCTPS ,oFont07)			
+	oPrint:say(nLin,1370, DTOC(SRA->RA_ADMISSA),oFont07)		
+	oPrint:say(nLin,1830, cRevez ,oFont07)			
+
+	nLin +=20
+	oPrint:Line(nLin+200,030,nLin+200,2350)        // Linha
+	oPrint:Line(nLinI,0500,nLin+200,0500)			// Linha Div.Cabecalho
+	oPrint:Line(nLinI,1300,nLin+200,1300)			// Linha Div.Cabecalho
+
+	oPrint:say(nLin+50,0050, STR0004,oFont10n)			 //"Matricula"
+	oPrint:say(nLin+50,0520, STR0005,oFont10n)			 //"Centro de Custo"
+	oPrint:say(nLin+50,1350, STR0122,oFont10n)			 //"Função"
+
+	nLin +=130
+
+	oPrint:say(nLin,0100, SRA->RA_MAT ,oFont07)			
+	oPrint:say(nLin,0520,fDesc("SI3",SRA->RA_CC,"I3_DESC",,SRA->RA_FILIAL),oFont07)			
+	oPrint:say(nLin,1370,fDesc("SRJ",SRA->RA_CODFUNC,"RJ_DESC"),oFont07)		
+
+	nLin +=100
+
+	If Alltrim(GETMV("MV_PAREND")) == "F"
+		lParEnd := "F"
+	Endif
+
+	cDataCid := alltrim(IF(lParEnd=="C",SM0->M0_CIDCOB,SM0->M0_CIDENT))+", "+StrZero(Day(dDataBase),2)+" de "
+	cDataCid += MesExtenso(Month(dDataBase))+" de "+Str(Year(dDataBase),4)
+
+	oPrint:say(nLin+50,0050, cDataCid,oFont10n)			 //data por extenso
+
+	nLin +=220
+	oPrint:say(nLin+50,0960, "__________________________",oFont10n)
+	nLin +=35
+	oPrint:say(nLin+50,1000, STR0123,oFont10n)			 //"Assinatura do Funcionário"
+	oPrint:say(nLin+250,100,STR0135,oFont10n) // "É facultada a inclusão de informações complementares ou adicionais ao PPP."
+	
+	oPrint:EndPage() 			// Finaliza a pagina
+EndIf
+Return NIL

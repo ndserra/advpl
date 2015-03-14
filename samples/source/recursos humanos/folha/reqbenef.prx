@@ -1,0 +1,604 @@
+#INCLUDE "rwmake.ch" 
+#INCLUDE  "ReqBenef.ch"
+#INCLUDE "PROTHEUS.CH"
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma    ³ReqBenef  º Autor ³ Natie              º Data ³  29/12/00   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDescricao   ³ Requerimento de Beneficio por Incapacidade                 º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso         ³ RdMaKE                                                     º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±º         ATUALIZACOES SOFRIDAS DESDE A CONSTRU€AO INICIAL.               º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºProgramador ³ Data   ³ BOPS ³  Motivo da Alteracao                       º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºNatie       ³19/02/01³xxxxxx³ Retirada da funcao   ValidPerg()           º±±
+±±ºNatie       ³07/09/02³v 7.10³ retirada cpo RA_BASEINSS                   º±±
+±±º            ³08/04/04³------³ Acerto no Driver de Impressao              º±±
+±±ºPedro Eloy  ³15/08/07³126097³ Criação do formulário integrado com WORD.  º±±
+±±º            ³28/09/07³126097³ feito o tratamento para gravar/imprimir .  º±±
+±±³Tatiane V.M.|25/08/09|020388|Compatibilizacao dos fontes  para aumento   ³±±
+±±³            |        |  2009| do campo filial e gestão corporativa.      ³±±
+±±ºTania       ³04/08/10³16698/³ Inclusao FieldPos para o campo RA_DEPSF.   º±±
+±±º            ³        ³2010  ³                                            º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+User Function ReqBenef()
+
+SetPrvt("AORD,CTIT,NLIN,CDESC1,CDESC2,CDESC3")
+SetPrvt("ARETURN,CPERG,CABEC1,CABEC2,NLI,TAMANHO")
+SetPrvt("CSTRING,LABORTPRINT,LIMITE,NOMEPROG,NLASTKEY,AREGS")
+SetPrvt("WNREL,AINFO,AEMPRESA,NORDEM,CFILIAL,CMATDE")
+SetPrvt("DDTREFE,CNOME,CENDER,CTIPO")
+SetPrvt("DULTDIA,ADEPENDE,DET,NIDADE,DDTAFAST,NCONTOUTR")
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de Variaveis                                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aOrd 		:= {STR0001}
+cTit		:= STR0008
+nLi			:= 66  
+cDesc1		:= "Este programa tem como objetivo imprimir relatorio  "
+cDesc2		:= "de acordo com os parametros informados pelo usuario."
+cDesc3		:= "Requerimento de Beneficio por Incapacidade"
+Cabec1		:= STR0007
+
+lAbortPrint	:= .F.
+tamanho		:= "P"
+nomeprog	:= "REQBENEF"
+
+aReturn		:= {"Zebrado",1,"Administracao", 2, 2, 1, "", 1}
+nLastKey	:= 0
+cPerg       := "REQBEN"
+wnrel      	:= " " 
+cString 	:= "SRA"
+aDepende	:= {}
+nTamanho    := If(aReturn[4]==1,'G','P')
+lDepSf		:= Iif(SRA->(FieldPos("RA_DEPSF"))>0,.T.,.F.)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Ajuste do grupo de pergunta                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+AjustaSX1()
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Monta a interface padrao com o usuario...                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+WnRel := "ReqBen"
+WnRel := SetPrint(cString,WnRel,cPerg,cTit,cDesc1,cDesc2,cDesc3,.F.,aOrd,.F.,'P')
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Processamento. RPTSTATUS monta janela com a regua de processamento. ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If nLastKey == 27
+	Return
+Endif
+
+SetDefault(aReturn,cString)
+
+If nLastKey == 27
+	Return Nil
+Endif
+
+RptStatus({||ImpReq()})
+Return 
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºFun‡„o    ³ImpReq    º Autor ³ Natie              º Data ³  29/12/00   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDescri‡„o ³                                                            ¹±±
+±±º          |                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Programa principal                                         º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+Static Function ImpReq()
+Local nX 	:= 0 
+
+Private cPathArq	:= ""
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Verifica Ordem do Relatorio                                  ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+nOrdem		:= aReturn[8]
+
+aInfo		:= {}
+aEmpresa	:= Array(08)
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+pergunte(cPerg,.F.)
+	
+//+--------------------------------------------------------------+
+//¦ Carregando variaveis mv_par?? para Variaveis do Sistema.     ¦
+//+--------------------------------------------------------------+
+cFilImp    	:= mv_par01		//-- Filial
+cMatDe     	:= mv_par02		//-- Matricula  
+cTipo      	:= mv_par03		//-- Tipo Afastamento  
+dDtRefe    	:= mv_par04		//-- Data Referencia
+dUltDia    	:= mv_par05		//-- Ult.Dia Trabalhado
+cNome      	:= mv_par06		//-- Curador/Procurador
+cEnder     	:= mv_par07     //-- Endereco
+nContOutr	:= mv_par08		//-- Contrib.INSS outras empresas
+cCodCID		:= mv_par09		// Codigo C.I.D.
+nImpWord	:= mv_par10		// Impressao em Word S/N
+cArqGrava	:= Alltrim(mv_par11)		// utilize para salvar em disco
+
+dbSelectArea("SRA")
+dbGoTop()
+dbSetOrder( 1 )
+
+SetRegua( SRA->( RecCount() ) )
+
+If dbSeek(cFilImp + cMatDe,.T.)
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Carrega dados da empresa                                       ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If	!fInfo(@aInfo,SRA->RA_FILIAL)
+		Return Nil
+	Endif
+
+		
+	/*+--------------------------------------------------------------+
+	//¦ Movimenta Regua Processamento                                ¦
+	//+--------------------------------------------------------------+*/
+	IncRegua()  //-- Move a regua.
+
+	//Carrega Dependentes para Salario Familia 
+	If lDepSf
+		If !EMPTY(SRA->RA_DEPSF)
+			DbSelectArea("SRB")
+			DbSetOrder(1)
+			SRB->(dbSeek(SRA->RA_FILIAL + SRA->RA_MAT,.T.) )
+			Do While !eof() .and. (SRA->RA_FILIAL + SRA->RA_MAT)== (SRB->RB_FILIAL + SRB->RB_MAT)
+				nIdade    := Calc_idade((dDtRefe),SRB->RB_DTNASC)
+				//Testa se ainda e dependente 
+				//"Prenome dos Filhos               Data Nasc. 
+				//XXXXXXXXXXXXXXXXXXXXXXXXXXXXX     99/99/9999 
+				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+				//³ Acumula Dependentes                                  ³
+				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+				If  (SRB->RB_GRAUPAR = "F" .and. SRB->RB_TipSf == '1')   .Or. ( SRB->RB_TipSf == '2' .And.  nIdade <= 14 .and.  SRB->RB_GRAUPAR = "F")
+					aAdd(aDepende,{Left(SRB->RB_Nome,30), SRB->RB_DtNasc})
+				Endif
+				SRB->(dbskip())
+			enddo
+			dbSelectArea("SRA")
+	    Endif	
+	EndIf
+    
+	aEmpresa[01] := SubStr( aInfo[08],1,2 ) + "." + SubStr( aInfo[08],3,3 ) + "." + SubStr( aInfo[08],6,3 ) + "/" + SubStr( aInfo[08],9,4 ) + "-" + SubStr( aInfo[08],13,2 ) //cgc
+	aEmpresa[02] := SubStr( aInfo[03] + Space(29) , 1 , 29 )		// Nome completo 	
+	aEmpresa[03] := SubStr( aInfo[04] + Space(29) , 1 , 29 )    //Endereco de Cobranca	
+	aEmpresa[04] := SubStr( aInfo[13] + Space(15) , 1 , 15 )    //BAirro
+	aEmpresa[05] := Substr( aInfo[07],1,5) +"-" + Substr(aInfo[07],6,3)                                     //CEP 
+	aEmpresa[06] := SubStr( aInfo[05] + Space(20) , 1 , 20 )    //Cidade
+	aEmpresa[07] := SubStr( aInfo[06] + Space(02) , 1 , 02 )    //Estado
+	aEmpresa[08] := SubStr( aInfo[14] + Space(08) , 1 , 08 )    //Compl Endereco
+  
+	//------------------------------------
+	// Integração com o Word
+	//-------------------------------------
+	If nImpWord = 1
+		cPathArq	:= cGetFile("REQBENEF.DOT | REQBENEF.DOT", STR0049)
+	    fImprReqWord()
+		Return
+	Endif
+	
+	Set Device to Print		
+
+	//-- Inicializa a impressäo
+	@ nLi,00 pSay AvalImp(080) 
+
+    //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+    //³ Impressao do cabecalho do relatorio. . .                            ³
+    //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If nli > 60
+		nLi := 1
+	endif	
+   
+	
+	@ nLi,00 PSay Replicate('-',78)     
+	nLi ++
+	@ nLi,00 pSay '|' + Space(78) + '|'
+	nLi++
+	@ nLi,00 pSay '|' + Space(78) + '|'
+	nLi ++            
+	@ nLi,00 PSAY "|"  
+	@ nLi,01 PSAY PADC(STR0008,78)			    	//"|                      PREVIDENCIA SOCIAL-Inst Nacional do Seguro Social"      |"			
+	@ nLi,079 PSAY "|"  
+	nLi ++
+	@ nLi,00 pSay '|' + Space(78) + '|'
+	nli ++	
+	@ nLi,00 pSay '|' + Space(78) + '|'
+
+	nLI ++
+	@ nLi,00 PSay "|"+Replicate('-',78)+ "|"
+	nLI ++               
+	@ nLi,00 PSAY "|"  
+	@ nLi,01 PSAY PADC(STR0007,78)					//"|                      REQUERIMENTO DE BENEFICIO POR INCAPACIDADE              |"
+	@ nLi,079 PSAY "|"  
+	nLi ++
+	@ nLi,00 PSay "|"+Replicate('-',78)+ "|"
+
+
+	/* Dados do Beneficiario */
+	nLi ++
+	@ nLi,000 PSAY  STR0013 			
+	@ nLi,079 PSAY "|"  
+	nLi ++	
+	Det := "|" + SRA->RA_NOME + SPACE(07) + dtoc(SRA->RA_NASC) + SPACE(13)+ fDesc("SX5","34"+SRA->RA_NACIONA,"SUBS(X5_DESCRI,1,15)")
+	@ nLi,000 PSAY  Det 	//CIDADE-ESTADO-CEP
+	@ nLi,079 PSAY "|"  			 
+
+	nLi ++
+	@ nLi,00 PSay "|"+space(78)+ "|"
+	nLi ++
+	@ nLi,000 PSAY STR0014  + SRA->RA_ENDERECO
+	@ nLi,079 PSAY "|"  
+
+	nLi ++            
+	Det := Subs(STR0015,1,15) + SRA->RA_COMPLEM + Space(8)+Subs(STR0015,39,9)+ space(1)+ SRA->RA_BAIRRO 
+	@ nLi,000 PSAY Det 
+	@ nLi,079 PSAY "|"
+
+    nLi ++
+	Det := Subs(STR0016,1,15) + left(SRA->RA_MUNICIPIO,20) +Space(3)+ subs(STR0016,39,9)+ space(1)+ SRA->RA_ESTADO + SPACE(15) +"CEP: " + SUBS(SRA->RA_CEP,1,5) +"-"+ SUBS(SRA->RA_CEP,6,8)
+	@ nLi,000 PSAY Det    					//CIDADE-ESTADO-CEP 
+	@ nLi,079 PSAY "|"
+
+	nLi ++             
+	Det := Subs(STR0017,1,15) + If(SRA->RA_SEXO="M","Masculino","Feminino" ) + space(14)+ subs(STR0017,39,30) + SRA->RA_NUMCP + "-" + SRA->RA_SERCP
+	@ nLi,000 PSAY  Det
+	@ nLi,079 PSAY "|"                                                                                                                                                          
+
+	nLi ++             
+	Det := subs(STR0018,1,15) + fDesc("SX5","33"+SRA->RA_ESTCIVIL,"subs(X5_DESCRI,1,15)")+space(07) + subs(STR0018,39,43)
+	@ nLi,000 PSAY  Det
+	@ nLi,079 PSAY "|"
+	
+	nLi ++
+	Det := STR0019 + If(nContOutr==1,"SIM","NAO") 		//+  IIF(SRA->RA_BASEINSS>0,"SIM","NAO") -> Cpo excluido na v7.10 
+	@ nLi,000 PSAY  Det	                                     
+	@ nLi,079 PSAY "|"  
+
+	nLi ++
+	@ nLi,00 PSay "|"+space(78)+ "|"
+	nLi ++
+	@ nLi,00 PSay "|"+space(78)+ "|"
+	nLi ++
+	@ nLi,00 PSay "|"+space(78)+ "|"
+	nLi ++
+	@ nLi,000 PSAY  STR0020	+ repl("-",30)							// assinatura
+ 	@ nli,079 PSAY "|"
+ 	
+    /* Procurador e/ou Curador*/
+    nLi ++
+	@ nLi,00 PSay "|"+space(78)+ "|"
+	nLi ++
+	@ nLi,00 PSay "|"+space(78)+ "|"
+	nLi ++
+	Det := STR0021  + SPACE(2)+ left(cNome,30)			//Curador ou Procurador
+	@ nLi,000 PSAY Det  	
+ 	@ nli,079 PSAY "|"
+
+	nLi  ++                                                  
+	Det := STR0022  + SPACE(2) +left(cEnder,30)		//Endereco Curado ou procurador
+	@ nLi,000 PSAY Det 
+ 	@ nli,079 PSAY "|"
+	nLi ++
+	@ nLi,00 PSay "|"+space(78)+ "|"
+	
+    /* Dados da Empresa*/
+    nLi ++
+	@ nLi,00 PSay "|"+Replicate('-',78)+ "|"
+	nLi ++	
+	@ nLi,00 PSAY "|"  
+	Det := PADC(STR0023,78)
+	@ nLi,001 PSAY  Det 			
+	@ nLi,079 PSAY "|"  
+
+	nLi ++
+	@ nLi,00 PSay "|"+Replicate('-',78)+ "|"
+	nLi ++             
+	Det := STR0024  
+	@ nLi,000 PSAY Det
+	@ nLi,079 PSAY "|"  
+	
+	nLi ++           
+	Det :="|" + aEmpresa[02]  + space(28) + aEmpresa[01] 			//Nome - cnpj
+	@ nLi,000 PSAY Det                                                          
+	@ nLi,079 PSAY "|"  
+
+	nLi ++
+	@ nLi,00 PSay "|"+space(78)+ "|"
+
+	nLi ++	 	    
+	Det := STR0014 + aEmpresa[03]                           
+	@ nLi,000 PSAY Det                                              //Endereco
+	@ nLi,079 PSAY "|"  
+
+	nLi ++            
+	Det := Subs(STR0015,1,15) + aEmpresa[08] + Space(15)+Subs(STR0015,39,9)+ space(1)+ aEmpresa[04] 
+	@ nLi,000 PSAY Det 
+	@ nLi,079 PSAY "|"  
+	
+	nLi ++	          
+	Det :=subs(STR0016,1,15) +  LEFT(aEmpresa[06],20) + Space(3) + subs(STR0016,39,9)+  space(1)+aEmpresa[07] + SPACE(13) +"CEP: " + aEmpresa[05] 
+	@ nLi,000 PSAY Det  												//Cidade, Uf ,CEP	
+	@ nLi,079 PSAY "|"  
+	    
+    /* Dados para obtencao do Beneficio */
+    nLi ++
+	@ nLi,00 PSay "|"+space(78)+ "|"
+    nLi ++             
+
+	Det := STR0025 + " " + dtoc(dUltDia)
+	@ nLi,000 PSAY  Det
+	Det := STR0046 + cCodCID
+	@ nLi,063 PSAY  Det
+ 	@ nli,079 PSAY "|"
+	nLi ++          
+	Det := STR0026 + space(1) + cTipo
+	@ nLi,000 PSAY  Det 			
+ 	@ nli,079 PSAY "|"
+	nLi ++
+	@ nLi,00 PSay "|"+space(78)+ "|"
+	
+	/* Dependentes para salario familia*/		
+	nLi ++
+	@ nLi,00 PSay "|"+Replicate('-',78)+ "|"
+	nLi ++      
+	@ nLi,00 PSAY "|"  
+	Det := PADC(STR0027	,78)
+	@ nLi,001 PSAY  Det 			
+	@ nLi,079 PSAY "|"  
+	
+	nLi ++          
+	@ nLi,00 PSay "|"+Replicate('-',78)+ "|"
+
+    nLi ++
+	Det := STR0028				   	//"Prenome dos Filhos               Data Nasc. 
+	@ nLi,000 PSAY  Det	
+	@ nLi,079 PSAY "|"  
+
+	For nX := 1 to Len(aDepende) 
+		nLi ++
+		@ nLi,000 pSay "|" + aDepende[nX,1] + Space(21)+ PadR(DtoC(aDepende[nX,2]),10) 
+	 	@ nli,079 PSAY "|"
+	Next nX
+
+	nLi ++
+	@ nLi,00 PSay "|"+Replicate('-',78)+ "|"
+	
+	nLi ++ 
+	@ nli,000 PSAY "|"	
+	Det := aEmpresa[06] +", "+ StrZero(Day(Date()),2)+ " de "  + MesExtenso(MONTH(Date())) +" de "+ (Strzero(Year(Date()),4)) 
+	@ nLi,001 PSAY Det
+	@ nli,079 PSAY "|"
+	nLi ++
+	@ nLi,00 PSay "|"+SPACE(78)+ "|"
+	nLi ++
+	@ nLi,00 PSay "|"+SPACE(78)+ "|"
+	nLi ++
+	@ nLi,000 PSAY  "| ---------------------------------------"
+	@ nli,079 PSAY "|"
+	nLi ++
+	@ nLi,000 PSAY STR0044
+	@ nli,079 PSAY "|"
+	nLi ++ 
+	@ nLi,000 PSAY STR0045             
+	@ nli,079 PSAY "|"
+	nLi ++
+	@ nLi,001 PSay Replicate('-',77)
+	
+    nLi := 1 			// Avanca a linha de impressao
+	nIdade		:= 0 
+	aDepende 	:= {}
+Endif
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Finaliza a execucao do relatorio...                                 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( 'SRA' )
+RetIndex('SRA')
+dbSetOrder(1)   
+dbGoTop()
+Set Device To Screen
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Se impressao em disco, chama o gerenciador de impressao...          ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+If aReturn[5]==1
+   dbCommitAll()
+   SET PRINTER TO
+   OurSpool(wnrel)
+Endif
+
+MS_FLUSH()
+
+Return
+
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºFun‡„o    ³ AjustaSX1º Autor ³ RH            	 º Data ³  08/08/07   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDescri‡„o ³ Criacao de Perguntas no SX1                                º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³                                                            º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+
+Static Function AjustaSX1()
+Local cPerg		:= "REQBEN"
+Local aRegs	 	:= {}
+Local aHelp		:= {}
+Local aHelpE	:= {}
+Local aHelpI	:= {}   
+Local cHelp		:= ""
+
+/* 
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³           Grupo  Ordem Pergunta Portugues   Pergunta Espanhol       Pergunta Ingles         Variavel 	Tipo  Tamanho Decimal Presel  GSC   Valid                 Var01     	 Def01      DefSPA1      DefEng1      Cnt01          					  Var02  Def02    DefSpa2  DefEng2	Cnt02  Var03 Def03  DefSpa3 DefEng3 Cnt03  Var04  Def04  DefSpa4    DefEng4  Cnt04 		 Var05  Def05  DefSpa5 DefEng5   Cnt05  	XF3  GrgSxg   cPyme   aHelpPor  aHelpEng	 aHelpSpa    cHelp      ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+
+aHelp := {	"Informe o código do C.I.D." }
+aHelpE:= {	"Informe o código do C.I.D." }
+aHelpI:= {	"Informe o código do C.I.D." }
+
+Aadd(aRegs,{cPerg,"09","Codigo C.I.D.   ? "           ,"¿Codigo C.I.D. ? "     ,"Codigo C.I.D. ? "       ,"mv_ch9","C" ,8      ,0     ,0     ,"G"  ,""     ,"mv_par09",""    ,""      ,""     ,"",""    ,""   ,""     ,""     ,""  ,""   ,""    ,""      ,""      ,""   ,""   ,""   ,""     ,""     ,""   ,""    ,""    ,""     ,""     ,""   ,"TMR",""    ,"S"  ,aHelp  ,aHelpE  ,aHelpI   ,cHelp})
+
+cHelp := ""
+PutSX1Help("P"+cHelp,aHelp,aHelpI,aHelpE)	 
+
+
+/* 
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³           Grupo  Ordem Pergunta Portugues   Pergunta Espanhol       Pergunta Ingles         Variavel 	Tipo  Tamanho Decimal Presel  GSC   Valid                 Var01     	 Def01      DefSPA1      DefEng1      Cnt01          					  Var02  Def02    DefSpa2  DefEng2	Cnt02  Var03 Def03  DefSpa3 DefEng3 Cnt03  Var04  Def04  DefSpa4    DefEng4  Cnt04 		 Var05  Def05  DefSpa5 DefEng5   Cnt05  	XF3  GrgSxg   cPyme   aHelpPor  aHelpEng	 aHelpSpa    cHelp      ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+
+aHelp := {	"Gerar o requerimento via WORD ?  "}
+aHelpE:= {	"Gerar o requerimento via WORD ?  "}
+aHelpI:= {	"Gerar o requerimento via WORD ?  "}
+
+Aadd(aRegs,{cPerg,"10","Integração com Word  ?"    ,"¿Integração com Word   ?"  ,"Integração com Word  ? " ,"mv_cha","C" ,1      ,0     ,0     ,"C"  ,""     ,"mv_par10","Sim"    ,"Sim"      ,"Sim"     ,"",""    ,"Não"   ,"Não"     ,"Não"     ,""  ,""   ,""    ,""      ,""      ,""   ,""   ,""   ,""     ,""     ,""   ,""    ,""    ,""     ,""     ,""   ,"",""    ,"S"  ,aHelp  ,aHelpE  ,aHelpI  ,cHelp})
+
+cHelp := ""
+PutSX1Help("P"+cHelp,aHelp,aHelpI,aHelpE)	 
+
+/* 
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³           Grupo  Ordem Pergunta Portugues   Pergunta Espanhol       Pergunta Ingles         Variavel 	Tipo  Tamanho Decimal Presel  GSC   Valid                 Var01     	 Def01      DefSPA1      DefEng1      Cnt01          					  Var02  Def02    DefSpa2  DefEng2	Cnt02  Var03 Def03  DefSpa3 DefEng3 Cnt03  Var04  Def04  DefSpa4    DefEng4  Cnt04 		 Var05  Def05  DefSpa5 DefEng5   Cnt05  	XF3  GrgSxg   cPyme   aHelpPor  aHelpEng	 aHelpSpa    cHelp      ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+
+aHelp := {	" Deve-se utilizar somente quando",;
+			" não querer a impressão via     ",;
+			" impressora e sim via arquivo   ",;
+			" aponte o caminho e nome arquivo."}
+
+aHelpE:= {	" Deve-se utilizar somente quando",;
+			" não querer a impressão via     ",;
+			" impressora e sim via arquivo   ",;
+			" aponte o caminho e nome arquivo."}
+			
+aHelpI:=  {	" Deve-se utilizar somente quando",;
+			" não querer a impressão via     ",;
+			" impressora e sim via arquivo   ",;
+			" aponte o caminho e nome arquivo."}
+
+aAdd(aRegs,{cPerg,'11' ,'Arquivo Saida    ?'  ,'Archivo Salida  ?'       ,'Output File  ?','mv_chb','C'  ,30     ,0      ,0     ,'G','','mv_par11',"" ,"" ,"","","","","","","","","","","","","","","","","","","","","","","","","",aHelp     ,aHelpE	,aHelpI	,""})
+
+PutSX1Help("P"+cHelp,aHelp,aHelpI,aHelpE)	 
+
+//-- Inclui Pergunta 
+ValidPerg(aRegs,cPerg)
+
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³REQBENEF  ºAutor  ³Microsiga           º Data ³  08/09/07   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³                                                            º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP                                                        º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+
+Function fImprReqWord()
+Local oWord
+Local nCount	:= 1
+Local nArq		:= 0
+Local cMsg		:= ""
+
+// Inicializa a integração com o Word
+oWord	:= OLE_CreateLink()
+
+OLE_OpenFile( oWord, cPathArq	,.f. )
+
+// Atualiza os campos.
+OLE_SetDocumentVar( oWord, "NOME1"		, SRA->RA_NOME  )
+OLE_SetDocumentVar( oWord, "NASCIM1"	, dtoc(SRA->RA_NASC) )
+OLE_SetDocumentVar( oWord, "NACIONA1"	, fDesc("SX5","34"+SRA->RA_NACIONA,"SUBS(X5_DESCRI,1,15)") )
+OLE_SetDocumentVar( oWord, "ENDERECO1"	, SRA->RA_ENDERECO )
+OLE_SetDocumentVar( oWord, "COMPLEME1"	, SRA->RA_COMPLEM )
+OLE_SetDocumentVar( oWord, "BAIRRO1"	, SRA->RA_BAIRRO )
+OLE_SetDocumentVar( oWord, "CIDADE1"	, Left(SRA->RA_MUNICIPIO,20) )
+OLE_SetDocumentVar( oWord, "ESTADO1"	, SRA->RA_ESTADO  )
+OLE_SetDocumentVar( oWord, "CEP1"		, SUBSTR(SRA->RA_CEP,1,5) + "-" + SUBS(SRA->RA_CEP,6,8) )
+OLE_SetDocumentVar( oWord, "SEXO1"      , If(SRA->RA_SEXO="M","Masculino","Feminino" )  )
+OLE_SetDocumentVar( oWord, "DOCINS1"	, SRA->RA_NUMCP + "-" + SRA->RA_SERCP  )
+OLE_SetDocumentVar( oWord, "ESTCIVIL1" 	, fDesc("SX5","33"+SRA->RA_ESTCIVIL,"subs(X5_DESCRI,1,15)")  )
+OLE_SetDocumentVar( oWord, "ATIVVINC1"	, If(nContOutr==1,"SIM","NAO")  )
+OLE_SetDocumentVar( oWord, "PROCURA1"	, left(cNome,30)  )
+OLE_SetDocumentVar( oWord, "ENDERECO2"	, left(cEnder,30) )
+
+OLE_SetDocumentVar( oWord, "EMPRESA1"	, aEmpresa[02]  )
+OLE_SetDocumentVar( oWord, "CNPJ1"		, aEmpresa[01] )
+OLE_SetDocumentVar( oWord, "ENDERECO2"	, left(cEnder,30)  )
+OLE_SetDocumentVar( oWord, "COMPLEME2"	, aEmpresa[08] )
+OLE_SetDocumentVar( oWord, "BAIRRO2"	, aEmpresa[04] )
+OLE_SetDocumentVar( oWord, "CIDADE2"	, aEmpresa[06] )
+OLE_SetDocumentVar( oWord, "ESTADO2"	, aEmpresa[07]  )
+OLE_SetDocumentVar( oWord, "CEP2"		, aEmpresa[05]  )
+OLE_SetDocumentVar( oWord, "ULTDIA"		, dtoc(dUltDia) )
+OLE_SetDocumentVar( oWord, "CID2"		, cCodCID  )
+OLE_SetDocumentVar( oWord, "AFASTADO2"	, cTipo   )
+
+OLE_SetDocumentVar( oWord, "LOCCIDADE"	, aEmpresa[06]                 )
+OLE_SetDocumentVar( oWord, "LOCDIA"		, StrZero(Day(Date()),2)       )
+OLE_SetDocumentVar( oWord, "LOCMES"		, MesExtenso(MONTH(Date() ) )  )
+OLE_SetDocumentVar( oWord, "LOCANO"		, Strzero(Year(Date() ),4)     )
+
+OLE_SetDocumentVar( oWord, "nLinhadep"	, Len(aDepende)   )
+
+For nCount := 1 to Len(aDepende)
+	OLE_SetDocumentVar(oWord, "var_table1_cell" + AllTrim(Str(nCount)) + "1",aDepende[nCount][1]  )
+	OLE_SetDocumentVar(oWord, "var_table2_cell" + AllTrim(Str(nCount)) + "2", DtoC( aDepende[nCount][2] )  )
+Next nCount						
+OLE_UpdateFields( oWord )
+
+//Executa a macro 'dependente' criada nos modelos.dot
+If !Empty(aDepende)
+	OLE_ExecuteMacro(oWord, "dependentes")	 
+Endif
+
+If Empty(cArqGrava)
+	OLE_PrintFile( oWord, "ALL",,, 1 )
+	OLE_CloseFile( oWord )
+	MsgAlert(STR0047,STR0048)
+Else
+	nArq		:= MSFCREATE(cArqGrava)
+	IF Ferror() # 0 .And. nArq = -1 
+		cMsg := STR0051 + STR(FERROR(),3) 	//"Erro de abertura, codigo DOS:"
+		Help('',1, "OPENERROR",,cMsg,1)		//-- "Nao foi possivel abrir ou  criar o arquivo no diretorio especifidado."
+	Else
+		OLE_SaveAsFile( oWord, cArqGrava  )
+		MsgAlert(STR0050+cArqGrava+".DOC",STR0048)	
+	EndIF
+Endif
+
+OLE_CloseLink( oWord )
+
+Return

@@ -1,0 +1,663 @@
+#INCLUDE "PROTHEUS.CH"
+#Include "rwmake.ch"        // incluido pelo assistente de conversao do AP5 IDE em 19/11/99
+
+/*
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programador  ³ Data     ³ FNC            ³  Motivo da Alteracao                      ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³±±
+±±³Tatiane V. M.³25/08/2009³00000020388/2009³Compatibilizacao dos fontes para aumento do³±±
+±±³             ³          ³                ³campo filial e gestão corporativa.         ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+User Function Impetiq()        // incluido pelo assistente de conversao do AP5 IDE em 19/11/99
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP5 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("CSTRING,AORD,CDESC1,CDESC2,CDESC3,ARETURN")
+SetPrvt("NOMEPROG,ALINHA,NLASTKEY,CPERG,LEND,AINFO")
+SetPrvt("CLIN,AT_PRG,WCABEC0,WCABEC1,WCABEC2,CONTFL")
+SetPrvt("LI,NTAMANHO,TITULO,WNREL,ADRIVER,ACODFOL")
+SetPrvt("NCONT,NORDEM,CFILDE,CFILATE,CCCDE,CCCATE")
+SetPrvt("CMATDE,CMATATE,CNOMEDE,CNOMEATE,CCHAPADE,CCHAPAATE")
+SetPrvt("CSITUACAO,CCATEGORIA,DDATAREF,NTIPFOR,NTAMETIQ,NNUMLIN")
+SetPrvt("NCOLUNAS,CINICIO,CFIM,CINDCOND,CFOR,CARQNTX")
+SetPrvt("CHAVE,CFILIALANT,CCCANT,NFUNC,CLINHA1,CDESCEMP")
+SetPrvt("CDESCEND,CDESCATIV,CDESCCGC,NTPINSC,WCCTO,WTURNO")
+SetPrvt("CNORMAL_A,CNORMAL_D,CCOMPRI_A,CCOMPRI_D,CEXPAND_A")
+SetPrvt("CESPAND_D,CSEXTO_A,CSEXTO_D,COITAVO_A,COITAVO_D,CEXPOEN_A")
+SetPrvt("CEXPOEN_D,CINDICE_A,CINDICE_D,CDESCFUNC,LTESTE,NCOL")
+SetPrvt("VEZ,INI,CDESCCCTO,SOMA")
+SetPrvt("CDESCTURN,")
+
+#IFNDEF  WINDOWS
+	#Translate PSAY => SAY
+#Endif
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ IMPETIQ  ³ Autor ³ R.H. - Aldo Marini    ³ Data ³ 04.06.97 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Emiss„o da Etiqueta / Cart„o de Ponto em RdMake            ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Folha de Pagamento                                         ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³         ATUALIZACOES SOFRIDAS DESDE A CONSTRU€AO INICIAL.             ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Programador ³ Data   ³ BOPS ³  Motivo da Alteracao                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³            ³        ³      ³                                          ³±±
+±±³Marinaldo   ³18/05/00³------³ Considerar apenas as 05 primeiras    posi³±±
+±±³            ³--------³------³ coes para impressao do Codigo CNAE.      ³±±
+±±³Marinaldo   ³18/05/00³------³ Acerto das Macros para o Protheus        ³±±
+±±³Marina      ³30/08/00³------³Validacao Filial/Acesso.Retirada parte DOS³±±  
+±±³Natie       ³29/08/01³009963³PrnFlush-Descarrega spool impressao teste ³±±
+±±³Natie       ³11/12/01³009963³ Acerto Impressao-Teste                   ³±±
+±±³            ³14/04/04³----- ³ Acerto Driver de Impressao               ³±±
+±±³Alex        ³18/08/09³020257³Ajuste no Grupo de Campos filial          ³±±
+±±³            ³        ³ /2009³tratamento para não considerar 2 posições ³±±
+±±³            ³        ³      ³fixas.                                    ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis  (Basicas)                                  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cString := "SRA"  // alias do arquivo principal (Base)
+aOrd    := { "Matricula","Centro de Custo","Nome","Chapa" } //Ordem
+cDesc1  := "Emiss„o da Etiqueta / Cart„o de Ponto"
+cDesc2  := "Ser  impresso de acordo com os parametros solicitados pelo"
+cDesc3  := "usuario."
+
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis Private(Basicas)                            ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aReturn  := { "Zebrado",1,"Administra‡„o",2,2,1,"",1 }
+NomeProg := "IMPETIQ"
+aLinha   := {}
+nLastKey := 0
+cPerg    := "GPR310"
+lEnd     := .F.
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis (Programa)                                  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aInfo := {}
+cLin:={0,0,0,0,0,0,0,0}
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis Utilizadas na funcao IMPR                          ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+AT_PRG   := "IMPETIQ"
+wCabec0  := 2
+wCabec1  := ""
+wCabec2  := ""
+Contfl   := 1
+Li       := 0
+nTamanho := "M"
+
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Variaveis de Acesso do Usuario                               ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+cAcessaSRA	:= &( " { || " + ChkRH( "IMPETIQ" , "SRA" , "2" ) + " } " )
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+pergunte("GPR310",.F.)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros                         ³
+//³ mv_par01        //  Filial De                                ³
+//³ mv_par02        //  Filial Ate                               ³
+//³ mv_par03        //  Centro de Custo De                       ³
+//³ mv_par04        //  Centro de Custo Ate                      ³
+//³ mv_par05        //  Matricula De                             ³
+//³ mv_par06        //  Matricula Ate                            ³
+//³ mv_par07        //  Nome De                                  ³
+//³ mv_par08        //  Nome Ate                                 ³
+//³ mv_par09        //  Chapa De                                 ³
+//³ mv_par10        //  Chapa Ate                                ³
+//³ mv_par11        //  Situa‡äes                                ³
+//³ mv_par12        //  Categorias                               ³
+//³ mv_par13        //  Data Referencia                          ³
+//³ mv_par14        //  Tipo Formulario 1-Etiqueta 2-Cartao Ponto³
+//³ mv_par15        //  Tamanho da Etiqueta                      ³
+//³ mv_par16        //  Informe Numero Linhas para Salto         ³
+//³ mv_par17        //  Numero de Colunas                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+Titulo := "EMISSO ETIQUETA / CARTO DE PONTO"
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a funcao SETPRINT                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+wnrel:="IMPETIQ"            //Nome Default do relatorio em Disco
+wnrel:=SetPrint(cString,wnrel,cPerg,Titulo,cDesc1,cDesc2,cDesc3,.F.,aOrd,.F.)
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Inicializa Impressao                                         ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If ! fInicia(cString)
+	Return
+Endif	
+
+RptStatus({|| GR310Imp()},Titulo)// Substituido pelo assistente de conversao do AP5 IDE em 19/11/99 ==> 	RptStatus({|| Execute(GR310Imp)},Titulo)
+Return
+
+
+Static Function GR310Imp()
+
+Local X
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis (Programa)                                  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aCodFol := {}
+nCont   := 0
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Carregando variaveis mv_par?? para Variaveis do Sistema.     ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nOrdem     := aReturn[8]
+cFilDe     := mv_par01
+cFilAte    := mv_par02
+cCcDe      := mv_par03
+cCcAte     := mv_par04
+cMatDe     := mv_par05
+cMatAte    := mv_par06
+cNomeDe    := mv_par07
+cNomeAte   := mv_par08
+cChapaDe   := mv_par09
+cChapaAte  := mv_par10
+cSituacao  := mv_par11
+cCategoria := mv_par12
+dDataref   := mv_par13
+nTipFor    := mv_par14
+nTamEtiq   := mv_par15
+nNumLin    := mv_par16
+nColunas   := If( mv_par17 > 4 , 4 ,mv_par17 )
+
+If nNumLin == 0
+	nNumLin := 1
+Endif
+
+Check_imp()
+
+dbSelectArea( "SRA" )
+If nOrdem == 1
+	dbSetOrder( 1 )
+ElseIf nOrdem == 2
+	dbSetOrder( 2 )
+ElseIf nOrdem == 3
+	dbSetOrder(3)
+ElseIf nOrdem == 4
+	dbSetOrder(1)
+Endif
+
+dbGoTop()
+
+If nOrdem == 1
+	dbSeek(cFilDe + cMatDe,.T.)
+	cInicio := "SRA->RA_FILIAL + SRA->RA_MAT"
+	cFim    := cFilAte + cMatAte
+ElseIf nOrdem == 2
+	dbSeek(cFilDe + cCcDe + cMatDe,.T.)
+	cInicio := "SRA->RA_FILIAL + SRA->RA_CC + SRA->RA_MAT"
+	cFim    := cFilAte + cCcAte + cMatAte
+ElseIf nOrdem == 3
+	DbSeek(cFilDe + cNomeDe + cMatDe,.T.)
+	cInicio := "SRA->RA_FILIAL + SRA->RA_NOME + SRA->RA_MAT"
+	cFim    := cFilAte + cNomeAte + cMatAte
+ElseIf nOrdem == 4
+	dbSeek(cFilDe + cMatDe,.T.)
+	cInicio := "SRA->RA_FILIAL + SRA->RA_MAT"
+	cFim    := cFilAte + cMatAte
+Endif
+
+#IFNDEF TOP
+	If nOrdem == 4
+		cIndCond := 'SRA->RA_FILIAL + SRA->RA_CHAPA'
+		cFor :="(SRA->RA_FILIAL + SRA->RA_CHAPA >= cFilDe + cChapaDe) "
+		cFor := cFor + ".And. (SRA->RA_FILIAL + SRA->RA_CHAPA <= cFilAte + cChapaAte)"
+	Endif
+#ELSE
+	If nOrdem == 4
+		cIndCond := "SRA->RA_FILIAL + SRA->RA_CHAPA"
+		cFor :='(RA_FILIAL + RA_CHAPA >= "'+cFilDe + cChapaDe+'")'
+		cFor := cFor + '.And. (RA_FILIAL + RA_CHAPA <= "'+cFilAte + cChapaAte+'")'
+	Endif
+#ENDIF
+
+If nOrdem == 4
+	cArqNtx  := CriaTrab(Nil,.F.)
+	IndRegua("SRA",cArqNtx,cIndCond,,cFor,"Selecionando Registros...")
+Endif
+
+
+dbSelectArea( "SRA" )
+SetRegua(SRA->(RecCount()))
+
+If nTamEtiq == 2
+	@ Li,0 PSAY cOitavo_A
+Endif
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Efetua  teste de Impressao                                   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If aReturn[5] # 1
+	TesteEtq()
+Endif	
+
+Chave      := 0
+cFilialAnt := Space(FWGETTAMFILIAL)
+cCcAnt     := Space(9)
+
+dbSelectArea( "SRA" )
+While !Eof() .And. Chave == 0 .And. !lEnd
+	Afill(cLin,"")
+	nFunc   := 0
+	nCont   := 1
+	cLinha1 := ""
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Cancela ImpresÆo ao se pressionar <ALT> + <A>                ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+	If lEnd
+		@Prow()+1,0 PSAY cCancel
+		Exit
+	EndIF			
+
+	While !Eof() .And. Chave == 0 .And. nFunc < nColunas .And. !lEnd
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Movimenta Regua Processamento                                ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		IncRegua()
+
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Cancela ImpresÆo ao se pressionar <ALT> + <A>                ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If lEnd
+			@Prow()+1,0 PSAY cCancel
+			Exit
+		EndIF		
+
+		If SRA->RA_FILIAL # cFilialAnt
+			If !fInfo(@aInfo,SRA->RA_FILIAL)
+				Exit
+			Endif
+			dbSelectArea( "SRA" )
+			cFilialAnt := SRA->RA_FILIAL
+		Endif
+		
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Verifica o De / Ate Solicitado                               ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If nOrdem == 1
+			If SRA->RA_FILIAL + SRA->RA_MAT > cFilAte + cMatAte
+				Chave := 1
+				Exit
+			Endif
+		Elseif nOrdem == 2
+			If SRA->RA_FILIAL + SRA->RA_CC + SRA->RA_MAT > cFilAte + cCcAte + cMatAte
+				Chave := 1
+				Exit
+			Endif
+		Elseif nOrdem == 3
+			If SRA->RA_FILIAL + SRA->RA_NOME + SRA->RA_MAT > cFilAte + cNomeAte + cMatAte
+				Chave := 1
+				Exit
+			Endif
+		Elseif nOrdem == 4
+			If SRA->RA_FILIAL + SRA->RA_CHAPA > cFilAte + cChapaAte
+				Chave := 1
+				Exit
+			Endif
+		Endif
+
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Consiste Parametriza‡Æo do Intervalo de ImpressÆo            ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If (Sra->Ra_Chapa < cChapaDe) .Or. (Sra->Ra_Chapa > cChapaAte) .Or. ;
+			(Sra->Ra_Nome < cNomeDe) .Or. (Sra->Ra_Nome > cNomeAte) .Or. ;
+		   (Sra->Ra_Mat < cMatDe) .Or. (Sra->Ra_Mat > cMatAte) .Or. ;
+			(Sra->Ra_CC < cCcDe) .Or. (Sra->Ra_CC > cCCAte)
+			dbSelectArea( "SRA" )
+			dbSkip()
+			Loop
+		EndIf
+		
+		/*
+		ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		³Consiste Filiais e Acessos                                             ³
+		ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+		IF !( SRA->RA_FILIAL $ fValidFil() .and. Eval( cAcessaSRA ) )
+			dbSelectArea("SRA")
+			dbSkip()
+			Loop
+		EndIF
+
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Verifica Situacao e Categoria do Funcionario                 ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If !( SRA->RA_SITFOLH $ cSituacao ) .OR. !( SRA->RA_CATFUNC $ cCategoria )
+			dbSkip()
+			Loop
+		Endif
+		cLin[nCont] := cLin[nCont] + cCompri_A + "CHAPA:"+ Space(18)
+		cLin[nCont] := cLin[nCont] + "CATEG:" + fDesc("SX5","28"+SRA->RA_CATFUNC,"X5DESCRI()",11,SRA->RA_FILIAL)+" "+Upper(FDESC_MES(Month(dDataRef),3))+"/"+PADR(Right(Str(Year(dDataRef)),IF(nTData=8,2,4)),4)+If(nfunc < 3,SPACE(6),"")
+		cLinha1     := cLinha1 + cCompri_A + Space(7) + cNormal_A + cExpand_A + SRA->RA_CHAPA + cEspand_D + cCompri_A + If(nFunc < 3,Space(If(nFunc==1,31,32)),"")
+		nCont := nCont + 1
+		cLin[nCont] := cLin[nCont] + "NOME:"+SRA->RA_NOME+" MATR:"+SRA->RA_MAT+If(nFunc < 3,Space(9),"")
+		nCont := nCont + 1
+		cLin[nCont] := cLin[nCont] + "FUNCAO:"+DescFun(SRA->RA_CODFUNC,SRA->RA_FILIAL)+" CTPS:"+SRA->RA_NUMCP+ "/" +SRA->RA_SERCP + If(nFunc<3 , Space(10) , "" )
+		
+		cDescEmp  := aInfo[03]									// Razao Social
+		cDescEnd  := aInfo[04]									// Endereco
+		cDescAtiv := StrZero(Val(Subst(aInfo[16],1,5)),5)	// Atividade Economica CNAE
+		cDescCgc  := aInfo[08]									// CGC/CEI
+		nTpInsc   := aInfo[15]									// Tipo de Inscricao
+		
+		If nTpInsc == 1
+			cDescCgc  := cDescCgc+Space(4)
+		Elseif nTpInsc == 2
+			cDescCgc  := Transform(cDescCgc,"@R ##.###.###/####-##")
+		Else
+			cDescCgc  := Transform(Subs(cDescCgc,1,11),"@R ###.###.###-##")+Space(4)
+		Endif
+		
+		If nTamEtiq == 1
+			nCont:= nCont + 1
+			cLin[nCont] := cLin[nCont] + "EMPR: "+Left(cDescEmp,30)+" ATIVI:"+cDescAtiv+If(nFunc < 3,Space(8),"")
+			nCont:= nCont + 1
+			cLin[nCont] := cLin[nCont]+ "END:"+Left(cDescEnd,30)+" C.C:"+SRA->RA_CC+IF(nFunc < 3,Space(8),"")
+		Endif
+		
+		nCont:= nCont + 1
+		wCcto := DescCc(SRA->RA_CC,SRA->RA_FILIAL)
+		If nTamEtiq == 1
+			cLin[nCont] := cLin[nCont] + "CGC: "+cDescCgc+" "+Space(50-27-Len(Rtrim(wCcto)))+Rtrim(wCcto)+If(nFunc < 3,Space(9),"")
+		Else
+			cLin[nCont] := cLin[nCont] + "CGC: "+cDescCgc+" "+SRA->RA_CC+"-"+Left(wCcto,If(Len(SRA->RA_CC)==9,13,18))+If(nFunc < 3,Space(9),"")
+		Endif
+		
+		nCont := nCont + 1
+		cLin[nCont] := cLin[nCont] + "   HORARIO DE TRABALHO               INTERVALO"+If(nFunc < 3,Space(10),"")
+
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Busca o SR6 Horario de Trabalho e Intervalo                  ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		dbSelectArea( "SR6" )
+		dbSeek(xFilial( "SR6" ) + SRA->RA_TNOTRAB )
+		If !Found()
+			wTurno := SPACE(50)
+		Endif
+		wTurno := SR6->R6_DESC
+		nCont := nCont + 1
+		cLin[nCont] := cLin[nCont] + wTurno + IF(nFunc < 3,Space(6),"")
+		nFunc := nFunc + 1
+		nCont := 1
+		dbSelectArea( "SRA" )
+		dbSkip()
+	Enddo
+
+	If lEnd
+		Exit
+	EndIF		
+
+	If cLin[1] # NIL
+		For X := 1 To If(nTamEtiq == 1,8,6)
+			@ LI, 0 PSAY cLin[X]
+			IF X == 1
+				@ Li, 0 PSAY cLinha1
+				@ Li, 0 PSAY cLinha1
+			Endif
+			Li := Li + 1
+		Next X
+	Endif
+	IF nTipFor == 2   // Se For Cartao de Ponto Salta para a Impressao do Proximo
+		Li := Li + nNumLin
+	Elseif nTamEtiq == 1
+		Li := Li + 1
+	Elseif nTamEtiq == 2
+		Li := Li + 2
+	Endif
+	If Li > 70
+		@ Li,0 PSAY " "
+		Li := 1
+		SetPrc(1,1)
+	Endif
+Enddo
+If nTamEtiq == 2
+	@ Li,0 PSAY cOitavo_D
+Endif
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Termino do Relatorio                                         ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SRA" )
+If nOrdem == 4
+	RetIndex( "SRA" )
+Endif
+dbSetOrder(1)
+If nOrdem == 4
+	fErase( cArqNtx + OrdBagExt() )
+Endif
+
+Set Device To Screen
+
+If aReturn[5] == 1
+	Set Printer To
+	Commit
+	ourspool(wnrel)
+Endif
+
+MS_FLUSH()
+
+*--------------------------*
+Static Function Check_Imp()
+*--------------------------*
+cExpand_A := Chr(14)
+cEspand_D := Chr(20)
+cSexto_A  := Chr(27)+"0"
+cSexto_D  := Chr(27)+"0"
+cOitavo_A := Chr(27)+"0"
+cOitavo_D := Chr(27)+"2"
+cExpoen_A := Chr(27)+"S"+Chr(0)
+cExpoen_D := Chr(27)+"T"
+cIndice_A := Chr(27)+"S"+Chr(0)
+cIndice_D := Chr(27)+"T"
+
+If nColunas <= 2 
+	cNormal_A := AvalImp(132) 
+	cNormal_D := AvalImp(132)
+	cCompri_A := AvalImp(132)
+	cCompri_D := AvalImp(132)
+Else
+	cNormal_A := AvalImp(220)
+	cNormal_D := AvalImp(220)
+	cCompri_A := AvalImp(220)
+	cCompri_D := AvalImp(220)
+Endif 
+Return( .T. )
+
+*---------------------------------*
+// Substituido pelo assistente de conversao do AP5 IDE em 19/11/99 ==> Function TesteEtq
+Static Function TesteEtq()
+*---------------------------------*
+
+Local XW
+Local MZ
+
+cDescEmp  := Replicate("X",30)
+cDescCgc  := Replicate("9",19)
+cDescEnd  := Replicate("X",30)
+cDescAtiv := "9999"
+cDescFunc := Replicate("X",10)
+
+lTeste := .T.
+
+While lTeste
+	nCont := 1
+	nCol  := 0
+	While nCont <= nColunas
+		@ Li,nCol PSAY cCompri_A +"CHAPA:"+SPACE(18)+"CATEG:XXXXXXXXXXX XXX/99"
+		nCont := nCont + 1
+		nCol  := nCol + 57
+	Enddo
+	For XW := 1 To 2
+		Vez := IIF(nCont == 5, 4 , Iif(nCont == 4 , 3 , Iif(nCont == 3 , 2 , 1)))
+		Ini := 001
+		For MZ := 1 To Vez
+			Ini:=Iif(MZ==1,1,Iif(MZ==2,48,Iif(MZ==3,97,146)))
+			@ Li,Ini PSAY cCompri_A + Space(6) + cNormal_A + cExpand_A + "99999" + cEspand_D + cCompri_A + Space(20)
+		Next
+	Next
+	
+	Li := Li + 1
+	nCol := 0
+	nCont:= 1
+	While nCont <= nColunas
+		@ Li,nCol PSAY "NOME:"+SRA->RA_NOME+" MATR.:"+SRA->RA_MAT
+		nCol := nCol + 56
+		nCont := nCont + 1
+	Enddo
+	
+	Li := Li + 1
+	nCol := 0
+	nCont:= 1
+	While nCont <= nColunas
+		@ Li,nCol PSAY "FUNCAO:"+cDescFunc+" CTPS:"+SRA->RA_NUMCP+"/"+SRA->RA_SERCP
+		nCol := nCol + 56
+		nCont := nCont + 1
+	Enddo
+	
+	If nTamEtiq == 1
+		Li := Li + 1
+		nCol := 0
+		nCont:= 1
+		While nCont <= nColunas
+			@ Li,nCol PSAY "EMPR: "+cDescEmp+" ATIVID:"+cDescAtiv
+			nCol := nCol + 56
+			nCont := nCont + 1
+		Enddo
+		Li := Li + 1
+		nCol := 0
+		nCont:= 1
+		While nCont <= nColunas
+			@ Li,nCol PSAY "END.:"+cDescEnd+' CCUSTO:9999'
+			nCol := nCol + 56
+			nCont := nCont + 1
+		Enddo
+	Endif
+	
+	Li := Li + 1
+	nCol := 0
+	nCont:= 1
+	While nCont <= nColunas
+		cDescCcto := Replicate("X",24)
+		@ Li,nCol PSAY "CGC: "+cDescCgc + Space(50-26-len(Rtrim(cDescCcto)))+Rtrim(cDescCcto)
+		nCol := nCol + 56
+		nCont := nCont + 1
+	Enddo
+	
+	Li := Li + 1
+	nCol := 0
+	Soma := 1
+	While Soma <= Vez
+		@ Li,nCol PSAY "   HORARIO DE TRABALHO               INTERVALO"
+		nCol := nCol + 56
+		Soma := Soma + 1
+	Enddo
+	
+	nCol := 0
+	Li := Li + 1
+	nCont:= 1
+	While nCont <= nColunas
+		cDescTurn := Replicate("X",51)
+		@ Li,nCol PSAY Subst(cDescTurn,1,30)+Subst(cDescTurn,31,22)
+		nCol := nCol + 56
+		nCont := nCont + 1
+	Enddo
+	
+	IF nTipFor == 2   // se for cartao salta para o proximo
+		LI := Li + nNumLin
+	Elseif nTamEtiq == 1
+		LI := Li + 2
+	Elseif nTamEtiq == 2
+		LI := Li + 3
+	Endif
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Testa impressao                                              ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	fImpTeste(cString)
+
+Enddo
+Return Li
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³fImpTeste ºAutor  ³R.H. - Natie        º Data ³  11/29/01   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Testa impressao de Formulario Teste                         º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP5                                                        º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static function fImpTeste(cString)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Descarrega teste de impressao                                ³ 
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+MS_Flush()
+fInicia(cString)
+Check_Imp()
+
+Pergunte("GPR30A",.T.)
+lTeste:= If(mv_par01 = 1 ,.F. , .T. )
+
+Return lTeste
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³fInicia   ºAutor  ³R.H.Natie           º Data ³  11/12/01   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Inicializa Impressao                                        º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP5                                                        º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+
+static Function fInicia(cString)
+
+If nLastKey == 27
+	Return .F.
+Endif
+SetDefault(aReturn,cString)
+If nLastKey == 27
+	Return .F.
+Endif
+
+Return  .T. 

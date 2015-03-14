@@ -1,0 +1,19 @@
+#include "rwmake.CH"        // incluido pelo assistente de conversao do AP5 IDE em 09/09/99
+
+User Function F090fil()        // incluido pelo assistente de conversao do AP5 IDE em 09/09/99
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP5 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("CCOND,")
+cCond := ''
+
+If cPaisLoc <> "BRA"
+   cCond :='SE2->E2_TIPO$"TF ^CH "'
+EndIf
+// Substituido pelo assistente de conversao do AP5 IDE em 09/09/99 ==> __Return(cCond)
+Return(cCond)        // incluido pelo assistente de conversao do AP5 IDE em 09/09/99

@@ -1,0 +1,6 @@
+#Include 'Protheus.ch'
+
+User Function expnome()
+
+Return("TI")
+

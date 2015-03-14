@@ -1,0 +1,281 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP5 IDE em 25/09/00
+#INCLUDE "IMPGRPS.CH"
+
+User Function Impgrps()        // incluido pelo assistente de conversao do AP5 IDE em 25/09/00
+Local aFoneSM0 := {}
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP5 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("ADRIVER,AINFO,CCGC,CRAZAO,CENDERECO,CTELEFONE")
+SetPrvt("CCEP,CCIDADE,CUF,CFPAS,CACTRAB,N22")
+SetPrvt("CTIPINSC,NLIN,NOPCA,NVEZ,")
+
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 25/09/00 ==> #INCLUDE "IMPGRPS.CH"
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³RdMake    ³ IMPGRPS  ³ Autor ³ Mauro                 ³ Data ³ 10.03.97 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Impressao da Guia de INSS Formulario Continuo              ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe e ³ ImpResC                                                    ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                                   ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³         ATUALIZACOES SOFRIDAS DESDE A CONSTRU€AO INICIAL.             ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Programador ³ Data   ³ BOPS ³  Motivo da Alteracao                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Aldo        ³22/12/97³XXXXXX³ Imprimir 13+ano qdo for 13.Salario.      ³±±
+±±³Cristina    ³02/06/98³XXXXXX³ Conversao para outros idiomas.           ³±±
+±±³Kleber      ³26/08/98³XXXXXX³ Ler o aDriver,Impr.comforme o Driver.    ³±±
+±±³Marina      ³30/08/00³------³ Retirada parte DOS.                      ³±±
+±±³Natie	     ³23/05/01³008445³ Impressao de cpos textos                 ³±±
+±±³Emerson	   ³05/05/04³070650³ Quando optante pelo simples, utilizar o  ³±±
+±±³            ³        ³      ³ parametro 15 para recolhimento.		      ³±±
+±±³Emerson	   ³21/07/04³------³Utilizar o parametro 15 quando for simples³±±
+±±³            ³        ³      ³independente se recolhimento ou deducao.  ³±±
+±±|Leandro Dr. ³30/03/09³004298³Ajuste na rotina para que valor do INSS   ³±±
+±±|   		     ³    		³	     ³nunca seja negativo.                      ³±± 
+±±|Luciana     ³02/03/10³002189³Retirado o total de funcionarios na GRPS  |±±
+±±|   		     ³     		³  2010³Formulario descontinuado.                 ³±± 
+±±³Luis Ricardo³15/12/10³026158³Ajustes na rotina para tratamento da nova ³±±
+±±³Cinalli     ³        ³  2010³regra do telefone do sigamat SM0->M0_FONE ³±±
+±±³            ³        ³	     ³utilizando a funcao FisGetTel da rotina	  ³±± 
+±±³            ³        ³	     ³Mata950 para retornar o telefone em um	  ³±± 
+±±³            ³        ³	     ³vetor com 3 elementos:					          ³±± 
+±±³            ³        ³	     ³	1o Elemento - Refere-se ao DDI		      ³±± 
+±±³            ³        ³	     ³	2o Elemento - Refere-se ao DDD		      ³±± 
+±±³            ³        ³	     ³	3o Elemento - Refere-se ao TELEFONE	    ³±± 
+±±³            ³        ³	     ³Deve-se enviar o conteudo do campo 		    ³±± 
+±±³            ³        ³	     ³SM0->M0_FONE em uma variavel caracter.	  ³±± 
+±±³Luis Ricardo³04/06/12³013275³Ajuste na exibicao do telefone na guia    ³±± 
+±±³Artuso      ³        ³TFASTZ³devido resolucao da Anatel que insere o 9 ³±± 
+±±³            ³        ³/2012 ³digito nos telefones moveis no Est. de SP.³±± 
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/                             
+
+aDriver    := LeDriver()
+aInfo      := {}
+cCgc       := ""
+cRazao     := ""
+cEndereco  := ""
+cTelefone  := ""
+cCep       := ""
+cCidade    := ""
+cUf        := ""
+cFPAS      := ""
+cAcTrab    := ""
+nDeduz     := 0
+nTam			 := 0
+
+dbSelectArea( "SRZ" )
+
+IF !fInfo(@aInfo,cFil)
+	Return Nil
+Endif
+
+cCgc      := aInfo[8]                      // CGC
+cRazao    := Subs(aInfo[3]+Space(40),1,40) // Razao Social
+cEndereco := Subs(aInfo[4]+Space(40),1,40)
+
+/*ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+  ³ Funcao para desmembrar o telefone em um vetor com 3 elementos:		³
+  ³		1o Elemento - Refere-se ao DDI									³
+  ³		2o Elemento - Refere-se ao DDD									³
+  ³		3o Elemento - Refere-se ao TELEFONE								³
+  ³ Deve-se enviar o telefone em uma variavel caracter com o conteudo	³
+  ³ do campo SM0->M0_FONE.												³
+  ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+aFoneSM0	:= FisGetTel( aInfo[10] )
+nTam := LEN(ALLTRIM(STR(aFoneSM0[03]))) 
+cTelefone	:= Str( aFoneSM0[03], nTam )
+
+cCep      := aInfo[7]
+cCidade   := Subs(aInfo[5],1,20)
+cUf       := aInfo[6]
+n22       := 0
+cFPAS     := aInfo[17]  // codigo FPAS
+cAcTrab   := aInfo[18]  // codigo de acidente de trabalho
+cTipInsc  := If (aInfo[15] == 1 ,"2","1" )
+cCgc      := If (cTipInsc == "2",aInfo[8],Transform(cCgc,"@R ##.###.###/####-##")) // CGC
+
+//--Setar impressora
+If aReturn[4] == 1  // Comprimido
+	@ nLin , 0 PSAY &(aDriver[3])
+Else                // Normal
+	@ nLin , 0 PSAY &(aDriver[4])
+Endif
+
+While .T.
+    @ nLin , 0 PSAY Chr(18)+ Space(43) + cTipInsc + Space(13) + cCgc
+
+	// CAMPO 11
+	nLin := nLin + 2
+	@ nLin , 0 PSAY Space(43) + cFPAS
+	nLin := nLin + 2
+	
+	// CAMPO 13
+
+   IF cTipo == 2
+      @ nLin , 0 PSAY Space(43) + "1" + Space(1) + "3" + Space(4) + subs(MV_PAR10,3,1) + Space(1) + subs(MV_par10,4,1)
+   Else
+      @ nLin , 0 PSAY Space(43) + cCompetencia
+   Endif
+   nLin := nLin + 3
+	
+	// CAMPO 16
+	If cEscolha == "1"
+		If n16 #0 .And. n16 # Nil
+			@ nLin , 0 PSAY Space(59)+ Transform(n16,"@E 999,999,999,999.99")
+			n22 := n22 + n16
+		Endif
+	Else
+		If n16Fil #0 .And. n16Fil # Nil
+			@ nLin , 0 PSAY Space(59)+ Transform(n16Fil,"@E 999,999,999,999.99")
+			n22 := n22 + n16Fil
+		Endif
+	Endif			
+	nLin := nLin + 2
+	
+	// CAMPO 17
+	If cEscolha == "1"
+		If n17 #0 .And. n17 # Nil .Or. ( n17a # 0 )
+			@ nLin, 0 PSAY Space(59)+ Transform(Max(n17 + n17a,0),"@E 999,999,999,999.99")
+			n22 := n22 + Max(n17 + n17a,0)
+			nDeduz := n17 + n17a
+		Endif
+	Else
+		If n17Fil #0 .And. n17Fil # Nil .Or. ( n17aFil # 0 )
+			@ nLin, 0 PSAY Space(59)+ Transform(Max(n17Fil + n17aFil,0),"@E 999,999,999,999.99")
+			n22 := n22 + Max(n17Fil + n17aFil,0)
+			nDeduz := n17Fil + n17aFil
+		Endif
+	Endif
+	
+	If nDeduz < 0		
+		Aadd(aLog,{cParam,Transform(nDeduz,"@E 999,999,999,999.99")})
+	EndIf
+		
+	nLin := nLin + 2
+		
+	// RAZAO SOCIAL
+	@ nLin , 0 PSAY Space(2) + cRazao
+	
+	// CAMPO 18  CODIGO DE TERCEIROS
+	If cEscolha == "1"	
+		If n18 #0 .And. n18 # Nil
+			@ nLin , 43 PSAY Space(14) + cTerceiros + Transform(n18,"@E 99,999,999,999.99")
+			n22 := n22 + n18
+		Endif
+	Else
+		If n18Fil #0 .And. n18Fil # Nil
+			@ nLin , 43 PSAY Space(14) + cTerceiros + Transform(n18Fil,"@E 99,999,999,999.99")
+			n22 := n22 + n18Fil
+		Endif
+	Endif			
+	
+	nLin := nLin + 4
+	@ nLin, 0 PSAY Space(2) + cEndereco
+	nLin := nLin + 1
+	@ nLin , 0 PSAY Space(30) + cTelefone
+	nLin := nLin + 1
+
+	If cEscolha == "1"	
+		If n21 #0 .And. n21 # Nil
+			@ nLin, 0 PSAY Space(59)+ Transform(n21,"@E 999,999,999,999.99")
+			n22 := n22 - n21
+		Endif
+	Else
+		If n21Fil #0 .And. n21Fil # Nil
+			@ nLin, 0 PSAY Space(59)+ Transform(n21Fil,"@E 999,999,999,999.99")
+			n22 := n22 - n21Fil
+		Endif
+	Endif			
+	nLin := nLin + 1
+	
+	@ nLin, 0 PSAY Space(02) + Transform(cCep,"@R #####-###") + Space(2) + cCidade + Space(5) + cUf
+	nLin := nLin + 1	
+	@ nLin, 0 PSAY Space(59) + Transform(n22,"@E 999,999,999,999.99")
+	nLin := nLin + 3	
+	
+	// SALARIO CONTRIBUICAO EMPREGADOS - CAMPO 81
+	If cEscolha == "1"
+		If n81 #0 .And. n18 # NIL
+			@ nLin, 0 PSAY Space(18)+Transform(n81,"@E 999,999,999,999.99")
+		Endif
+	Else
+		If n81Fil #0 .And. n18Fil # NIL
+			@ nLin, 0 PSAY Space(18)+Transform(n81Fil,"@E 999,999,999,999.99")
+		Endif
+	Endif			
+	nLin := nLin + 2
+	
+	// EMPREGADOS/AUTONOMOS - CAMPO 82
+	If cEscolha == "1"	
+		If n82 #0 .And. n82 # NIL
+			@ nLin , 0 PSAY Space(18)+Transform(n82,"@E 999,999,999,999.99")
+		Endif
+	Else
+		If n82Fil #0 .And. n82Fil # NIL
+			@ nLin , 0 PSAY Space(18)+Transform(n82Fil,"@E 999,999,999,999.99")
+		Endif
+	Endif			
+	nLin := nLin + 1
+	
+	// TOTAL A PAGAR
+	If cEscolha == "1"	
+		If n22 #0 .And. n82 # NIL
+			@ nLin, 0 PSAY Space(59)+Transform(n22,"@E 999,999,999,999.99")
+		Endif
+	Else
+		If n22 #0 .And. n82Fil # NIL
+			@ nLin, 0 PSAY Space(59)+Transform(n22,"@E 999,999,999,999.99")
+		Endif
+	Endif			
+	nLin := nLin + 1	
+	
+	// CODIGO ACIDENTE DE TRABALHO
+	@ nLin , 0 PSAY Space(10) + cAcTrab // Codigo de Acidente de Trabalho
+	nLin := nLin + 1
+
+	@ nLin , 0 PSAY cTexto1 + cTexto2
+	nLin := nLin + 1
+	@ nlin,  0 PSAY cTexto3 + cTexto4 
+	nLin := nLin + 1
+
+	// CODIGO E DESCRICAO DO CENTRO DE CUSTO
+	If Upper(cParam) #Replicate('\',Len(cParam))
+		@ nLin, 2 PSAY AllTrim(cParam) + ' - ' + AllTrim(DescCc(cParam,cFil,26))
+	EndIf	
+    
+	If nVez == 0
+		Set Device to Screen
+		Pergunte('GPR30A',.T.)
+		nOpca := mv_par01 // 1=Confirma  2=Repete
+		Set Device to Printer
+
+		If nOpcA == 2
+			Set Device to Print
+			nVez := 0
+			n22  := 0
+			Loop
+		ElseIf nOpcA == 1
+			nVez := 1
+		ElseIF nOpcA == 3
+			nVez := 0
+		Endif
+	Endif
+	
+	nLin := nLin + 8
+	@ nlin, 0 PSAY " "
+	Exit
+Enddo

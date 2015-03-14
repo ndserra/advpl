@@ -1,0 +1,66 @@
+<ApMenu>
+	<DocumentProperties>
+		<Module></Module>
+		<Version>10.1</Version>
+	</DocumentProperties>
+	<Menu Status="Enable">
+		<Title lang="pt">&Atualizações</Title>
+		<Title lang="es">&Actualizaciones</Title>
+		<Title lang="en">&Updates</Title>
+		<Menu Status="Enable">
+			<Title lang="pt">Cadastro</Title>
+			<Title lang="es">Cadastro</Title>
+			<Title lang="en">Cadastro</Title>
+			<MenuItem Status="Enable">
+				<Title lang="pt">Parametro</Title>
+				<Title lang="es">Parametro</Title>
+				<Title lang="en">Parametro</Title>
+				<Function>XTELA</Function>
+				<Type>03</Type>
+				<Access>xxxxxxxxxx</Access>
+				<Module>97</Module>
+				<Owner>0</Owner>
+				<KeyWord>
+					<KeyWord lang="pt">                         </KeyWord>
+					<KeyWord lang="es">                         </KeyWord>
+					<KeyWord lang="en">                         </KeyWord>
+				</KeyWord>
+			</MenuItem>
+			<MenuItem Status="Enable">
+				<Title lang="pt">Cliente</Title>
+				<Title lang="es">Cliente</Title>
+				<Title lang="en">Cliente</Title>
+				<Function>FTELACLI</Function>
+				<Type>03</Type>
+				<Access>xxxxxxxxxx</Access>
+				<Module>97</Module>
+				<Owner>0</Owner>
+				<KeyWord>
+					<KeyWord lang="pt">                         </KeyWord>
+					<KeyWord lang="es">                         </KeyWord>
+					<KeyWord lang="en">                         </KeyWord>
+				</KeyWord>
+			</MenuItem>
+		</Menu>
+		<Menu Status="Disable">
+			<Title lang="pt">Cadastro</Title>
+			<Title lang="es">Cadastro</Title>
+			<Title lang="en">Cadastro</Title>
+		</Menu>
+	</Menu>
+	<Menu Status="Enable">
+		<Title lang="pt">&Consultas</Title>
+		<Title lang="es">&Consultas</Title>
+		<Title lang="en">&Searches</Title>
+	</Menu>
+	<Menu Status="Enable">
+		<Title lang="pt">&Relatorios</Title>
+		<Title lang="es">&Informes</Title>
+		<Title lang="en">&Reports</Title>
+	</Menu>
+	<Menu Status="Enable">
+		<Title lang="pt">&Miscelanea</Title>
+		<Title lang="es">&Miscelanea</Title>
+		<Title lang="en">&Miscellaneous</Title>
+	</Menu>
+</ApMenu>

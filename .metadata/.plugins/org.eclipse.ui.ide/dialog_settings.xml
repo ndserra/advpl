@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<list key="installedFeatures">
+		<item value="org.eclipse.emf.common:2.10.1.v20140901-1043"/>
+		<item value="org.eclipse.emf.ecore:2.10.1.v20140901-1043"/>
+		<item value="org.eclipse.help:2.0.102.v20140925-0400"/>
+		<item value="org.eclipse.platform:4.4.0.v20140925-0400"/>
+		<item value="org.eclipse.rcp:4.4.0.v20140925-0400"/>
+	</list>
+	<section name="SaveAsDialogSettings">
+		<item value="525" key="DIALOG_WIDTH"/>
+		<item value="114" key="DIALOG_Y_ORIGIN"/>
+		<item value="386" key="DIALOG_X_ORIGIN"/>
+		<item value="579" key="DIALOG_HEIGHT"/>
+		<item value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
+	</section>
+	<section name="NewWizardAction">
+	</section>
+</section>

@@ -1,0 +1,69 @@
+Codigo Banco   0010030"104"                                                       
+Lote Servico   0040070"0000"                                                      
+Tipo Registro  0080080"0"                                                         
+Uso Febraban   0090170Space( 09 )                                                 
+Tipo Inscricao 0180180"2"                                                         
+CNPJ           0190320cCodCnpj                                                    
+Cod Convenio   0330480StrZero(Val( cCodConve ),20)                                
+Uso Exclusivo  0490520Space(4)                                                    
+Cod Agencia    0530570StrZero(Val( cCodAgenc ),5)                                 
+Digito Agencia 0580580StrZero(Val( cDigAgenc ),1)                                 
+Numero Conta   0590700StrZero(Val( cCodConta ),12)                                
+Digito Conta   0710710StrZero(Val( cDigConta ),1)                                 
+Digito Ag/Conta0720720Space( 01 )                                                 
+Nome Empresa   0731020PadR(cNomeEmpr,30)                                          
+Nome Banco     1031320PadR("CAIXA ECONOMICA FEDERAL",30)                          
+Uso Febraban   1331420Space( 10 )                                                 
+Codigo Remessa 1431430"1"                                                         
+Data Geracao   1441510GravaData(dDataBase,.F.,5)                                  
+Hora Geracao   1521570SubStr(Time(),1,2)+SubStr(Time(),4,2)+SubStr(Time(),7,2)    
+Nr Seq Arquivo 1581630CNABSequencia()                                             
+Nr da Versao La1641660"080"                                                       
+Dens. Gravacao 1671710"01600"                                                     
+Uso Reserv. Bco1721910Space( 20 )                                                 
+Uso Reserv. Emp1922110Space( 20 )                                                 
+Uso Exc Febraba2122400Space( 29 )                                                 
+Codigo Banco   0010030"104"                                                       
+Lote de Servico0040070"0001"                                                      
+Tipo Registro  0080080"1"                                                         
+Nº Sequencial  0090130nSeq                                                        
+Segmento       0140140"A"                                                         
+Tipo Movimento 0150150"0"                                                         
+Cod Instr Movim0160170"00"                                                        
+Cod Camara Cent0180200"000"                                                       
+Cod. Banco Favo0210230SubStr(cBanco,1,3)                                          
+Num. Agencia   0240280StrZero(Val(SubStr(SRA->RA_BCDEPSA,4,5)),5)                 
+Dig Verif Agenc0290290StrZero(Val( cDigAgenc ),1)                                 
+Nr Conta Corren0300410StrZero(Val( cCodConta ),12)                                
+Dig Verif Conta0420420StrZero(Val( cDigConta ),1)                                 
+Dig Verif AG/CO0430430" "                                                         
+Nome Favorecido0440730PadR(cNome,30)                                              
+Nr Doc Atribuid0740790Space( 06 )                                                 
+Brancos        0800920Space( 13 )                                                 
+Finalidade TED 0930930AllTrim(STR(nTipoConta))                                    
+Data Vencimento0941010GravaData(dDataPgto,.F.,5)                                  
+Tipo Moeda     1021040"BRL"                                                       
+Quant Moeda    1051190"000000000000000"                                           
+Valor Pagamento1201340StrZero(nValor,15)                                          
+Nr Doc Banco   1351430Space( 20 )                                                 
+Brancos        1441460Space( 03 )                                                 
+Quant Parcelas 1471480"01"                                                        
+Bloqueio       1491490"S"                                                         
+Forma Parcelame1501500"1"                                                         
+Dia Vencimento 1511520SubStr(GravaData(dDataPgto,.F.,5),1,2)                      
+Numero Parcela 1531540"00"                                                        
+Data Pgt Efetiv1551620GravaData(dDataPgto,.F.,5)                                  
+Valor Efetivo  1631770StrZero(nValor,15)                                          
+Outras Informac1782170Space( 40 )                                                 
+Finalidade DOC 2182190If(lDocCc,"06",If(lDocPoup,"11","00"))                      
+Uso Febraban   2202290Space( 10 )                                                 
+Aviso Favorecid2302300"0"                                                         
+Ocorrencias    2312400Space( 10 )                                                 
+Codigo do Banco0010030"104"                                                       
+Lote de Servico0040070"9999"                                                      
+Tpo Registro   0080080"9"                                                         
+Uso Febraban   0090170Space( 09 )                                                 
+Qtde. Lotes    0180230"000001"                                                    
+Qtde. Registros0240290nSeq+4                                                      
+Uso Febraban   0300350Space( 06 )                                                 
+Uso Febraban   0362400Space( 205 )                                                

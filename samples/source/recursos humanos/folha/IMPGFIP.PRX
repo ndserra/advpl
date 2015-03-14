@@ -1,0 +1,1102 @@
+// QUEM FOR UTILIZAR ESSE RDMAKE DEVE VERIFICAR SE NO SX1 GPR540 EXISTE O PARAMETRO 19
+// SE NAO EXISTIR  DEVE SER CRIADO PARA PODER RODAR ESSE PROGRAMA.
+
+#INCLUDE "PROTHEUS.CH"
+#Include "rwmake.ch"        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+#INCLUDE "IMPGFIP.CH" 
+
+User Function Impgfip()        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP5 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("CSTRING,AORD,CDESC1,CDESC2,ARETURN,NOMEPROG")
+SetPrvt("ALINHA,NLASTKEY,CPERG,TITULO,AT_PRG,WCABEC0")
+SetPrvt("WCABEC1,CONTFL,LI,NTAMANHO,LEND,CIMPOPC")
+SetPrvt("ADRIVER,CCOMPAC,CNORMAL,AREGS,WNREL,AINFO")
+SetPrvt("ACODFOL,NDIASAFAS,DIASTRAB,CAUXCOMPET,NALIQSAT,CALIQSAT")
+SetPrvt("NPERCFPAS,AINSSEMP,CCATEG,COCORR,CCODAFAST,DDTAFAST")
+SetPrvt("CFILNVEZ,NSAVREC,LEXISTE,LVOLTA,LCABECALHO,LIMPCC")
+SetPrvt("CITOMADOR,CTOMADOR,NBASEINSS,NINSSFUNC,NDEDUCAO,NSALFAM")
+SetPrvt("NBASE,N13BASE,NVALFGTS,ATOTAIS,NVALAVI,NTOTACI")
+SetPrvt("NBASEFUN,CTERCEIROS,CDIASMES,DIASDSR,NTOTDIAS,AAFAST")
+SetPrvt("AINFEMP,NORDEM,CFILDE,CFILATE,CCCDE,CCCATE")
+SetPrvt("CMATDE,CMATATE,CNOMDE,CNOMATE,DDATAREF,CCENTRA")
+SetPrvt("CCONTATO,CFONE,LMENSAL,CSIMPLES,NEVENTO,NTIPO")
+SetPrvt("NJAM,CRECOL,LPREIMP,CCOMPETENCIA,CINICIO")
+SetPrvt("CFIM,CFILANTERIOR,CCCANT,NVEZ,NVALACI,CCOMPET")
+SetPrvt("N,NVL13SAL,NDIASSM,NAVOS,DDTBASEINI,DDTBASEFIM")
+SetPrvt("NINSS,NVALINSS,DET,CFIL")
+SetPrvt("NPERCACI,")
+
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 05/07/00 ==>    #include "INKEY.CH"
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 05/07/00 ==> #INCLUDE "IMPGFIP.CH"
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 05/07/00 ==> 	#DEFINE PSAY SAY
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ IMPGFIP  ³ Autor ³ R.H. - Kleber D. Gomes³ Data ³ 17.01.99 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ GFIP - Guia de Recolhimento do FGTS e Inform. … Previdˆncia³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe   ³ IMPGFIP(void)                                              ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³                                                            ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                                   ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³         ATUALIZACOES SOFRIDAS DESDE A CONSTRU€AO INICIAL.             ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Programador ³ Data   ³ BOPS ³  Motivo da Alteracao                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Kleber     ³23/09/99³XXXXXX³Acerto na composicao do valor Tot.Rec.FGTS³±±
+±±³ Kleber     ³24/09/99³XXXXXX³Chamada da fINSSEmp, p/calcular Dedu‡Æo.  ³±±
+±±³ Marina     ³30/08/00³------³Validacao Filial/Acesso.Retirada parte DOS³±±  
+±±³ Natie      ³07/09/02³v 7.10³Exclusao ValidPerg                        ³±±  
+±±³ Alex       ³10/08/09³      ³Ajuste no grupo de campos "Filial".Tamanho³±±  
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Seta Ano com 4 digitos                                       ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+Set Century ON
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis (Basicas)                                   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cString := "SRA"                 //Alias do arquivo principal (Base)
+aOrd    := {STR0001,STR0002,STR0003,STR0004}    //"Filial+Mat"###"Filial+Cc+Mat"###"Filial+Nome"###"Filial+Cc+Nome"
+cDesc1  := STR0005      //"GFIP - Guia de Recolhimento do FGTS e Informa‡äes a Previdencia Social"
+cDesc2  := STR0006      //"Ser  impresso de acordo com os parametros solicitados pelo usu rio."
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis (Basicas)                                   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aReturn  := {STR0008,1,STR0009,1,2,1,"",1 }   // "Zebrado"###"Administra‡„o"
+NomeProg := "IMPGFIP"
+aLinha   := {}
+nLastKey := 0
+cPerg    := "GPR540"
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis Utilizadas na funcao IMPR                          ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+Titulo   := STR0005   //"GFIP - Guia de Recolhimento do FGTS e Informa‡äes a Previdencia Social"
+AT_PRG   := "IMPGFIP"
+wCabec0  := 1
+wCabec1  := ""
+Contfl   := 1
+Li       := 0
+nTamanho := "G"
+lEnd     := .F.
+
+cImpOpc  := ""
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+pergunte("GPR540",.F.)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a funcao SETPRINT                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+wnrel:="IMPGFIP"            //Nome Default do relatorio em Disco
+wnrel:=SetPrint(cString,wnrel,cPerg,Titulo,cDesc1,cDesc2,,.F.,aOrd,,nTamanho)
+
+If nLastKey == 27
+   Return
+Endif
+SetDefault(aReturn,cString)
+If nLastKey == 27
+   Return
+Endif
+
+RptStatus({|| ImprGFIP()})// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==>    RptStatus({|| Execute(ImprGFIP)})
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ IMPGFIP  ³ Autor ³ R.H. - Kleber D. Gomes³ Data ³ 08.01.99 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ GFIP - Guia de Recolhimento do FGTS e Inform. … Previdˆncia³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe e ³ IMPGFIP()                                                  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³ lEnd        - A‡Æo do Codelock                             ³±±
+±±³          ³ wnRel       - T¡tulo do relat¢rio                          ³±±
+±±³          ³ cString     - Mensagem                                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                                   ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==> Function ImprGFIP
+Static Function ImprGFIP()
+
+Local X
+Local nVezes
+Local n
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis Locais (Programa)                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aInfo   := {}
+aCodFol := {}
+
+nDiasAfas  := 0
+DiasTrab   := 30
+cAuxCompet := ""
+nAliqSat   := 0
+cAliqSat   := "0,0 %"
+nPercFPAS  := 0
+aInssEmp   := Array(23,2)
+cCateg     := Space(2)
+cOcorr     := Space(2)
+cCodAfast  := ""
+dDtAfast   := CTOD("")
+cFilnVez   := ""
+nSavRec    := 0
+lExiste    := .F.
+lVolta     := .F.
+lCabecalho := .F.
+lImpCc     := .F.
+
+cITomador  := Space(14)
+cTomador   := Space(40)
+cRecol	   := " "
+nBaseINSS  := 0
+nINSSFunc  := 0
+nDeducao   := 0
+nSalFam    := 0
+nBASE      := 0
+n13BASE    := 0
+nValFGTS   := 0
+aTotais    := Array(6)
+nValAvi    := 0
+nTotAci    := 0
+nbasefun   := 0
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis  (Programa)                                 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cTerceiros := Space(4)
+cDiasMes   := Getmv("MV_DIASMES")
+DiasDsr    := 0
+nTotDias   := 0
+aAfast     := {}
+aInfEmp    := Array(9)
+
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Variaveis de Acesso do Usuario                               ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+cAcessaSRA	:= &( " { || " + ChkRH( "IMPGFIP" , "SRA" , "2" ) + " } " )
+cAcessaSRC	:= &( " { || " + ChkRH( "IMPGFIP" , "SRC" , "2" ) + " } " )
+cAcessaSRI	:= &( " { || " + ChkRH( "IMPGFIP" , "SRI" , "2" ) + " } " )
+cAcessaSRD	:= &( " { || " + ChkRH( "IMPGFIP" , "SRD" , "2" ) + " } " )
+cAcessaSR8	:= &( " { || " + ChkRH( "IMPGFIP" , "SR8" , "2" ) + " } " )
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Carregando variaveis mv_par?? para Variaveis do Sistema.     ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nOrdem     := aReturn[8]
+cFilDe     := mv_par01	//-- Filial  De   
+cFilAte    := mv_par02 	//-- Filial  Ate 
+cCcDe      := mv_par03 	//-- C.Custo De 
+cCcAte     := mv_par04 	//-- C.Custo Ate 
+cMatDe     := mv_par05	//-- Matricula De
+cMatAte    := mv_par06	//-- Matricula Ate 
+cNomDe     := mv_par07	//-- Nome De 
+cNomAte    := mv_par08	//-- Nome Ate
+dDataRef   := mv_par09  //-- Data de Referencia
+cCentra    := mv_par10 	//-- Filial Centralizadora 
+cContato   := PadR(mv_par11,30)	//-- Pessoa para contato 
+cFone      := PadR(mv_par12,16)	//-- DDD/Telefone 
+lMensal    := If(mv_par13 == 1 , .T. , .F.)	//-- Movimento  1- Mensal   2- Acumulado
+cSimples   := Str(mv_par14)						//-- Opcao imposto SIMPLES   1-Nao  2-Sim 
+nEvento    := mv_par15 							//-- Valor da Receita Bruta ( SENAR )
+nTipo      := mv_par16 							//-- Recolhimento FGTS	1-no prazo 2-em atraso
+nJam       := mv_par17 							//-- Percentual do JAM  
+If mv_par18 == "1"     							//-- Codigo Recolhimento
+	cRecol  := "115"
+ElseIf mv_par18 == "2"
+	cRecol  := "130"
+ElseIf mv_par18 == "3"
+	cRecol  := "150"
+ElseIf mv_par18 == "4"
+	cRecol  := "155"
+ElseIf mv_par18 == "5"
+	cRecol  := "608"
+ElseIf mv_par18 == "6"
+	cRecol  := "640"
+ElseIf mv_par18 == "7"
+	cRecol  := "650"
+ElseIf mv_par18 == "8"
+	cRecol  := "660"
+ElseIf mv_par18 == "9"
+	cRecol  := "904"
+ElseIf mv_par18 == "A"
+	cRecol  := "905"
+ElseIf mv_par18 == "B"
+	cRecol  := "907"
+ElseIf mv_par18 == "C"
+	cRecol  := "908"
+EndIf
+lPreImp    := If(mv_par19 == 1 , .T. , .F.)		//-- Pre-Impresso / Zebrados 
+
+cCompetencia := Substr(DtoC(dDataRef),4,2) +"/"+ Right(Str(Year(dDataRef)),4)
+
+// Zera Acumulador dos Totais
+For X := 1 to 6
+	aTotais[X] := 0
+Next X
+
+dbSelectArea( "SRA" )
+
+If nOrdem == 1
+   dbSetOrder( 1 )
+   dbSeek(cFilDe + cMatDe,.T.)
+   cInicio  := "SRA->RA_FILIAL + SRA->RA_MAT"
+   cFim     := cFilAte + cMatAte
+ElseIf nOrdem == 2
+   dbSetOrder( 2 )
+   dbSeek(cFilDe + cCcDe + cMatDe,.T.)
+   cInicio  := "SRA->RA_FILIAL + SRA->RA_CC + SRA->RA_MAT"
+   cFim     := cFilAte + cCcAte + cMatAte
+ElseIf nOrdem == 3
+   dbSetOrder( 3 )
+   dbSeek(cFilDe + cNomDe + cMatDe,.T.)
+   cInicio  := "SRA->RA_FILIAL + SRA->RA_NOME + SRA->RA_MAT"
+   cFim     := cFilAte + cNomAte + cMatAte
+ElseIf nOrdem == 4
+    dbSetOrder( 8 )
+    dbSeek(cFilDe + cCcDe + cNomDe,.T.)
+    cInicio  := "SRA->RA_FILIAL + SRA->RA_CC + SRA->RA_NOME"
+    cFim     := cFilAte + cCcAte + cNomAte
+Endif
+
+cFilAnterior := Replicate("!", FWGETTAMFILIAL)
+cCcAnt       := "!!!!!!!!!"
+
+dbSelectArea( "SRA" )
+SetRegua(SRA->(RecCount()*2))
+
+While ! Eof() .And. &cInicio <= cFim
+	If lEnd
+		Exit
+	EndIf
+
+	//-- 1 Vez Soma Para Caluclo Inss Empresa
+	//-- 2 Vez Impressao dos funcionarios
+	For nVezes := 1 To 2
+	nVez := nVezes
+
+		If nVez == 1
+			lVolta := .F.
+		Endif
+
+		//--Salvar o 1o. Registro e a Filial para retornar na 2a. vez
+		nSavRec  := Recno()
+		cFilnVez := SRA->RA_FILIAL
+
+		While ! Eof() .And. &cInicio <= cFim
+
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³ Movimenta Regua Processamento                                ³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+			IncRegua()
+
+			If lEnd
+				Set device to Print
+				@Prow()+1,0 PSAY cCancel
+				Set Device To Screen
+				Exit
+			EndIf
+		
+			If lVolta
+				lVolta := .F.
+				Exit
+			Endif
+		
+			//-- Quebra de Filial para carregar dados da empresa
+		  If SRA->RA_FILIAL #cFilAnterior
+			If !FP_CODFOL(@aCodFol)
+	            Exit
+			EndIf
+
+			If !Empty(cCentra)
+				If !fInfo(@aInfo,cCentra) .Or. !fInssEmp(cCentra,@aInssEmp,.T.)
+					Exit
+				EndIf
+				cFilAnterior := cCentra
+			Else
+				If !fInfo(@aInfo,SRA->RA_FILIAL) .Or. !fInssEmp(SRA->RA_FILIAL,@aInssEmp,.T.)
+					Exit
+				EndIf
+				cFilAnterior := SRA->RA_FILIAL
+			EndIf
+
+			aInfEmp[1] := PadR(aInfo[03],40)  // 1- RazÆo Social
+			aInfEmp[2] := PadR(aInfo[08],14)  // 2- CGC/CNPJ/CEI
+			aInfEmp[3] := PadR(aInfo[04],30)  // 3- Endere‡o
+			aInfEmp[4] := PadR(aInfo[13],20)  // 4- Bairro
+			aInfEmp[5] := PadR(aInfo[07],08)  // 5- CEP
+			aInfEmp[6] := PadR(aInfo[05],20)  // 6- Cidade
+			aInfEmp[7] := PadR(aInfo[06],02)  // 7- UF
+			aInfEmp[8] := PadR(aInfo[16],05)  // 8- N§ CNAE
+		
+			// Verificando o Tamanho do FPAS
+			If Substr(aInfo[17],1,1) == "0" //9- FPAS
+				aInfEmp[9] := Substr(aInfo[17],2,3)
+			Else
+				aInfEmp[9] := Substr(aInfo[17],1,3)
+			EndIf
+	
+	      EndIf
+
+			If SRA->RA_CC #cCcAnt .And. (nOrdem == 2 .Or. nOrdem == 4)
+
+				cCcAnt    := SRA->RA_CC
+
+				cITomador := Space(14)           // CGC/CNPJ/CEI(Tomador de servi‡o)
+				cTomador  := Space(40)           // RazÆo Social(Tomador de servi‡o)
+			
+	         dbSelectArea("SI3")
+	         dbSetOrder(1)
+	         nPercFPAS :=0
+	         If dbSeek(SRA->RA_FILIAL+SRA->RA_CC)
+	            If TYPE(SI3->I3_CEI) #"U"
+	               cITomador := PadR(SI3->I3_CEI,14)
+	            EndIf
+	            If TYPE("SI3->I3_ENDEREC") #"U"
+	               cTomador  := PadR(SI3->I3_ENDEREC,40)
+	            EndIf
+
+	            aInssEmp[21,1] := SI3->I3_PERCACI / 100
+	            nPercFPAS      := SI3->I3_PERFPAS / 100
+				Endif
+
+	      EndIf
+
+	      If (SRA->RA_NOME < cNomDe) .Or. (SRA->RA_NOME > cNomAte) .Or. ;
+	         (SRA->RA_MAT < cMatDe)  .Or. (SRA->RA_MAT > cMatAte)  .Or. ;
+	         (SRA->RA_CC < cCcDe)    .Or. (SRA->RA_CC > cCcAte) .Or. ;
+				SRA->RA_SITFOLH $ "E,T" .Or. Empty(SRA->RA_PIS)
+				fTestaTotal()      // Executa Quebras
+	         Loop
+	      EndIf
+			
+			   	/*
+			ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			³Consiste Filiais e Acessos                                             ³
+			ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+			IF !( SRA->RA_FILIAL $ fValidFil() .and. Eval( cAcessaSRA ) )
+				dbSelectArea("SRA")
+   		   		dbSkip()
+   		   		Loop
+			EndIF
+			
+	
+	      If SRA->RA_ADMISSA > dDataRef .OR. SRA->RA_OPCAO > dDataRef
+	         fTestaTotal()      // Executa Quebras
+	         Loop
+	      EndIf
+	
+			//--Verifica Dias Afastados no Mes.
+			DiasTrab := 30
+	      FDiasAfast(@nDiasAfas,@DiasTrab,dDataRef)
+	
+	      // Optou pelo SIMPLES
+	      If cSimples == "2" .Or. aInfEmp[9] $ "582/639/655"
+	         cTerceiros := Space(4)
+	      EndIf
+	   
+	      If aInfEmp[9] $ "604/639/647" .Or. cSimples == "2"
+	         nAliqSat   :=0
+	      Else
+	         nAliqSat   := aInssEmp[3][1] * 100
+	      EndIf
+	
+			If nAliqSat == 1
+				cAliqSat   := "1,0 %"
+			ElseIf nAliqSat == 2
+				cAliqSat   := "2,0 %"
+			ElseIf nAliqSat == 3
+				cAliqSat   := "3,0 %"
+			Else
+				cAliqSat   := "0,0 %"
+			EndIf
+
+			nBaseFun := 0.00
+			//-- Somar Registros para calculo do Inss Empresa Cabecalho da GFIP
+			If lMensal             // Movimento Mensal 
+	         dbSelectArea("SRC")
+	         dbSetOrder(1)
+	         If dbSeek(SRA->RA_FILIAL+SRA->RA_MAT)
+					lExiste := .T.
+	            While !Eof() .And. SRA->RA_FILIAL+SRA->RA_MAT == ;
+							             SRC->RC_FILIAL+SRC->RC_MAT
+	
+						If	SRC->RC_PD == aCodFol[13,1] .Or.;
+	                  		SRC->RC_PD == aCodFol[14,1] .Or.;
+	                  		SRC->RC_PD == aCodFol[19,1] .Or.;
+	                  		SRC->RC_PD == aCodFol[20,1]
+	                  		nBaseINSS  := nBaseINSS + Round(SRC->RC_VALOR,2)
+							nBaseFun	  := nBaseFun + Round(SRC->RC_VALOR,2)
+	               		EndIf
+	         
+	               //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	               //³ Verifica se a verba entra nas Deducoes FPAS                  ³
+	               //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	               If PosSrv(SRC->RC_PD,SRC->RC_FILIAL,"RV_DEDINSS") == "S"
+                     nDeducao := nDeducao + Round(SRC->RC_VALOR,2)
+	               Endif
+      
+	               If SRC->RC_PD == aCodFol[34,1]
+	                  nSalFam    := nSalFam + Round(SRC->RC_VALOR,2)
+	               EndIf
+	
+	               If SRC->RC_PD == aCodFol[64,1] .Or.;
+	                  SRC->RC_PD == aCodFol[65,1] .Or.;
+	                  SRC->RC_PD == aCodFol[70,1]
+	                  nINSSFunc  := nINSSFunc + Round(SRC->RC_VALOR,2)
+	               EndIf
+						
+	               If SRC->RC_PD == aCodFol[17,1]
+	                  nBASE      := nBASE + Round(SRC->RC_VALOR,2)
+	               EndIf
+	
+						If SRC->RC_PD == aCodFol[18,1] .Or.;
+						   SRC->RC_PD == aCodFol[109,1]
+							nValFGTS   := nValFGTS + Round(SRC->RC_VALOR,2)
+						EndIf
+						
+	               If SRC->RC_PD == aCodFol[108,1]
+	                  n13BASE    := n13BASE + Round(SRC->RC_VALOR,2)
+	               EndIf
+						dbSelectArea("SRC")
+		            dbSkip()
+					Enddo
+					
+				    If !Eval(cAcessaSRC)
+						dbSkip()
+						Loop
+				    EndIf
+	        EndIf
+	            
+	         dbSelectArea("SRI")
+	         dbSetOrder(1)
+	         If dbSeek(SRA->RA_FILIAL+SRA->RA_MAT)
+	            While !Eof() .And. SRA->RA_FILIAL+SRA->RA_MAT == ;
+	                               SRI->RI_FILIAL+SRI->RI_MAT
+	   
+	               If MesAno(SRI->RI_DATA) #MesAno(dDataRef)
+							dbSelectArea("SRI")
+	                  dbSkip()
+	                  Loop
+	               EndIf
+	             
+	               If SRI->RI_PD == aCodFol[19,1] .Or.;
+	                  SRI->RI_PD == aCodFol[20,1]
+	                  nBaseINSS  := nBaseINSS + Round(SRI->RI_VALOR,2)
+							nBaseFun   := nBaseFun + Round(SRI->RI_VALOR,2)
+	               EndIf
+	
+	               If SRI->RI_PD == aCodFol[18,1] .Or.;
+						   SRI->RI_PD == aCodFol[109,1]
+							nValFGTS   := nValFGTS + Round(SRI->RI_VALOR,2)
+	               EndIf
+
+					dbSelectArea("SRI")
+					dbSkip()
+					
+				    If !Eval(cAcessaSRI)
+						dbSkip()
+						Loop
+		    		EndIf
+	            EndDo
+	         EndIf
+	      Else              // Movimento Acumulado
+	         dbSelectArea("SRD")
+	         dbSetOrder(1)
+	         If dbSeek(SRA->RA_FILIAL+SRA->RA_MAT)
+	            While !Eof() .And. SRA->RA_FILIAL+SRA->RA_MAT == SRD->RD_FILIAL+SRD->RD_MAT
+	               If SRD->RD_DATARQ #StrZero(YEAR(dDataRef),4) + STRZERO(MONTH(dDataRef),2) .Or.;
+	                  SRD->RD_MES=="13" .And. MONTH(dDataRef)==12 .And. !(LEFT(SRD->RD_DATARQ,4) == StrZero(YEAR(dDataRef),4))
+	                   DbSkip()
+	                   Loop
+	               Endif
+	      
+	               If SRD->RD_PD == aCodFol[13,1] .Or.;
+	                  SRD->RD_PD == aCodFol[14,1] .Or.;
+	                  SRD->RD_PD == aCodFol[19,1] .Or.;
+	                  SRD->RD_PD == aCodFol[20,1]
+	                  nBaseINSS  := nBaseINSS + Round(SRD->RD_VALOR,2)
+							nBasefun   := nBasefun + Round(SRD->RD_VALOR,2)
+	               EndIf
+	      
+	               //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	               //³ Verifica se a verba entra nas Deducoes FPAS                  ³
+	               //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	               If PosSrv(SRD->RD_PD,SRD->RD_FILIAL,"RV_DEDINSS") == "S"
+	                  nDeducao   := nDeducao + Round(SRD->RD_VALOR,2)
+	               Endif
+	               If SRD->RD_PD == aCodFol[34,1]
+	                  nSalFam    := nSalFam + Round(SRD->RD_VALOR,2)
+	               EndIf
+	                  
+	               If SRD->RD_PD == aCodFol[64,1] .Or.;
+	                  SRD->RD_PD == aCodFol[65,1] .Or.;
+	                  SRD->RD_PD == aCodFol[70,1]
+	                  nINSSFunc  := nINSSFunc + Round(SRD->RD_VALOR,2)
+	               EndIf
+
+	               If SRD->RD_PD == aCodFol[17,1]
+	                  nBASE      := nBASE + Round(SRD->RD_VALOR,2)
+	               EndIf
+	
+						If SRD->RD_PD == aCodFol[18,1] .Or.;
+						   SRD->RD_PD == aCodFol[109,1]
+							nValFGTS   := nValFGTS + Round(SRD->RD_VALOR,2)
+						EndIf
+	
+	               If SRD->RD_PD == aCodFol[108,1]
+	                  n13BASE    := n13BASE + Round(SRD->RD_VALOR,2)
+	               EndIf
+	     
+					dbSelectArea("SRD")
+	                dbSkip()
+	                
+	                If !Eval(cAcessaSRD)
+						dbSkip()
+						Loop
+		    		EndIf	                
+	                
+				EndDo
+	         Endif 
+			Endif	
+
+			//--Deducao do Salario Maternidade do 13o Salario
+			If nVez == 1      
+	         FSDSMatern()
+				nValAci := 0.00
+				fCalcAci(aInssEmp,nBaseFun,SRA->RA_FILIAL,SRA->RA_CC,@nValAci)
+				nTotAci := nTotAci + nValAci
+			Endif	
+	
+         cCompet:= Right(Str(Year(dDataRef)),4) + Substr(DtoC(dDataRef),3,3)
+
+			cCateg:=FCateg(nValFgts)
+	
+			//--Verifica Ocorrencia do Funcionario
+			//-- Ocorrencia	
+			If TYPE("SRA->RA_OCORREN") #"U"
+				cOcorr := SRA->RA_OCORREN
+			Else
+				cOcorr := Space(02)				
+			EndIf
+
+	      //-- Nao deve aparecer no arquivo pois nao recolhe FGTS
+	      If SRA->RA_SITFOLH == "A" .And. SRA->RA_AFASFGT $ "X/Y/P/ "
+				If (nVez == 1 .And. nBaseInss <= 0) .Or. (nVez == 2 .And. nBase+n13Base <= 0)
+		 			FtestaTotal()      // Executa Quebras
+		         Loop
+				Endif
+	      EndIf
+
+			If (SRA->RA_SITFOLH == "D" .And. nVez == 2 .And. nBASE+n13BASE<=0) .Or.;
+				(SRA->RA_SITFOLH == "D" .And. nVez == 1 .And. nBaseInss<=0)
+				fTestaTotal()      // Executa Quebras
+				Loop
+			EndIf
+
+			//--Impressao do Funcionario
+			If nVez == 2	
+	  			cAuxCompet := Right(Str(Year(dDataRef)),4) + Substr(DtoC(dDataRef),4,2)
+				aAfast     := {}
+				dDtAfast   := CTOD("")
+				cCodAfast  := ""
+				FMontaSR8(cAuxCompet,@aAfast)
+				If Len(aAfast) #0
+					For n:= 1 To Len(aAfast)
+						dDtAfast  := aAfast[n,1]
+						cCodAfast := aAfast[n,2]
+						fDetalhe()
+					Next
+				Else
+					fDetalhe()
+				EndIf
+				nBaseINSS  := 0
+				nDeducao   := 0
+				nSalFam    := 0
+				nINSSFunc  := 0
+			Else
+				nBASE      := 0
+				nValFGTS   := 0				
+				n13BASE    := 0
+			Endif
+			
+			dbSelectArea("SRA")
+			fTestaTotal()      // Executa Quebras
+		Enddo
+	Next n
+Enddo
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Termino do Relatorio                                         ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SRA" )
+dbSetOrder(1)
+dbSelectArea( "SI3" )
+dbSetOrder(1)
+dbSelectArea( "SRC" )
+dbSetOrder(1)
+dbSelectArea( "SRD" )
+dbSetOrder(1)
+dbSelectArea( "SRI" )
+dbSetOrder(1)
+dbSelectArea( "SR8" )
+dbSetOrder(1)
+
+Set Device To Screen
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Seta os digitos conforme o Set Century                       ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If Len(DTOC(MsDate())) == 8  // Tamanho da Data dependendo do Set Century
+	Set Century OFF
+EndIf
+
+If aReturn[5] == 1
+   Set Printer To
+   Commit
+   ourspool(wnrel)
+Endif
+
+MS_FLUSH()
+
+*-------------------*
+// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==> Function fTestaTotal
+Static Function fTestaTotal()
+*-------------------*
+//-Executa Quebra
+
+If !Empty(cCentra)
+	cFilAnterior := cCentra
+Else
+	cFilAnterior := SRA->RA_FILIAL
+EndIf
+cCcAnt := SRA->RA_CC
+
+//--Proximo Funcionario
+dbSelectArea("SRA")
+dbSkip()
+
+Set device to Print
+
+If Eof() .Or. &cInicio > cFim
+	If nVez == 1
+		lCabecalho   := .T.
+		fCabecalho()
+		dbSelectArea("SRA")
+		dbGoTo(nSavRec)
+		cFilAnterior := cFilnVez
+		nTotAci 		 := 0
+	Else
+		fTotfol()
+	Endif
+	lVolta := .T.
+Elseif cFilAnterior #SRA->RA_FILIAL .And. Empty(cCentra)
+	If nVez == 1
+		lCabecalho   := .T.
+		fCabecalho()
+		dbSelectArea("SRA")
+		dbGoTo(nSavRec)
+		cFilAnterior := cFilnVez
+		nTotAci      := 0
+	Else
+		fTotFol()
+	Endif
+	lVolta := .T.
+Elseif cCcAnt #SRA->RA_CC .And. (nOrdem == 2 .Or. nOrdem == 4) .And. lExiste
+	If nVez == 1
+		lCabecalho   := .T.
+		fCabecalho()
+		dbSelectArea("SRA")
+		dbGoTo(nSavRec)
+		cFilAnterior := cFilnVez
+		nTotAci      := 0
+	Else
+		lImpCc := .T.
+		fTotFol()
+		lImpCc := .F.
+	Endif
+	lVolta  := .T.
+	lExiste := .F.
+Endif
+
+Set Device to Screen
+dbSelectArea("SRA")
+Return
+
+*------------------*
+// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==> Function FSDSMatern
+Static Function FSDSMatern()
+*------------------*
+//-- Totaliza a deducao de Sal.Maternidade
+
+Local nDiaIni
+
+If GetMv("MV_SALMGRP") == "N"   // Deducao de Sal.Matern. no 13o.Salario
+   nVl13Sal    :=0
+   nDiasSM     :=0
+   nAvos       :=0
+   dDtBaseIni  := CtoD("01/01/"+RIGHT(STR(YEAR(dDataRef),4),2))
+   dDtBaseFim  := CtoD("31/12/"+RIGHT(STR(YEAR(dDataRef),4),2))
+   dbSelectArea('SRC')
+   dbSetOrder(1)
+   If dbSeek(SRA->RA_FILIAL + SRA->RA_MAT)
+      While !Eof() .And. SRA->RA_FILIAL + SRA->RA_MAT == SRC->RC_FILIAL + SRC->RC_MAT
+         //-- Verif. 13.Salario Indenizado e 13. Sal. Av. Previo
+         If SRC->RC_PD == aCodFol[114,1] .Or. SRC->RC_PD == aCodFol[115,1] 
+            If SRC->RC_PD == aCodFol[114,1]
+               nAvos := nAvos + Int(SRC->RC_HORAS)
+            Else
+               nAvos := nAvos + 1
+            Endif
+            nVl13Sal := nVl13Sal + SRC->RC_VALOR
+         Endif
+         dbSkip()
+      Enddo
+   Endif
+   dbSelectArea('SRI')
+   dbSetOrder(2)
+   If dbSeek(SRA->RA_FILIAL + SRA->RA_CC + SRA->RA_MAT)
+      Do While !Eof() .And. SRA->RA_FILIAL + SRA->RA_CC + SRA->RA_MAT == ;
+									 SRI->RI_FILIAL + SRI->RI_CC + SRI->RI_MAT
+
+	      If MesAno(SRI->RI_DATA) #MesAno(dDataRef)
+				dbSelectArea("SRI")
+	         dbSkip()
+	         Loop
+	      EndIf
+
+         If SRI->RI_PD > '100' .And. SRI->RI_PD < '400' .And. PosSrv(SRI->RI_PD,SRI->RI_FILIAL,"RV_INSS") == "S"
+            If SRI->RI_PD == aCodFol[024,1]
+               nAvos := nAvos + Int(SRI->RI_HORAS)
+            Endif
+            nVl13Sal := nVl13Sal + SRI->RI_VALOR
+         Endif
+         dbSkip()
+      Enddo
+   Endif
+   If nVl13Sal > 0
+      dbSelectArea( "SR8" )
+      If dbSeek(SRA->RA_FILIAL + SRA->RA_MAT)
+         While !EOF() .And. SRA->RA_FILIAL + SRA->RA_MAT == SR8->R8_FILIAL + SR8->R8_MAT
+            If SR8->R8_TIPO == "Q"
+               For nDiaIni := SR8->R8_DATAINI to SR8->R8_DATAFIM
+                  If dDtBaseIni<= nDiaIni .And. nDiaIni<=dDtBaseFim
+                     nDiasSM := nDiasSM + 1
+                  Endif
+               Next
+               If nDiasSM > 0 .And. nAvos > 0
+                  nDeducao := nDeducao + ROUND(((nVl13Sal/nAvos)/30)*nDiasSM,2)
+               Endif
+            Endif
+            dbskip()
+            
+   		    If !Eval(cAcessaSR8)
+				dbSkip()
+				Loop
+		    EndIf
+		    
+         Enddo
+      Endif
+   Endif
+EndIf
+
+Return Nil
+
+*------------------*
+// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==> Function FCabecalho
+Static Function FCabecalho()
+*------------------*
+
+nINSS    := 0
+nValINSS := 0
+
+//          1         2         3         4         5         6         7         8         9         0         1         2         3         4         5         6         7         8         9         0         1         2
+//01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+//                                                                                                                                                                | Carimbo CIEF                  | |Para uso da CAIXA       |
+//                                                                                                                                                                |                               | |                        |
+//                                                                                               G F I P - Guia de Recolhimento do FGTS e                         |                               | +------------------------+
+//  CAIXA ECONOMICA FEDERAL - CAIXA          INSTITUTO NACIONAL DO SEGURO SOCIAL - INSS          Informacoes a Previdencia Social                                 |                               | | Competencia mes/ano    |
+//                                                                                                                                                                |                               | | XX/XXXX                |
+//                                                                                                                                                                |                               | +------------------------+
+//                                                                                                                                                                |                               | | Codigo recolhimento    |
+//  | Razao Social/Nome                                         | Pessoa para contato/DDD/telefone                               | CGC/CNPJ/CEI                 | |                               | | XXX                    |
+//  | XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                  | XXXXXXXXXXXXXXXXXXXXXXXXXXXXX  / (XXXX) XXXX-XXXX              | XXXXXXXXXXXXXX               | |                               | +------------------------+
+//  +-----------------------------------------------------------+----------------------------------------------------------------+------------------------------+ +-------------------------------+ OUTRAS INFORMACOES
+//  | Endereco (logradouro,No.,andar,apartamento)                                              | Bairro/distrito                               | CEP            | Municipio                  | UF | | No.Processo Judicial   |
+//  | XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                                                           | XXXXXXXXXXXXXXXXXXXX                          | XXXXXXXX       | XXXXXXXXXXXXXXXXXXXX       | XX | |                        |
+//  +------------------------------------------------------------------------------------------+-----------------------------------------------+----------------+----------------------------+----+ +------------------------+
+//  | FPAS     | Codigo terceiros    | SIMPLES     | Aliquota SAT  | CNAE  | Tomador de servico(CGC/CNPJ/CEI)  | Tomador de Servico (razao social)                                                | | Vara/JCJ               |
+//  | XXX      | XXXX                | X           | X,X %         | XXXXX | XXXXXXXXXXXXXX                    | XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                                         | |                        |
+//  +----------+---------------------+-------------+---------------+-------+-----------------------------------+----------------------------------------------------------------------------------+ +------------------------+
+//  | Valor devido Prev. Social | Contrib. desc. empregado | Valor salario-familia | Comerc.de producao rural | Receira evento desp./patroc. | Compensacao Prev.Social | Somatorio                | |Periodo (de-ate)        |
+//  |        999,999,999,999.99 |       999,999,999,999.99 |    999,999,999,999.99 |                          |           999,999,999,999.99 |                         |       999,999,999,999.99 | |                        |
+//  +---------------------------+--------------------------+-----------------------+--------------------------+------------------------------+-------------------------+--------------------------+ +------------------------+
+//  | No.PIS-PASEP/Inscricao | Adimissao | Carteira de trabalho | Cat | Remuneracao                  | Remuneracao 13o.salario       | Ocor. | Nome do trabalhador                        | Movimentacao |      | Nascimento |
+//  | do contrib. individual | (data)    | (No./serie)          |     | (sem parcela do 13o.salario) | (somente parcela do 13o.Sal.) |       |                                            | (data)       | Cod. | (data)     |
+//	 |                        |           |                      |     |                              |                               |       |                                            |              |      |            |
+
+nTotAci := If (nTotAci == NIL,0.00,nTotAci)
+
+If nBaseINSS > 0 .And. lCabecalho
+   nINSS := nINSS + ROUND(nBaseINSS * aInssemp[1,1],2) // Inss Emp.
+   nINSS := nINSS + ROUND(nBaseINSS * If (nPercFPAS > 0, nPercFPAS , aInssemp[2,1]),2)   // Terceiros
+	nInss := nInss + nTotAci
+   nBaseINSS := 0
+EndIf
+
+nValINSS := nValINSS + ((nINSS + nINSSFunc) - nDeducao)
+nDeducao := 0
+
+@ 00,00 PSAY AvalImp(220) 
+
+If lPreImp
+	@ 03,02 PSAY Space(183)+cCompetencia
+	@ 05,02 PSAY Space(183)+cRecol
+	@ 07,02 PSAY aInfEmp[1]+Space(29)+PadR(cContato,20)+Space(1)+cFone+Space(7)+aInfEmp[2]
+	@ 09,02 PSAY aInfEmp[3]+Space(57)+aInfEmp[4]+Space(16)+aInfEmp[5]+Space(11)+aInfEmp[6]+Space(15)+aInfEmp[7]
+ 	@ 11,02 PSAY aInfEmp[9]+Space(9)+cTerceiros+Space(11)+cSimples+Space(11)+cAliqSat+Space(11)+aInfEmp[8]+Space(7)+cITomador+Space(17)+cTomador
+	Det := Space(5)+If(lCabecalho,Transform((nValINSS),"@E 999,999,999,999.99"),Space(18))+Space(8)+If(lCabecalho,Transform((nINSSFunc),"@E 999,999,999,999.99"),Space(18))+Space(8)+If(lCabecalho,Transform((nSalFam),"@E 999,999,999,999.99"),Space(18))+Space(23)
+	Det := Det + Space(10)+If(lCabecalho,Transform((nEvento),"@E 999,999,999,999.99"),Space(18))+Space(25)+Space(12)+If(lCabecalho,Transform((nValINSS+nINSSFunc+nSalFam+nEvento),"@E 999,999,999,999.99"),Space(18))
+	@ 13,02 PSAY Det
+Else
+	@ 01,00 PSAY Space(160)+"| "+STR0010+Space(18)+"| "+"|"+STR0011+Space(7)+"|" //"Carimbo CIEF"###"Para uso da CAIXA"
+	@ 02,00 PSAY Space(160)+"|"+Space(31)+"| "+"|"+Space(24)+"|"
+	@ 03,00 PSAY Space(95)+STR0012+Space(25)+"|"+Space(31)+"| "+"+"+Repl("-",24)+"+" //"G F I P - Guia de Recolhimento do FGTS e"
+	@ 04,02 PSAY STR0013+Space(10)+STR0014+Space(10)+STR0015+Space(33)+"|"+Space(31)+"| "+"| "+STR0016+Space(4)+"|" //"CAIXA ECONOMICA FEDERAL - CAIXA"###"INSTITUTO NACIONAL DO SEGURO SOCIAL - INSS"###"Informacoes a Previdencia Social"###"Competencia mes/ano"
+	@ 05,00 PSAY Space(160)+"|"+Space(31)+"| "+"| "+cCompetencia+Space(16)+"|"
+	@ 06,00 PSAY Space(160)+"|"+Space(31)+"| "+"+"+Repl("-",24)+"+"
+	@ 07,00 PSAY Space(160)+"|"+Space(31)+"| "+"| "+STR0017+Space(4)+"|" //"Codigo recolhimento"
+	@ 08,02 PSAY "| "+STR0018+Space(41)+"| "+STR0019+Space(31)+"| "+STR0020+Space(17)+"| |"+Space(31)+"| "+"| "+cRecol+Space(20)+"|" //"Razao Social/Nome"###"Pessoa para contato/DDD/telefone"###"CGC/CNPJ/CEI"
+	@ 09,02 PSAY "| "+aInfEmp[1]+Space(18)+"| "+cContato+" | "+cFone+Space(14)+"| "+aInfEmp[2]+Space(15)+"| "+"|"+Space(31)+"|"+" "+"+"+Repl("-",24)+"+"
+	@ 10,02 PSAY "+"+Repl("-",59)+"+"+Repl("-",64)+"+"+Repl("-",30)+"+ +"+Repl("-",31)+"+"+STR0021 //" OUTRAS INFORMACOES"
+	@ 11,02 PSAY "| "+STR0022+Space(46)+"| "+STR0023+Space(31)+"| "+STR0024+Space(12)+"| "+STR0025+Space(18)+"| "+STR0026+"| | "+STR0027+Space(3)+"|" //"Endereco (logradouro,No.,andar,apartamento)"###"Bairro/distrito"###"CEP"###"Municipio"###"UF "###"No.Processo Judicial"
+	@ 12,02 PSAY "| "+aInfEmp[3]+Space(59)+"| "+aInfEmp[4]+Space(26)+"| "+aInfEmp[5]+Space(7)+"| "+aInfEmp[6]+Space(7)+"| "+aInfEmp[7]+" | |"+Space(24)+"|"
+	@ 13,02 PSAY "+"+Repl("-",90)+"+"+Repl("-",47)+"+"+Repl("-",16)+"+"+Repl("-",28)+"+"+Repl("-",4)+"+ +"+Repl("-",24)+"+"
+	@ 14,02 PSAY "| "+STR0028+Space(5)+"| "+STR0029+Space(4)+"| "+STR0030+Space(5)+"| "+STR0031+Space(2)+"| "+STR0032+Space(2)+"| "+STR0033+Space(2)+"| "+STR0034+Space(48)+"| | "+STR0035+Space(15)+"|" //"FPAS"###"Codigo terceiros"###"SIMPLES"###"Aliquota SAT"###"CNAE"###"Tomador de servico(CGC/CNPJ/CEI)"###"Tomador de servico (razao social)"###"Vara/JCJ"
+	@ 15,02 PSAY "| "+aInfEmp[9]+Space(6)+"| "+cTerceiros+Space(16)+"| "+cSimples+Space(11)+"| "+cAliqSat+Space(9)+"| "+aInfEmp[8]+" | "+cITomador+Space(20)+"| "+cTomador+Space(41)+"| |"+Space(24)+"|"
+	@ 16,02 PSAY "+"+Repl("-",10)+"+"+Repl("-",21)+"+"+Repl("-",13)+"+"+Repl("-",15)+"+"+Repl("-",7)+"+"+Repl("-",35)+"+"+Repl("-",82)+"+ +"+Repl("-",24)+"+"
+	@ 17,02 PSAY "| "+STR0036+" | "+STR0037+" | "+STR0038+" | "+STR0039+" | "+STR0040+" | "+STR0041+" | "+STR0042+Space(16)+"| |"+STR0043+Space(8)+"|" //"Valor devido Prev. Social"###"Contrib. desc. empregado"###"Valor salario-familia"###"Comerc.de producao rural"###"Receira evento desp./patroc."###"Compensacao Prev.Social"###"Somatorio"###"Periodo (de-ate)"
+	Det := "|"+ Space(8)+If(lCabecalho,Transform((nValINSS),"@E 999,999,999,999.99"),Space(18))+" |"+Space(7)+If(lCabecalho,Transform((nINSSFunc),"@E 999,999,999,999.99"),Space(18))+" |"+Space(4)+If(lCabecalho,Transform((nSalFam),"@E 999,999,999,999.99"),Space(18))+" |"+Space(26)+"|"
+	Det := Det + Space(11)+If(lCabecalho,Transform((nEvento),"@E 999,999,999,999.99"),Space(18))+" |"+Space(25)+"| "+Space(6)+If(lCabecalho,Transform((nValINSS+nINSSFunc+nSalFam+nEvento),"@E 999,999,999,999.99"),Space(18))+" | |"+Space(24)+"|"
+	@ 18,02 PSAY Det
+	@ 19,02 PSAY "+"+Repl("-",27)+"+"+Repl("-",26)+"+"+Repl("-",23)+"+"+Repl("-",26)+"+"+Repl("-",30)+"+"+Repl("-",25)+"+"+Repl("-",26)+"+ +"+Repl("-",24)+"+"
+	@ 20,02 PSAY "| "+STR0044+" | "+STR0045+" | "+STR0046+" | "+STR0047+" | "+STR0048+Space(17)+"| "+STR0049+Space(6)+" | "+STR0050+" | "+STR0051+Space(24)+" | "+STR0052+" |"+Space(6)+"| "+STR0053+" |" //"No.PIS-PASEP/Inscricao"###"Adimissao"###"Carteira de trabalho"###"Cat"###"Remuneracao"###"Remuneracao 13o.salario"###"Ocor."###"Nome do trabalhador"###"Movimentacao"###"Nascimento"
+	@ 21,02 PSAY "| "+STR0054+" | "+STR0055+Space(4)+"| "+STR0056+Space(10)+"|"+Space(5)+"| "+STR0057+"| "+STR0058+" |"+Space(7)+"| "+Space(44)+"| "+STR0059+Space(7)+"| "+STR0060+" | "+STR0061+Space(5)+"|" //"do contrib. individual"###"(data)"###"(No./serie)"###"(sem parcela do 13o.salario)"###"(somente parcela do 13o.sal.)"###"(data)"###"Cod."###"(data)"
+	@ 22,02 PSAY "|"+Space(24)+"|"+Space(11)+"|"+Space(22)+"|"+Space(5)+"|"+Space(29)+"|"+Space(31)+"|"+Space(7)+"|"+Space(45)+"|"+Space(14)+"|"+Space(6)+"|"+Space(12)+"|"
+EndIf
+
+nValINSS := 0
+nSalFam  := 0
+nEvento  := 0
+If lPreImp
+	Li    := 17
+Else
+	Li    := 23
+EndIf
+
+Return Nil
+
+*----------------*
+// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==> Function FDetalhe
+Static Function FDetalhe()
+*----------------*
+
+//          1         2         3         4         5         6         7         8         9         0         1         2         3         4         5         6         7         8         9         0         1         2
+//01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+//	 | XXXXXXXXXXX            |DD/MM/AAAA | XXXXXXX / XXXXX      | XX  |           999,999,999,999.99 |            999,999,999,999.99 | XX    | XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  | DD/MM/AAAA   | XX   | DD/MM/AAAA |
+//    ......................................................................................................................................................................................................................
+//  +------------------------+-----------+----------------------+-----+------------------------------+-------------------------------+-------+--------------------------------------------+--------------+------+------------+
+//                                                                    | Somatorio                    | Somatorio                     | Soma  | | Rem + 13o.(Cat.1,2,3 e 5 | Rem + 13o.(Cat. 4) | | Total a recolher FGTS     |
+//                                                                    |           999,999,999,999.99 |            999,999,999,999.99 | 99999 | |       999,999,999,999.99 | 999,999,999,999.99 | |        999,999,999,999.99 |
+//                                                                    +------------------------------+---------------------------------------+ +--------------------------+--------------------+ +---------------------------+
+//
+//                                                                                                                                                     | Autenticacao                                                        
+//                   -------------------------------------------------          ---------------------------------------------------------------------  |                                                                     
+//                   Local e data                                               Assinatura                                                             |                                                                     
+
+Set Device To Printer
+
+DbSelectArea("SRA")
+
+If lPreImp
+	Det := PadR(SRA->RA_PIS,11)+Space(10)+If(Empty(SRA->RA_ADMISSA),Space(10),DtoC(SRA->RA_ADMISSA))
+	Det := Det + Space(6)+PadR(SRA->RA_NUMCP,7)+" / "+PadR(SRA->RA_SERCP,5)+Space(7)+cCateg
+	Det := Det + Space(9)+Transform((nBASE),"@E 999,999,999,999.99")+Space(10)
+	Det := Det + Transform((n13BASE),"@E 999,999,999,999.99")+Space(3)+cOcorr+Space(4)
+	Det := Det + PadR(SRA->RA_NOME,40)+Space(10)+If(Empty(dDtAfast),Space(10),DtoC(dDtAfast))+Space(5)
+	Det := Det + PadR(cCodAfast,2)+Space(4)+If(Empty(SRA->RA_NASC),Space(10),DtoC(SRA->RA_NASC))
+	@ Li,02 PSAY Det
+Else
+	Det := "| "+ PadR(SRA->RA_PIS,11)+Space(12)+"|"+If(Empty(SRA->RA_ADMISSA),Space(10),DtoC(SRA->RA_ADMISSA))+" | "
+	Det := Det + PadR(SRA->RA_NUMCP,7)+" / "+PadR(SRA->RA_SERCP,5)+Space(6)+"| "+cCateg+"  |"
+	Det := Det + Space(10)+Transform((nBASE),"@E 999,999,999,999.99")+" |"+Space(12)
+	Det := Det + Transform((n13BASE),"@E 999,999,999,999.99")+" |"+Space(4)+cOcorr+" | "
+	Det := Det + PadR(SRA->RA_NOME,40)+Space(4)+"| "+If(Empty(dDtAfast),Space(10),DtoC(dDtAfast))+Space(3)+"| "
+	Det := Det + PadR(cCodAfast,2)+Space(3)+"| "+If(Empty(SRA->RA_NASC),Space(10),DtoC(SRA->RA_NASC))+" |"
+	@ Li,02 PSAY Det
+EndIf
+
+Det := ""
+Li := Li + 1
+
+aTotais[1] := aTotais[1] + nBASE    //Remuneracao(sem parcela do 13o. salario)
+aTotais[2] := aTotais[2] + n13BASE  //Remuneracao 13o. salario(somente parcela do 13o.sal.)
+aTotais[3] := aTotais[3] + Val(cOcorr) // Soma das ocorrencias
+
+If cCateg $ "01/02/03/05"
+	aTotais[4] := aTotais[4] + (nBASE + n13BASE) //Rem + 13o.(Cat.1,2,3 e 5)
+ElseIf cCateg $ "04"
+	aTotais[5] := aTotais[5] + (nBASE + n13BASE) //Rem + 13o.(Cat 4)
+EndIf
+aTotais[6]    := aTotais[6] + nValFGTS
+
+nBASE      := 0
+n13BASE    := 0
+nValFGTS   := 0
+
+If (Li > 41 .And. lPreImp) .Or. (Li > 47 .And. !lPreImp)
+	fTotFol()
+	lCabecalho := .F.
+	fCabecalho()
+Endif
+
+*---------------*
+
+Return(nil)        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+
+// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==> Function fTotFol
+Static Function fTotFol()
+*---------------*
+
+Local I
+Local X
+
+If Li < 43 .And. lPreImp
+	For i := Li To 43
+		@ i,02 PSAY ""
+	Next
+	Li := i+1
+EndIf
+
+If Li < 48 .And. !lPreImp
+	For i := Li To 48
+		Det := "|"+Space(24)+"|"+Space(11)+"|"+Space(22)+"|"+Space(5)
+		Det := Det + "|"+Space(29)+"|"+Space(31)+"|"+Space(7)+"|"+Space(45)
+		Det := Det + "|"+Space(14)+"|"+Space(6)+"|"+Space(12)+"|"
+		@ i,02 PSAY Det
+	Next
+	Li := i+1
+EndIf
+
+If nTipo == 1 .And. aTotais[6] == 0 // Total a Recolher FGTS
+   aTotais[6] := Round((aTotais[4]*0.08)+(aTotais[5]*0.02),2)
+ElseIf nTipo == 2 .And. cCompet > "09/1989"
+	aTotais[6] := If(nJam#0.00,Round((aTotais[4]*(nJam/100))+If(aTotais[5]#0.00,(aTotais[5]*(nJam/100))/4,0.00),2),0.00)
+EndIf
+
+If lPreImp
+	Det := Space(70)+Transform((aTotais[1]),"@E 999,999,999,999.99")
+	Det := Det + Space(10)+Transform((aTotais[2]),"@E 999,999,999,999.99")
+	Det := Det + Space(4)+Transform((aTotais[3]),"@E 999")+Space(8)+Transform((aTotais[4]),"@E 999,999,999,999.99")
+	Det := Det + Space(5)+Transform((aTotais[5]),"@E 999,999,999,999.99")+Space(18)
+	Det := Det + Transform((aTotais[6]),"@E 999,999,999,999.99")
+	@Li,02 PSAY Det
+Else	
+	Det := "+"+Repl("-",24)+"+"+Repl("-",11)+"+"+Repl("-",22)+"+"+Repl("-",5)
+	Det := Det + "+"+Repl("-",29)+"+"+Repl("-",31)+"+"+Repl("-",7)+"+"+Repl("-",45)
+	Det := Det + "+"+Repl("-",14)+"+"+Repl("-",6)+"+"+Repl("-",12)+"+"
+	@Li,02 PSAY Det
+	Li := Li + 1
+	Det := Space(66)+"| "+STR0062+Space(19)+"| "+STR0062+Space(21)+"| " //"Somatorio"
+	Det := Det + STR0063+"  | | "+STR0064+"| "+STR0065 //"Soma"###"Rem + 13o.(Cat.1,2,3 e 5)"###"Rem + 13o.(Cat. 4)"
+	Det := Det + "  | | "+STR0066+Space(5)+"|" //"Total a recolher FGTS"
+	@Li,02 PSAY Det
+	Li := Li + 1
+	Det := Space(66)+"|"+Space(10)+Transform((aTotais[1]),"@E 999,999,999,999.99")+" |"
+	Det := Det + Space(12)+Transform((aTotais[2]),"@E 999,999,999,999.99")+" | "
+	Det := Det + Space(2)+Transform((aTotais[3]),"@E 999")+" | |"+Space(7)+Transform((aTotais[4]),"@E 999,999,999,999.99")
+	Det := Det + " |  "+Transform((aTotais[5]),"@E 999,999,999,999.99")+" | |"+Space(8)
+	Det := Det + Transform((aTotais[6]),"@E 999,999,999,999.99")+" |"
+	@Li,02 PSAY Det
+	Li := Li + 1
+	Det := Space(66)+"+"+Repl("-",29)+"+"+Repl("-",31)+"+"+Repl("-",7)+"+ +"+Repl("-",26)+"+"+Repl("-",21)+"+ +"+Repl("-",27)+"+"
+	@Li,02 PSAY Det
+	Li := Li + 1
+	Det := Space(149)+"| "+STR0067 //"Autenticacao"
+	@Li,02 PSAY Det
+	Li := Li + 1
+	Det := Space(149)+"|"
+	@Li,02 PSAY Det
+	Li := Li + 1
+	Det := Space(19)+Repl("-",49)+Space(10)+Repl("-",69)+"  |"
+	@Li,02 PSAY Det
+	Li := Li + 1
+	Det := Space(19)+STR0068+Space(47)+STR0069+Space(61)+"|" //"Local e data"###"Assinatura"
+	@Li,02 PSAY Det
+EndIf
+
+Li := Li + 1
+If lImpCc
+	Det := cCcAnt + " - " + DescCc(cCcAnt,cFilAnterior)
+	@Li,02 PSAY Det
+EndIf
+Li := 0
+For X := 1 To 6
+	aTotais[X] := 0
+Next X
+
+Return
+
+*----------------*
+// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==> Function fCalcAci
+Static Function fCalcAci()
+*----------------*
+
+nValAci := 0
+cFil    := SRA->RA_FILIAL
+
+//-- Calculo do % Acid. de Trabalho Por Funcionario / C.Custo ou Filial
+nPercAci := aInssEmp[3,1]  //-- Ac.Trab.
+If Type("SRA->RA_PERCSAT") #"U" .And. SRA->RA_PERCSAT > 0
+	nPercAci := SRA->RA_PERCSAT / 100
+Else
+	//-- Verifica o % de Acidente do C.Custo
+	dbSelectArea("SI3")
+	If ( cFil #Nil .And. xFilial() == space(FWGETTAMFILIAL) ) .Or. cFil == Nil
+		cFil := xFilial()
+	Endif
+	If dbSeek( cFil + SRA->RA_CC ) .And. SI3->I3_PERCACI > 0
+		nPercAci := SI3->I3_PERCACI / 100
+	Endif
+Endif
+
+//--Montar a Base Total de Inss
+nValAci := Round(nBase * nPercAci,2)
+
+Return

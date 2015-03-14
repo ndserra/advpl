@@ -1,0 +1,57 @@
+Codigo Registro0010010"0"                                                         
+Codigo Remessa 0020020"1"                                                         
+Literal Remessa0030090"REMESSA"                                                   
+Codigo Servico 0100110"01"                                                        
+Literal Servico0120260"COBRANCA"                                                  
+Ident.Empresa  0270460"00000000006843900000"                                      
+Nome da Empresa0470760SUBS(SM0->M0_NOMECOM,1,30)                                  
+Codigo do Banco0770790"745"                                                       
+Nome do Banco  0800940"CITIBANK S/A"                                              
+Data Gravacao  0951000GravaData(dDataBase,.F.)                                    
+Densidade      1011050"01600"                                                     
+Literal        1061080"BPI"                                                       
+No.Arquivo     1091140SEE->EE_ULTDSK                                              
+Brancos        1153940                                                            
+No.Sequencial  3954000"000001"                                                    
+Codigo Registro0010010"1"                                                         
+Codigo Inscr   0020030"02"                                                        
+Numero Inscr   0040170SM0->M0_CGC                                                 
+Ident.Empresa  0180370"00000000006843900000"                                      
+Uso da Empresa 0380620SE1->E1_NUM                                                 
+Nosso Numero   0630760SUBSTR(SE1->E1_NUMBCO,5,8)                                  
+Uso do Banco   0771070                                                            
+Carteira       1081080"1"                                                         
+Ocorrencia     1091100"01"                                                        
+Seu Numero     1111200SE1->E1_PREFIXO+SE1->E1_NUM+SE1->E1_PARCELA                 
+Vencimento     1211260GravaData(SE1->E1_VENCTO,.F.)                               
+Valor Titulo   1271392STRZERO(NOROUND((SE1->E1_SALDO-SE1->E1_IRRF)*100,0),13)     
+Codigo do Banco1401420"745"                                                       
+Agencia Cobrad 1431470                                                            
+Especie        1481490"01"                                                        
+Aceite         1501500"N"                                                         
+Data Emissao   1511560GravaData(SE1->E1_EMISSAO,.F.)                              
+Instrucao 1    1571600"0000"                                                      
+Juros de Mora  1611730STRZERO(INT(SE1->E1_VALJUR*100),13)                         
+Desconto ate   1741790"000000"                                                    
+Valor Desconto 1801922STRZERO(0,13)                                               
+Valor IOF      1932052STRZERO(0,13)                                               
+Abatimentos    2062182STRZERO(0,13)                                               
+Codigo Inscr.  2192200IF(SA1->A1_TIPO == "F","01","02")                           
+Numero Inscr   2212340SA1->A1_CGC                                                 
+Nome do Sacado 2352740LEFT(SA1->A1_NOME,40)                                       
+Endereco       2753140LEFT(SA1->A1_END,40)                                        
+Bairro Sacado  3153260SUBS(SA1->A1_BAIRRO,1,12)                                   
+Cep do Sacado  3273340SUBS(SA1->A1_CEP,1,8)                                       
+Cidade         3353490LEFT(SA1->A1_MUN,15)                                        
+Estado         3503510SA1->A1_EST                                                 
+Nome do Sacador3523910                                                            
+Brancos        3923930                                                            
+Codigo de Moeda3943940"0"                                                         
+No.Sequencial  3954000Incrementa()                                                
+Codigo Registro0010010"9"                                                         
+Tipo Registro  0020020"1"                                                         
+Qtd.Titulos    0030100nSeq-1                                                      
+Valor Total    0110232SomaValor()                                                 
+Brancos        0243910                                                            
+No.de Geracao  3923940SEE->EE_ULTDSK                                              
+No.Sequencial  3954000Incrementa()                                                

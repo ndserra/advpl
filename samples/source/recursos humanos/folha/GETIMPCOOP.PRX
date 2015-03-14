@@ -1,0 +1,522 @@
+#INCLUDE "PROTHEUS.CH"
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³RdMake    ³GETIMPCOOP³ Autor ³ Equipe RH             ³ Data ³ 24.06.05 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³Calcula o INSS / IRRF / Pensao Alimenticia para Cooperados  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe e ³GETIMPCOOP(aRegs,cTipoChave,d_DtRef,d_DtPgto,lLerFP)        ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³aRegs                                                       ³±±
+±±³          ³[1] - "C" - Filial de Origem                                ³±±
+±±³          ³[2] - "C" - Chave - RG ou CPF                               ³±±
+±±³          ³[3] - "C" - Categoria: A=Autonomo Cooperado / P=Pro Labore  ³±±
+±±³          ³[4] - "A" - Array contendo o codigo da verba e valor.       ³±±
+±±³          ³[4,1] - "C" - Codigo da Verba                               ³±±
+±±³          ³[4,2] - "N" - Valor da Verba                                ³±±
+±±³          ³[5] - "A" - Array de retorno com todas as verbas calculadas ³±±
+±±³          ³            identico ao APD da Gestao de Pessoal.           ³±±
+±±³          ³[6] - "C" - Sequencia de ordenacao (Nao enviar)             ³±±
+±±³          ³[7] - "C" - Numero de dependentes para IR                   ³±±
+±±³          ³[8] - "A" - Array contendo as informacoes de pensionistas.  ³±±
+±±³          ³[8,1] - "C" - Codigo da Verba de desconto da pensao         ³±±
+±±³          ³[8,2] - "N" - Percentual de desconto da pensao              ³±±
+±±³          ³[8,3] - "N" - Valor fixo para desconto da pensao            ³±±
+±±³          ³[8,4] - "N" - Numero de salarios minimos                    ³±±
+±±³          ³[8,5] - "C" - Codigos das verbas de base p/calculo da pensao³±±
+±±³          ³[8,6] - "L" - Calcula pelo Liquido, .T. ou .F.              ³±±
+±±³          ³[9] - "C" - Matricula (Nao enviar)                          ³±±
+±±³          ³cTipoChave	- "1" RG / "2" CPF                            ³±±
+±±³          ³d_DtRef		- Data de Refencia p/tabelas de inss          ³±±
+±±³          ³d_DtPgto		- Data de Pagamento p/tabelas de irrf         ³±±
+±±³          ³lLerFP		- .T. Busca no SRA / .F. Nao busca no SRA     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                                   ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Observacoes                                                           ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ - A deducao de inss para imposto de renda sera gerada somente         ³±±
+±±³ na matricula onde foi descontado o INSS pois este valor sera          ³±±
+±±³ deduzido da base de ir do mes anterior que sera gerado na             ³±±
+±±³ proxima matricula.                                                    ³±±
+±±³ - Tanto o IR quanto a Pensao Alimenticia serao calculados pela        ³±±
+±±³ diferenca apurada entre os registros processados.                     ³±±
+±±³ - Apuraremos o liquido de cada uma das matriculas do cooperado        ³±±
+±±³ demonstrado no seu array correspondente.                              ³±±
+±±³ - Tanto o IR quanto o INSS tem seu fato gerador dado pelo pagamento   ³±±
+±±³ ao cooperado ou pelo reconhecimento do credito ao cooperado, conf.    ³±±
+±±³ consulta realizada a IOB.                                             ³±±
+±±³ - Quando o credito for reconhecido deve-se mandar os valores tambem   ³±±
+±±³ porem quando houver o pagamento referente a um credito reconhecido    ³±±
+±±³ em mes anterior, nao deve enviar novamente o valor pois nao ha        ³±±
+±±³ necessidade de recalculo dos descontos na data de pagamento.          ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³         ATUALIZACOES SOFRIDAS DESDE A CONSTRU€AO INICIAL.             ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Programador ³ Data   ³ BOPS ³  Motivo da Alteracao                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³            ³        ³      ³                                          ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+
+User Function GETIMPCOOP(aRegs,cTipoChave,d_DtRef,d_DtPgto,lLerFP)
+
+Local nPercJur  	:= 0.11
+Local nPercFis  	:= 0.20
+Local aArea			:= GetArea()
+Local aAreaSRA  	:= SRA->( GetArea() )
+Local aAreaSRC  	:= SRC->( GetArea() )
+Local aPensaoPLS	:= {}
+Local lRet			:= .F.
+Local nCnt,cChaveSRA,nRecSRA,nPos,cChaveInd
+Local nBasePro,nBaseJur,nBaseFis
+Local nValoJur,nValoFis,nValoPro
+Local nValAuxJ,nValAuxP,nValAuxF
+Local nBsAcumJ,nBsAcumP,nBsAcumF
+Local nBaseTot,nBaseOut,nValoOut,nBaseAux
+Local nTamChave		:= 0
+Local nValBaseIr	:= 0.00
+Local nValIr		:= 0.00
+Local nValDedInss	:= 0.00
+Local nx			:= 0
+Local nOrdemSRA		:= 0
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis necessarias as funcoes do gpe						 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+Local cFilProc
+Local dData_Ref
+Local cFilMatCorr	:= ""
+Local cNumDepIr		:= ""	// Numero de dependentes para IR
+Private aTabIr[5,3]
+
+DEFAULT aRegs		:= {}
+DEFAULT	lLerFP		:= .T.			// Indica que deve ler o movimento da folha de pagamento
+DEFAULT cTipoChave	:= "1"			// Indica o tipo da chave a ser pesquisada
+DEFAULT d_DtRef		:= dDatabase	// Indica a data de referencia para carga da tabela de inss e salario minimo
+DEFAULT d_DtPgto	:= dDatabase	// Indica a data de pagamento para carga da tabela de ir
+
+nTamChave			:= TamSX3(If(cTipoChave=="1","RA_RG","RA_CIC"))[1]
+cChaveInd			:= If(cTipoChave=="1","RA_RG + RA_FILIAL + RA_MAT","RA_CIC + RA_FILIAL + RA_MAT")
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Testa a existencia de informacao do array enviado pelo PLS	 ³
+//³ Caso nao exista retorna sem processar.						 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If ValType(aRegs) == "U" .Or. Len(aRegs) == 0
+	Return lRet
+Endif
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Inicializa o ambiente do GPE antes de calcular				 ³
+//³ Seta e Carrega os Mnemonicos.								 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+SetMnemonicos(NIL,NIL,.T.)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis necessarias ao calculo e carga de tabelas.		 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cChaveSRA	:= left(aRegs[01,02]+space(nTamChave),nTamChave)	// Chave para pesquisa - Rg ou Cpf
+cFilProc	:= If(Empty(aRegs[01,01]),"01",aRegs[01,01])		// Filial corrente
+dData_Pgto	:= d_DtPgto											// Data de Pagamento
+dData_Ref	:= d_DtRef											// Data de Referencia
+c__Roteiro	:= "FOL"											// Indica para as funcoes da folha que o 
+																// calculo e do tipo "Folha de Pagamento"
+			
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Carregando a Tabela do Salario Minimo						 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If !Sal_Min(@Val_SalMin,MesAno(dData_Ref))
+	Return lRet
+EndIf
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Carregando Tabela de I.R.									 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If !CargaIr(@aTabIr,MesAno(dData_Pgto))
+	Return lRet
+Endif
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Carregando a  Tabela do INSS								 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If !Car_inss(@aTInss,MesAno(dData_Ref))
+	Return lRet
+EndIf
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Carrega Variaveis Codigos da Folha							 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If !FP_CODFOL(@aCodFol,cFilProc)
+	Return lRet
+Endif
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica se foram cadastrados os identificadores para calculo³
+//³ do autonomo que presta servico a P.Fisica e Juridica.		 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If	Empty(aCodFol[349,1]) .Or.;  // Pagto servicos prestados P.FISICA
+	Empty(aCodFol[350,1]) .Or.;  // Base do INSS P.FISICA
+ 	Empty(aCodFol[351,1]) .Or.;  // Valor do INSS P.FISICA
+ 	Empty(aCodFol[352,1]) .Or.;  // Pagto servicos prestados P.JURIDICA
+ 	Empty(aCodFol[353,1]) .Or.;  // Base de INSS P.JURIDICA
+ 	Empty(aCodFol[354,1]) 		 // Valor do INSS P.JURIDICA
+	MsgStop("ATENCAO. Favor Informar as verbas correspodentes aos identificadores: "+;
+			"[349/350/351/352/353/354]")
+	Return lRet
+EndIf
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Teto do recolhimento de INSS                              	 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nTetoInss := aTinss[Len(aTinss),1]
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Busca o funcionario atual em outros registros do cadastro	 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nRecSRA		:= SRA->( Recno() )
+If ( nOrdemSRA	:= RetOrdem( "SRA" , cChaveInd , .T. ) ) <> 0
+
+	SRA->( dbSetOrder( nOrdemSRA ) )
+
+	If !Empty(cChaveSRA) .And. SRA->( dbSeek( cChaveSRA ) )
+		aPensaoPLS	:= If(len(aRegs[len(aRegs),8]) > 0,aClone(aRegs[len(aRegs),8]),aPensaoPLS)
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Busca as matriculas que existirem na folha de pagamento.     ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		While SRA->RA_RG == cChaveSRA .And. !(SRA->( Eof() )) .And. lLerFP
+			If	( SRA->RA_SITFOLH <> "D" .Or. ;
+				( SRA->RA_SITFOLH == "D" .And. MesAno(SRA->RA_DEMISSA) == MesAno(dData_Ref) ) )
+				aAdd( aRegs,{	SRA->RA_FILIAL		,;	// Filial de Origem
+								If(cTipoChave=="1",SRA->RA_RG,SRA->RA_CIC),;	// chave: RG ou CPF
+								SRA->RA_CATFUNC		,;	// Tipo do Registro: A = Autonomo Cooperado / P = Pro Labore
+								{}					,;	// Array de entrada da informacao, a estrutura e (Verba, valor)
+								{}					,;	// Array identico ao APD - Neste array sera dado o retorno dos valores calculados
+								""					,; // Ajuste da sequencia de ordenacao do array para execucao do calculo do inss e ir
+								SRA->RA_DEPIR		,;	// Numero de dependentes para o IR
+								aClone(aPensaoPLS)	,;	// Array com as informacoes de pensao alimenticia.
+								SRA->RA_MAT			;
+								})
+	
+				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+				//³ Busca os valores do movimento existentes para esta matricula.³
+				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+				nRecnoSRC	:= SRC->(recno())
+				SRC->(dbsetorder(1))
+				SRC->(dbseek(SRA->(RA_FILIAL+RA_MAT)))
+				aPd	:= {}
+				While ( !SRC->(eof()) ) .And. SRC->(RC_FILIAL+RC_MAT) == SRA->(RA_FILIAL+RA_MAT)
+					fMatriz(SRC->RC_PD,SRC->RC_VALOR,0,"  ",,"V",SRC->RC_TIPO2,0," ",If(SRC->RC_TIPO2=="I",dData_Pgto,SRC->RC_DATA),.T.)
+					SRC->(dbskip())
+				Enddo
+				aRegs[len(aRegs),05]	:= aClone(aPd)
+				SRC->(dbgoto(nRecnoSRC))
+			Endif
+			SRA->( dbSkip() )
+		EndDo
+	EndIf
+	SRA->( dbSetOrder( 1 ) )
+	SRA->( dbGoTo(nRecSRA) )
+Endif
+
+restarea(aArea)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Ordena o Array para proecessamento						   	 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+fOrdAregs(@aRegs)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Monta o APD dos registros							     	 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+fMontaApd(@aRegs)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Calculo e geracao de verba de inss							 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+For nCnt := 1 To Len(aRegs)
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Carrega a filial corrente no processamento a realizar		 ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	cFilProc	:= aRegs[nCnt,01]
+	cNumDepIr	:= aRegs[nCnt,07]
+	aPensaoPLS	:= aClone(aRegs[nCnt,08])
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Inicializa variaveis para montagem da base e desconto   	 ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	nBasePro := nBaseJur := nBaseFis := 0
+	nValoPro := nValoJur := nValoFis := 0
+	nValAuxJ := nValAuxP := nValAuxF := 0
+	nBsAcumJ := nBsAcumP := nBsAcumF := 0
+	nBaseTot := nBaseOut := nValoOut := nBaseAux := 0
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Busca no movimento os valores de (Juridica e Pro-Labore)	 ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	For nx := 1 To Len(aRegs)
+		nPos	:= aScan(aRegs[nx,05], { |x| x[1] == aCodFol[352,1] .And. x[9] <> "D" } )
+		nValAuxJ := If(nPos>0,aRegs[nx,05,nPos,5],0)
+		nPos	:= aScan(aRegs[nx,05], { |x| x[1] == aCodFol[217,1] .And. x[9] <> "D" } )
+		nValAuxP := If(nPos>0,aRegs[nx,05,nPos,5],0)
+		nPos	:= aScan(aRegs[nx,05], { |x| x[1] == aCodFol[349,1] .And. x[9] <> "D" } )
+		nValAuxF := If(nPos>0,aRegs[nx,05,nPos,5],0)
+		nPos	:= aScan(aRegs[nx,05], { |x| x[1] == aCodFol[288,1] .And. x[9] <> "D" } )
+		nValAuxO := If(nPos>0,aRegs[nx,05,nPos,5],0)
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Monta a base acumulada ja recolhida p/proceder o recolhimento³
+		//³ dos Servicos Prestados - Juridica, Fisica e Pro-Labore		 ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If aRegs[nx,01] < cFilProc
+			nBsAcumJ += (nValAuxJ+nValAuxP+nValAuxO)
+			nBsAcumP += (nValAuxJ+nValAuxP+nValAuxO)
+			nBsAcumF += (nValAuxJ+nValAuxP+nValAuxF+nValAuxO)
+		ElseIf aRegs[nx,01] == cFilProc
+			nBsAcumJ += nValAuxO
+			nBsAcumP += (nValAuxJ+nValAuxO)
+			nBsAcumF += (nValAuxJ+nValAuxP+nValAuxO)
+		ElseIf aRegs[nx,01] > cFilProc
+			nBsAcumF += (nValAuxJ+nValAuxP+nValAuxO)
+		EndIf
+		nBaseTot += (nValAuxJ+nValAuxP+nValAuxF+nValAuxO)
+	Next nx
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Carrega o aPd do registro corrente.							 ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	aPd	:= aClone(aRegs[nCnt,05])
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Busca total Base INSS outras empresas para apresentar no LOG ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If !Empty( aCodFol[288,1] )
+		aEval( aPD , { |x| nBaseOut += IF( x[1] == aCodFol[288,1] .and. x[9] # "D" .and. x[3] == cSemana , x[5] , 0.00 ) } )
+	EndIf
+	
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Busca valor total INSS outras empresas para apresentar no LOG³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If !Empty( aCodFol[289,1] )
+		aEval( aPD , { |x| nValoOut += IF( x[1] == aCodFol[289,1] .and. x[9] # "D" .and. x[3] == cSemana , x[5] , 0.00 ) } )
+	EndIf
+	
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Processa o calculo do Inss									 ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If aRegs[nCnt,03] == "A"
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Busca os valores p/ calculo atual (Fisica e Juridica) em aPd ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		nValoFis := fBuscaPd( aCodFol[349,1] )
+		nValoJur := fBuscaPd( aCodFol[352,1] )
+		nBaseFis := nValoFis
+		nBaseJur := nValoJur
+		nBaseRec := Min( nTetoInss, nBaseTot )
+	
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Calculo do INSS Autonomo - Juridica						 	 ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		nBaseAux := Max( nBaseRec - nBsAcumJ, 0 )
+		nBaseJur := Min( nBaseAux, nBaseJur )
+		nInssJur := NoRound( nBaseJur * nPercJur, 2 )
+	
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Calculo do INSS Autonomo - Fisica						 	 ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		nBaseAux := Max( nBaseRec - nBsAcumF, 0 )
+		nBaseFis := Min( nBaseAux, nBaseFis )
+		nInssFis := NoRound( nBaseFis * nPercFis, 2 )
+	
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Gera a Base e Desconto do INSS Autonomo - Juridica + Fisica	 ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		fGeraVerba( aCodfol[350,1], nValoFis,,,,,,,,,.T. ) //Base Fisica
+		fGeraVerba( aCodfol[351,1], nInssFis,,,,,,,,,.T. ) //Inss Fisica
+		fGeraVerba( aCodfol[353,1], nValoJur,,,,,,,,,.T. ) //Base Juridica
+		fGeraVerba( aCodfol[354,1], nInssJur,,,,,,,,,.T. ) //Inss Juridica
+	
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Grava a Base e Inss "outras empresas" na proxima filial      ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		fGerBsOut(nValoJur+nValoFis,nInssJur+nInssFis,@aRegs,aRegs[nCnt,01],aRegs[nCnt,03])
+	
+		lRet	:= .T.
+	ElseIf aRegs[nCnt,03] == "P"
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Busca o valor do Pro-Labore p/ o calculo atual em aPd		 ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		nValoPro := fBuscaPd( aCodFol[217,1] )
+		nBasePro := nValoPro
+		nBaseRec := Min( nTetoInss, nBaseTot )
+	
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Calculo do INSS Pro-Labore 								 	 ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		nBaseAux := Max( nBaseRec - nBsAcumP, 0 )
+		nBasePro := Min( nBaseAux, nBasePro )
+		nInssPro := NoRound( nBasePro * nPercJur, 2 )
+		fGeraVerba( aCodfol[064,1], nInssPro,,,,,,,,,.T. )
+		fGeraVerba( aCodfol[221,1], nValoPro,,,,,,,,,.T. )
+	
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Grava a Base e Inss "outras empresas" na proxima filial      ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		fGerBsOut(nValoPro,nInssPro,@aRegs,aRegs[nCnt,01],aRegs[nCnt,03])
+	
+		lRet	:= .T.
+	EndIf
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Gera valores ja utilizados nas matriculas anteriores.		 ³
+	//³ Base Ir mes anterior e valor ir mes anterior ja descontado.	 ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	fGeraVerba( aCodfol[106,1], nValBaseIr ,,,,,,,,dData_Pgto,.T. )
+	fGeraVerba( aCodfol[107,1], nValIr     ,,,,,,,,dData_Pgto,.T. )
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Acumula e gera o valor da deducao do Inss descontado nesta matricula. ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	nValDedInss	:= abs(fBuscaPd(aCodfol[351,1]+","+aCodfol[354,1]+","+aCodfol[064,1],"V"))
+	fGeraVerba( aCodFol[167,1], nValDedInss,,,,,,,,dData_Pgto,.T. )
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Calcula a Pensao Alimenticia								 ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	FCalcPensao(aCodFol[64,1],aCodFol[66,1],aCodFol[56,1],0.00,dData_Pgto,,.F.,cFilProc,cNumDepIr,"M"," ",aPensaoPLS)
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Calcula o IR												 ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	fCIr(aCodfol,aTabir,,dData_Pgto,cFilProc,cNumDepIr,"M")
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Acumula o valor calculado de IR a ser utilizado na proxima matricula. ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	nValBaseIr	:= abs(fBuscaPd(aCodFol[015,1],"V"))
+	nValIr		:= abs(fBuscaPd(aCodFol[066,1],"V"))+abs(fBuscaPd(aCodFol[107,1],"V"))
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Calcula o liquido e salva o aPd do registro corrente.		 ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	fLiquido(aCodfol,aCodfol[47,1],0.01,aCodfol[43,1],.T.,aCodFol[45,1],.T.)
+	aRegs[nCnt,05]	:= aClone(aPd)
+
+next nCnt
+RestArea( aAreaSRA )
+RestArea( aAreaSRC )
+
+Return lRet
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³RdMake    ³fGerBsOut ³ Autor ³ Equipe RH             ³ Data ³ 15.09.03 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Gera base outras empresas na proxima filial de calculo     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe e ³ fGerBsOut                                                  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                                   ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³         ATUALIZACOES SOFRIDAS DESDE A CONSTRU€AO INICIAL.             ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Programador ³ Data   ³ BOPS ³  Motivo da Alteracao                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³            ³        ³      ³                                          ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß/*/
+Static Function fGerBsOut(nBsInss,nVlInss,aRegs,cFilCorr,cSitCorr)
+Local nPosVb,nSeqVerba,cSeqVerba,nCnt
+Local aPdBkp	:= aClone(aPd)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Grava a Base e Inss "outras empresas" na proxima filial      ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If nBsInss > 0 .Or. nVlInss > 0
+	Asort( aRegs,,, { |x,y| x[01]+x[03] < y[01]+y[03] } )
+	nSeqVerba := Ascan( aRegs, { |x| x[01]+x[03] == cFilCorr+cSitCorr })
+	cSeqVerba := Str(If(nSeqVerba == 0, 1, nSeqVerba), 1)
+	For nCnt := 1 To Len(aRegs)
+		If aRegs[nCnt,01]+aRegs[nCnt,03] # cFilCorr+cSitCorr
+			If ( aRegs[nCnt,01] > cFilCorr ) .Or.;
+	           ( aRegs[nCnt,01] == cFilCorr .And. cSitCorr # "P" )
+				aPd	:= aclone(aRegs[nCnt,05])
+				fMatriz(aCodFol[288,1],nBsInss,0,"  ",,"V","I",0," ",dData_Pgto,.T.,cSeqVerba)
+				fMatriz(aCodFol[289,1],nVlInss,0,"  ",,"V","I",0," ",dData_Pgto,.T.,cSeqVerba)
+				aRegs[nCnt,05]	:= aclone(aPd)
+			EndIf
+		EndIf
+	Next nCnt
+	Asort( aRegs,,, { |x,y| x[06] < y[06] } )
+EndIf
+
+aPd	:= aClone(aPdBkp)
+
+Return Nil
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºFuncao    ³FORDAREGS ºAutor  ³Equipe RH           º Data ³  03/07/05   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Funcao que monta o array Apd que sera utilizado no calculo  º±±
+±±º          ³dos impostos para o Plano de Saude.                         º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³                                                            º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function fOrdAregs(aRegs)
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Organiza os registros na ordem Filial + Categoria			 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aEval( aRegs , { |X| X[06] := X[01]+If(X[03]=="P","01","02") } )
+
+aSort( aRegs ,,, { |x,y| x[06] < y[06] } )
+
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºFuncao    ³FMONTAPD  ºAutor  ³Equipe RH           º Data ³  03/07/05   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Funcao que monta o array Apd que sera utilizado no calculo  º±±
+±±º          ³dos impostos para o Plano de Saude.                         º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³                                                            º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function fMontaApd(aRegs)
+
+Local nx	:= 0
+Local ny	:= 0
+
+For nx := 1 to len(aRegs)
+	aPd	:= aClone(aRegs[nx,05])
+	For ny := 1 to len(aRegs[nx,04])
+		fMatriz( aRegs[nx,04,ny,1],aRegs[nx,04,ny,2],0.00,"  ",,"V","I",0," ",dData_Pgto,.T. )
+	next ny
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Inclui o Apd para cada um dos registros de aRegs			 ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	aRegs[nx,05]	:= aClone(aPd)
+Next nx
+
+//-- Zera o apd
+aPd := {}
+
+Return nil
+

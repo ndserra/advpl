@@ -1,0 +1,58 @@
+Codigo Registro00100100                                                           
+Codigo Remessa 00200201                                                           
+Literal Remessa0030090"REMESSA"                                                   
+Codigo Servico 010011001                                                          
+Literal Servico0120260"COBRANCA"                                                  
+Codigo Empresa 0270380SubStr(SEE->EE_CODEMP,1,10)                                 
+Brancos        0390460                                                            
+Nome da Empresa0470760SUBSTR(SM0->M0_NOME,1,30)                                   
+Codigo do Banco0770790341                                                         
+Nome do Banco  0800940'BANCO ITAU SA'                                             
+Data Gravacao  0951000GravaData(dDataBase,.F.)                                    
+Brancos        1013940                                                            
+Numero Sequenc.3954000000001                                                      
+Codigo Registro00100191                                                           
+Codigo Inscr   002003002                                                          
+Numero Inscr   0040170SUBSTR(SM0->M0_CGC,1,14)                                    
+Codigo Empresa 0180290SubStr(SEE->EE_CODEMP,1,12)                                 
+Brancos        0300370                                                            
+Uso da Empresa 0380620                                                            
+Nosso Numero   0630700NossoNum()                                                  
+Quant.Moedas   0710830                                                            
+Uso do Banco   0841070                                                            
+Carteira       1081080                                                            
+Codigo Ocorrenc1091100SE1->E1_OCORREN                                             
+Seu Numero     1111200SE1->E1_PREFIXO+SE1->E1_NUM+SE1->E1_PARCELA                 
+Vencimento     1211260GravaData(SE1->E1_VENCREA,.F.)                              
+Valor Titulo   1271392MOEDA(SE1->E1_VALOR,1,"R")                                  
+Codigo do Banco1401420341                                                         
+Agencia Cobrad 1431460                                                            
+DAC Agencia Cob1471470                                                            
+Especie        1481490Tabela("17",Substr(SE1->E1_TIPO,1,2))                       
+Aceite         1501500'A'                                                         
+Data Emissao   1511560GravaData(SE1->E1_EMISSAO,.F.)                              
+Instrucao 1    1571580SE1->E1_INSTR1                                              
+Instrucao 2    1591600SE1->E1_INSTR2                                              
+Mora por dia   1611732SE1->E1_VALJUR                                              
+Desconto ate   1741790                                                            
+Valor Desconto 1801922                                                            
+Valor IOF      1932052                                                            
+Abatimentos    2062182                                                            
+Codigo Inscr.  219220002                                                          
+Numero Inscr   2212340SA1->A1_CGC                                                 
+Nome do Sacado 2352640SubStr(SA1->A1_NOME,1,30)                                   
+Brancos        2652740                                                            
+Lograd Sacado  2753140SubStr(SA1->A1_END,1,40)                                    
+Bairro Sacado  3153290Substr(SA1->A1_BAIRRO,1,15)                                 
+Cep do Sacado  3303340SubStr(SA1->A1_CEP,1,5)                                     
+Cidade Sacado  3353490Substr(SA1->A1_MUN,1,15)                                    
+Estado Sacado  3503510SA1->A1_EST                                                 
+Sacador/Avalist3523810                                                            
+Brancos        3823850                                                            
+Data da Mora   3863910GravaData(SE1->E1_VENCREA,.F.)                              
+Prazo          39239301                                                           
+Digito         3943940Modulo11(se1->e1_numbco,2,9)                                
+Sequencial     3954000incrementa()                                                
+Codigo Registro00100109                                                           
+Brancos        0023940                                                            
+Numero Sequenc 3954000Incrementa()                                                

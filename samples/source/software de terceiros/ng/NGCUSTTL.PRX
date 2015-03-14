@@ -1,0 +1,74 @@
+#include "rwmake.ch"
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡Æo    ³ MA330C3  ³ Autor ³ In cio Luiz Kolling   ³ Data ³08/06/2005³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ atualiza o STL c/ referencia ao SD3 -                      ³±±
+±±³          ³ A principio este programa sera com RDMAKE (Ponto de entrada³±±
+±±³          ³ parte teste na NG), mas esta mesma rotina devera ser desen-³±±
+±±³          ³ volvida e inclu¡da no programa de recalcula do custo medio ³±±
+±±³          ³ da microsica. (SD3)                                        ³±±
+±±³          ³                                                            ³±±
+±±³          ³ Observacao:                                                ³±±
+±±³          ³ As rotinas foram desenvolvidas considerando que o campo    ³±±
+±±³          ³ _NUMSEQ seja £nico. Caso isso nÆo seja afirmativo, deve-se ³±±
+±±³          ³ achar outro maneira de acessar o registro correspondente.  ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+User Function MA330C3()
+Local aAREAUSO := GetArea()
+If select("STL") > 0
+   DbselectArea('STL')
+   DbsetOrder(7)
+   If Dbseek(xFILIAL("STL")+sd3->d3_numseq)
+      If stl->tl_custo <> sd3->d3_custo1
+         DbselectArea('STL')
+         RecLock("STL",.F.)
+         stl->tl_custo := sd3->d3_custo1
+         MsUnlock("STL")
+      Endif
+   Endif
+Endif
+RestArea(aAREAUSO)
+Return .t.
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡Æo    ³ MA330D1  ³ Autor ³ In cio Luiz Kolling   ³ Data ³08/06/2005³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ atualiza o STL c/ referencia ao SD1 -                      ³±±
+±±³          ³ A principio este programa sera com RDMAKE (Ponto de entrada³±±
+±±³          ³ parta teste na NG), mas esta mesma rotina devera ser desen-³±±
+±±³          ³ volvida e inclu¡da no programa de recalcula do custo medio ³±±
+±±³          ³ da microsica. (SD1)                                        ³±±
+±±³          ³                                                            ³±±
+±±³          ³ Observacao:                                                ³±±
+±±³          ³ As rotinas foram desenvolvidas considerando que o campo    ³±±
+±±³          ³ _NUMSEQ seja £nico. Caso isso nÆo seja afirmativo, deve-se ³±±
+±±³          ³ achar outro maneira de acessar o registro correspondente.  ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+User Function MA330D1()
+Local aAREAUSO := GetArea()
+If select("STL") > 0
+   DbselectArea('STL')
+   DbsetOrder(7)
+   If Dbseek(xFILIAL("STL")+sd1->d1_numseq)
+      If stl->tl_custo <> sd1->d1_custo
+         DbselectArea('STL')
+         RecLock("STL",.F.)
+         stl->tl_custo := sd1->d1_custo
+         MsUnlock("STL")
+      Endif
+   Endif
+Endif
+RestArea(aAREAUSO)
+Return .t.

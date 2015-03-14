@@ -1,0 +1,220 @@
+ANOTAÇÕES DA AULA 2 - ADVPL (07.02.15)
+
+INSTALANDO ARQUIVOS HELP:
+
+- Instalação dos arquivos de Help (utilizando o CD)
+- Escolher o local da instalação do Protheus onde devem ser adicionados os arquivos de help
+- Os arquivos ficam armazenados em formato HTML e podem ser atualizados/editados
+- São adicionadas as seguintes entradas no appserver.ini:
+	;[Environment]
+	;helpserver=ARQ-03-FS-004:5580
+
+	[http]
+	enable=1
+	path=C:\TOTVS 11\Help OnLine
+	port=5581
+- Copiar o Environment para a configuração de ambiente e comentar o original
+	helpserver=ARQ-03-FS-004:5581
+- OBS: O numero da porta padrão é 80 e deve ser mudado conforme a preferencia/necessidade
+
+- PARA RETIRA O TIME OUT EDITAR O ARQUIVO APPSERVER;
+
+=====================================================================
+
+COMO CRIAR UMA SEGUNDA INSTANCIA DO SERVIDOR (CRIAR O AMBIENTE DE TESTES):
+-  ???????
+
+
+
+======================================================================
+
+PARA DIVIDIR OS SERVIÇOS DE UMA INSTANCIA DO SERVIDOR:
+
+- Duplicar a pasta Appserver com todo o seu conteúdo
+- Alterar as configuraçõess do arquivo appserver.ini com as configurações desejadas:
+	+ Para um License server não será necessário colocar os dados de ambiente
+	+ PAra Criação de SLAVES e realziações de balancemaento de carga é necessário alterar também a configuração do
+	  arquivo de configuração do Master parta que faça a distribuição de carga entre os slaves
+
+
+=======================================================================
+
+ANOTAÇÕES DA AULA 4 - ADVPL (21/02/2015)
+
+FALANDO SOBRE BACKUP:
+
+- PASTA PROTHEUS_DATA/PSWBACKUP: LOCAL ONDE SÃO ARMAZENADOS OS BACKUPS POR DEFAULT
+- PASTA PROTHEUSDATA/SYSTEM: ARQUIVOS SXALGUMACOISA.DBF CONTEM OS DADOS DE 
+- PASTA PROTHEUSDATA/PROFILE: CONTEM TODOS OS DEMAIS DADOS DOS USUÁRIOS COMO PERMISSÕES, ETC.
+- PASTA PROTHEUSDATA\SYSTEMLOAD: CONTEM TODOS OS ARQUIVOS PADRÃO DO PROTHEUS QUE SERÃO UTILZIADOS COMO TEMPLATE PARA RECONSTRUÇÃO DOS ARQUIVOS E DICIONARIOS DE DADOS DO SISTEMA, CASO SEJAM APAGADOS.
+- 
+
+=======================================================================
+* PERGUNTA DE PROVA: 
+	ARQUIVOS SX SÃO CHAMADOS DE ARQUIVOS CUSTOMIZADORES
+	!=				
+	TABELAS PARA CUSTOMIZAÇÕES: SZ0 A SZZ ZZ0 A ZZZ (RANGES DE TABELA UTILZIADOS PARA CUSTOMIZAÇÃO)
+=======================================================================
+	
+DICIONARIO DE DADOS:
+	SX1: SIGACFG / BASES DE DADOS / BASES DE DADOS / PERGUNTAS - Perguntas (relação de perguntas apresentadas aos usuários para emissão de relatórios, definição de parametros, etc.)
+	SX2: SIGACFG / BASES DE DADOS / ARQUIVOS / ( OU SIGACFG / BASES DE DADOS / BASES DE DADOS / ARQUIVOS ) - Criação de tabelas customizadaas dos ranges indicados acima (ver figura 1). Onde ACfilial/Unidade/Empresa define a forma como será utilziada)
+		ATIVIDADE DA AULA: 
+			-CRIAR TABELA ZZ0_REL00001
+			-CRIAR CAMPOS ZZ0_CODIGO 
+			-CRIAR CAMPO ZZ0_FOR
+			-CRIAR CAMPO ZZ0_LOJA
+			-CRIAR CAMPO ZZ0_GARANT
+			-CRIAR CAMPO ZZ0_PROD
+			-CRIAR CAMPO ZZ0_QTD
+			-CRIAR OS INDICES:
+			-CRIAR CÓDIGO DE NOVA CONSULTA (ATRAVÉS DO TDS):
+			
+				#include "rwmake.ch"
+
+				user function CADZZ0()
+				local cAlias
+
+					aRotina := {}
+					
+					cAlias := "ZZ0"
+					
+					dbSelectArea(cAlias)
+					//indices
+					dbSetOrder(1) 
+					
+					private cCadastro := "Teste SX's'"
+						
+					AADD(aRotina,{"Pesquisar" 	,"AxPesqui"		,0,	1})  //+-----------------------------------------// quando a função FilBrowse for utilizada a função de pesquisa deverá ser a PesqBrw ao invés da AxPesqui//+-----------------------------------------//
+					AADD(aRotina,{"Visualizar" 	,"AxVisual"		,0,	2})
+					AADD(aRotina,{"Incluir" 	,"AxInclui"		,0,	3})
+					AADD(aRotina,{"Alterar" 	,"AxAltera"		,0,	4})
+					AADD(aRotina,{"Excluir" 	,"AxDeleta"		,0,	5})
+					AADD(aRotina,{"Teste" 	,"U_REL00001()"		,0,	6})
+					AADD(aRotina,{"PesqPag" ,"PesqBrw" 		,0,	7})//+-----------------------------------------
+					dbSelectArea(cAlias)
+					
+					dbSetOrder(1)
+					
+					mBrowse( 6, 1, 22, 75, cAlias)
+					
+				return( NIL )
+	
+			-CRIAR CAMPO ZZ0_NOME (VIRTUAL): OS CAMPOS CRIADOS COMO VIRTUAL NÃO REPRESENTAM CAMPOS REAIS DE UMA TABELA, APENAS DADOS PARA APRESENTAÇÃO NAS TELAS DE CONSULTA ORIUNDAS DE OUTRAS TABELAS ONDE DE FATO SÃO CAMPOS REAIS, COMO NESTE EXEMPLO.
+					ATRIBUIR FUNCÇÃO POSICIONE PARA RECUPERAÇÃO DO DADO DE NOME DA TABELA FORNECEDOR:
+					http://tdn.totvs.com.br/pages/viewpage.action?pageId=25165872&src=search
+					FORMULA PARA PEGAR O NOME DO FORMNECEDOR QUE SERÁ UTILIZADO NO CAMPO VIRTUAL:
+						POSICIONE("SA2",1,xFilial("SA2")+ZZ0->ZZ0_FOR+ZZ0->ZZ0_LOJA,"A2_NREDUZ")
+						POSICIONE("SA2",1,xFilial("SA2")+ZZ0->ZZ0_FOR+ZZ0->ZZ0_LOJA,"A2_NREDUZ")     
+					
+			
+		- FORMATOS: @! CASEINSENSITIVE UPCASE - @E APENAS NUMERICOS - @R ALFANUMERICOS
+		
+		-  GETSXENUM("ZZ0","ZZ0_CODIGO")(http://tdn.totvs.com.br/pages/viewpage.action?pageId=27677496&src=search)
+		
+		- após a inclusão da tabela (NO DICIONARIO EM SX1) SERÁ NECESSÁRIO INSERIR OS DETALHES PARA CRIAÇÃO DE SEUS CAMPOS DENTRO DO SISTEMA:
+			HELP EXPLICANDO PARA QUE SERVERM ESSES PARAMETROS: http://arq-03-fs-004:5580/portuguese/cfgx034.htm
+		
+		MASCARAS DE DIGITAÇÃO(FORMATO):
+		- ZZ0_CODIGO: @!
+		- ZZ0_FOR: @!
+		- ZZ0_LOJA: @!
+		- ZZ0_GARANT: @!
+		- ZZ0_PROD: @RXXX-XX-X   - Onde X identifica caracteres alfanumericos (poderia ser utilizado 9 para aceitar apenas char numericos)
+		- ZZ0_QTD: @E 9,999,999,999 - Onde 9 identifica caracteres apenas numericos (*)
+		
+		VALIDAÇÕES:
+		- ZZ0_CODIGO: NÃO INSERIR NENHUMA VALIDAÇÃO
+		- ZZ0_FOR (FORNECEDOR): EXISTCPO("SA2") - FUNÇÃO UTILIZADA PARA VALIDAÇÃO QUE POR PADRÃO VERIFICA O INDECE 1 DA TABELA (http://tdn.totvs.com.br/pages/viewpage.action?pageId=24346640&src=search)
+		- ZZ0_LOJA (LOJA): EXISTCPO("SA2", M->ZZ0_FOR + M->ZZ0_LOJA, 1) - 
+		- ZZ0_GARANT (GARANTIA): PERTENCE("SN") - COMO FOI UTILIZADO UMA LISTA DE PO S/N ESTA FUNC DE VCALIDAÇÃO LIMITA A DIGITAÇÃO A ESSES DOIS CARACTERES
+		- ZZ0_PROD (PRODUTO):
+		- ZZ0_QTD (QUANTIDADE):
+		
+		
+		GATILHOS:
+			GATILHO 1:
+			
+			
+			GATILHO 2:				
+				ZZ0_FOR
+				ZZ0_NOME
+				SA2->SA2_NREDUZ
+				xFILIAL("SA2")+M->ZZ0_FOR+ZZ0_LOJA        
+		
+	NO TDS (TOTVS DEVELOPMENT STUDIO) CRIAR UM NOVO CÓDIGO UTILZIANDO:
+		- CLICAR (DIREITO) EM RESOURCE: -> NOVO/OUTRAS/ASSISTENTE DE CÓDIGO ADVPL
+		- SELECIONAR "CADASTRO", DIGITAR UM NOME PARA O PROJETO E AVANÇAR;
+		- NA TELA SEGUINTE COLOCAR "ALIAS" O NOME DA TABELA QUE SERÁ UTILZIADA;
+		
+	SX3:
+	SX4
+	SX5
+	SX6
+	
+	SX7
+	SX9
+	SXG
+	SXE
+	SXF
+	SXA
+	SXB
+
+===============================================================
+DICA ECLIPSE:
+
+- UTILIZAR O CTRL+SPC PARA COMPLETAR OS COMANDOS AO DIGITAR.
+
+FUNCTION CRIADA PARA O REL00001:
+
+#include 'protheus.ch'
+#include 'parmtype.ch'
+
+user function REL00001() 
+
+Msginfo("Grupo de pergunta SX1","Dicionario SX1")
+
+PERGUNTE("REL00001",.T.)
+
+Msginfo(
+	"Codigo de: " + MV_PAR01 + CHR(13);
+	"Codigo ate: " + MV_PAR02 + CHR(13);
+	"Bloqueio: " + cValToChar(MV_PAR03), "Respostas"
+)
+
+return	
+==============================================================	
+- SA2 - TABELA DE FORNECEDORES
+
+EXERCICIO 2:
+
+1) NA TELA DE CONSULTA DE COMPRAS DEVE SER INCLUIDO O NOME DO FORNECEDOR (SF1)
+2) CALCULAR A QUANTIDADE * VALOR NA TELA DE INCLUSÃO DE MOVIMENTOS
+	CONSIDERAR:
+		NOME DO FORNECEDEOR: SF1
+
+
+		NOME DO PRODUTO: SD1
+		
+		
+		POSICIONE("SA2",1,xFilial("SA2")+F1->F1_FORNECE+F1->F1_LOJA,"A2_NREDUZ")  
+
+
+		
+SEGUNDO GATILHO:
+D1_COD
+D1_X_DESC
+SB1->B1_DESC
+xFilial("SB1")+M->D1_COD
+
+
+===========================================================================================
+
+- Na IDE do TDS:
+	Shift + Ctrl + L
+	
+	Ainda no TDS se quiser testar a function abrir debug e user "sigamdi" para rodar o client em modo debug
+	No debugger em Expressions é possivel colar algum elemento do codigo (ex. Variuaveis) para exibir seus conteudos e outras informações
+	Para adicionar breakpoints basta clicar duas vezes na linhga desejada.
+	Os breakpoints podem ser adicionados nas linhas que aparecerem com erro para visuaçlizar o que esta acontecendo
+	

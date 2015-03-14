@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Excluir recurso &quot;Formacao/src/exemplo.prw&quot;" deleteContents="false" description="Excluir recurso &quot;Formacao/src/exemplo.prw&quot;" element1="/Formacao/src/exemplo.prw" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1422726015683"/>
+</session>

@@ -1,0 +1,77 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP5 IDE em 19/11/99
+#IFNDEF WINDOWS
+#DEFINE PSAY SAY
+#ENDIF
+
+User Function Bolfin()        // incluido pelo assistente de conversao do AP5 IDE em 19/11/99
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP5 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("CEND1,CEND2,CCEP,NJUR,LI,nAbatimento")
+
+#IFNDEF WINDOWS
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 19/11/99 ==> #DEFINE PSAY SAY
+#ENDIF
+
+***** Procura o nome do cliente para jogar no boleto
+dbSelectArea( "SA1" )
+dbSeek(xFilial()+SE1->E1_CLIENTE+SE1->E1_LOJA)
+
+cEnd1 := SA1->A1_END
+cEnd2 := SA1->A1_MUN+" - "+SA1->A1_EST
+cCep := SA1->A1_CEP
+
+dbSelectArea( "SE1" )
+*** Calcula os Juros    
+nJur        := SE1->E1_SALDO/(25*30)
+nAbatimento := SomaAbat(SE1->E1_PREFIXO, SE1->E1_NUM, SE1->E1_PARCELA,;
+                                             "R", 1,, SE1->E1_CLIENTE)
+
+@ LI,    50 PSAY Chr(18) + DtoC( SE1->E1_VENCTO )
+@ LI+3, 000 PSAY DtoC( SE1->E1_EMISSAO )
+@ LI+3, 011 PSAY SE1->E1_NUM+SE1->E1_PARCELA
+@ LI+3, 028 PSAY "DUPL."
+@ LI+3, 035 PSAY "SIM"
+@ LI+3, 039 PSAY SE1->E1_EMISSAO
+@ LI+5, 049 PSAY (SE1->E1_VALOR-SE1->E1_IRRF-nAbatimento) PICTURE "@E 999,999,999.99"
+@ LI+7, 000 PSAY chr(15)+"Valor Expresso em REAL"
+@ LI+8, 000 PSAY "Cobrar Multa de 10% apos Vencto : "+TRANSFORM(SE1->E1_VALOR/10,"@EB 999,999,999.99")+" Reais"
+@ LI+9, 000 PSAY "Cobrar Taxa de Permanencia apos Vencto : "+Transform(nJur,"@EB 9999.99")+" Reais/Dia"
+@ LI+10,000 PSAY "Nao Dispensar juros de Mora"
+
+@ LI+12,000 PSAY chr(18)
+@ LI+13,006 PSAY chr(15)+SA1->A1_NOME+" CGC : "+TRANSFORM(SA1->A1_CGC,"@R 999.999.999/9999-99")
+@ LI+14,000 PSAY cEnd1 + " CEP : "+SubStr(cCep,1,5)+"-"+SubStr(cCep,6,3)
+@ LI+15,000 PSAY cEnd2+chr(18)
+
+// Exemplo de codigo de barras
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+LI:=LI+24
+
+dbSelectArea( "SE1" )    
+
+Return

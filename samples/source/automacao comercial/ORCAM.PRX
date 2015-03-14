@@ -1,0 +1,887 @@
+#INCLUDE "rwmake.ch"        // incluido pelo assistente de conversao do AP6 IDE em 06/09/01
+#INCLUDE "orcam.ch"
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡„o    ³ Orcam	    ³ Autor ³                      ³ Data ³          ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡„o ³ Imprime o orcamento de venda                                  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe   ³ Orcam()                                                       ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³ Nenhum                                                        ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Retorno   ³ Nenhum                                                        ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso		 ³ LOJA701, LOJA010 e LOJA016                                    ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³  DATA    ³ BOPS ³Programador³ MOTIVO DA ALTERACAO                        ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³09/11/05  ³086583³Geronimo   ³Melhoria na considerção do desconto na      ³±±
+±±³          ³      ³           ³impressao do orcamento                      ³±±
+±±³09/02/07  ³117063³Marcio L   ³Inclusao do Orcamento para Amazonas         ³±±
+±±³01/11/2007³135422³P.Benedet  ³Nao saltar pagina no final da impressao qdo ³±±
+±±³          ³      ³           ³for impressora de cupom                     ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+ 
+User Function Orcam()        // incluido pelo assistente de conversao do AP6 IDE em 06/09/01
+
+If LjAnalisaLeg(33)[1]
+	OrcMinas()
+ElseIf LjAnalisaLeg(22)[1]
+	OrcAmazonas()
+Else
+	OrcGenerico()
+EndIf
+
+Return(.T.)
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³ORCAM     ºAutor  ³Microsiga           º Data ³  21/01/07   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³ Funcao generica de impressao de orcamento                  º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP                                                         º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function OrcGenerico()
+
+Local nValDesc := 0		// Acumula o total de desconto concedido por Item.
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("CNUMORC,CRODATXT,NCNTIMPR,TAMANHO,TITULO,CDESC1")
+SetPrvt("CDESC2,CDESC3,CSTRING,NTIPO,NOMEPROG")
+SetPrvt("NTOTREGS,NMULT,NPOSANT,NPOSATU,NPOSCNT,LCONTINUA")
+SetPrvt("ARETURN,NLASTKEY,LI,M_PAG,CNOMARQ,WNREL")
+SetPrvt("AAREA,LCABEC,ACONDICOES,AFORMAPGTO,")
+
+cNumOrc  := SL1->L1_NUM
+cRodaTxt := ""
+nCntImpr := 0
+Tamanho  := "M"
+titulo   := STR0001
+cDesc1   := STR0002
+cDesc2   := ""
+cDesc3   := ""
+cString  := "SL1"
+nTipo    := 0
+nomeprog := "NFSIGW"
+
+dbSelectArea("SL1")
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis para controle do cursor de progressao do relatorio ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nTotRegs := 0 ;nMult := 1 ;nPosAnt := 4 ;nPosAtu := 4 ;nPosCnt := 0
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis locais exclusivas deste programa                   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+lContinua := .T.
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis tipo Private padrao de todos os relatorios         ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aReturn  := { STR0003, 1,STR0004, 2, 2, 1, "",1 }
+nLastKey := 0
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Contadores de linha e pagina                                 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+li := 80 ;m_pag := 1
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis locais exclusivas deste programa                   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cNomArq:=""
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a funcao SETPRINT                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+wnrel:=SetPrint("SL1",NomeProg,,titulo,cDesc1,cDesc2,cDesc3,.F.,"")
+If LastKey() == 27 .or. nLastKey == 27
+	Return
+Endif
+
+SetDefault(aReturn,cString)
+If LastKey() == 27 .or. nLastKey == 27
+	Return
+Endif
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica se deve comprimir ou nao                            ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nTipo  := IIF(aReturn[4]==1,GetMV("MV_COMP"),GetMV("MV_NORM"))
+
+aArea := GetArea()  // Grava a area atual
+
+li 		  := 65
+lCabec	  := .T.
+aCondicoes := {}
+aFormaPgto := {}
+
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Posiciona no arquivo cabe‡alho								 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SL1" )
+dbSetOrder( 1 )
+dbSeek( xFilial("SL1")+cNumOrc )
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Posiciona no arquivo de Clientes							 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SA1" )
+dbSetOrder( 1 )
+dbSeek( xFilial("SA1")+SL1->L1_CLIENTE+SL1->L1_LOJA )
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Posiciona no arquivo de Vendedores 							 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SA3" )
+dbSetOrder( 1 )
+dbSeek( xFilial("SA3")+SL1->L1_VEND )
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Monta Array da Condi‡„o de Pagamento						 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aCondicoes := lj010Cond( )
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Monta Array com tipo de Forma de Pagamento					 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SX5" )
+dbSetOrder( 1 )
+dbSeek( xFilial("SX5")+"06" )
+
+While !Eof( ) .and. SX5->X5_FILIAL == xFilial("SX5") .and. SX5->X5_TABELA = "06"
+	
+	If Trim(SX5->X5_CHAVE) == "CC"
+		SAE->(DbSeek(xFilial("SX5")+Chr(0),.T.))
+	EndIf
+	
+	If SX5->X5_CHAVE != "CC" .or. !SAE->(Eof())
+		Aadd( aFormaPgto, SubStr( SX5->X5_DESCRI, 1, 13 ) + SubStr(SX5->X5_CHAVE , 1, 3 ) )
+	EndIf
+	
+	dbSkip( )
+	
+EndDo
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Posiciona no arquivo de Itens								 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SL2" )
+dbSetOrder( 1 )
+dbSeek( xFilial("SL2")+cNumOrc )
+
+While !Eof( ) .and. SL2->L2_NUM == SL1->L1_NUM
+	If SL2->L2_VENDIDO == "S"
+		dbSkip()
+		Loop
+	EndIf
+	
+	If li > 60
+		lCabec := .T.
+	EndIf
+	
+	If lCabec   
+		Li := 01
+		@ li,00 PSAY "+-------------------------------------------------------------------------------+"
+		li := li+1                             
+		If LjAnalisaLeg(17)[1] 
+			@ li,00   PSAY "|"	
+			@ li,14   PSAY "NAO E DOCUMENTO FISCAL - NAO VALIDO COMO GARANTIA."              
+			@ li,80   PSAY "|"	
+			@ li+1,00 PSAY "|"	
+			@ li+1,80 PSAY "|"	
+			li := li+2   
+		EndIf
+		@ li,00 PSAY STR0005
+ 		@ li,17 PSAY SL1->L1_NUM
+		@ li,28 PSAY STR0006
+		@ li,38 PSAY SL1->L1_EMISSAO
+		@ li,49 PSAY STR0007
+		@ li,60 PSAY SL1->L1_DTLIM
+		@ li,80 PSAY "|"
+		@ li+1,00 PSAY STR0008
+		@ li+1,17 PSAY SL1->L1_CLIENTE
+		@ li+1,25 PSAY "-"
+		@ li+1,28 PSAY SA1->A1_NOME
+		@ li+1,80 PSAY "|"
+		@ li+2,00 PSAY STR0009
+		@ li+2,17 PSAY SL1->L1_VEND
+		@ li+2,25 PSAY "-"
+		@ li+2,28 PSAY SA3->A3_NOME
+		@ li+2,80 PSAY "|"
+		@ li+3,00 PSAY "|-------------------------------------------------------------------------------|"
+		@ li+4,00 PSAY STR0010
+		Li := li+5
+		lCabec := .F.
+	EndIf
+	
+	@ li,00 PSAY "|"
+	@ li,01 PSAY SL2->L2_ITEM
+	@ li,04 PSAY AllTrim(SL2->L2_PRODUTO)
+	@ li,20 PSAY Substr(SL2->L2_DESCRI,1,12)
+	@ li,33 PSAY SL2->L2_QUANT	Picture "@E 999.9"
+	@ li,39 PSAY SL2->L2_UM
+	@ li,42 PSAY SL2->L2_VRUNIT  + SL2->L2_DESCPRO + (SL2->L2_VALDESC / SL2->L2_QUANT) Picture "@E 9,999,999.99"
+	@ li,55 PSAY SL2->L2_VALDESC + SL2->L2_DESCPRO  Picture "@E 9,999,999.99"
+	@ li,68 PSAY SL2->L2_VLRITEM Picture "@E 9,999,999.99"
+	@ li,80 PSAY "|"
+	li:=li+1
+	nValDesc += SL2->L2_VALDESC
+	dbSkip()
+EndDo
+
+If !lCabec
+	@ li,00 PSAY "|-------------------------------------------------------------------------------|"
+	li:=li+1
+	@ li,00 PSAY STR0011
+	@ li,66 PSAY SL1->L1_VLRTOT + SL1->L1_DESCONT + nValDesc picture "@E 999,999,999.99"
+	@ li,80 PSAY "|"
+	li:=li+1
+	@ li,00 PSAY STR0012
+	@ li,66 PSAY SL1->L1_DESCONT + nValDesc picture "@E 999,999,999.99"
+	@ li,80 PSAY "|"
+	li:=li+1
+	@ li,00 PSAY STR0013
+	@ li,66 PSAY SL1->L1_VLRLIQ picture "@E 999,999,999.99"
+	@ li,80 PSAY "|"
+	li:=li+1
+	@ li,00 PSAY "|-------------------------------------------------------------------------------|"
+	li:=li+1
+	@ li,00 PSAY STR0014
+	If Len(aCondicoes) == NIL
+		@ li,22 PSAY SubStr(aCondicoes[ SL1->L1_COND ], 1, 12 )
+	EndIf
+	@ li,80 PSAY "|"
+	li:=li+1
+	@ li,00 PSAY STR0015
+	If Len(aFormaPgto) == NIL
+		@ li,22 PSAY SubStr( aFormaPgto[ SL1->L1_FORMA ] , 1, 13 )
+	EndIf
+	If !Empty( SL1->L1_CONDPG )
+		dbSelectArea( "SE4" )
+		dbSeek( xFilial("SE4")+SL1->L1_CONDPG)
+		@li, 37 PSAY STR0016 + SL1->L1_CONDPG + " " + SE4->E4_DESCRI
+		dbSelectArea( "SL1" )
+	EndIf
+	@ li,80 PSAY "|"
+	li:=li+1
+	@ li,00 PSAY STR0017
+	@ li,22 PSAY SL1->L1_NROPCLI
+	@ li,80 PSAY "|"
+	li:=li+1
+	@ li,00 PSAY "+-------------------------------------------------------------------------------+" 
+	
+EndIf
+
+RestArea( aArea ) // Restaura a area atual
+
+If aReturn[5] == 1
+	Set Printer To
+	dbCommitAll()
+	OurSpool(wnrel)
+EndIf
+
+DbCommitAll()
+
+If !Empty(LjGetStation("IMPCUP"))
+	SetPgEject(.F.)
+EndIf
+
+Ms_FLush()
+
+SetPgEject(.T.)
+
+Return
+
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³OrcAmazonaºAutor  ³Marcio Lopes        º Data ³  31/01/07   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Impressao de orcamento para Amzonas                         º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ MP8                                                        º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function OrcAmazonas()
+
+Local nValDesc 	:= 0										// Acumula o total de desconto concedido por Item.
+Local nC		:= 0										// Contador de itens impressos
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("CNUMORC	, CRODATXT	, NCNTIMPR	, TAMANHO	, TITULO	, CDESC1"	)
+SetPrvt("CDESC2		, CDESC3	, CSTRING	, NTIPO		, NOMEPROG"				)
+SetPrvt("NTOTREGS	, NMULT		, NPOSANT	, NPOSATU	, NPOSCNT	, LCONTINUA")
+SetPrvt("ARETURN	, NLASTKEY	, LI,M_PAG	, CNOMARQ	, WNREL"				)
+SetPrvt("AAREA		, LCABEC	, ACONDICOES, AFORMAPGTO"						)
+
+
+cNumOrc  := SL1->L1_NUM
+cRodaTxt := ""
+nCntImpr := 0
+Tamanho  := "M"
+titulo   := STR0001
+cDesc1   := STR0002
+cDesc2   := ""
+cDesc3   := ""
+cString  := "SL1"
+nTipo    := 0
+nomeprog := "NFSIGW"
+
+dbSelectArea("SL1")
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis para controle do cursor de progressao do relatorio ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nTotRegs := 0 ;nMult := 1 ;nPosAnt := 4 ;nPosAtu := 4 ;nPosCnt := 0
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis locais exclusivas deste programa                   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+lContinua := .T.
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis tipo Private padrao de todos os relatorios         ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aReturn  := { STR0003, 1,STR0004, 2, 2, 1, "",1 }
+nLastKey := 0
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Contadores de linha e pagina                                 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+li := 80 ;m_pag := 1
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis locais exclusivas deste programa                   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cNomArq:=""
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a funcao SETPRINT                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+wnrel:=SetPrint("SL1",NomeProg,,titulo,cDesc1,cDesc2,cDesc3,.F.,"")
+If LastKey() == 27 .or. nLastKey == 27
+	Return
+Endif
+
+SetDefault(aReturn,cString)
+If LastKey() == 27 .or. nLastKey == 27
+	Return
+Endif
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica se deve comprimir ou nao                            ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nTipo  := IIF(aReturn[4]==1,GetMV("MV_COMP"),GetMV("MV_NORM"))
+
+aArea := GetArea()  // Grava a area atual
+
+li 		  := 65
+lCabec	  := .T.
+aCondicoes := {}
+aFormaPgto := {}
+
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Posiciona no arquivo cabe‡alho								 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SL1" )
+dbSetOrder( 1 )
+dbSeek( xFilial("SL1")+cNumOrc )
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Posiciona no arquivo de Clientes							 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SA1" )
+dbSetOrder( 1 )
+dbSeek( xFilial("SA1")+SL1->L1_CLIENTE+SL1->L1_LOJA )
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Posiciona no arquivo de Vendedores 							 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SA3" )
+dbSetOrder( 1 )
+dbSeek( xFilial("SA3")+SL1->L1_VEND )
+
+dbSelectArea( "SB1" )
+dbSetOrder( 1 )
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Monta Array da Condi‡„o de Pagamento						 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aCondicoes := lj010Cond( )
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Monta Array com tipo de Forma de Pagamento					 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SX5" )
+dbSetOrder( 1 )
+dbSeek( xFilial("SX5")+"06" )
+
+While !Eof( ) .and. SX5->X5_FILIAL == xFilial("SX5") .and. SX5->X5_TABELA = "06"
+	
+	If Trim(SX5->X5_CHAVE) == "CC"
+		SAE->(DbSeek(xFilial("SX5")+Chr(0),.T.))
+	EndIf
+	
+	If SX5->X5_CHAVE != "CC" .or. !SAE->(Eof())
+		Aadd( aFormaPgto, SubStr( SX5->X5_DESCRI, 1, 13 ) + SubStr(SX5->X5_CHAVE , 1, 3 ) )
+	EndIf
+	
+	dbSkip( )
+	
+End
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Posiciona no arquivo de Itens								 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SL2" )
+dbSetOrder( 1 )
+dbSeek( xFilial("SL2") + cNumOrc )
+
+While !Eof( ) .and. SL2->L2_NUM == SL1->L1_NUM
+	If SL2->L2_VENDIDO == "S"
+		dbSkip()
+		Loop
+	EndIf
+	
+	If li > 60
+		OrcCabec()
+		LI := 16
+	EndIf
+	++nC
+	If nC == 10
+		@ LI, 00 PSAY "|" + PadC(STR0022, 88) + "|"		 // "*** NÃO É DOCUMENTO FISCAL ***"
+		++LI
+		nC := 0
+	EndIf
+	@ li,00 PSAY "|"
+	@ li,01 PSAY SL2->L2_ITEM
+	@ li,04 PSAY SL2->L2_PRODUTO
+	@ li,18 PSAY Left(SL2->L2_DESCRI, 20)
+	@ li,39 PSAY SL2->L2_QUANT	Picture "@E 9999"
+	@ li,44 PSAY SL2->L2_UM
+	@ li,47 PSAY SL2->L2_VRUNIT  + SL2->L2_DESCPRO + (SL2->L2_VALDESC / SL2->L2_QUANT) Picture "@E 9,999,999.99"
+	If SB1->(dbSeek(xFilial("SB1") + SL2->L2_PRODUTO))
+		@ LI, 60 PSAY Transform(SB1->B1_PICM, "@E 99,99")
+	EndIf
+	@ li,67 PSAY SL2->L2_VALDESC + SL2->L2_DESCPRO  Picture "@E 9,999,999.99"
+	@ li,76 PSAY SL2->L2_VLRITEM Picture "@E 9,999,999.99"
+	@ li,88 PSAY "|"
+	li:=li+1
+	nValDesc += SL2->L2_VALDESC
+	dbSkip()
+End
+
+OrcRodape( LI, aCondicoes, aFormaPgto, nValDesc )
+
+If aReturn[5] == 1
+	Set Printer To
+	dbCommitAll()
+	OurSpool(wnrel)
+EndIf
+
+If !Empty(LjGetStation("IMPCUP"))
+	SetPgEject(.F.)
+EndIf
+
+Ms_FLush()
+
+SetPgEject(.T.)
+
+Return(.T.)
+
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³OrcMinas  ºAutor  ³Microsiga           º Data ³  21/01/07   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³ Funcao de impressao de orcamento para Minas Gerais         º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP                                                         º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function OrcMinas()
+
+Local nValDesc := 0		// Acumula o total de desconto concedido por Item.
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP6 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("CNUMORC,CRODATXT,NCNTIMPR,TAMANHO,TITULO,CDESC1")
+SetPrvt("CDESC2,CDESC3,CSTRING,NTIPO,NOMEPROG")
+SetPrvt("NTOTREGS,NMULT,NPOSANT,NPOSATU,NPOSCNT,LCONTINUA")
+SetPrvt("ARETURN,NLASTKEY,LI,M_PAG,CNOMARQ,WNREL")
+SetPrvt("AAREA,LCABEC,ACONDICOES,AFORMAPGTO,")
+
+
+cNumOrc  := SL1->L1_NUM
+cRodaTxt := ""
+nCntImpr := 0
+Tamanho  := "M"
+titulo   := STR0001
+cDesc1   := STR0002
+cDesc2   := ""
+cDesc3   := ""
+cString  := "SL1"
+nTipo    := 0
+nomeprog := "NFSIGW"
+
+dbSelectArea("SL1")
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis para controle do cursor de progressao do relatorio ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nTotRegs := 0 ;nMult := 1 ;nPosAnt := 4 ;nPosAtu := 4 ;nPosCnt := 0
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis locais exclusivas deste programa                   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+lContinua := .T.
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis tipo Private padrao de todos os relatorios         ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aReturn  := { STR0003, 1,STR0004, 2, 2, 1, "",1 }
+nLastKey := 0
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Contadores de linha e pagina                                 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+li := 80 ;m_pag := 1
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis locais exclusivas deste programa                   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cNomArq:=""
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a funcao SETPRINT                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+wnrel:=SetPrint("SL1",NomeProg,,titulo,cDesc1,cDesc2,cDesc3,.F.,"")
+If LastKey() == 27 .or. nLastKey == 27
+	Return
+Endif
+
+SetDefault(aReturn,cString)
+If LastKey() == 27 .or. nLastKey == 27
+	Return
+Endif
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica se deve comprimir ou nao                            ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nTipo  := IIF(aReturn[4]==1,GetMV("MV_COMP"),GetMV("MV_NORM"))
+
+aArea := GetArea()  // Grava a area atual
+
+li 		  := 65
+lCabec	  := .T.
+aCondicoes := {}
+aFormaPgto := {}
+
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Posiciona no arquivo cabe‡alho								 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SL1" )
+dbSetOrder( 1 )
+dbSeek( xFilial("SL1")+cNumOrc )
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Posiciona no arquivo de Clientes							 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SA1" )
+dbSetOrder( 1 )
+dbSeek( xFilial("SA1")+SL1->L1_CLIENTE+SL1->L1_LOJA )
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Posiciona no arquivo de Vendedores 							 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SA3" )
+dbSetOrder( 1 )
+dbSeek( xFilial("SA3")+SL1->L1_VEND )
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Monta Array da Condi‡„o de Pagamento						 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aCondicoes := lj010Cond( )
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Monta Array com tipo de Forma de Pagamento					 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SX5" )
+dbSetOrder( 1 )
+dbSeek( xFilial("SX5")+"06" )
+
+While !Eof( ) .and. SX5->X5_FILIAL == xFilial("SX5") .and. SX5->X5_TABELA = "06"
+	
+	If Trim(SX5->X5_CHAVE) == "CC"
+		SAE->(DbSeek(xFilial("SX5")+Chr(0),.T.))
+	EndIf
+	
+	If SX5->X5_CHAVE != "CC" .or. !SAE->(Eof())
+		Aadd( aFormaPgto, SubStr( SX5->X5_DESCRI, 1, 13 ) + SubStr(SX5->X5_CHAVE , 1, 3 ) )
+	EndIf
+	
+	dbSkip( )
+	
+End
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Posiciona no arquivo de Itens								 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SL2" )
+dbSetOrder( 1 )
+dbSeek( xFilial("SL2")+cNumOrc )
+
+While !Eof( ) .and. SL2->L2_NUM == SL1->L1_NUM
+	If SL2->L2_VENDIDO == "S"
+		dbSkip()
+		Loop
+	EndIf
+	
+	If li > 60
+		lCabec := .T.
+	EndIf
+	
+	If lCabec   
+		Li := 01
+		@ li,00 PSAY "+-------------------------------------------------------------------------------+"
+		li := li+1                             
+		@ li,00   PSAY "|"	
+		@ li,17   PSAY STR0030 // "DOCUMENTO AUXILIAR DE VENDA - ORÇAMENTO"                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+		@ li,80   PSAY "|"
+		li := li + 1
+		@ li,00 PSAY "+-------------------------------------------------------------------------------+"
+		li++	
+		If LjAnalisaLeg(17)[1]
+			@ li,00   PSAY "|"	
+			@ li,14   PSAY STR0026 // "NAO E DOCUMENTO FISCAL - NAO VALIDO COMO GARANTIA."
+			@ li,80   PSAY "|"	
+			@ li+1,00 PSAY "|"	
+			@ li+1,80 PSAY "|"	
+			li := li+2   
+		EndIf
+		
+		
+		@ li,00 PSAY STR0005	//No do Orcamento
+ 		@ li,17 PSAY SL1->L1_NUM
+		@ li,28 PSAY STR0031   //"No do Documento Fiscal:_______________"
+		@ li,80 PSAY "|"
+		@ li+1,00 PSAY STR0008
+		@ li+1,17 PSAY SL1->L1_CLIENTE
+		@ li+1,25 PSAY "-"
+		@ li+1,28 PSAY SA1->A1_NOME
+		@ li+1,80 PSAY "|"
+		@ li+2,00 PSAY STR0009
+		@ li+2,17 PSAY SL1->L1_VEND
+		@ li+2,25 PSAY "-"
+		@ li+2,28 PSAY SA3->A3_NOME
+		@ li+2,80 PSAY "|"
+		@ li+3,00 PSAY "|"
+		@ li+3,01 PSAY STR0032	 //"Emissao       :"
+		@ li+3,17 PSAY SL1->L1_EMISSAO
+		@ li+3,28 PSAY STR0033		//"Validade :"
+		@ li+3,39 PSAY SL1->L1_DTLIM
+		@ li+3,80 PSAY "|"
+		@ li+4,00 PSAY "|-------------------------------------------------------------------------------|"
+		@ li+5,00 PSAY STR0010
+		Li := li+6
+		lCabec := .F.
+	EndIf
+	
+	@ li,00 PSAY "|"
+	@ li,01 PSAY SL2->L2_ITEM
+	@ li,04 PSAY SL2->L2_PRODUTO
+	@ li,20 PSAY Substr(SL2->L2_DESCRI,1,12)
+	@ li,33 PSAY SL2->L2_QUANT	Picture "@E 999.9"
+	@ li,39 PSAY SL2->L2_UM
+	@ li,42 PSAY SL2->L2_VRUNIT  + SL2->L2_DESCPRO + (SL2->L2_VALDESC / SL2->L2_QUANT) Picture "@E 9,999,999.99"
+	@ li,55 PSAY SL2->L2_VALDESC + SL2->L2_DESCPRO  Picture "@E 9,999,999.99"
+	@ li,68 PSAY SL2->L2_VLRITEM Picture "@E 9,999,999.99"
+	@ li,80 PSAY "|"
+	li:=li+1
+	nValDesc += SL2->L2_VALDESC
+	dbSkip()
+EndDo
+
+If !lCabec
+	@ li,00 PSAY "|-------------------------------------------------------------------------------|"
+	li:=li+1
+	@ li,00 PSAY STR0011
+	@ li,66 PSAY SL1->L1_VLRTOT + SL1->L1_DESCONT + nValDesc picture "@E 999,999,999.99"
+	@ li,80 PSAY "|"
+	li:=li+1
+	@ li,00 PSAY STR0012
+	@ li,66 PSAY SL1->L1_DESCONT + nValDesc picture "@E 999,999,999.99"
+	@ li,80 PSAY "|"
+	li:=li+1
+	@ li,00 PSAY STR0013
+	@ li,66 PSAY SL1->L1_VLRLIQ picture "@E 999,999,999.99"
+	@ li,80 PSAY "|"
+	li:=li+1
+	@ li,00 PSAY "|-------------------------------------------------------------------------------|"
+	li:=li+1
+	@ li,00 PSAY STR0014
+	If Len(aCondicoes) == NIL
+		@ li,22 PSAY SubStr(aCondicoes[ SL1->L1_COND ], 1, 12 )
+	EndIf
+	@ li,80 PSAY "|"
+	li:=li+1
+	@ li,00 PSAY STR0015
+	If Len(aFormaPgto) == NIL
+		@ li,22 PSAY SubStr( aFormaPgto[ SL1->L1_FORMA ] , 1, 13 )
+	EndIf
+	If !Empty( SL1->L1_CONDPG )
+		dbSelectArea( "SE4" )
+		dbSeek( xFilial("SE4")+SL1->L1_CONDPG)
+		@li, 37 PSAY STR0016 + SL1->L1_CONDPG + " " + SE4->E4_DESCRI
+		dbSelectArea( "SL1" )
+	EndIf
+	@ li,80 PSAY "|"
+	li:=li+1
+	@ li,00 PSAY STR0017
+	@ li,22 PSAY SL1->L1_NROPCLI
+	@ li,80 PSAY "|"
+	li:=li+1
+	@ li,00 PSAY "+-------------------------------------------------------------------------------+" 
+	li:=li+3
+	@ li,00 PSAY STR0034 //"                   E vedada a autenticacao deste documento" 
+	
+EndIf
+
+RestArea( aArea ) // Restaura a area atual
+
+If aReturn[5] == 1
+	Set Printer To
+	dbCommitAll()
+	OurSpool(wnrel)
+EndIf
+
+DbCommitAll()
+Ms_FLush()
+
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³OrcCabec  ºAutor  ³Marcio Lopes        º Data ³  31/01/07   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Cabecalho do orcamento                                      º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ MP8                                                        º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function OrcCabec()
+Local cInscFed	:= SuperGetMV("MV_INSCFED",,"")				// Inscricao Federal
+
+@  1,  0 Psay "+---------------------------------------------------------------------------------------+"
+@  2,  0 PSay "|" + PadC(Alltrim(UPPER(SM0->M0_NOMECOM)), 87) 													+ "|"
+@  3,  0 PSay "|" + PadC(Alltrim(UPPER(SM0->M0_ENDCOB )), 87) 													+ "|"
+@  4,  0 Psay "|" + PadC(STR0018 + Strtran(Transform(Val(SM0->M0_CGC), "99,999,9999/999-99"), ",", "."), 87) 	+ "|"
+@  5,  0 PSay "|" + PadC(STR0019 + Alltrim(SM0->M0_INSC), 87)													+ "|"
+@  6,  0 PSay "|" + PadC(STR0020 + cInscFed, 87) 																+ "|"
+@  7,  0 PSay "|" + PadC(STR0021 + Alltrim(SM0->M0_INSCM), 87)													+ "|"
+@  8,  0 PSay "|"
+@  8, 88 PSay "|"
+@  9,  0 PSay "|---------------------------------------------------------------------------------------|"
+@ 10,  0 PSay STR0005
+@ 10, 19 PSay Left(SL1->L1_NUM, 3) + "." + Right(SL1->L1_NUM, 3) + "/" + Right(LjGetStation("SERIE"), 2)
+@ 10, 31 PSay STR0006 	
+@ 10, 41 PSay DtoC(SL1->L1_EMISSAO) 
+@ 10, 52 PSay STR0007 
+@ 10, 63 PSay DtoC(SL1->L1_DTLIM)
+@ 10, 88 PSay "|" 
+@ 11,  0 PSay "|" + PadC(STR0022, 87) + "|" 	// "*** NÃO É DOCUMENTO FISCAL ***"
+@ 12,  0 PSay STR0008 + SL1->L1_CLIENTE 	+ " - " + PadR(SA1->A1_NOME, 63) + "|"
+@ 13,  0 PSay STR0009 + SL1->L1_VEND 		+ " - " + PadR(SA3->A3_NOME, 63) + "|"
+@ 14,  0 PSay "|---------------------------------------------------------------------------------------|"
+@ 15,  0 PSay "|IT Codigo        Descricao            Qtde UM     Vl.Unit.  ST    Vl.Desc.    Vlr.Total|"
+
+
+Return(.T.)
+
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³OrcRodape ºAutor  ³Marcio Lopes        º Data ³  31/01/07   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Rodape do orcamento                                         º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ MP8                                                        º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function OrcRodape( LI, aCondicoes, aFormaPgto, nValDesc )
+
+@ li,00 PSAY "|---------------------------------------------------------------------------------------|"
+li:=li+1
+@ li,00 PSAY STR0011
+@ li,74 PSAY SL1->L1_VLRTOT + SL1->L1_DESCONT + nValDesc picture "@E 999,999,999.99" + "|"
+li:=li+1
+@ li,00 PSAY STR0012
+@ li,74 PSAY SL1->L1_DESCONT + nValDesc picture "@E 999,999,999.99" + "|"
+li:=li+1
+@ li,00 PSAY STR0013
+@ li,74 PSAY SL1->L1_VLRLIQ picture "@E 999,999,999.99" + "|"
+li:=li+1
+@ LI, 0 PSAY "|" + PadC(STR0023, 87) + "|" 		// "*** EXIJA O CUPOM FISCAL - NÂO É VÁLIDO COMO GARANTIA DE MERCADORIA ***"
+li:=li+1
+@ li,00 PSAY "|---------------------------------------------------------------------------------------|"
+Return(.T.)

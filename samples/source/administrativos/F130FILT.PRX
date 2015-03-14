@@ -1,0 +1,24 @@
+#include "rwmake.CH"        // incluido pelo assistente de conversao do AP5 IDE em 09/09/99
+
+User Function F130filt()        // incluido pelo assistente de conversao do AP5 IDE em 09/09/99
+
+/*/
+____________________________________________________________________________
+¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+¦¦+-----------------------------------------------------------------------+¦¦
+¦¦¦Funçào    ¦ FARGTIP  ¦ Autor ¦ BRUNO SOBIESKI        ¦ Data ¦ 14.03.99 ¦¦¦
+¦¦+----------+------------------------------------------------------------¦¦¦
+¦¦¦Descriçào ¦ Debe retornar los documentos que deberan incluirse en el   ¦¦¦
+¦¦¦            Mayor (E2, E1 o E5 TIPO).                                  ¦¦¦
+¦¦+----------+------------------------------------------------------------¦¦¦
+¦¦¦ Uso      ¦ Finr550                                                    ¦¦¦
+¦¦+-----------------------------------------------------------------------+¦¦
+¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+*/
+// Substituido pelo assistente de conversao do AP5 IDE em 09/09/99 ==> __RETURN("DP /NF /FT /NDF/NCF/NCC/NDC/PA /RA ")
+If cPaisLoc <> "BRA"
+   Return("DP /NF /FT /NDF/NCF/NCC/NDC/PA /RA ")        // incluido pelo assistente de conversao do AP5 IDE em 09/09/99
+Else
+   Return("")
+EndIf

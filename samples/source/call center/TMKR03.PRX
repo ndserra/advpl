@@ -1,0 +1,704 @@
+#INCLUDE "TMKR03.CH"
+#INCLUDE "RWMAKE.CH"
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡„o    ³ Tmkr03   ³ Autor ³ Armando M. Tessaroli  ³ Data ³ 26/03/03 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡„o ³ Emissao do Pedido de Vendas                                ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Televendas (SUA)                                           ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Analista  ³ Data/Bops/Ver ³Manutencao Efetuada                         ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³          ³        ³      ³                                            ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+User Function Tmkr03(cNumAte)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis                                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+Local wnrel   	:= "TMKR03"  	 	// Nome do Arquivo utilizado no Spool
+Local Titulo 	:= STR0001 			// "Emissao do Pedido de Vendas - Televendas"
+Local cDesc1 	:= STR0002 			// "Este programa ira emitir o pedido de vendas criado no sistema"
+Local cDesc2 	:= STR0003 			// "com ou sem liberacao ou a emissao da nota fiscal."
+Local cDesc3 	:= STR0004 			// "Informe os parametros de selecao para emissao dos Pedidos"
+Local nReg   	:= 0
+Local nomeprog	:= "TMKR03.PRX"			// nome do programa
+Local cString 	:= "SUA"				// Alias utilizado na Filtragem
+Local lDic    	:= .F. 					// Habilita/Desabilita Dicionario
+Local lComp   	:= .F. 					// Habilita/Desabilita o Formato Comprimido/Expandido
+Local lFiltro 	:= .T. 					// Habilita/Desabilita o Filtro
+
+Private Tamanho := "G" 					// P/M/G
+Private Limite  := 220 					// 80/132/220
+Private aReturn := { STR0005,;			// [1] Reservado para Formulario	//"Zebrado"
+					 1,;				// [2] Reservado para N§ de Vias
+					 STR0006,;			// [3] Destinatario					//"Administracao"
+					 2,;				// [4] Formato => 1-Comprimido 2-Normal	
+					 2,;	    		// [5] Midia   => 1-Disco 2-Impressora
+					 1,;				// [6] Porta ou Arquivo 1-LPT1... 4-COM1...
+					 "",;				// [7] Expressao do Filtro
+					 1 } 				// [8] Ordem a ser selecionada
+					 					// [9]..[10]..[n] Campos a Processar (se houver)
+Private m_pag   := 1  				 	// Contador de Paginas
+Private nLastKey:= 0  				 	// Controla o cancelamento da SetPrint e SetDefault
+Private cPerg   := "TMK003"  		 	// Pergunta do Relatorio
+Private aOrdem  := {}  				 	// Ordem do Relatorio
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+AjustaSx1(cPerg)	//Ajusta o nome dos parametros 
+Pergunte(cPerg,.F.)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros                          ³
+//³ Mv_Par01           // Do Vendedor                             ³
+//³ Mv_Par02           // Ate o Vendedor                          ³
+//³ Mv_Par03           // A Partir de                             ³
+//³ Mv_Par04           // Ate o dia                               ³
+//³ Mv_Par05           // Da Pedido                               ³
+//³ Mv_Par06           // Ate o Pedido                            ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+wnrel:=SetPrint(cString,wnrel,cPerg,@titulo,cDesc1,cDesc2,cDesc3,lDic,aOrdem,lComp,Tamanho,lFiltro)
+
+If (nLastKey == 27)
+	DbSelectArea(cString)
+	DbSetOrder(1)
+	Set Filter to
+	Return
+Endif
+
+SetDefault(aReturn,cString)
+
+If (nLastKey == 27)
+	DbSelectArea(cString)
+	DbSetOrder(1)
+	Set Filter to
+	Return
+Endif
+
+RptStatus({|lEnd| TK03Imp(@lEnd,wnRel,cString,nomeprog,Titulo,cNumAte)},Titulo)
+
+Return(.T.)
+
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡„o    ³ TK03Imp  ³ Autor ³ Armando M. Tessaroli  ³ Data ³ 26/03/03 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡„o ³ Emissao do Pedido de Vendas                                ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Televendas                                                 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Analista  ³ Data/Bops/Ver ³Manutencao Efetuada                         ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³          ³        ³      ³                                            ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+Static Function TK03Imp(lEnd,wnrel,cString,nomeprog,Titulo,cNumAte)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para Impressao Do Cabecalho e Rodape    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+Local nLi		:= 0			// Linha a ser impressa
+Local nMax		:= 58			// Maximo de linhas suportada pelo relatorio
+Local cbCont	:= 0			// Numero de Registros Processados
+Local cbText	:= SPACE(10)	// Mensagem do Rodape
+Local cCabec1	:= "" 			// Label dos itens
+Local cCabec2	:= "" 			// Label dos itens
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Declaracao de variaveis especificas para este relatorio³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+Local cArqTrab	:= ""		// Nome do arquivo temporario
+Local nInd		:= 0		// Controle do arquivo temporario
+Local cCodCli	:= ""		// Dados do cliente ou prospect
+Local cNome		:= ""		// Dados do cliente ou prospect
+Local cEnder	:= ""		// Dados do cliente ou prospect
+Local cCGC		:= ""		// Dados do cliente ou prospect
+Local cRG		:= ""		// Dados do cliente ou prospect
+Local cContato	:= ""		// Nome do contato
+Local cEntidade	:= ""		// Alias da entidade SA1 ou SUS
+Local cFormPag	:= ""		// Forma de pagamento
+Local lSC5		:= .F.		// Controle de impressao dos dados do pedido de vendas
+Local aFatura	:= {}		// Dados da fatura
+Local nCol		:= 0		// Controle
+Local nI		:= 0		// Controle
+
+If cNumAte <> Nil
+	Mv_Par01 := ""
+	Mv_Par02 := "ZZZZZZ"
+	Mv_Par03 := Ctod("01/01/00")
+	Mv_Par04 := Ctod(("31/12/")+Str(Year(dDataBase),4,0))
+	Mv_Par05 := cNumAte
+	Mv_Par06 := cNumAte
+Endif
+
+DbSelectArea("SUA")
+SetRegua(RecCount())		// Total de Elementos da regua
+
+#IFDEF TOP
+	cQuery :=	" SELECT	UA_BAIRROC, UA_BAIRROE, UA_CEPC, UA_CEPE, UA_CLIENTE, UA_CODCONT, UA_CODOBS, " +;
+				"			UA_CONDPG, UA_DTLIM, UA_EMISSAO, UA_ENDCOB, UA_ENDENT, UA_ESTC, UA_ESTE, UA_FILIAL, " +;
+				"			UA_FIM, UA_INICIO, UA_LOJA, UA_MUNC, UA_MUNE, UA_NUM, UA_NUMSC5, UA_OPER, UA_OPERADO, " +;
+				"			UA_PDESCAB, UA_PROSPEC, UA_TPCARGA, UA_TRANSP, UA_VEND " +;
+				" FROM " + RetSqlName("SUA") + " SUA" +;
+				" WHERE	SUA.UA_FILIAL = '" + xFilial("SUA") + "' AND" +;
+				"		SUA.UA_CANC = '' AND" +;
+				"		SUA.UA_VEND BETWEEN '" + Mv_Par01 + "' AND '" + Mv_Par02 + "' AND" +;
+				"		SUA.UA_EMISSAO BETWEEN '" + DtoS(Mv_Par03) + "' AND '" + DtoS(Mv_Par04) + "' AND" +;
+				"		SUA.UA_NUM BETWEEN '" + Mv_Par05 + "' AND '" + Mv_Par06 + "' AND" +;
+				"		SUA.D_E_L_E_T_ = ' ' " +;
+				" ORDER BY UA_FILIAL, UA_VEND, UA_EMISSAO"
+	
+	cQuery	:= ChangeQuery(cQuery)
+	// MemoWrite("TMKR03.SQL", cQuery)
+	DbSelectArea("SUA")
+	DbCloseArea()
+	DbUseArea(.T., "TOPCONN", TCGenQry(,,cQuery), 'SUA', .F., .T.)
+	
+	TCSetField('SUA', 'UA_EMISSAO',	'D')
+	TCSetField('SUA', 'UA_PROSPEC',	'L')
+	TCSetField('SUA', 'UA_DTLIM',	'D')
+
+#ELSE
+	cArqTrab := CriaTrab("",.F.)
+	IndRegua(cString,cArqTrab,"SUA->UA_FILIAL+SUA->UA_VEND+DTOS(SUA->UA_EMISSAO)",,,STR0007) //"Selecionando Registros..."
+	dbCommit()
+	nIndex := RetIndex("SUA")
+	dbSetIndex(cArqTrab+OrdBagExt())
+	
+	DbSelectArea("SUA")
+	DbSetOrder(nIndex+1)
+	MsSeek(xFilial("SUA")+(Mv_Par01),.T.) //Vendedor
+	
+#ENDIF
+
+While	(!Eof())							.AND.;
+		SUA->UA_FILIAL == xFilial("SUA")	.AND.;
+		SUA->UA_VEND >= Mv_Par01			.AND.;
+		SUA->UA_VEND <= Mv_Par02
+	
+	IncRegua()
+	
+	If lEnd
+		@Prow()+1,000 PSay STR0008 //"CANCELADO PELO OPERADOR"
+		Exit
+	Endif
+	
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Considera filtro do usuario                                  ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If (!Empty(aReturn[7])) .AND. (!&(aReturn[7]))
+		DbSkip()
+		Loop
+	Endif
+	
+	#IFNDEF TOP
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³Verifica intervalo.³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If (SUA->UA_EMISSAO < Mv_Par03) .or. (SUA->UA_EMISSAO > Mv_Par04)
+			DbSkip()
+			Loop
+		Endif
+		
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³Verifica o intervalo de codigos³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If !Empty(Mv_Par05) .AND. !Empty(Mv_Par06)
+			If SUA->UA_NUM < Mv_Par05 .Or. SUA->UA_NUM > Mv_Par06
+				DbSkip()
+				Loop
+			Endif
+		Endif
+		
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³Se nao for um PEDIDO nao imprime³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If SUA->UA_OPER <> "1"
+			DbSkip()
+			Loop
+		Endif
+	#ENDIF
+	
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³Armazena os dados da Empresa.³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If !SUA->UA_PROSPEC
+		cEntidade	:=	"SA1"
+		cCodCli		:=	Posicione("SA1",1,xFilial("SA1")+SUA->UA_CLIENTE+SUA->UA_LOJA,"SA1->A1_COD") + " - " +;
+						Posicione("SA1",1,xFilial("SA1")+SUA->UA_CLIENTE+SUA->UA_LOJA,"SA1->A1_LOJA")
+		cNome		:=	Posicione("SA1",1,xFilial("SA1")+SUA->UA_CLIENTE+SUA->UA_LOJA,"SA1->A1_NOME")
+		cEnder		:=	Posicione("SA1",1,xFilial("SA1")+SUA->UA_CLIENTE+SUA->UA_LOJA,"SA1->A1_END")
+		cCGC		:=	Posicione("SA1",1,xFilial("SA1")+SUA->UA_CLIENTE+SUA->UA_LOJA,"SA1->A1_CGC")
+		cRg			:=	Posicione("SA1",1,xFilial("SA1")+SUA->UA_CLIENTE+SUA->UA_LOJA,"SA1->A1_INSCR")
+		If Empty(cRg)
+			cRg :=	Posicione("SA1",1,xFilial("SA1")+SUA->UA_CLIENTE+SUA->UA_LOJA,"SA1->A1_RG")
+		Endif
+	Else
+		cEntidade	:=	"SUS"
+		cCodCli		:=	Posicione("SUS",1,xFilial("SUS")+SUA->UA_CLIENTE+SUA->UA_LOJA,"SUS->US_COD") + " - " +;
+						Posicione("SUS",1,xFilial("SUS")+SUA->UA_CLIENTE+SUA->UA_LOJA,"SUS->US_LOJA")
+		cNome    	:=	Posicione("SUS",1,xFilial("SUS")+SUA->UA_CLIENTE+SUA->UA_LOJA,"SUS->US_NOME")
+		cEnder   	:=	Posicione("SA1",1,xFilial("SUS")+SUA->UA_CLIENTE+SUA->UA_LOJA,"SUS->US_END")
+		cCGC     	:=	Posicione("SUS",1,xFilial("SUS")+SUA->UA_CLIENTE+SUA->UA_LOJA,"SUS->US_CGC")
+	Endif
+	
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³Monta uma string com as formas de pagamento utilizada na venda³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	DbSelectArea("SL4")
+	DbSetOrder(1)
+	cFormPag := ""
+	If MsSeek(xFilial("SL4") + SUA->UA_NUM + "SIGATMK")
+		While	(!Eof())							.AND.;
+				SL4->L4_Filial == xFilial("SL4")	.AND.;
+				SL4->L4_Num == SUA->UA_NUM			.AND.;
+				Trim(SL4->L4_ORIGEM) == "SIGATMK"
+				
+			If !(Trim(SL4->L4_FORMA) $ cFormPag)
+				cFormPag := cFormPag + Trim(SL4->L4_FORMA) + "/"
+			Endif
+			AaDd(aFatura, {SL4->L4_Data, SL4->L4_Valor, SL4->L4_Forma} )
+			DbSkip()
+			
+		End
+		cFormPag := SubStr(cFormPag,1,Len(cformPag)-1)
+	Endif
+	
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³Posiciona no respectivo registro do SC5, cabecalho do pedido de vendas³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	DbSelectArea("SC5")
+	DbSetOrder(1)
+	If MsSeek(xFilial("SC5") + SUA->UA_NUMSC5)
+		lSC5 := .T.
+	Endif
+	
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³Seleciona contato.           ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	cContato := Posicione("SU5",1,xFilial("SU5")+SUA->UA_CODCONT,"U5_CONTAT")
+	
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³Funcao que incrementa a linha e verifica a quebra de pagina³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	Tk03Linha(@nLi,nMax+1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+	@ nLi,000 PSay __PrtThinLine()
+	
+	Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+	@ nLi,000 PSay "| " + PadR(STR0009,9) + " " + PadR(cCodCli,30) //"Empresa"
+	@ nLi,044 PSay "|"
+	@ nLi,046 PSay PadR(STR0010,25) //"LOCAL DE ENTREGA"
+	@ nLi,088 PSay "|"
+	@ nLi,090 PSay PadR(STR0011,25) //"ENDERECO DE COBRANCA"
+	@ nLi,131 PSay "|"
+	
+	Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+	@ nLi,000 PSay "| " + PadR(cNome,40) // STR0012 - "Nome"
+	@ nLi,044 PSay "|"
+	@ nLi,045 PSay Repl("-",43)
+	@ nLi,088 PSay "|"
+ 	@ nLi,089 PSay Repl("-",42)
+	@ nLi,131 PSay "|"
+	
+	Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+	@ nLi,000 PSay "| " + PadR(cEnder,40) // STR0013 - "Endereco"
+	@ nLi,044 PSay "|"
+	@ nLi,046 PSay SubStr(SUA->UA_ENDENT,1,40)
+	@ nLi,088 PSay "|"
+	@ nLi,090 PSay SubStr(SUA->UA_ENDCOB,1,40)
+	@ nLi,131 PSay "|"
+	
+	Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+	@ nLi,000 PSay "| " + PadR(cRg,30) // STR0014 - "Inscr./RG"
+	@ nLi,044 PSay "|"
+	@ nLi,046 PSay Transform(SUA->UA_CEPE, "99999-999") + SubStr(SUA->UA_BAIRROE,1,31)
+	@ nLi,088 PSay "|"
+	@ nLi,090 PSay Transform(SUA->UA_CEPC, "99999-999") + SubStr(SUA->UA_BAIRROC,1,31)
+	@ nLi,131 PSay "|"
+	
+	Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+	@ nLi,000 PSay "| "		// STR0015 - "CPF/CNPJ"
+	@ nLi,002 PSay cCGC Picture IIF(Len(cCGC)==14,'@R 99.999.999/9999-99','@R 999.999.999-99')
+	@ nLi,044 PSay "|"
+	@ nLi,046 PSay Trim(SubStr(SUA->UA_MUNE,1,35)) + " - " + SUA->UA_ESTE
+	@ nLi,088 PSay "|"
+	@ nLi,090 PSay Trim(SubStr(SUA->UA_MUNC,1,35)) + " - " + SUA->UA_ESTC
+	@ nLi,131 PSay "|"
+	
+	Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+	@ nLi,000 PSay __PrtThinLine()
+	
+	
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³Imprime os dados do pedido.   ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	DbSelectArea("SUA")
+	Tk03Linha(@nLi,2,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+	@ nLi,000 PSay __PrtFatLine()
+	
+	Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+	@ nLi,000 PSay STR0016 + SUA->UA_NUM //"Atendimento : "
+	@ nLi,066 PSay STR0017 + SUA->UA_NUMSC5 //"Pedido      : "
+	
+	Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+	@ nLi,000 PSay STR0018 + Dtoc(SUA->UA_EMISSAO) //"Emissão     : "
+	@ nLi,066 PSay STR0019 + If(lSC5,Transform(SC5->C5_Frete, "@E 999,999.99") + If(SC5->C5_TpFrete=="C"," - CIF"," - FOB"),"") //"Frete       : "
+	
+	Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+	@ nLi,000 PSay STR0020 + SUA->UA_INICIO + " / " + SUA->UA_FIM //"Inicio / Fim: "
+	@ nLi,066 PSay STR0021 + Transform(SC5->C5_Despesa, "@E 999,999.99") //"Despesas    : "
+	
+	Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+	@ nLi,000 PSay STR0022 + SubStr(cContato,1,49) //"Contato     : "
+	@ nLi,066 PSay STR0023 + Transform(SC5->C5_Descont, "@E 999,999.99") //"Desconto    : "
+	
+	Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+	@ nLi,000 PSay STR0024 + SubStr(Posicione("SA3",1,xFilial("SA3")+SUA->UA_VEND,"A3_NOME"),1,49) //"Vendedor    : "
+	@ nLi,066 PSay STR0025 + SubStr(Posicione("SE4",1,xFilial("SE4")+SUA->UA_CONDPG,"E4_DESCRI"),1,48) //"Cond. Pagto : "
+	
+	Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+	@ nLi,000 PSay STR0026 + SubStr(Posicione("SU7",1,xFilial("SU7")+SUA->UA_OPERADO,"U7_NOME"),1,49) //"Operador    : "
+	@ nLi,066 PSay STR0027 + If(SUA->UA_TPCARGA=="1",STR0028,STR0029) //"Mapa Carreg.: "###"CARREGA"###"NAO CARREGA"
+	
+	Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+	@ nLi,000 PSay STR0030 + SubStr(cFormPag,1,49) //"Forma Pagto : "
+	@ nLi,066 PSay STR0031 + Transform(SUA->UA_PDESCAB, "@E 999.99") //"Indenizacao : "
+	
+	Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+	@ nLi,000 PSay STR0032 + SubStr(Posicione("SA4",1,xFilial("SA4")+SUA->UA_TRANSP,"A4_NOME"),1,49) //"Transportad.: "
+	@ nLi,066 PSay STR0033 + DtoC(SUA->UA_DTLIM) //"Validade    : "
+	
+	Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+	@ nLi,000 PSay __PrtThinLine()
+	
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³  Impresssao do campo memo da observacao						        ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	aLinha := Tk03Memo(SUA->UA_CODOBS, 120)
+	If Len(aLinha) > 0
+		For nI := 1 To Len(aLinha)
+			Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+			If nI == 1
+				@ nLi,000 PSay PadR(STR0034,12) //"Observação: "
+			Endif
+			@ nLi,13 PSay aLinha[nI]
+		Next nI
+	Endif
+	
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³Imprime os produtos/servicos pedidos.³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	dbSelectArea("SUB")
+	dbSetOrder(1)
+	If dbSeek(xFilial("SUB")+SUA->UA_NUM)
+		Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+		@ nLi,000 PSay __PrtThinLine()
+		
+		Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+		@ nLi,000 PSay PadR(STR0035,Limite) //"Item Produto         Descricao                     UM   Qtde     Vlr Unit.      Vlr Item %Desc.     Val. Desc. %Acresc.  Val Acresc."
+		
+		Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+		@ nLi,000 PSay __PrtThinLine()
+		
+		nTotQtd  := 0
+		nTotGeral:= 0
+		
+		While	(!Eof())							.AND.;
+				xFilial("SUB") == SUB->UB_FILIAL	.AND.;
+				SUA->UA_NUM    == SUB->UB_NUM
+			
+			DbSelectArea("SB1")
+			DbSetOrder(1)
+			DbSeek(xFilial("SB1")+SUB->UB_PRODUTO)
+			
+			Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+			@ nLi,000		PSay SUB->UB_ITEM			PICTURE PESQPICT("SUB","UB_ITEM")
+			@ nLi,PCol()+3	PSay SB1->B1_COD			PICTURE PESQPICT("SB1","B1_COD")
+			@ nLi,PCol()+1	PSay Left(SB1->B1_DESC,29)	PICTURE PESQPICT("SB1","B1_DESC")
+			@ nLi,PCol()+1	PSay SB1->B1_UM				PICTURE PESQPICT("SB1","B1_UM")
+			@ nLi,PCol()+1	PSay SUB->UB_QUANT			PICTURE PESQPICT("SUB","UB_QUANT")
+			@ nLi,PCol()+1	PSay SUB->UB_VRUNIT			PICTURE "@E 99,999,999.99"
+			@ nLi,PCol()+1	PSay SUB->UB_VLRITEM		PICTURE "@E 99,999,999.99"
+			@ nLi,PCol()+1	PSay SUB->UB_DESC			PICTURE PESQPICT("SUB","UB_DESC")
+			@ nLi,PCol()+1	PSay SUB->UB_VALDESC		PICTURE PESQPICT("SUB","UB_VALDESC")
+			@ nLi,PCol()+1	PSay SUB->UB_ACRE			PICTURE PESQPICT("SUB","UB_ACRE")
+			@ nLi,PCol()+1	PSay SUB->UB_VALACRE		PICTURE PESQPICT("SUB","UB_VALACRE")
+			
+			nTotQtd  += SUB->UB_QUANT
+			nTotGeral+= SUB->UB_VLRITEM
+			
+			dbSelectArea("SUB")
+			dbSkip()
+		End
+		
+		
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³Imprime os totais de quantidade e valor.³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+		@ nLi,000 PSay __PrtThinLine()
+		
+		Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+		@ nLi,053 PSay PadR(STR0036,23) + Transform(nTotQtd, "@E 99,999,999.99") //"Total das quantidades"
+		@ nLi,096 PSay PadR(STR0037,23) + Transform(nTotGeral, "@E 99,999,999.99") //"Valor total do Pedido"
+	Endif
+	
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³Imprime as formas de pagamento.³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If len(aFatura) > 0
+		nCol := 0
+		Tk03Linha(@nLi,3,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+		@ nLi,000 PSay __PrtFatLine()
+		
+		Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+		@ nLi,000 PSay PadR(STR0038,Limite) //"| Vencto   Forma          Valor || Vencto   Forma          Valor || Vencto   Forma          Valor || Vencto   Forma          Valor |"
+		
+		Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+		@ nLi,000 PSay __PrtThinLine()
+		
+		Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+		For nI := 1 to len(aFatura)
+			If nCol == 0
+				@ nLi,nCol PSay "| " + DtoC(aFatura[nI][1]) + " " + SubStr(aFatura[nI][3],1,9) + " " + Transform(aFatura[nI][2], "@E 999,999.99")
+				nCol+=32
+			Else
+				@ nLi,nCol PSay "|| " + DtoC(aFatura[nI][1]) + " " + SubStr(aFatura[nI][3],1,9) + " " + Transform(aFatura[nI][2], "@E 999,999.99")
+				nCol+=33
+			Endif
+			If nCol == 131
+				@ nLi,nCol PSay "|"
+				Tk03Linha(@nLi,3,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+				nCol := 0
+			Endif
+		Next nI
+		
+		If nCol == 32
+			@ nLi,nCol		PSay "||"
+			@ nLi,nCol+33	PSay "||"
+			@ nLi,nCol+66	PSay "||"
+			@ nLi,131		PSay "|"
+			Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+		ElseIf nCol == 65
+			@ nLi,nCol		PSay "||"
+			@ nLi,nCol+33	PSay "||"
+			@ nLi,131		PSay "|"
+			Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+		ElseIf nCol == 98
+			@ nLi,nCol		PSay "||"
+			@ nLi,131		PSay "|"
+			Tk03Linha(@nLi,1,nMax,titulo,cCabec1,cCabec2,nomeprog,tamanho)
+		Endif
+		@ nLi,000 PSay __PrtThinLine()
+	Endif
+	
+	aFatura   := {}
+	nTotQtd   := 0
+	nTotGeral := 0
+	
+	dbSelectArea("SUA")
+	dbSkip()
+	
+End
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Imprime o rodape do relatorio³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+Roda(cbCont,cbText,Tamanho)
+
+#IFDEF TOP
+	DbSelectArea("SUA")
+	DbCloseArea()
+	ChkFile("SUA")
+#ELSE
+	dbSelectArea("SUA")
+	RetIndex("SUA")
+	Set Filter To
+	dbSetOrder(1)
+	FErase(cArqTrab+OrdBagExt())
+	FErase(cArqTrab)
+#ENDIF
+
+Set Device To Screen
+
+If aReturn[5] == 1
+	Set Printer TO
+	dbcommitAll()
+	ourspool(wnrel)
+Endif
+
+MS_FLUSH()
+
+Return(.T.)
+
+
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³Tk03Memo  ºAutor  ³Armando M. Tessaroliº Data ³  25/03/03   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Monta o texto conforme foi digitado pelo operador e quebra  º±±
+±±º          ³as linhas no tamanho especificado sem cortar palavras e     º±±
+±±º          ³devolve um array com os textos a serem impressos.           º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºParametros³ cCodigo - Codigo de referencia da gravacao do memo         º±±
+±±º          ³ nTaM    - Tamanho maximo de colunas do texto               º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Call Center                                                º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function Tk03Memo(cCodigo,nTam)
+
+Local cString	:= MSMM(cCodigo,nTam)		// Carrega o memo da base de dados
+Local nI		:= 0    					// Contador dos caracteres	
+Local nJ		:= 0    					// Contador dos caracteres	
+Local nL		:= 0						// Contador das linhas 
+Local cLinha	:= ""						// Guarda a linha editada no campo memo
+Local aLinhas	:= {}						// Array com o memo dividido em linhas
+
+For nI := 1 TO Len(cString)
+	If (MsAscii(SubStr(cString,nI,1)) <> 13) .AND. (nL < nTam)
+		// Enquanto não houve enter na digitacao e a linha nao atingiu o tamanho maximo
+		cLinha+=SubStr(cString,nI,1)
+		nL++
+	Else    
+		// Se a linha atingiu o tamanho maximo ela vai entrar no array
+		If MsAscii(SubStr(cString,nI,1)) <> 13
+			nI--
+			For nJ := Len(cLinha) To 1 Step -1
+				// Verifica se a ultima palavra da linha foi quebrada, entao retira e passa pra frente
+				If SubStr(cLinha,nJ,1) <> " "
+					nI--
+					nL--
+				Else
+					Exit
+				Endif
+			Next nJ
+			// Se a palavra for maior que o tamanho maximo entao ela vai ser quebrada
+			If nL <=0
+				nL := Len(cLinha)
+			Endif
+		Endif
+		
+		// Testa o valor de nL para proteger o fonte e insere a linha no array
+		If nL >= 0
+			cLinha := SubStr(cLinha,1,nL)
+			AAdd(aLinhas, cLinha)
+			cLinha := ""
+			nL := 0
+		Endif	
+	Endif
+Next nI
+
+// Se o nL > 0, eh porque o usuario nao deu enter no fim do memo e eu adiciono a linha no array.
+If nL >= 0
+	cLinha := SubStr(cLinha,1,nL)
+	AAdd(aLinhas, cLinha)
+	cLinha := ""
+	nL := 0
+Endif	
+
+Return(aLinhas)
+
+
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³Tk03Linha ºAutor  ³Armando M. Tessaroliº Data ³  06/02/03   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³   Incrementa o contador de linhas para impressão nos relatoº±±
+±±º          ³rios e verifica se uma nova pagina sera iniciada.           º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºParametros³ nLi      - Numero da linha em que sera impresso            º±±
+±±º          ³ nInc     - Quantidade de linhas a serem incrementadas      º±±
+±±º          ³ nMax     - Numero maximo de linhas por pagina              º±±
+±±º          ³ Titulo   - Titulo do cabecalho do relatorio                º±±
+±±º          ³ cCabec1  - Primeira linha do lalbel do relatorio           º±±
+±±º          ³ cCabec2  - Segunda linha do label do relatorio             º±±
+±±º          ³ NomeProg - Nome do programa que sera impresso no cabecalho º±±
+±±º          ³ Tamanho  - Tamanho de colunas do relatorio                 º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Call Center                                                º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Function Tk03Linha(	nLi,		nInc,		nMax,		titulo,;
+					cCabec1,	cCabec2,	nomeprog,	tamanho)
+
+Local nChrComp	:= IIF(aReturn[4]==1,15,18)
+
+nLi+=nInc
+If nLi > nMax .or. nLi < 5
+	nLi := Cabec(titulo,cCabec1,cCabec2,nomeprog,tamanho,nChrComp)
+	nLi++
+Endif
+
+Return(Nil)
+
+              
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³TMKR03    ºAutor  ³Andrea Farias       º Data ³  11/09/04   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³ Ajusta o nome de alguns parametros no SX1                  º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP8 - CALL CENTER                                          º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+
+Static Function AjustaSX1(cPerg)    
+                   
+Local aArea	:= GetArea()        
+Local nI	:= 0
+Local aPerg	:= {}                     
+
+Aadd( aPerg, {"05",STR0039} )//"Do Atendimento"
+Aadd( aPerg, {"06",STR0040} )//"Ate o Atendimento"
+
+Dbselectarea("SX1")    
+DbsetOrder(1)
+For nI:=1 to Len(aPerg)
+	If Dbseek(cPerg+aPerg[nI,1]) .AND. "Pedido" $ X1_PERGUNT 
+		Reclock("SX1",.F.)
+		#IFDEF SPANISH
+			SX1->X1_PERSPA	:= aPerg[nI,2]
+		#ELSE
+			#IFDEF ENGLISH
+				SX1->X1_PERENG	:= aPerg[nI,2]
+			#ELSE
+				SX1->X1_PERGUNT	:= aPerg[nI,2]
+			#ENDIF
+		#ENDIF
+        MsUnlock()
+	Endif       
+Next
+
+RestArea(aArea)	
+Return()

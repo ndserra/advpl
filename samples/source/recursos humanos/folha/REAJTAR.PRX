@@ -1,0 +1,1608 @@
+#Include "rwmake.ch"        // incluido pelo assistente de conversao do AP5 IDE em 10/02/00
+#INCLUDE "REAJTAR.CH"
+#INCLUDE "PROTHEUS.CH" 
+
+#define D_CODIGO   1
+#define D_DESCRI   2
+#define D_ANTIGO   3
+#define D_VERBA    4
+#define D_PERC     5
+#define D_REAJ     6
+#define D_NOVO     7
+#define D_ARRE     8
+#define D_DTREAJ   5
+
+User Function reajtar()        // incluido pelo assistente de conversao do AP5 IDE em 10/02/00
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP5 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("CDESC1,CDESC2,CDESC3,CSTRING,AORD,ARETURN")
+SetPrvt("NOMEPROG,ALINHA,NLASTKEY,CPERG,NORDEM,NPOSANT")
+SetPrvt("NPOSATU,NORMAL,DESCANSO,TITULO,AT_PRG,WCABEC0")
+SetPrvt("WCABEC1,CONTFL,LI,NTAMANHO,NOPCX,AHEADER")
+SetPrvt("AALTER,ATELA,AGETS,NUSADO,ACOLS")
+SetPrvt("WNREL,CTARDE,CTARATE,NCRITERIO,NARREDONDA,NRELATU")
+SetPrvt("NTARFUNAMB,CFILDE,CFILATE,CCCDE,CCCATE,CMATDE")
+SetPrvt("CMATATE,CFUNDE,CFUNATE,CCATEGORIA,LREPARA,NUSAR")
+SetPrvt("CDEONDE,CTIP,NSAVREC,ACOLSTAR,ATARREAJ,ARECTAR")
+SetPrvt("ATOTTAR1,ATOTFUN1,ATOTCC1,ATOTFIL1,ATOTEMP1,ATOTALIZA")
+SetPrvt("AINFO,APOSICAO1,CONTINUA,NELEM,NTIPATU,CARQDBF")
+SetPrvt("CARQNTX,XTELA,BHOTAREA,CSAVSCRVT,CSAVSCRVP,CSAVSCRHT")
+SetPrvt("CSAVSCRHP,CURLEN,NCOLANT,NLINGETD,CTITULO,AC")
+SetPrvt("AR,ACGD,CLINHAOK,CTUDOOK,LRETMOD2,AFAIXAS")
+SetPrvt("N,NREGISTROS,NCNT,NITENS,NREG,CFILIALANT")
+SetPrvt("CCCANT,CFUANT,CMATANT,LNOVAMAT,LIMPCABE,LIMPFUNC")
+SetPrvt("LMUDOUMAT,NRECNO,NTARNOVA,NTARANTI,NTARPERC,NVALARRED")
+SetPrvt("K,NPOS,NRESTO,CCPORET,J,CCHAVERX_COD")
+SetPrvt("NCOL,CCOD,CTXT,CALIAS,AARRAY1,X")
+SetPrvt("CDET,AFIELDS,CINDCOND,CDESCFIL")
+
+Private nNumRegs := 0
+
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 10/02/00 ==> #INCLUDE "REAJTAR.CH"
+
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 10/02/00 ==> #define D_CODIGO   1
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 10/02/00 ==> #define D_DESCRI   2
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 10/02/00 ==> #define D_ANTIGO   3
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 10/02/00 ==> #define D_VERBA    4
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 10/02/00 ==> #define D_PERC     5
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 10/02/00 ==> #define D_REAJ     6
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 10/02/00 ==> #define D_NOVO     7
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 10/02/00 ==> #define D_ARRE     8
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ REAJTAR  ³ Autor ³ Emerson Rosa de Souza   ³ Data ³ 17/12/99 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Aumento Para Tarefas                                         ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe   ³ REAJTAR(void)                                                ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³                                                              ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³         ATUALIZACOES SOFRIDAS DESDE A CONSTRU€AO INICIAL.               ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Programador ³ Data     ³ BOPS ³  Motivo da Alteracao                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Marina      ³ 30/08/00 ³------³Validacao Filial/Acesso.Retirada parte DOS³±±  
+±±³Pedro Eloy  ³ 26/02/04 ³QNC811³Ajuste nas definicoes das variaveis locais³±±  
+±±³            ³          ³00693 ³e passado os parametros nas funcoes.      ³±±  
+±±³      	   ³ 14/10/05 ³003252³Ajuste na gravacao da data de reajuste    ³±±
+±±³Equipe RH   ³ 09/01/06 ³091275³Retorno do programa antigo que nao faz a  ³±±  
+±±³            ³          ³      ³geracao de novas tarefas no SRO.          ³±±  
+±±³Tania       ³31/03/2006³096251³Acerto na sequencia dos parametros para a ³±±  
+±±³            ³          ³      ³funcao ValidPerg.                         ³±±  
+±±³Natie       ³30/10/06  ³104988³Melhoria no help da pergunta              ³±±  
+±±³Renata      ³22/05/07  ³122677³Incluido historico no SRO.                ³±±  
+±±³            ³          ³091275³Alterado fGravaReaj().                    ³±±  
+±±³            ³          ³ 	 ³Melhoria no help da pergunta.  			³±± 
+±±³			   ³		  ³		 ³Ajuste no relatorio, para paginar somente ³±±  
+±±³            ³          ³ 	 ³as tarefas que serao reajustadas          ³±±  
+±±³Kelly       | 02/04/08 |141326|Traducao de perguntes e helps para ingles ³±±
+±±³            |          |      |e espanhol. Utilizacao da pergunta 		³±±
+±±³            |          |      |"Qual Categoria" para filtragem de dados.	³±±
+±±³Marcelo     | 25/04/08 |144223|Ajuste que permite atualizar as tarefas e ³±±
+±±³            |          |      |lancamentos mais uma vez no mes corrente e³±±
+±±³            |          |      |tambem nos meses seguintes caso se deseje.³±± 
+±±³            |          |      |E emitir o relatorio das tarefas atualiza-³±±
+±±³            |          |      |das ou LOG quando nao houver lancamentos. ³±±
+±±³Kelly       | 26/06/08 |148858|Ajuste na pergunta 17 do grupo REAJTAR.   ³±±
+±±³Marcelo     | 27/03/09 |007028|Ajustes em fGravaReaj e Monta_TFA para    ³±±
+±±³            |          |  2009|avaliar devidamente lanctos. s/data final.³±±
+±±³Renata      | 30/04/09 |10254/|Ajustes para suportar nova extrutura do   ³±±
+±±³            |          |  2009|do cadastro de tarefas (X59), que passou  ³±±
+±±³            |          |      |ter 2 registro no sigagpe.				³±±
+±±³Renata      | 26/05/09 |15702/|Ajustes em fReajTarefa, fImpReajTa e      ³±±
+±±³            |          |  2009|fImpReajFun, p/ utilizar 4 casas decimais ³±±
+±±³Renata      | 21/07/09 |15702/|Ajuste para cliente informar vlr reajuste ³±±
+±±³            |          |  2009|com 4 casas decimais 					    ³±±
+±±|Reginaldo   | 14/08/09 |20424/|Ajuste no Grupo de Campos filial          ³±±
+±±|            |          |  2009|tratamento para não considerar 2 posições ³±±
+±±|            |          |      |fixas.                                    ³±±
+±±|Francisco Jr| 11/01/10 |00429/|Compatibilizado tratamento de filial para ³±±
+±±|            |          |  2010|uso na Gestao Corporativa.                ³±±
+±±³Jonatas     | 22/07/10 |011759|Ajuste para passar string com tamanho     ³±±
+±±³            |          |  2010|correto de acordo com layout utilizado.   ³±± 
+±±³Alessandro  ³ 18/03/11 ³006427³Tratamento de novas funcionalidadesde p/  ³±±
+±±³Santos      ³          ³  2011³o calculo de professores.                 ³±±
+±±³Gustavo M.  ³ 20/04/12 ³008787|Tratamento oara corrigir error.log (varia ³±±
+±±³            ³          ³  2012³vel sem valor)                            ³±±±±±±±±±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄ¿±±
+±±³Luis Ricardo³27/06/2012³00000015096/2012³Ajuste no layout conforme data da tarefa³±±
+±±³Cinalli	   ³		  ³Ch.: TFDVA3	   ³impressa com 2 ou 4 digitos no ano.		³±±
+±±³Mauricio MR ³10/07/2012³00000017022/2012³Ajuste para controlar o estouro de campo³±±
+±±³            ³		  ³TFHMNY	       ³RO_VALOR.								³±±
+±±³Allyson M.  ³20/08/2013³THQNU0		   ³Ajuste para evitar error log quando a   ³±±
+±±³            ³		  ³			       ³matricula possui menos que 6 digitos.	³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis Locais(Basicas)                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+//cDesc1  := STR0001		//"Aumento Para Tarefas."
+cDesc1  := STR0002		//"O aumento ser  aplicado sobre as tarefas definidas nos Parametros,"
+cDesc2  := STR0003		//"reajustando automaticamente os lancamentos de TODOS os funcionarios."
+cDesc3  := STR0042		//"de TODAS as filiais, a partir da data informada."
+cString := "SRA"	    // Alias do arquivo principal (Base)                                    
+
+aOrd := {STR0004,STR0005,STR0007}  //"Matricula"###"Centro de Custo"###"Função" 
+
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Variaveis de Acesso do Usuario                               ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+cAcessaSRA	:= &( " { || " + ChkRH( "REAJTAR" , "SRA" , "2" ) + " } " )
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis Private(Basicas)                            ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aReturn  := {STR0008, 1,STR0009, 2, 2, 1, "",1 }	//"Zebrado"###"Administra‡„o"
+NomeProg := "REAJTAR"
+aLinha   := {}
+nLastKey := 0
+cPerg    := "REAJTA    "
+nOrdem   := 0
+n 		 := 1
+aRegs	 :=	{}
+
+
+aHelp1  :=  {"Informe o tipo de aumento que será       ",;
+			"efetuado no processamento.               ",; 
+			}
+
+aHelpI1 :=  {"Enter the type of increase to be given",;
+			"in the processing."}
+
+aHelpE1 :=  {"Informe el tipo de aumento que se ",;
+			"efectuara en el procesamiento."}
+			
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³            Grupo   Ordem Pergunta Portugues Pergunta Espanhol  Pergunta Ingles    Variavel Tipo Tamanho Decimal Presel  GSC   Valid             Var01      Def01  DefSPA1  DefEng1  Cnt01  Var02 Def02 DefSpa2 DefEng2  Cnt02 Var03 Def03 DefSpa3 DefEng3 Cnt03 Var04  Def04  DefSpa4 DefEng4 Cnt04 Var05 Def05  DefSpa5 DefEng5 Cnt05  XF3 GrgSxg cPyme aHelpPor aHelpEng aHelpSpa cHelp     ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+Aadd(aRegs,{cPerg,"18","Tipo de Aumento ?             ","¿ Tipo de Aumento ?           ","Type of Raise ?               ","mv_chi","C",03,0, 0,"G" ,"NaoVazio()","mv_par18" ,"","","","","","","","","","","","","","","","",""	,"","","","","","","","41","","",aHelp1  ,aHelpI1  ,aHelpE1  , })
+
+ValidPerg(aRegs,cPerg,.T.)
+
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis Private(Programa)                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nPosAnt  := nPosAtu  := 6
+Normal   := Descanso := 0
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis Utilizadas na funcao IMPR                          ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+Titulo   := ""
+AT_PRG   := "REAJTAR"
+wCabec0  := 1
+wCabec1  := STR0010+Dtoc(dDataBase)	//"Data Base: "
+CONTFL   := 1
+LI       := 0
+nTamanho := "M"
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Incluir na GetDados							                 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nOpcx := 3
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Obtem os Percentuais de Aumento                              ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aHeader := {}
+
+Aadd(aHeader,{STR0016,"TAREFADE"  ,"@E 999,999,999,999.99"   , 15 , 2 , "positivo()" , "û" , "N" , "  "," " })	//"Faixa De"
+Aadd(aHeader,{STR0017,"TAREFAATE" ,"@E 999,999,999,999.99"   , 15 , 2 , "positivo()" , "û" , "N" , "  "," " })	//"Faixa Ate"
+Aadd(aHeader,{STR0018,"TAREFAPERC","@E 999.999999"           , 10 , 6 , "positivo()" , "û" , "N" , "  "," " })	//"% Aumento"
+Aadd(aHeader,{STR0019,"TAREFAVAL" ,"@E 999,999,999.9999"     , 12 , 4 , "positivo()" , "û" , "N" , "  "," " })	//"Valor do Aumento"
+aAlter := { "TAREFADE" , "TAREFAATE" , "TAREFAPERC" , "TAREFAVAL" }
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³// Inicializa 1§ Item                                         ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aTELA  := { 0,0 }
+aGETS  := { 0 }
+nUsado := 5
+aCols  := {}
+Aadd( aCols, { 0.01, 0.00 , 0.00 , 0.00 , .F. } )
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+pergunte("REAJTA",.F.)
+
+Titulo := STR0020	    // "RELACAO DE AUMENTO DE TAREFAS"
+                        
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a funcao SETPRINT                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+wnrel:="REAJTAR"       //Nome Default do relatorio em Disco
+wnrel:=SetPrint(cString,wnrel,cPerg,@Titulo,cDesc1,cDesc2,cDesc3,.F.,aOrd,,nTamanho)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros                         ³
+//³       mv_par01      Codigo Tarefa De                         ³
+//³       mv_par02      Codigo Tarefa Ate                        ³
+//³       mv_par03      Criterio de Arred.                       ³
+//³       mv_par04      Arredonda Em R$                          ³
+//³       mv_par05      Atualiza Tarefa                          ³
+//³       mv_par06      Tipo de Relatorio                        ³
+//³       mv_par07      Filial De                                ³
+//³       mv_par08      Filial Ate                               ³
+//³       mv_par09      Centro de Custo De                       ³
+//³       mv_par10      Centro de Custo Ate                      ³
+//³       mv_par11      Matricula De                             ³
+//³       mv_par12      Matricula Ate                            ³
+//³       mv_par13      Funcao De                                ³
+//³       mv_par14      Funcao Ate                               ³
+//³       mv_par15      Categoria					             ³
+//³       mv_par16      Data do Reajuste - Mes/Ano               ³
+//³       mv_par17      Atualiza lancamentos subsequentes        ³
+//³       mv_par18      Tipo de Aumento                          ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nOrdem      := aReturn[8]
+cTarDe      :=  mv_par01
+cTarAte     :=  mv_par02
+nCriterio   :=  mv_par03
+nArredonda  :=  mv_par04
+nRelAtu     :=  mv_par05
+nTarFunAmb  :=  mv_par06
+cFilDe      :=  mv_par07
+cFilAte     :=  mv_par08
+cCcDe       :=  mv_par09
+cCcAte      :=  mv_par10
+cMatDe      :=  mv_par11
+cMatAte     :=  mv_par12
+cFunDe      :=  mv_par13
+cFunAte     :=  mv_par14
+cCateg		:=  mv_par15
+dReajuste   :=  ctoD("01/" + SubStr(mv_par16,1,2) + "/" + SubStr(mv_par16,3,4))
+nAtulTar    :=  mv_par17
+cTipAum		:=  mv_par18
+wCabec1     := wCabec1 + "  " 
+aLog        := {}   
+
+If nLastKey == 27
+	Return
+Endif
+SetDefault(aReturn,cString)
+If nLastKey == 27
+	Return
+Endif
+
+RptStatus({|| ReajImp()},Titulo)// Substituido pelo assistente de conversao do AP5 IDE em 10/02/00 ==> 	RptStatus({|| Execute(ReajImp)},Titulo)
+
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ REAJIMP  ³ Autor ³ R.H. - Emerson        ³ Data ³ 17/12/99 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Aumento para Tarefas                                       ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe   ³ REAJIMP()    			                                  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                                   ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 10/02/00 ==> Function ReajImp
+Static Function ReajImp()
+
+Local n
+Local nCnt
+Local K
+Local aLogFile	:= {}
+Local nTotReg	:= 0
+Local cPosSRX   := ""  
+Local aErrorTar	:= {}
+
+lRepara   := .T.
+nUsar     := 0
+cDeOnde   := ""
+cTip      := "59" // Tarefas
+nSavRec   := RecNo()
+aColsTar  := {}  // Contera as tarefas cadatradas no SRX
+aTarReaj  := {}  // Contera as tareas que foram reajustadas
+aRecTar   := {}  // Contera o Recno() do SRX
+aTotTar1  := {}  // Contera os totais da tarefa (Parametro) que serao impressos
+aTotFun1  := {}  // Contera os totais da Funcao que serao impressos
+aTotCC1   := {}  // Contera os totais do CC que serao impressos
+aTotFil1  := {}  // Contera os totais da Filial que serao impressos
+aTotEmp1  := {}  // Contera os totais da Empresa que serao impressos
+aTotaliza := {}  // Servira para imprimir os totalizadores dentro da funcao fImpReaj(Tar/Fun)
+aInfo     := {}
+aPosicao1 := {}
+Continua  := .F.
+nUsado    := 0
+nElem	  := 0
+nTipAtu   := 0   // Identifica a atualizacao 1-Tarefa 2-Funcao 3-CC 4-Filial 5-Empresa
+cArqDBF   := ""
+cArqNTX   := ""
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis do Rodape do Modelo 2                              ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nLinGetD:=0
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Titulo da Janela                                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cTitulo:=OemtoAnsi(STR0045)		//"INDICE PARA AUMENTO DE TAREFA"
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Array com descricao dos campos do Cabecalho do Modelo 2      ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aC:={}
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Array com descricao dos campos do Rodape do Modelo 2         ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aR:={}
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Array com coordenadas da GetDados no modelo2                 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aCGD:={44,5,118,315}
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Chamada da Modelo2                                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+// lRetMod2 = .T. se confirmou
+// lRetMod2 = .F. se cancelou
+lRetMod2:=Modelo2(cTitulo,aC,aR,aCGD,nOpcx,'REAJLOK()')
+// No Windows existe a funcao de apoio CallMOd2Obj() que retorna o
+// objeto Getdados Corrente
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Se cancelou operacao, retorna.                               ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+IF ! lRetMod2
+	Return
+EndIf
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Se nao foi digitado indices para o aumento, retorna.         ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If Len(Acols) == 0
+	Return
+Endif
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Desconsidera Faixas deletadas                                ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aFaixas := {}
+For n := 1 To Len(aCols)
+	If aCols[n,5] == .F.
+		Aadd(aFaixas,{ aCols[n,1] , aCols[n,2] , aCols[n,3] , aCols[n,4] , aCols[n,5] })
+	Endif
+Next n
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica o Numero de Linhas Para Cada Registro               ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea("Sx2")
+dbSeek("SRX")
+dbSelectArea("SR5")
+dbSetOrder(2)
+dbSeek( RhTamFilial(xFilial("SR5")) + "X" + cTip )
+nRegistros := If(R5_TAMANHO<=0,1,R5_TAMANHO)
+While !EOF() .And. ( ALLTRIM(R5_ARQUIVO) == "X" + cTip )
+	If R5_usado != " " .And. cNivel >= Val( R5_NIVEL )
+		nUsado := nUsado + 1
+ 	Endif
+	dbSkip()
+EndDo
+dbSetOrder(1)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Conta o Numero de Lancamentos das Tarefas                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nCnt := 0
+dbSelectArea("SRX")
+dbSetOrder(2)
+dbSeek( cTip )
+While !Eof() .And. ALLTRIM(RX_TIP) == cTip  
+	nCnt := nCnt + 1 
+	cPosSRX := SubStr( SRX->RX_COD, 4, 1 )
+ 	If cPosSRX == "1"
+		Aadd( aRecTar,Recno() ) // Guardar Recno Para Aumento da Tarefa
+	EndIf	
+	dbSkip()
+Enddo
+nCnt := Int(nCnt/nRegistros)
+
+nTotReg := nCnt 
+	
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Monta aColsTar Com os Dados da Tarefa Definidos no SRX       ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aColsTar := Array( nCnt , nUsado + 1 )
+nItens   := nCnt := 0
+dbSelectArea("SRX")
+dbSeek( cTip )
+While !Eof() .And. ALLTRIM(RX_TIP) == cTip 
+	nReg := 1
+	nCnt := nCnt + 1 
+
+	If nCnt <= nTotReg
+		If nCnt > Len(aColsTar) 
+			lRepara := .F.
+			Help(" ",1,"A150REPARA")
+			Exit
+		Endif
+	
+		While ! Eof() .And. ALLTRIM(RX_TIP) == cTip .and. nReg <= 1  //nRegistros
+			If SubStr(SRX->RX_COD,4,1) == "1"		
+				dbSelectArea("SR5")
+				dbSeek( RhTamFilial(xFilial("SR5")) + "X" + cTip + STRZERO(nReg,2) )
+				//dbSeek( "  X" + cTip + STRZERO(nReg,2) )
+				While !EOF() .And. ( ALLTRIM(R5_ARQUIVO) == "X" + cTip ) .And. VAL(R5_REG) <= nReg
+	 				 IF R5_usado != " " .And. cNivel >= Val( R5_NIVEL )
+						nUsar := VAL(SR5->R5_POSICAO)
+						nItens  := nItens + 1
+						cDeOnde := "SRX->" + IF (ALLTRIM(SR5->R5_DEONDE) == "RX_CODCHAVE","RX_COD",ALLTRIM(SR5->R5_DEONDE))
+						If ALLTRIM(R5_TIPO) == "C"
+							aColsTar[nCnt,nUsar] := Subs(&cDeOnde,R5_DE,R5_QUANTOS)
+						ElseIf ALLTRIM(R5_TIPO) == "N"
+							aColsTar[nCnt,nUsar] := VAL(Subs(&cDeOnde,R5_DE,R5_QUANTOS))
+						ElseIf ALLTRIM(R5_TIPO) == "D"
+							aColsTar[nCnt,nUsar] := CTOD( substr(Substr (&cDeOnde, R5_DE, R5_QUANTOS),7,2) + "/" + substr(Substr (&cDeOnde, R5_DE, R5_QUANTOS),5,2) + "/" +  substr(Substr (&cDeOnde, R5_DE, R5_QUANTOS),1,4)  )
+						Endif
+					Endif
+					dbSkip()
+				EndDo
+				dbSelectArea("SRX")
+				nReg := nReg + 1
+			EndIf	
+		dbSkip()
+		EndDo
+	
+		aColsTar[nCnt][nUsado+1] := .F.
+		nReg := nReg + 1
+	Else
+		Exit
+	EndIf
+EndDo
+If !lRepara
+	Return
+Endif
+If nItens == 0 .And. lRepara
+	Help(" ",1,"A150SP")
+	Return
+Endif
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Reajusta as Tarefas e Grava no Array aTarReaj		         ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+fReajTarefa(aErrorTar,aLogFile)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Se nao houve reajuste, retorna 						         ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If ( Len(aTarReaj) == 0 )  .OR. ( Len(aErrorTar) > 0 )
+		If ( Len(aErrorTar) > 0 ) 
+								
+				MS_FLUSH()
+		
+				fMakeLog( {aLogFile}, {STR0043}, NIL , NIL ,"LOGTAREFAS") //Log do Reajuste de Tarefas 
+						
+		Endif			
+	Return
+EndIf
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//| Monta Arquivo Temporario Para Listar Tarefeiros              |
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+Monta_TFA()
+
+Set Device To Print
+
+If nRelAtu == 1 .And. nTarFunAmb # 2 // Relatorio de Parametros ou Ambos
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Altera o TITULO de acordo com o relatorio escolhido 	 	 ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	Titulo := STR0020 + "  -  " + STR0040  // "RELACAO DE AUMENTO DE TAREFAS"##"PARAMETROS"
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Carrega "aInfo" com informacoes da Filial Corrente  	 	 ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If !fInfo(@aInfo,cFilAnt)
+		Return
+	Endif
+	LI       := 0
+	For nCnt := 1 To Len(aTarReaj)
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Inicializa Array para Totalizacao                            ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		aPosicao1 := {}
+		Aadd( aPosicao1,{0,0,0,0,0} )
+
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Atualizando Array aPosicao1                                  ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		nElem := nCnt
+		Atualiza()
+		
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Atualiza Totalizador de Tarefas								 ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		nTipAtu := 1     // Atualiza aTotTar1
+		fAtuCont()
+  			
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Imprime a Tarefa Reajustada                                  ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	    fImpTar(nCnt)
+	Next nCnt
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Totaliza as tarefas acumuladas								 |
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	fTotalTarefa()
+ElseIf nRelAtu == 2
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Grava no SRX a Tarefa Reajustada                             ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	fGravaReaj()
+EndIf
+
+If nTarFunAmb # 2 // Relatorio de Tarefas ou Ambos
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Altera o TITULO de acordo com o relatorio escolhido 	 	 ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	Titulo := STR0020 + "  -  " + STR0041  // "RELACAO DE AUMENTO DE TAREFAS"##"FUNCIONARIOS"
+
+	dbSelectArea( "TFA" )
+	dbGoTop()
+	LI         := 0
+	cFilialAnt := Replicate("!", FWGETTAMFILIAL)
+	cCcAnt     := "!!!!!!!!!"
+	cFuAnt     := "!!!!"
+	cMatAnt    := "!!!!!!"
+	lNovaMat   := .F.
+	lImpCabe   := .F.
+	lImpFunc   := .F.
+	lMudouMat  := .F.
+	While ! EOF()
+		If TFA->FA_FILIAL #cFilialAnt
+			If !fInfo(@aInfo,TFA->FA_FILIAL)
+				Exit
+			Endif
+			dbSelectArea( "TFA" )
+			cFilialAnt := TFA->FA_FILIAL
+		Endif
+   
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Inicializa Array para Totalizacao                            ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		aPosicao1 := {}
+		Aadd( aPosicao1,{0,0,0,0,0} )
+
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Atualizando Array aPosicao1                                  ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		nElem := Ascan( aTarReaj, { |X| X[1] == TFA->FA_CODTAR } )
+		If nElem > 0
+			Atualiza()
+		EndIf
+
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Atualizando Totalizadores                                    ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		nTipAtu := 2
+		fAtuCont()  // Funcao		
+		nTipAtu := 3		
+		fAtuCont()  // Centro de Custo
+		nTipAtu := 4
+		fAtuCont()  // Filial
+		nTipAtu := 5
+		fAtuCont()  // Empresa
+		
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Verifica se e novo funcionario para imprimir o cabecalho     ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		lNovaMat := ( cMatAnt #TFA->FA_MAT )
+		cMatAnt  := TFA->FA_MAT
+		
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Verifica se proximo registro e do mesmo funcionario 		 ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		nRecno := RECNO()
+		dbskip()            
+		lMudouMat := ( cMatAnt #TFA->FA_MAT )
+		dbGoTo(nRecno)
+		
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Imprime o Funcionario                                        ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	    fImpFun()
+    	fTestaTotal()
+	EndDo
+EndIf
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Termino do relatorio                                         ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+Set Device To Screen
+If aReturn[5] = 1
+	Set Printer To
+	Commit
+	ourspool(wnrel)
+Endif
+	
+MS_FLUSH()
+
+//-- VERIFICA SE ALGUM LANCAMENTO FOI ATUALIZADO
+If nNumRegs == 0 
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Apresenta Tela com Log de erros								 ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	aAdd(aLogFile, STR0044 )//"A Tarefa foi reajustada no cadastro de Parametros 59. Mas nao existem Lancamentos para esta Tarefa"
+	fMakeLog( {aLogFile}, {STR0043},cPerg,.T.,"LOGTAREFAS", , , , , .F.) //Log do Reajuste de Tarefas
+
+EndIf
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Exclui o arquivo temporario criado p/ impressao do relatorio ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "TFA" )
+dbCloseArea()
+fErase(cArqNtx + OrdBagExt())
+fErase(cArqDbf + GetDBExtension())
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Restaura a integridade dos arquivos							 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SRX" )
+dbSetOrder(1)
+dbSelectArea( "SR5" )
+dbSetOrder(1)
+
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o   ³fReajTarefa³ Autor ³ Emerson R. de Souza   ³ Data ³ 21/12/99 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o³Reajusta as Tarefas Definidas no Parametro                   ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso     ³ Generico                                                    ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 10/02/00 ==> Function fReajTarefa
+Static Function fReajTarefa(aErrorTar,aLogFile)
+
+Local K
+Local aCodigo 	:= {} 
+Local cNumero	:= ''
+Local nLimite 	:= 0
+
+cNumero	:= Replicate('9',TamSx3('RO_VALOR')[1]-TamSx3('RO_VALOR')[2]-1  )
+cNumero	:= cNumero + '.' + Replicate('9',TamSx3('RO_VALOR')[2])
+
+nLimite := Val(cNumero)
+
+nTarNova  := 0
+nTarAnti  := 0 
+nTarPerc  := 0
+nValArred := 0
+
+For k := 1 To Len(aColsTar)
+	If aColsTar[k,D_CODIGO] >= cTarDe .And. aColsTar[k,D_CODIGO] <= cTarAte 
+	  If !(aColsTar[k,5] > dReajuste )	
+		If Ascan(aCodigo, { |X| aColsTar[k,D_CODIGO]== X[1]  }) == 0
+	  		nTarAnti := aColsTar[k,D_ANTIGO]
+			nPos     := Ascan(aFaixas, { |X| nTarAnti >= X[1] .And. nTarAnti <= X[2] })
+			If nPos > 0
+				nTarPerc := aFaixas[nPos,3]
+				nTarNova := nTarAnti
+				nTarNova := nTarAnti * ( 1 + ( nTarPerc / 100 ) )
+				nTarNova := nTarNova + aFaixas[nPos,4] 
+				If nCriterio == 1
+					nTarNova := NoRound(nTarNova,4)
+				ElseIf nCriterio == 2
+					nTarNova := Round(nTarNova,4)
+				Else				
+					If nTarNova - Round(nTarNova,4) > 0.00
+						nTarNova := NoRound((nTarNova + .01),4)
+					Else
+						nTarNova := Round(nTarNova,4)
+					Endif
+				Endif
+				If nArredonda #0
+					nResto := Mod(nTarNova,nArredonda)
+					If Round(nResto,4) > 0.00
+						nValArred := nArredonda - nResto
+						nTarNova  := nTarNova + nValArred
+					Else
+						nValArred := 0.00
+					Endif
+				Endif 
+				IF nLimite < nTarNova 
+				                         
+					aAdd(aLogFile, STR0046 + aColsTar[k,D_CODIGO] + ' - ' + Alltrim(aColsTar[k,D_DESCRI]) + STR0047 )//"O valor reajustado ultrapassou a capacidade maxima de armazenamento do campo RO_VALOR"
+					AADD(aErrorTar, aColsTar[k,D_CODIGO] )
+				Else
+					Aadd(aTarReaj, { aColsTar[k,D_CODIGO], aColsTar[k,D_DESCRI],;
+			    				  aColsTar[k,D_ANTIGO], aColsTar[k,D_VERBA],;
+			     				  nTarPerc, nTarNova-nTarAnti, 	nTarNova, nValArred } )
+					aColsTar[k,D_ANTIGO] := nTarNova
+					aColsTar[k,5] 		 := dReajuste
+			     
+				Endif
+					
+			EndIf
+		EndIf
+	  EndIf
+	EndIf
+Next k
+
+Return
+
+/*
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³fGravaReaj³ Autor ³ Emerson Rosa de Souza ³ Data ³ 29.12.99 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Grava as Tarefas Reajustadas no arquivo de Parametros e SRO³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ fGravaReaj                                                 ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 10/02/00 ==> Function fGravaReaj
+Static Function fGravaReaj()
+
+Local nCont		:= 0
+Local nx		:= 0
+Local dFolMes   := Stod( SuperGetMV( "MV_FOLMES" ) + "01" )
+Local nReg	    
+Local lTemSeq	:= .F.
+Local cSeq		:= StrZero( 0, 5 )
+Local cNewSeq	:= StrZero( 0, 5 )
+Local cFilMat	:= Space(FWGETTAMFILIAL) + Space( TamSX3("RA_MAT")[1] )
+Local aSROSeq	:= {}
+Local lTemItem	:= SRO->( FieldPos( "RO_ITEM" ) # 0 )
+Local lTemClVl	:= SRO->( FieldPos( "RO_CLVL" ) # 0 ) 
+
+
+Private cAjFilMat:= ""
+
+cCpoRet := "" // Campo que sera preenchido em a150Transf
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Grava a Tarefa Reajustada no Cadastro de Parametros			 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+For nCont := 1 To Len(aColsTar) 
+	If Ascan(aTarReaj, { |X| X[1] == aColsTar[nCont,1] }) > 0
+		cChaveRX_COD := ""
+		nCol 		 := 0
+		cChaveRX_COD := ""
+		nCol         := 0
+		nReg 		 := 1
+		cCod 		 := SPACE(11)
+		cTxt 		 := SPACE(60)
+		dbSelectArea("SR5")
+		dbSeek( RhTamFilial(xFilial("SR5")) + "X" + cTip + STRZERO(nReg,2) )
+
+		While !EOF() .And. ( ALLTRIM(R5_ARQUIVO) == "X" + cTip  )
+			If VAL(R5_REG) == 2
+				Exit
+			EndIf	
+	
+			While !EOF() .And. ( ALLTRIM(R5_ARQUIVO) == "X" + cTip ) .And. VAL(R5_REG) == nReg
+				If  ALLTRIM(R5_TIPO) == "F"
+					IF ALLTRIM(R5_DEONDE) == "RX_TXT"
+						cTxt := If(R5_DE==1,"",Subs(cTxt,1,(R5_DE-1)))+SUBS(R5_RELACAO,1,R5_TAMANHO)+Subs(cTxt,R5_DE+R5_QUANTOS,60-(R5_DE+R5_QUANTOS))
+					ELSEIF ALLTRIM(R5_DEONDE) == "RX_COD"
+						cCod := If(R5_DE==1,"",Subs(cCod,1,(R5_DE-1)))+SUBS(R5_RELACAO,1,R5_TAMANHO)+Subs(cCod,R5_DE+R5_QUANTOS,11-(R5_DE+R5_QUANTOS))
+					ENDIF
+				ElseIf ( R5_usado != " " .And. cNivel >= Val( R5_nivel ) )
+					nCol := nCol + 1
+					IF ALLTRIM(R5_DEONDE) == "RX_TXT"                                        
+    					a150Transf(nCont) // Converte aColsTar e carrega em cCpoRet
+						cTxt := If(R5_DE==1,"",Subs(cTxt,1,(R5_DE-1)))+cCpoRet+Subs(cTxt,R5_DE+R5_QUANTOS,60-(R5_DE+R5_QUANTOS))
+					ELSEIF ALLTRIM(R5_DEONDE) == "RX_COD"
+						If VAL(R5_REG) == 1 .And. ALLTRIM(R5_DEONDE) == "RX_CODCHAVE"
+	    					a150Transf(nCont) // Converte aColsTar e carrega em cCpoRet
+							cChaveRX_COD := cChaveRX_COD + cCpoRet
+						Endif                                                      
+    					a150Transf(nCont) // Converte aColsTar e carrega em cCpoRet
+						cCod := If(R5_DE==1,"",Subs(cCod,1,(R5_DE-1)))+cCpoRet+Subs(cCod,R5_DE+R5_QUANTOS,11-(R5_DE+R5_QUANTOS))
+					ELSEIF ALLTRIM(R5_DEONDE) == "RX_CODCHAVE"
+						If VAL(R5_REG) == 1 
+	    					a150Transf(nCont) // Converte aColsTar e carrega em cCpoRet
+							cChaveRX_COD := cChaveRX_COD + cCpoRet
+						Endif                                                      
+    					a150Transf(nCont) // Converte aColsTar e carrega em cCpoRet
+						cCod := If(R5_DE==1,"",Subs(cCod,1,(R5_DE-1)))+cCpoRet+Subs(cCod,R5_DE+R5_QUANTOS,11-(R5_DE+R5_QUANTOS))
+					ENDIF
+				ElseIf R5_usado == " " .And. ALLTRIM(R5_DEONDE) == "RX_CODCHAVE"
+					cCod := Left(cChaveRX_COD+Space(11),11)
+				Endif
+				dbSkip()
+			EndDo
+			If Len(AllTrim(cTxt)) == 0
+				Exit
+			Endif
+			dbSelectArea("SRX")
+			dbGoTo(aRecTar[nCont]) // Posiciona no registro para gravar a tarefa reajustada
+			RecLock("SRX",.F.)
+			SRX->RX_TIP := cTip
+			SRX->RX_COD := cCod
+			SRX->RX_TXT := cTxt
+			MsUnlock()
+			nReg := nReg + 1
+			cTxt := Space(60)
+			cCod := Space(11)
+			dbSelectArea("SR5")
+		Enddo
+	EndIf
+Next nCont
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Grava a Tarefa Reajustada nos Lancamentos Dos Funcionarios   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+cAlias := Alias()
+dbSelectArea("SRO")
+dbSetOrder(2) 
+dbGotop()
+
+aSRO := {} //--ARRAY(SRO->(fCount())) 
+lTemSeq	:= SRO->( ( FieldPos( "RO_SEQ" ) * FieldPos( "RO_CONTSEQ" ) ) # 0 )
+
+While SRO->( !Eof() )
+	If cFilMat # SRO->( RO_FILIAL + RO_MAT )
+		
+		cFilMat := SRO->( RO_FILIAL + RO_MAT )
+	    cAjFilMat:= "a" + StrTran(cFilMat," ","_")
+		&( cAjFilMat ) := {}
+		
+		If SRA->( dbSeek( cFilMat ) )
+			If !fGPA190Atu()
+				Exit
+			EndIf
+		EndIf
+	EndIf
+	
+	If lTemSeq
+		cAjFilMat := "a" + StrTran(cFilMat," ","_")
+		aAdd( &( cAjFilMat ), SRO->RO_SEQ )
+	EndIf
+	nPos	:= Ascan(aTarReaj, { |X| X[1] == SRO->RO_CODTAR } )
+
+	If nPos > 0 .And. dFolMes <= dReajuste // Verifica se o periodos esta fechado
+
+		//Atualizacao da tarefa dentro do mes corrente
+  		If	( AnoMes( SRO->RO_DATA ) == AnoMes( dReajuste ) ) .And. ( Empty(SRO->RO_DATAATE) .Or. AnoMes( SRO->RO_DATAATE ) >= AnoMes( dReajuste ) ) 
+			RecLock( "SRO", .F. )
+				SRO->RO_VALOR   := ( aTarReaj[nPos,D_NOVO] )                      
+				SRO->RO_VALTOT  := ( aTarReaj[nPos,D_NOVO] * SRO->RO_QUANT )
+				If lTemSeq
+					SRO->RO_TPALT		:= cTipAum
+				EndIf
+			MsUnLock()
+			nNumRegs++ 
+
+		//Atualizacao da tarefa com quebra entre meses distintos - DATA DE < REAJUSTE e DATA ATE >= REAJUSTE Ou " "
+		ElseIf	( AnoMes( SRO->RO_DATA ) < AnoMes( dReajuste ) ) .And. ( Empty(SRO->RO_DATAATE) .Or. AnoMes( SRO->RO_DATAATE ) >= AnoMes( dReajuste ) ) 
+			RecLock( "SRO", .F. )
+	       		aadd(aSro, ( {SRO->RO_Filial, SRO->RO_MAT, SRO->RO_TIPO, dReajuste, If( SRO->RO_DATAATE >= dReajuste, SRO->RO_DATAATE, ""), SRO->RO_CODTAR, SRO->RO_QTDSEM, RO_QUANT, aTarReaj[nPos,D_NOVO], (aTarReaj[nPos,D_NOVO] * SRO->RO_QUANT), SRO->RO_CC, SRO->RO_VERBA, If( lTemSeq, SRO->RO_SEQ, cNewSeq ), If( lTemItem, SRO->RO_ITEM, "" ), If( lTemClVl, SRO->RO_CLVL, "" )  } ) ) 
+			    SRO->RO_DATAATE := If( ( dReajuste-1 ) < SRO->RO_DATA, SRO->RO_DATA,( dReajuste-1 ) )
+			MsUnLock() 
+			nNumRegs++
+			
+		//Atualizacao da tarefa com quebra entre meses distintos - DATA DE <= REAJUSTE e DATA ATE > REAJUSTE Ou " "
+		ElseIf	( AnoMes( SRO->RO_DATA ) <= AnoMes( dReajuste ) ) .And. ( Empty(SRO->RO_DATAATE) .Or. AnoMes( SRO->RO_DATAATE ) > AnoMes( dReajuste ) ) 
+			RecLock( "SRO", .F. )
+	       		aadd(aSro, ( {SRO->RO_Filial, SRO->RO_MAT, SRO->RO_TIPO, ( LastDate( dReajuste )+1), If( SRO->RO_DATAATE >= dReajuste, SRO->RO_DATAATE, ""), SRO->RO_CODTAR, SRO->RO_QTDSEM, RO_QUANT, aTarReaj[nPos,D_NOVO], (aTarReaj[nPos,D_NOVO] * SRO->RO_QUANT), SRO->RO_CC, SRO->RO_VERBA, If( lTemSeq, SRO->RO_SEQ, cNewSeq ), If( lTemItem, SRO->RO_ITEM, "" ), If( lTemClVl, SRO->RO_CLVL, "" )  } ) ) 
+			    SRO->RO_DATAATE := If( LastDate( dReajuste ) < SRO->RO_DATA, SRO->RO_DATA, LastDate( dReajuste ) )
+			MsUnLock() 
+			nNumRegs++
+			
+		//Atualizacao das tarefas dos meses subsequentes quando escolhido pelo Usuario
+		ElseIf	( AnoMes( SRO->RO_DATA ) > AnoMes( dReajuste ) ) .And. ( Empty(SRO->RO_DATAATE) .Or. AnoMes( SRO->RO_DATAATE ) > AnoMes( dReajuste ) ) .And. nAtulTar == 2 
+			RecLock( "SRO", .F. )
+				SRO->RO_VALOR   := ( aTarReaj[nPos,D_NOVO] )                      
+				SRO->RO_VALTOT  := ( aTarReaj[nPos,D_NOVO] * SRO->RO_QUANT )
+				If lTemSeq
+					SRO->RO_TPALT		:= cTipAum
+				EndIf
+			MsUnLock() 
+			nNumRegs++
+		Endif
+		Endif
+
+	dbSkip()
+EndDo
+
+cFilMat	:= Space(FWGETTAMFILIAL) + Space( TamSX3("RA_MAT")[1] )
+	For nx := 1 to len(aSRO)
+	If aSro[nx,1] + aSro[nx,2] # cFilMat
+		cFilMat := aSro[nx,1] + aSro[nx,2]
+		cAjFilMat:= "a" + StrTran(cFilMat," ","_")
+		aSROSeq := aClone( &( cAjFilMat ) )
+	EndIf
+	aSort( aSROSeq,,, { |x,y| x > y } )
+	RecLock("SRO",.T.) 
+		SRO->RO_FILIAL   := aSro[nx,1]
+		SRO->RO_MAT      := aSro[nx,2]
+		SRO->RO_TIPO     := aSro[nx,3]
+		SRO->RO_DATA     := aSro[nx,4]
+  			If  !Empty(aSro[nx,5]) 
+				SRO->RO_DATAATE  := (aSro[nx,5])
+			EndIf	
+		SRO->RO_CODTAR 	 := aSro[nx,6]
+		SRO->RO_QTDSEM 	 := aSro[nx,7]
+		SRO->RO_QUANT  	 := aSro[nx,8]
+		SRO->RO_VALOR  	 := aSro[nx,9]
+		SRO->RO_VALTOT 	 := aSro[nx,10]
+		SRO->RO_CC		 := aSro[nx,11]
+		SRO->RO_VERBA 	 := aSro[nx,12]
+	If lTemSeq .And. !Empty( aSROSeq )
+		cNewSeq 			:= Soma1( aSROSeq[1] )
+		SRO->RO_SEQ			:= cNewSeq
+		aAdd( aSROSeq, cNewSeq )
+
+		SRO->RO_CONTSEQ		:= aSro[nx,13]
+		SRO->RO_TPALT		:= cTipAum
+	EndIf
+	
+	If lTemItem
+		SRO->RO_ITEM := aSro[nx,14]
+	EndIf
+	
+	If lTemClVl
+		SRO->RO_CLVL := aSro[nx,15]
+	EndIf
+	MsUnLock() 
+	Next 
+
+dbSelectArea(cAlias)
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³a150TransfºAutor  ³MICROSIGA           º Data ³  13/01/00   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Converte o Campo de Acordo com o Tipo                       º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Generico                                                   º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 10/02/00 ==> Function a150Transf
+Static Function a150Transf(nCont)
+cCpoRet := ""
+If ALLTRIM(R5_TIPO) == "C"
+	cCpoRet := aColsTar[nCont,nCol]
+ElseIf ALLTRIM(R5_TIPO) == "N"
+	cCpoRet := Str(aColsTar[nCont,nCol],R5_TAMANHO,R5_DECIMAL)
+ElseIf ALLTRIM(R5_TIPO) == "D"
+	cCpoRet := dTos(aColsTar[nCont,nCol])
+Endif
+If cCpoRet == NIL
+	cCpoRet := ""
+Endif
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³Atualiza  ºAutor  ³MICROSIGA           º Data ³  13/01/00   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Atualiza o Array aPosicao1                                  º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Generico                                                   º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 10/02/00 ==> Function Atualiza
+Static Function Atualiza()
+aPosicao1[1,1] := aTarReaj[nElem,D_ANTIGO]
+aPosicao1[1,2] := aTarReaj[nElem,D_PERC]
+aPosicao1[1,3] := aTarReaj[nElem,D_REAJ]
+aPosicao1[1,4] := aTarReaj[nElem,D_NOVO]
+aPosicao1[1,5] := aTarReaj[nElem,D_ARRE]
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³fAtuCont  ºAutor  ³MICROSIGA           º Data ³  13/01/00   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Atualiza os Totalizadores                                   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Generico                                                   º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 10/02/00 ==> Function fAtuCont
+Static Function fAtuCont()
+
+Local X
+
+If nTipAtu == 1    
+	aArray1 := aTotTar1	
+ElseIf nTipAtu == 2
+	aArray1 := aTotFun1
+ElseIf nTipAtu == 3
+	aArray1 := aTotCC1
+ElseIf nTipAtu == 4
+	aArray1 := aTotFil1
+Else
+	aArray1 := aTotEmp1
+EndIf
+
+If  Len(aArray1) > 0
+	For x := 1 To 5
+		aArray1[1,x] := aArray1[1,x] + aPosicao1[1,x]
+	Next x
+Else
+	aArray1 := Aclone(aPosicao1)
+Endif
+
+If nTipAtu == 1
+	aTotTar1 := aArray1	
+ElseIf nTipAtu == 2	
+	aTotFun1 := aArray1
+ElseIf nTipAtu == 3	
+	aTotCC1 := aArray1
+ElseIf nTipAtu == 4	
+	aTotFil1 := aArray1
+Else
+	aTotEmp1 := aArray1
+EndIf
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³fImpReajTaºAutor  ³MICROSIGA           º Data ³  13/01/00   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Imprime a Linha de Totais                                   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Generico                                                   º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 10/02/00 ==> Function fImpReajTar
+Static Function fImpReajTar()
+cDet := STR0038 // "TAREFA ANTIGA          PERCENTUAL          REAJUSTE          NOVA TAREFA          ARREDONDAMENTO"
+Impr(cDet,"C")
+cDet :=        Space(01) + TRANSFORM(aTotaliza[1,1],"@E 999999999.9999")
+cDet := cDet + Space(06) + TRANSFORM(aTotaliza[1,2],"@E 99999.999999")
+cDet := cDet + Space(04) + TRANSFORM(aTotaliza[1,3],"@E 999999999.9999")		
+cDet := cDet + Space(07) + TRANSFORM(aTotaliza[1,4],"@E 999999999.9999")
+cDet := cDet + Space(10) + TRANSFORM(aTotaliza[1,5],"@E 999999999.9999")
+Impr(cDet,"C")
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³Monta_TFA ºAutor  ³R.H.	             º Data ³  12/01/00   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³ Monta Arquivo Temporario Para Impressao dos Tarefeiros     º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Local                                                      º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 10/02/00 ==> Function Monta_TFA
+Static Function Monta_TFA()
+Cria_TFA()
+dbSelectArea("SRA")
+dbSetOrder(1)
+dbSelectArea("SRO")
+dbGoTop()
+While !EOF()
+                                                
+	//Imprime relatorio do lancamento atualizado no mes corrente e subsequentes
+	If SRO->RO_CODTAR >= cTarDe .And. SRO->RO_CODTAR <= cTarAte .And. nAtulTar == 2
+		If ( Empty( SRO->RO_DATAATE ) .Or. ( SRO->RO_DATAATE >= dReajuste ) ) 
+			dbSelectArea("SRA")
+			dbSeek( SRO->RO_FILIAL+SRO->RO_MAT )
+		Else  
+			dbSkip()
+			Loop
+		Endif                                   
+
+	//Imprime relatorio do lancamento atualizado no mes corrente		
+	ElseIf SRO->RO_CODTAR >= cTarDe .And. SRO->RO_CODTAR <= cTarAte .And. nAtulTar == 1	 
+		If Empty( SRO->RO_DATAATE ) .Or. ( ( SRO->RO_DATAATE >= dReajuste ) .And. ( Month( dReajuste ) == Month( SRO->RO_DATAATE ) ) ) // Verifica se esta no mes corrente
+			dbSelectArea("SRA")
+			dbSeek( SRO->RO_FILIAL+SRO->RO_MAT )
+		Else 
+			dbSkip()
+			Loop			
+		Endif  
+	
+	Else
+		dbSkip()
+		Loop			 
+	EndIf
+                                          
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Consiste Parametrizacao do Intervalo de Impressao            ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If	( SRA->RA_MAT     < cMatDe ) .Or. ( SRA->RA_MAT     > cMatAte ) .Or. ;
+		( SRA->RA_CC      < cCcDe  ) .Or. ( SRA->RA_CC      > cCcAte  ) .Or. ;
+		( SRA->RA_CODFUNC < cFunDe ) .Or. ( SRA->RA_CODFUNC > cFunAte )
+		dbSelectArea("SRO")
+		dbSkip()
+		Loop
+	EndIf
+
+	/*
+	ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	³Consiste Filiais e Acessos                                             ³
+	ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+	IF !( SRA->RA_FILIAL $ fValidFil() .and. Eval( cAcessaSRA ) )
+		dbSelectArea("SRA")
+		dbSkip()
+		Loop
+	EndIF
+			
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Verifica Situacao do Funcionario               				 ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If !( SRA->RA_SITFOLH $ " *F*A" )
+		dbSelectArea("SRO")
+		dbSkip()
+		Loop
+	Endif
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Verifica Categoria do Funcionario               		 	 ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If !( SRA->RA_CATFUNC $ cCateg )
+		dbSelectArea("SRO")
+		dbSkip()
+		Loop
+	Endif
+
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Grava o Funcionario no TFA Para Emissao do Relatorio         ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	dbSelectArea("TFA")
+	RecLock( "TFA", .T. )
+		
+	TFA->FA_FILIAL  := SRA->RA_FILIAL
+	TFA->FA_MAT     := SRA->RA_MAT
+	TFA->FA_CC      := SRA->RA_CC
+	TFA->FA_CODFUNC := SRA->RA_CODFUNC
+	TFA->FA_NOME    := SRA->RA_NOME
+	TFA->FA_ADMISSA := SRA->RA_ADMISSA
+	TFA->FA_CATFUNC := SRA->RA_CATFUNC
+	TFA->FA_SINDICA := SRA->RA_SINDICA
+	TFA->FA_VERBA   := SRO->RO_VERBA
+	TFA->FA_DATADE  := SRO->RO_DATA
+	TFA->FA_CODTAR  := SRO->RO_CODTAR
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Checa a existencia do campo RO_DATAATE no arquivo SRO        ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If Type("SRO->RO_DATAATE") #"U"
+		TFA->FA_DATAATE := SRO->RO_DATAATE
+	EndIf
+	MsUnLock()
+	dbSelectArea("SRO")  
+	dbSkip()
+EndDo
+Return
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o	 ³ Cria_TFA	³ Autor ³ R.H. -	     		| Data ³ 12.01.99 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Criar Arquivo de Trabalho Para Relatorio de Tarefeiros     |±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe	 ³ CRIA_TFA()	 											  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso		 ³ Generico 												  ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß/*/
+// Substituido pelo assistente de conversao do AP5 IDE em 10/02/00 ==> FUNCTION Cria_Tfa
+Static FUNCTION Cria_Tfa()
+cArqDBF := CriaTrab(NIL,.f.)
+aFields := {}
+AADD(aFields,{"FA_FILIAL" ,"C",FWGETTAMFILIAL,0})
+AADD(aFields,{"FA_MAT"    ,"C",06,0})
+AADD(aFields,{"FA_CC"     ,"C",09,0})
+AADD(aFields,{"FA_CODFUNC","C",04,0})
+AADD(aFields,{"FA_ADMISSA","D",08,0})
+AADD(aFields,{"FA_CATFUNC","C",01,0})
+AADD(aFields,{"FA_SINDICA","C",02,0})
+AADD(aFields,{"FA_CODTAR" ,"C",03,0})
+AADD(aFields,{"FA_VERBA"  ,"C",03,0})
+AADD(aFields,{"FA_NOME"   ,"C",30,0})
+AADD(aFields,{"FA_DATADE" ,"D",08,0})
+AADD(aFields,{"FA_DATAATE","D",08,0})
+
+DbCreate(cArqDbf,aFields)
+DbUseArea(.T.,,cArqDbf,"TFA",.F.)
+If nOrdem == 1
+	cIndCond := "FA_FILIAL+FA_MAT+FA_CODTAR"
+ElseIf nOrdem == 2
+	cIndCond := "FA_FILIAL+FA_CC+FA_MAT+FA_CODTAR"
+Else                                        
+	cIndCond := "FA_FILIAL+FA_CODFUNC+FA_MAT+FA_CODTAR"
+EndIf
+cArqNtx  := CriaTrab(NIL,.f.)
+IndRegua("TFA",cArqNtx,cIndCond,,,STR0035)  //"Selecionando Registros..."
+dbGoTop()
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³fTotalTareºAutor  ³MICROSIGA           º Data ³  13/01/00   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Imprime os Totais das Tarefas								  º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Generico                                                   º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 10/02/00 ==> Function fTotalTarefa
+Static Function fTotalTarefa()
+cDet:=STR0034+aInfo[3]		//"Empresa: "
+Impr(cDet,"C")
+Impr("","C")
+
+aTotaliza := aTotTar1
+fImpReajTar()
+aTotTar1  :={}
+
+Impr("","F")
+Return
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³fImpTar   ºAutor  ³MICROSIGA           º Data ³  13/01/00   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Imprime a Tarefa do Cadastro de Parametros                  º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Generico                                                   º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 10/02/00 ==> Function fImpTar
+Static Function fImpTar(nCnt)
+cDet := STR0026+cFilAnt+Space(2)+STR0036+aTarReaj[nCnt,D_CODIGO]+Space(2)+;  	  // "FILIAL:"#"TAREFA: "
+		 Left(aTarReaj[nCnt,D_DESCRI]+Space(30),30)+STR0037+aTarReaj[nCnt,D_VERBA] //  " VERBA: "
+
+Impr(cDet,"C")
+Impr("","C")
+                        
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Impressao do Array aPosicao1					 			 |
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aTotaliza := aPosicao1
+fImpReajTar()
+
+If nCnt+1 <= Len(aTarReaj)
+	Impr("","C")
+	cDet := Repl("-",132)
+	Impr(cDet,"C")
+Else 
+	Impr("","C")
+	cDet := Repl("#",132)
+	Impr(cDet,"C")
+EndIf
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³fTestaTotaºAutor  ³MICROSIGA           º Data ³  13/01/00   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Imprime as Quebras Totalizando-as                           º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Generico                                                   º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 10/02/00 ==> Function fTestaTotal
+Static Function fTestaTotal()
+dbSelectArea( "TFA" )
+cFilialAnt := TFA->FA_FILIAL
+cCcAnt     := TFA->FA_CC
+cFuAnt     := TFA->FA_CODFUNC
+dbSkip()
+
+If Eof()
+	fImpFu()
+	fImpCc()
+	fImpFil()
+	fImpEmp()
+Elseif cFilialAnt #TFA->FA_FILIAL
+	fImpFu()
+	fImpCc()
+	fImpFil()
+Elseif cCcAnt #TFA->FA_CC
+	fImpCc()
+Elseif cFuAnt #TFA->FA_CODFUNC
+	fImpFu()
+Endif
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³fImpReajFuºAutor  ³MICROSIGA           º Data ³  13/01/00   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Imprime a Linha de Totais dos Funcionarios                  º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Generico                                                   º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 10/02/00 ==> Function fImpReajFun
+Static Function fImpReajFun()
+
+// Tratamento para determinar os espacos entre as Datas de Tarefas com ou sem 4 digitos no Ano (12 ou 2012)
+Local nTamDtDe	:= LEN( DTOC(TFA->FA_DATADE) ) 	// Define o tamanho da Data DE a ser impressa
+Local nTamDtAte	:= LEN( DTOC(TFA->FA_DATAATE) ) 	// Define o tamanho da Data ATE a ser impressa
+
+If lImpFunc
+	If lImpCabe
+		cDet := STR0039 // "TAREFA     VERBA     DT.TAREFA DE     DT.TAREFA ATE     TAREFA ANTIGA     PERCENTUAL     REAJUSTE     NOVA TAREFA     ARREDONDAMENTO"
+		Impr(cDet,"C")
+	EndIf
+
+	cDet := Space(2) + TFA->FA_CODTAR + Space(7) + TFA->FA_VERBA + Space( 07 )
+	cDet := cDet + DTOC(TFA->FA_DATADE) + Space(IIF(nTamDtDe==10,07,10)) + DTOC(TFA->FA_DATAATE) + Space(IIF(nTamDtAte==10,06,07))
+
+	cDet := cDet + TRANSFORM(aTotaliza[1,1],"@E 999999999.9999")
+	cDet := cDet + Space(05) + TRANSFORM(aTotaliza[1,2],"@E 999.999999")
+	cDet := cDet + Space(01) + TRANSFORM(aTotaliza[1,3],"@E 999999999.9999")		
+	cDet := cDet + Space(02) + TRANSFORM(aTotaliza[1,4],"@E 999999999.9999")
+	cDet := cDet + Space(05) + TRANSFORM(aTotaliza[1,5],"@E 9999999.9999")
+Else
+	cDet := STR0038 // "TAREFA ANTIGA          PERCENTUAL          REAJUSTE          NOVA TAREFA          ARREDONDAMENTO"
+	Impr(cDet,"C")
+	cDet := Space(01) + TRANSFORM(aTotaliza[1,1],"@E 999999999.9999")
+	cDet := cDet + Space(06) + TRANSFORM(aTotaliza[1,2],"@E 99999.999999")
+	cDet := cDet + Space(04) + TRANSFORM(aTotaliza[1,3],"@E 999999999.9999")		
+	cDet := cDet + Space(07) + TRANSFORM(aTotaliza[1,4],"@E 999999999.9999")
+	cDet := cDet + Space(10) + TRANSFORM(aTotaliza[1,5],"@E 999999999.9999")
+EndIf
+Impr(cDet,"C")
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³fImpFun   ºAutor  ³MICROSIGA           º Data ³  13/01/00   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Imprime o Funcionario                                       º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Generico                                                   º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 10/02/00 ==> Function fImpFun
+Static Function fImpFun()
+lImpCabe := .F.        // Indica se deve ser impresso o cabecalho das tarefas
+lImpFunc := .T.        // Indica que o funcionario sera impresso
+If lNovaMat
+	cDet := STR0026+TFA->FA_FILIAL+STR0027+TFA->FA_CC+STR0028+TFA->FA_MAT+; 									    // "FILIAL: "#"CCTO: "#" MAT: "
+			STR0029+TFA->FA_NOME+STR0030+DTOC(TFA->FA_ADMISSA)+STR0031+TFA->FA_CATFUNC+STR0032+TFA->FA_SINDICA  // " NOME: "#"DT.ADMISSAO: "#"CATEGORIA"#"SINDICATO"
+	Impr(cDet,"C")
+	Impr("","C")
+	lImpCabe := .T.
+EndIf
+
+aTotaliza := aPosicao1
+fImpReajFun()
+
+If lMudouMat
+	Impr("","C")
+	cDet := Repl("-",132)
+	Impr(cDet,"C")
+EndIf
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³fImpFu    ºAutor  ³MICROSIGA           º Data ³  13/01/00   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Imprime a Quebra Por Funcao                                 º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Generico                                                   º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 10/02/00 ==> Function fImpFu
+Static Function fImpFu()
+If Len(aTotFun1) == 0 .Or. nOrdem #3
+	Return
+Endif
+
+cDet:=STR0026+cFilialAnt+STR0033+cFuAnt+" - "+DescFun(cFuAnt,cFilialAnt)	//"FILIAL: "###" FUNCAO: "
+Impr(cDet,"C")
+Impr("","C")
+           
+lImpFunc  := .F.        // Indica que o totalizador sera impresso
+aTotaliza := aTotFun1   //  Array que sera impressa dentro de fImpReajFun
+fImpReajFun()
+
+aTotFun1 :={}
+
+Impr("","C")
+cDet := Repl("=",132)
+Impr(cDet,"C")
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³fImpCc    ºAutor  ³MICROSIGA           º Data ³  13/01/00   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Imprime a Quebra Por Centro de Custo                        º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Generico                                                   º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 10/02/00 ==> Function fImpCc
+Static Function fImpCc()
+If Len(aTotCc1) == 0 .Or. nOrdem #2
+	Return
+Endif
+
+cDet:=STR0026+cFilialAnt+STR0027+cCcAnt+" - "+DescCc(cCcAnt,cFilialAnt)	//"FILIAL: "###" CCTO: "
+Impr(cDet,"C")
+Impr("","C")
+
+lImpFunc  := .F.        // Indica que o totalizador sera impresso
+aTotaliza := aTotCC1    //  Array que sera impressa dentro de fImpReajFun
+fImpReajFun()
+
+aTotCc1 :={}
+
+Impr("","C")
+cDet := Repl("=",132)
+Impr(cDet,"C")
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³fImpFil   ºAutor  ³MICROSIGA           º Data ³  13/01/00   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Imprime a Quebra Por Filial                                 º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Generico                                                   º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 10/02/00 ==> Function fImpFil
+Static Function fImpFil()
+If Len(aTotFil1) == 0
+	Return
+Endif
+
+cDescFil := aInfo[1] + Space(25)
+cDet     := STR0026+cFilialAnt+" - "+cDescFil	//"FILIAL: "
+Impr(cDet,"C")
+Impr("","C")
+           
+lImpFunc  := .F.        // Indica que o totalizador sera impresso
+aTotaliza := aTotFil1   //  Array que sera impressa dentro de fImpReajFun
+fImpReajFun()
+
+aTotFil1 :={}
+
+Impr("","C")
+cDet := Repl("#",132)
+Impr(cDet,"C")
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³fImpEmp   ºAutor  ³MICROSIGA           º Data ³  13/01/00   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Imprime a Quebra Por Empresa                                º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ Generico                                                   º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+// Substituido pelo assistente de conversao do AP5 IDE em 10/02/00 ==> Function fImpEmp
+Static Function fImpEmp()
+If Len(aTotEmp1) == 0
+	Return
+Endif
+
+cDet:=STR0034+aInfo[3]		//"Empresa: "
+Impr(cDet,"C")
+Impr("","C")
+
+lImpFunc  := .F.        // Indica que o totalizador sera impresso
+aTotaliza := aTotEmp1   //  Array que sera impressa dentro de fImpReajFun
+fImpReajFun()
+
+aTotEmp1 :={}
+
+Impr("","F")
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o   ³REAJLOK    ³ Autor ³ R.H.					³ Data ³ 21/12/99 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o³Critica linha digitada                                       ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso     ³ Generico                                                    ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+Function REAJLOK
+nLinGetD := n
+lRetorna := .T.
+Continua := .F.
+aFaixas1 := {}
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Desconsidera Faixas deletadas                                ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If aCols[nLinGetD,5] == .F.
+	If aCols[nLinGetD,1] > aCols[nLinGetD,2]
+		Help(" ",1,"GR200FAIXA")
+		lRetorna := .F.
+	Endif
+	
+	If nLinGetD > 1
+		If aCols[nLinGetD,1] <= aCols[nLinGetD-1,2]
+			Help(" ",1,"GR200FAIXA")
+			lRetorna := .F.
+		Endif
+	Endif
+	
+	If ( aCols[nLinGetD,3] == 0 ) .And. ( aCols[nLinGetD,4] == 0 )
+		Help(" ",1,"GR200ZEROS")
+		lRetorna := .F.
+	Endif
+Endif
+// Substituido pelo assistente de conversao do AP5 IDE em 10/02/00 ==> __Return(lRetorna)
+Return(lRetorna)        // incluido pelo assistente de conversao do AP5 IDE em 10/02/00

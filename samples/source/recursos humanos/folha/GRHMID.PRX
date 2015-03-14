@@ -1,0 +1,233 @@
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+
+User Function Grhmid()        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+
+Local CT:=0
+
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP5 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("CSAVSCR1,CSAVCUR1,CSAVROW1,CSAVCOL1,CSAVCOR1,WNREL")
+SetPrvt("CSTRING,ASTMID,TREGS,M_MULT,P_ANT,P_ATU")
+SetPrvt("P_CNT,M_SAV20,M_SAV7,CNOMEIND,CANOI")
+SetPrvt("CCPANOI,CMESI,CANOF,CCPANOF,CMESF,CANOAT")
+SetPrvt("CCPANOAT,ACCUSTO,AMATR,AVALOR,CCCUSTO,CNOMEARQ")
+SetPrvt("CINDCOND,CFOR,CARQNTX,NLOCAR,NPTEVAL,")
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ GRHMID   ³ Autor ³ Wagner Serrano        ³ Data ³ 07/11/97 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Geracao de Arquivo de Analise da Situacao RH               ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe e ³ GRHMID (void)                                              ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ RDMAKE                                                     ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Salva a Integridade dos dados de Entrada                     ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+cSavScr1        := SaveScreen(3,0,24,79)
+cSavCur1        := SetCursor(0)
+cSavRow1        := ROW()
+cSavCol1        := COL()
+cSavCor1        := SetColor("bg+/b,,,")
+wnrel           := "GRUMID"
+cString         := "SRD"
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas                          ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If Pergunte("GRHMID",.T.)
+Else
+    Return
+EndIf
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros                        ³
+//³ mv_par01              Qual Empresa                          ³
+//³ mv_par02              Data Inicial                          ³
+//³ mv_par03              Data Final                            ³
+//³ mv_par04              Append/Replace                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+If LastKey() == 27 
+	RestScreen(3,0,24,79,cSavScr1)
+	Return( NIL )
+Endif
+
+If File("GRHMID" + GetDBExtension())
+Else
+    aStMid:={}
+    Aadd(aStMid,{"EMPR","C",2,0})
+    Aadd(aStMid,{"ANO","C",4,0})
+    Aadd(aStMid,{"MES","C",3,0})
+    Aadd(aStMid,{"MES2","C",2,0})
+    Aadd(aStMid,{"CC","C",9,0})
+    Aadd(aStMid,{"VALOR","N",18,2})
+    Aadd(aStMid,{"ADM","N",3,0})
+    Aadd(aStMid,{"DEM","N",3,0})
+    dbCreate("GRHMID",aStMid)
+EndIf
+tregs  :=RecCount()
+m_mult :=1
+IF tregs>0
+	m_mult:=70/tregs
+Endif
+p_ant  :=4
+p_atu  :=4
+p_cnt  := 0
+m_sav20:= dcursor(3)
+m_sav7 := Savescreen(23,0,24,79)
+
+cNomeInd:="SRDWXYZ"
+cAnoI:=Space(4)
+cCpAnoI:=Space(2)
+cMesI:=Space(2)
+cAnoF:=Space(4)
+cCpAnoF:=Space(2)
+cMesF:=Space(2)
+cAnoAt:=Space(2)
+cCpAnoAt:=Space(2)
+aCCusto:={}
+aMatr:={}
+aValor:={}
+cCCusto:=Space(9)
+cNomeArq:="RC"+mv_par01+"a"
+
+dbUseArea(.T.,,cNomeArq,,.F.)
+
+dbUseArea(.T.,,"GRHMID",,.F.)
+If mv_par04=="R"
+    Zap        
+EndIf
+// Index On ANO+MES2+DIA+SRV To GRHMID
+
+dbSelectArea("SRA")
+dbSetOrder(1)
+dbSelectArea("SRD")
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Criando Indice temporario do Acumulado (SRD).                ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+//cIndCond := "RD_FILIAL + RD_DATARQ +RD_MAT"
+//cFor     := ''   //RD_DATARQ >= "'+cAnoBase+'00'+'" .And. RD_DATARQ <= "'+cAnoBase+'99'+'"'
+//cArqNtx  := CriaTrab(Nil,.F.)
+//IndRegua("SRD",cArqNtx,cIndCond,,cFor,"Selecionando Registros...")
+//dbGoTop()
+
+cAnoI:=SubStr(Dtos(mv_par02),3,2)
+cMesI:=SubStr(Dtos(mv_par02),5,2)
+If Val(cAnoI)<50
+    cCpAnoI:="20"
+Else
+    cCpAnoI:="19"
+EndIf
+
+cAnoF:=SubStr(Dtos(mv_par03),3,2)
+cMesF:=SubStr(Dtos(mv_par03),5,2)
+If Val(cAnoF)<50
+    cCpAnoF:="20"
+Else
+    cCpAnoF:="19"
+EndIf
+
+dbSeek(mv_par01+cAnoI+cMesI,.T.)
+While !Eof()
+    If LastKey()==286
+	Exit
+    Endif
+    
+    cAnoAt:=SubStr(RD_DATARQ,1,2)
+    If Val(cAnoAt)<50
+	cCpAnoAt:="20"
+    Else
+	cCpAnoAt:="19"
+    EndIf
+
+    If cCpAnoAt+RD_DATARQ>cCpAnoF+cAnoF+cMesF
+	Exit
+    EndIf
+
+    dbSelectArea("SRA")
+    dbSeek(SRD->RD_FILIAL+SRD->RD_MAT) // Pos.Funcionarios p/obter C.C.
+    cCCusto:=SRA->RA_CC
+    
+    If RA_SITFOLH=="D"
+	dbSelectArea("SRD")
+	While SRA->RA_FILIAL+SRA->RA_MAT==SRD->RD_FILIAL+SRD->RD_MAT
+	    dbSkip()
+	EndDo
+	Loop
+    EndIf
+    dbSelectArea("SRD")
+    
+    nLocAr:=AsCan(aCCusto,RD_FILIAL+cCpAnoAt+RD_DATARQ+cCCusto)
+    If nLocAr==0    
+	Aadd(aCCusto,RD_FILIAL+cCpAnoAt+RD_DATARQ+cCCusto)
+	nPteVal:=0
+	If RD_PD<"400"
+	    nPteVal:=nPteVal+RD_VALOR
+	ElseIf RD_PD>="400" .And. RD_PD<"700"
+	    nPteVal:=nPteVal-RD_VALOR
+	EndIf
+	Aadd(aValor,nPteVal)
+    Else
+	If RD_PD<"400" 
+	    aValor[nLocAr]:=aValor[nLocAr]+RD_VALOR
+	ElseIf RD_PD>="400" .And. RD_PD<"700"
+	    aValor[nLocAr]:=aValor[nLocAr]-RD_VALOR
+	EndIf
+    EndIf
+
+    //ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+    //³ Movimentacao do Cursor da Barra de Gauge                     ³
+    //ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+    
+    p_cnt:=p_cnt+1
+    p_atu:=3+INT(p_cnt*m_mult)
+    If p_atu != p_ant
+	p_ant:=p_atu
+	RestScreen(23,0,24,79,M_SAV7)
+	RestScreen(23,P_ATU,24,P_ATU+3,M_SAV20)
+    EndIf
+    dbSelectArea("SRD")
+    dbSkip()
+EndDo
+dbSelectArea("GRHMID")
+For CT := 1 To Len(aCCusto)
+    RecLock("GRHMID",.T.)
+    FieldPut(FieldPos("EMPR"),SubStr(aCCusto[CT],1,2))
+    FieldPut(FieldPos("ANO"),SubStr(aCCusto[CT],3,4))
+    FieldPut(FieldPos("MES2"),SubStr(aCCusto[CT],7,2))
+    FieldPut(FieldPos("MES"),SubStr(MesExtenso(Val(MES2)),1,3))
+    FieldPut(FieldPos("CC"),SubStr(aCCusto[CT],9,9))
+    FieldPut(FieldPos("VALOR"),aValor[CT])
+//    FieldPut(FieldPos("QTDE"),aQtde[CT3])
+    MsUnlock()
+Next
+dbCloseArea()
+dbSelectArea( "SRD" )
+RetIndex( "SRD" )
+dbSetOrder(1)
+fErase( cArqNtx + OrdBagExt() )
+
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Restaura a Integridade dos dados                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+RestScreen(3,0,24,79,cSavScr1)
+SetCursor(cSavCur1)
+
+FT_PFLUSH()
+// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==> __Return()
+Return()        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+

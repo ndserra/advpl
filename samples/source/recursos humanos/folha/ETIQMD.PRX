@@ -1,0 +1,372 @@
+#INCLUDE "PROTHEUS.CH"
+#INCLUDE "RWMAKE.CH"
+#INCLUDE "ETIQMD.CH"
+
+User Function Etiqmd()        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP5 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("CBTXT,CSTRING,AORD,CDESC1,CDESC2,CDESC3")
+SetPrvt("LEND,ARETURN,NOMEPROG,AMALADIR,NLASTKEY,CPERG")
+SetPrvt("AINFO,AT_PRG,WCABEC0,WCABEC1,WCABEC2,CONTFL")
+SetPrvt("LI,NTAMANHO,TITULO,WNREL,NORDEM,CFILDE")
+SetPrvt("CFILATE,CCCDE,CCCATE,CMATDE,CMATATE,CNOMEDE")
+SetPrvt("CNOMEATE,CCHAPADE,CCHAPAATE,CSITUACAO,CCATEGORIA,DDATAREF")
+SetPrvt("NCOLUNAS,CINICIO,CFIM,CINDCOND,CFOR,CARQNTX")
+SetPrvt("CHAVE,NCOL,NALIN,CFILIALANT,CCCANT")
+SetPrvt("CTIPO")
+
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 05/07/00 ==>    #DEFINE PSAY SAY
+
+// Movido para o inicio do arquivo pelo assistente de conversao do AP5 IDE em 05/07/00 ==> #INCLUDE "ETIQMD.CH"
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ ETIQMD   ³ Autor ³ R.H. - Fernando Joly  ³ Data ³ 07/12/98 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Emiss„o da Etiqueta para Mala Diretao                      ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ RdMake                                                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³         ATUALIZACOES SOFRIDAS DESDE A CONSTRU€AO INICIAL.             ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Programador ³ Data   ³ BOPS ³  Motivo da Alteracao                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Kleber      ³07/12/98³17393a³Conversao para RdMake                     ³±± 
+±±³Marina      ³30/08/00³------³Validacao Filial/Acesso.Limpeza DOS.      ³±±
+±±³Priscila    ³05/05/03³061502³Alt. para controlar o salto de pagina.    ³±±
+±±³Alex        ³19/08/09³020747³Ajuste no Grupo de Campos filial          ³±±
+±±³            ³        ³ /2009³tratamento para não considerar 2 posições ³±±
+±±³            ³        ³      ³fixas.                                    ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis Locais (Basicas)                            ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+CbTxt   := ""     //Ambiente
+cString := "SRA"  // alias do arquivo principal (Base)
+aOrd    := {STR0001,STR0002,STR0003,STR0004} //"Matricula"###"Centro de Custo"###"Nome"###"Chapa"
+cDesc1  := STR0005      //"Emiss„o de Etiquetas P/ Mala Direta"
+cDesc2  := STR0006      //"Ser  impresso de acordo com os parametros solicitados pelo"
+cDesc3  := STR0007      //"usu rio."
+   
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis Private(Basicas)                            ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+lEnd     := .F.
+aReturn  := {STR0008,1,STR0009,2,2,1,"",1 }     //"Zebrado"###"Administra‡„o"
+NomeProg := "ETIQMD"
+aMalaDir := {}
+nLastKey := 0
+cPerg    := "GPR360"
+   
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Variaveis Private(Programa)                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+aInfo := {}
+   
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis Utilizadas na funcao IMPR                          ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+AT_PRG   := "ETIQMD"
+wCabec0  := 2
+wCabec1  := ""
+wCabec2  := ""
+Contfl   := 1
+Li       := 0
+nTamanho := "M"
+
+/*
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ Variaveis de Acesso do Usuario                               ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+cAcessaSRA	:= &( " { || " + ChkRH( "ETIQMD" , "SRA" , "2" ) + " } " )
+ 
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Verifica as perguntas selecionadas                           ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+pergunte("GPR360",.F.)
+   
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para parametros                         ³
+//³ MV_PAR01        //  Filial De                                ³
+//³ MV_PAR02        //  Filial Ate                               ³
+//³ MV_PAR03        //  Centro de Custo De                       ³
+//³ MV_PAR04        //  Centro de Custo Ate                      ³
+//³ MV_PAR05        //  Matricula De                             ³
+//³ MV_PAR06        //  Matricula Ate                            ³
+//³ MV_PAR07        //  Nome De                                  ³
+//³ MV_PAR08        //  Nome Ate                                 ³
+//³ MV_PAR09        //  Chapa De                                 ³
+//³ MV_PAR10        //  Chapa Ate                                ³
+//³ MV_PAR11        //  Situa‡äes                                ³
+//³ MV_PAR12        //  Categorias                               ³
+//³ MV_PAR13        //  Data Referencia                          ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+Titulo := STR0010          //"EMISSO DE ETIQUETAS P/ MALA DIRETA"
+   
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Envia controle para a funcao SETPRINT                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+wnrel:="ETIQMD"            //Nome Default do relatorio em Disco
+wnrel:=SetPrint(cString,wnrel,cPerg,Titulo,cDesc1,cDesc2,cDesc3,.F.,aOrd,.F.)
+   
+If nLastKey == 27
+   Return
+Endif
+
+SetDefault(aReturn,cString)
+
+If nLastKey == 27
+   Return
+Endif
+   
+RptStatus({||GR360Imp()})// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==>    RptStatus({||Execute(GR360Imp)})
+Return Nil
+// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==>    function GR360Imp
+Static function GR360Imp()
+
+Local T
+   
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Carregando variaveis MV_PAR?? para Variaveis do Sistema.     ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+nOrdem     := aReturn[8]
+cFilDe     := MV_PAR01
+cFilAte    := MV_PAR02
+cCcDe      := MV_PAR03
+cCcAte     := MV_PAR04
+cMatDe     := MV_PAR05
+cMatAte    := MV_PAR06
+cNomeDe    := MV_PAR07
+cNomeAte   := MV_PAR08
+cChapaDe   := MV_PAR09
+cChapaAte  := MV_PAR10
+cSituacao  := MV_PAR11
+cCategoria := MV_PAR12
+dDataref   := MV_PAR13
+nColunas   := If( MV_PAR14 > 4 , 4 , MV_PAR14 )
+   
+dbSelectArea( "SRA" )
+If nOrdem == 1
+   dbSetOrder( 1 )
+ElseIf nOrdem == 2
+   dbSetOrder( 2 )
+ElseIf nOrdem == 3
+   dbSetOrder(3)
+ElseIf nOrdem == 4
+   dbSetOrder(1)
+Endif
+   
+dbGoTop()
+   
+If nOrdem == 1
+   dbSeek(cFilDe + cMatDe,.T.)
+   cInicio := SRA->RA_FILIAL + SRA->RA_MAT
+   cFim    := cFilAte + cMatAte
+ElseIf nOrdem == 2
+   dbSeek(cFilDe + cCcDe + cMatDe,.T.)
+   cInicio := SRA->RA_FILIAL + SRA->RA_CC + SRA->RA_MAT
+   cFim    := cFilAte + cCcAte + cMatAte
+ElseIf nOrdem == 3
+   dbSeek(cFilDe + cNomeDe + cMatDe,.T.)
+   cInicio := SRA->RA_FILIAL + SRA->RA_NOME + SRA->RA_MAT
+   cFim    := cFilAte + cNomeAte + cMatAte
+ElseIf nOrdem == 4
+   dbSeek(cFilDe + cMatDe,.T.)
+   cInicio := SRA->RA_FILIAL + SRA->RA_MAT
+   cFim    := cFilAte + cMatAte
+Endif
+   
+#IFNDEF TOP
+   If nOrdem == 4
+      cIndCond:= "SRA->RA_FILIAL + SRA->RA_CHAPA"
+      cFor :="(SRA->RA_FILIAL + SRA->RA_CHAPA >= cFilDe + cChapaDe) "
+      cFor := cFor + ".And. (SRA->RA_FILIAL + SRA->RA_CHAPA <= cFilAte + cChapaAte)"
+   Endif
+#ELSE
+   If nOrdem == 4
+      cIndCond:= "SRA->RA_FILIAL + SRA->RA_CHAPA"
+      cFor :='(RA_FILIAL + RA_CHAPA >= "'+cFilDe + cChapaDe+'")'
+      cFor := cFor + '.And. (RA_FILIAL + RA_CHAPA <= "'+cFilAte + cChapaAte+'")'
+   Endif
+#ENDIF
+   
+If nOrdem == 4
+   cArqNtx  := CriaTrab(Nil,.F.)
+   IndRegua("SRA",cArqNtx,cIndCond,,cFor,STR0011)  //"Selecionando Registros..."
+Endif
+   
+dbSelectArea( "SRA" )
+SetRegua(SRA->(RecCount()))
+   
+Chave      := 0
+Li         := PROW()
+nCol       := 1
+nAlin      := 0
+If aReturn[5] # 1 
+	Li         := PROW()  // PROW - Informe em que linha o carro de impressao esta posicionado//
+//	@Li ,0 PSAY chr(12)
+EndIf
+
+For T:=1 TO nColunas
+   aAdd(aMalaDir,{" "," "," "," "," "," "," "," "})
+Next 
+
+cFilialAnt := Space(FWGETTAMFILIAL)
+cCcAnt     := Space(GetSx3Cache("RA_CC", "X3_TAMANHO"))
+
+//@Li ,0 PSAY chr(12)
+   
+dbSelectArea( "SRA" )
+While !SRA->(Eof()) .And. Chave == 0
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Movimenta Regua Processamento                                ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	IncRegua()
+         
+	If SRA->RA_FILIAL != cFilialAnt
+		If !fInfo(@aInfo,SRA->RA_FILIAL)
+			Chave := 1
+			Exit
+		Endif
+		dbSelectArea( "SRA" )
+		cFilialAnt := SRA->RA_FILIAL
+	Endif
+     
+
+	While !Eof() .And. SRA->RA_FILIAL == cFilialAnt
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Movimenta Regua Processamento                                ³
+      	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		IncRegua()
+
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Verifica o De / Ate Solicitado                               ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		IF &(IndexKey()) > cFim .Or. Sra->(Eof())
+			Chave := 1
+			Exit
+		ENDIF
+            
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Cancela ImpresÆo ao se pressionar <ALT> + <A>                ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If lEnd
+			Set Device to Printer
+			@Prow()+1,0 PSAY cCancela
+			Set Device to Screen  
+			Chave := 1
+			Exit
+		EndIF
+         
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Consiste Parametriza‡Æo do Intervalo de ImpressÆo            ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If	(SRA->RA_CHAPA < cChapaDe) .OR. (SRA->RA_CHAPA > cChapaAte) .Or. ;
+			(SRA->RA_NOME < cNomeDe) .OR. (SRA->RA_NOME > cNomeAte) .Or. ;
+			(SRA->RA_MAT < cMatDe) .OR. (SRA->RA_MAT > cMatAte) .Or. ;
+			(SRA->RA_CC < cCcDe) .OR. (SRA->RA_CC > cCCAte)
+			SRA->(DBSkip(1))
+		Loop
+		EndIf
+
+		/*
+		ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		³Consiste Filiais e Acessos                                             ³
+		ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ*/
+		IF !( SRA->RA_FILIAL $ fValidFil() .and. Eval( cAcessaSRA ) )
+			dbSelectArea("SRA")
+			dbSkip()
+			Loop
+		EndIF
+         
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Verifica Situacao e Categoria do Funcionario                 ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If !( SRA->RA_SITFOLH $ cSituacao ) .OR. !( SRA->RA_CATFUNC $ cCategoria )
+			Sra->(dbSkip(1))
+			Loop
+		Endif
+		nAlin := nAlin+1
+   
+		aMalaDir[nAlin,1] := SRA->RA_NOME
+		aMalaDir[nAlin,2] := SRA->RA_ENDERECO
+		aMalaDir[nAlin,3] := SRA->RA_COMPLEME + " " + SRA->RA_BAIRRO
+		aMalaDir[nAlin,4] := SRA->RA_MUNICIP + " " + SRA->RA_ESTADO + " " + Left(SRA->RA_CEP,5) + "-" + Right(SRA->RA_CEP,3)
+		aMalaDir[nAlin,5] := SRA->RA_FILIAL + "-" + SRA->RA_MAT + "-" + SRA->RA_CC
+		cTipo := "I"
+		fChkETMD()
+	dbSkip()
+	EndDo
+	IF Chave == 1
+		Exit
+	EndIf
+
+	If Eof()
+		Exit
+	EndIf
+Enddo
+cTipo:="F"
+fChkETMD()
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Termino do Relatorio                                         ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+dbSelectArea( "SRA" )
+Set Filter to
+dbSetOrder(1)
+   
+If nOrdem == 4
+	fErase( cArqNtx + OrdBagExt() )
+EndIf
+   
+Set Device To Screen
+   
+If aReturn[5] == 1
+	Set Printer To
+	dbCommit()
+	OurSpool(WnRel)
+EndIf
+   
+MS_FLUSH()
+
+*-------------------------------------
+// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==> FuncTion fChkETMD
+Static FuncTion fChkETMD()
+*-------------------------------------
+
+Local C
+Local I
+
+If (cTipo == "I" .And. nAlin == nColunas) .Or. (cTipo == "F" .And. nAlin > 0)
+   For C:= 1 To 5
+      nCol:=0
+      For I:= 1 To nColunas       
+          @ Li,nCol PSAY aMalaDir[I,C]
+          nCol := nCol + 44
+          aMalaDir[I,C]:= " "
+      Next
+      Li := Li + 1
+   Next
+   nAlin:=0              
+	Li := Li + 1
+Endif
+
+If Li >= 56
+	Li := 0
+EndIf 
+
+If cTipo == "F"
+   @ Li, 0 PSAY " "
+Endif
+
+Return(nil)        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+

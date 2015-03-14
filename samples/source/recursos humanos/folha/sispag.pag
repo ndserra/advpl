@@ -1,0 +1,202 @@
+ACodigo Banco   0010030"999"                                                       
+ALote de Servico0040070"0000"                                                      
+ARegistro Header0080080"0"                                                         
+AFiller         0090140SPACE(6)                                                    
+ALayout Arquivo 0150170"020"                                                       
+ATipo Insc Emp  0180180"2"                                                         
+ACGC/CPF Debitar0190320SUBST(SM0->M0_CGC,1,14)                                     
+AFiller         0330520SPACE(20)                                                   
+AAgencia Debitar0530570SUBST(SA6->A6_AGENCIA,1,5)                                  
+AFiller         0580580SPACE(1)                                                    
+AC/C Debitar    0590700SUBST(SA6->A6_NUMCON,1,12)                                  
+AFiller         0710710SPACE(1)                                                    
+ADAC Ag C/C Deb 0720720                                                            
+ANome Empresa   0731020SUBS( SM0->M0_NOME,1,30 )                                   
+ANome Banco     1031320SUBS( SA6->A6_NOME,1,30 )                                   
+AFiller         1331420SPACE(10)                                                   
+ACod Rem/Ret    1431430"1"                                                         
+AData da geracao1441510GRAVADATA(DDATABASE,.F.)                                    
+AHora da geracao1521570SUBS(TIME(),1,2)+SUBS(TIME(),4,2)+SUBS(TIME(),7,2)          
+AN§ Sequencial  1581630"000001"                                                    
+AFiller         1641660SPACE(3)                                                    
+ADensid Gravacao1671710"00000"                                                     
+AFiller         1722400SPACE(20)                                                   
+BCodigo Banco   0010030"999"                                                       
+BLote de Servico0040070"0001"                                                      
+BRegistro Lote  0080080"1"                                                         
+BTipo Operacao  0090090"C"                                                         
+BTipo Pagamento 0100110SUBST( SEA->EA_TIPOPAG,1,2 )                                
+BForma Pagto    0120130SUBST( SEA->EA_MODELO,1,2)                                  
+BLayout do Lote 0140160"020"                                                       
+BFiller         0170170SPACE(1)                                                    
+BTipo Insc      0180180"2"                                                         
+BCGC/CPF Debitar0190320SUBST(SM0->M0_CGC,1,14)                                     
+BFiller         0330520SPACE(20)                                                   
+BN§ Agenc Debit 0530570SUBST(SA6->A6_AGENCIA,1,5)                                  
+BFiller         0580580SPACE(1)                                                    
+BC/C Debitar    0590700SUBST(SA6->A6_NUMCON,1,12)                                  
+BFiller         0710710SPACE(1)                                                    
+BDAC            0720720                                                            
+BNome Empresa   0731020SUBSTR(SM0->M0_NOME,1,30)                                   
+BFinalidade Pgto1031320SPACE(30)                                                   
+BHist C/C       1331420SPACE(10)                                                   
+BLogradouro     1431720SUBSTR(SM0->M0_ENDCOB,1,30)                                 
+BNumero         1731770"00000"                                                     
+BComplemento    1781920SPACE(15)                                                   
+BCidade         1932120SUBS(SM0->M0_CIDCOB,1,20)                                   
+BCEP            2132200SUBS(SM0->M0_CEPCOB,1,8 )                                   
+BEstado         2212220SUBS(SM0->M0_ESTCOB,1,2)                                    
+BFiller         2232300SPACE(8)                                                    
+BOcorrencias    2312400"00        "                                                
+CCodigo do Banco0010030"341"                                                       
+CLote de Servico0040070"0001"                                                      
+CRegistro Header0080080"1"                                                         
+CTipo Operacao  0090090"C"                                                         
+CTipo de Pgto   0100110SUBST( SEA->EA_TIPOPAG,1,2)                                 
+CForma Pgto     0120130SUBST( SEA->EA_MODELO,1,2)                                  
+CLayout do Lote 0140160"020"                                                       
+CFiller         0170178SPACE(1)                                                    
+CInscricao      0180180"2"                                                         
+CN§ Inscricao   0190320SUBST(SM0->M0_CGC,1,14)                                     
+CFiller         0330520SPACE(20)                                                   
+CAgencia Debitar0530570SUBSTR(SA6->A6_AGENCIA,1,5)                                 
+CFiller         0580580SPACE(1)                                                    
+CC/C Debitada   0590700SUBST(SA6->A6_NUMCON,1,12)                                  
+CFiller         0710710SPACE(1)                                                    
+CDAC            0720720                                                            
+CNome Empresa   0731020SUBSTR(SM0->M0_NOME,1,30)                                   
+CFinalidade Lote1031320SPACE(30)                                                   
+CCompl Historico1331420SPACE(10)                                                   
+CLogradouro     1431720SUBST(SM0->M0_ENDCOB,1,30)                                  
+CNumero         1731770"00000"                                                     
+CComplemento    1781920SPACE(15)                                                   
+CCidade         1932120SUBS(SM0->M0_CIDCOB,1,20)                                   
+CCEP            2132200SUBS(SM0->M0_CEPCOB,1,8)                                    
+CEstado         2212220SUBS(SM0->M0_ESTCOB,1,2)                                    
+CFiller         2232300SPACE(8)                                                    
+COcorrencias    2312400"00        "                                                
+DCodigo Banco   0010030"999"                                                       
+DLote de Servico0040070"0001"                                                      
+DReg.Trailer lot0080080"5"                                                         
+DFiller         0090170SPACE(9)                                                    
+DQtde Registros 0180230M->NSEQ+2                                                   
+DSomatoria Valor0240412STRZERO(SOMAVALOR(),18)                                     
+DFiller Numerico0420590STRZERO(0,18)                                               
+DFiller         0602300SPACE(171)                                                  
+DOcorrencias    2312400SPACE(10)                                                   
+ECodigo Banco   0010030"999"                                                       
+ELote de Servico0040070"0001"                                                      
+EReg.Trailer lot0080080"5"                                                         
+EFiller         0090170SPACE(9)                                                    
+EQtde.Reg.Lote  0180230M->NSEQ*2+2                                                 
+ESomatoria Valor0240412STRZERO(SOMAVALOR(),18)                                     
+EFiller Numerico0420590STRZERO(0,18)                                               
+EFiller         0602300SPACE(171)                                                  
+EOcorrencias    2312400SPACE(10)                                                   
+FCodigo Banco   0010030"999"                                                       
+FLote de Servico0040070"9999"                                                      
+FReg.Trailer arq0080080"9"                                                         
+FFiller         0090170SPACE(9)                                                    
+FQtde.Lotes arq.0180230"000001"                                                    
+FQtde.Reg.do arq0240290M->NSEQ*(IIF(SEA->EA_MODELO$"30|31",2,1))+4                 
+FFiller         0302400SPACE(211)                                                  
+GCodigo Banco   0010030"999"                                                       
+GLote de Servico0040070"0001"                                                      
+GRegistro Detalh0080080"3"                                                         
+GN§ Sequencial  0090130incrementa()-1                                              
+GSegmento       0140140"A"                                                         
+GTipo Movimento 0150170"000"                                                       
+GFiller         0180200"000"                                                       
+GBanco Favorecid0210230SUBST(SE2->E2_PORTADO,1,3)                                  
+GAgencia Conta  0240430SPACE(20)                                                   
+GNome Favorecido0440730SUBST(SA2->A2_NOME,1,30)                                    
+GSeu Numero     0740930NUMTITULO()                                                 
+GData Pgto      0941010GRAVADATA(SE2->E2_VENCREA,.F.)                              
+GTipo Moeda     1021040"REA"                                                       
+GFiller         1051190"000000000000000"                                           
+GValor Pgto     1201342STRZERO(SE2->E2_SALDO*100,15)                               
+GNosso Numero   1351490SPACE(15)                                                   
+GFiller         1501540SPACE(5)                                                    
+GData Efet Pgto 1551620SPACE(8)                                                    
+GValor Efetivo  1631772"0000000000000000"                                          
+GFinalid Detalhe1781970SPACE(20)                                                   
+GFiller         1982290SPACE(32)                                                   
+GAviso Favorecid2302300"0"                                                         
+GOcorrencias    2312400"00       "                                                 
+HCod.Banco      0010030"999"                                                       
+HLote Servico   0040070"0001"                                                      
+HRegistro Detalh0080080"3"                                                         
+HN§ Sequencial  0090130M->NSEQ                                                     
+HCod.Segmento   0140140"B"                                                         
+HFiller         0150170SPACE(3)                                                    
+HTipo Inscricao 0180180"2"                                                         
+HN§ Inscricao   0190320SUBS(SA2->A2_CGC,1,14)                                      
+HLogradouro     0330620SUBS(SA2->A2_END,1,30)                                      
+HNumero         0630670"00000"                                                     
+HComplemento    0680820SPACE(15)                                                   
+HBairro         0830970SUBS(SA2->A2_BAIRRO,1,15)                                   
+HCidade         0981170SUBS(SA2->A2_MUN,1,20)                                      
+HCep            1181250SUBS(SA2->A2_CEP,1,8)                                       
+HSigla do Estado1261270SUBS(SA2->A2_EST,1,2)                                       
+HFiller         1282400SPACE(113)                                                  
+JCodigo Banco   0010030"999"                                                       
+JLote de Servico0040070"0001"                                                      
+JRegistro Detalh0080080"3"                                                         
+JN§ Sequenc.Lote0090130M->NSEQ                                                     
+JCod.Seg.Detalhe0140140"J"                                                         
+JTipo Movimento 0150170"000"                                                       
+JBanco Favorecid0180200SUBSTR(SE2->E2_CODBAR,1,3)                                  
+JMoeda          0210210SUBSTR(SE2->E2_CODBAR,4,1)                                  
+JDV             0220220EXECBLOCK("DIGVER")                                         
+JValor          0230362EXECBLOCK("VALIMP")                                         
+JCampo Livre    0370610EXECBLOCK("CAMPFREE")                                       
+JNome Favorecido0620910SUBST(SA2->A2_NOME,1,30)                                    
+JData Vencto    0920990GRAVADATA(SE2->E2_VENCREA,.F.)                              
+JValor Titulo   1001142STRZERO(SE2->E2_VALOR*100,15)                               
+JDescontos      1151292"000000000000000"                                           
+JAcrescimos     1301442"000000000000000"                                           
+JData Pagamento 1451520SPACE(8)                                                    
+JValor Pagamento1531672"000000000000000"                                           
+JZeros          1681820"000000000000000"                                           
+JSeu Numero     1832020NUMTITULO()                                                 
+JFiller         2032150SPACE(13)                                                   
+JNosso Numero   2162300SPACE(15)                                                   
+JOcorrencias    2312400"00        "                                                
+NCodigo Banco   0010030"999"                                                       
+NLote Servico   0040070                                                            
+NTipo Registro  0080080"3"                                                         
+NNro do Registro0090130                                                            
+NSegmento       0140140"N"                                                         
+NTipo Movimento 0150170                                                            
+NIdent. Tributo 0180190"01"                                                        
+NCodigo Pagto   0200230                                                            
+NCompetencia    0240290                                                            
+NIdentificador  0300430                                                            
+NValor INSS     0440572                                                            
+NValor Out.Ent. 0580712                                                            
+NJuros          0720850                                                            
+NValor Arrecadad0860992                                                            
+NData Pagamento 1001070                                                            
+NFiller         1081940Space(87)                                                   
+NNro Titulo     1952140                                                            
+NNosso Numero   2152290                                                            
+NOcorrencias    2302400                                                            
+OCodigo do Banco0010030"999"                                                       
+OLote de Servico0040070                                                            
+OTipo Registro  00800803                                                           
+OSequenc. Regist0090130                                                            
+OSegmento       0140140"O"                                                         
+OTipo Movimento 0150170                                                            
+OCodigo Barras  0180650                                                            
+OConcessionaria 0660950                                                            
+OData Vencto    0961030                                                            
+OMoeda          1041060"REA"                                                       
+OQuantdade Moeda1071210                                                            
+OValor a Pagar  1221362                                                            
+OData Pagamento 1371440                                                            
+OValor Pago     1451592                                                            
+OFiller         1601740space(15)                                                   
+ONro Titulo     1751940                                                            
+OFiller         1952150space(21)                                                   
+ONosso Numero   2162300                                                            
+OOcorrencias    2312400                                                            

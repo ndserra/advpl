@@ -1,0 +1,178 @@
+#Include "rwmake.ch"        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+#INCLUDE "IMPRESC.CH"
+
+User Function Impresc()        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+
+Local Imprime	:= 0 
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP5 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("NLIN,CONTADOR,LNULL,DET")
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³RdMake    ³ ImpResZ  ³ Autor ³ Mauro                        ³ Data ³ 10.03.97 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Impressao da Rescisao em Formulario Continuo                      ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe e ³ ImpResC                                                           ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ Generico                                                          ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³               ATUALIZACOES SOFRIDAS DESDE A CONSTRU€AO INICIAL.              ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Programador ³ Data   ³ BOPS/FNC  ³  Motivo da Alteracao                       ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Kleber      ³10/09/99³23866a-----³ Alt.para imprimir qualquer qtd de verbas.  ³±±
+±±³Marina      ³30/08/00³-----------³ Retirada parte DOS.                        ³±±
+±±³Andreia     ³01/10/02³-----------³ Impressao do percentual de pensao alimen-  ³±±
+±±³            ³        ³-----------³ a partir do cadastro de beneficiarios.     ³±±
+±±³            ³14/04/04³-----------³ Acerto no Driver p/Impressao               ³±±
+±±³            ³29/03/05³078304     ³ Impressao do Muncipio da Empresa-campo 60  ³±±
+±±³Marcelo     ³14/09/09³021627/2009³ Avaliacao do parametro 29 para impressao do³±±
+±±³            ³        ³           ³ salario do cadastro ou do termo rescisao.  ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß/*/
+
+nLin    := 0
+Contador:= 1
+lNull   := .F.
+
+fCabecalho()
+
+For Imprime := 1 to Max(Len(aPdv),Len(aPdd))
+	If Max(Len(aPdv)/2,Len(aPdd)) <= 16
+		If Imprime <= 16 .And. Imprime <= Len(aPdv)
+			Det := Space(3) + aPdv[Imprime]
+		Else
+			Det := Space(44)
+		Endif
+	
+		If Imprime + 16 <= Len(aPdv)
+			Det := Det + Space(3) + aPdv[Imprime + 16]
+		Else
+			Det := Det + Space(45)
+		Endif
+		
+		If Imprime <= Len(aPdd)
+			Det := Det + Space(3) + aPdd[Imprime]
+		Else
+			Det := Det + Space(45)
+		EndIf
+		
+		If Len(Alltrim(Det)) <> 0
+			@ nLin,0 PSAY ( Det )
+		   nLin := nLin + 1
+		   Contador := Contador + 1
+		Else
+			Exit
+		Endif
+	Else
+		If Imprime <= Len(aPdv)/2 .And. Imprime <= Len(aPdv)
+			Det := Space(3) + aPdv[Imprime]
+		Else
+			Det := Space(44)
+		Endif
+	
+		If Imprime + If(Len(aPdv)%2>0,Len(aPdv)/2-1,Len(aPdv)/2) <= Len(aPdv)
+			Det := Det + Space(3) + aPdv[Imprime + Len(aPdv)/2]
+		Else
+			Det := Det + Space(44)
+		Endif
+		
+		If Imprime <= Len(aPdd)
+			Det := Det + Space(3) + aPdd[Imprime]
+		Else
+			Det := Det + Space(44)
+		EndIf
+		Alert(Str(Len(AllTrim(Det))))
+		If Len(Alltrim(Det)) <> 0
+			@ nLin,0 PSAY ( Det )
+			nLin := nLin + 1
+			Contador := Contador + 1
+		Else
+			Exit
+		Endif
+		
+		If Contador > 16
+			lNull := .T.
+			fRodape()
+			lNull := .F.
+			fCabecalho()
+		EndIf
+	EndIf
+Next
+
+fRodape()
+
+Return Nil
+
+//-------------------
+Static Function fCabecalho()
+//-------------------
+nLin := 1
+@ nLin,0 PSAY AvalImp( 132 )
+nLin := nLin + 1
+@ nLin,0 PSAY ( Space(3) + aInfo[3] + Space(32) + Alltrim(cCodFgts) )
+nLin := nLin + 1
+@ nLin,0 PSAY ( Chr(13) )
+nLin := nLin + 1
+@ nLin,0 PSAY ( Space(3) + aInfo[4] )
+nLin := nLin + 1
+@ nLin,0 PSAY ( Chr(13) )
+nLin := nLin + 1
+@ nLin,0 PSAY ( Space(3) + aInfo[7] + Space(6) + "               " + Space(12) + aInfo[5] + Space(19) + aInfo[6] )
+nLin := nLin + 1
+@ nLin,0 PSAY ( Chr(13) )
+nLin := nLin + 1
+@ nLin,0 PSAY ( Space(3) + Subs(SRA->RA_BCDPFGT,1,3)+'-'+DescBco(SRA->RA_BCDPFGT,sRA->rA_FILIAL,20) +"    "+DescBco(SRA->RA_BCDPFGT,SRA->RA_FILIAL,20,.T.)+"/" + SA6->A6_EST+ Space(21) + Subs(SRA->RA_BCDPFGT,4,5) )
+nLin := nLin + 1
+@ nLin,0 PSAY ( Chr(13) )
+nLin := nLin + 1
+@ nLin,0 PSAY ( Space(3) + SRA->RA_NOME + Space(10) + STR0001+SRA->RA_MAT+Space(6)+STR0002+SRA->RA_CC+Space(18)+ SRA->RA_NUMCP + Space(15) + SRA->RA_SERCP + Space(10) + SRA->RA_UFCP )	//"Matr.:"###"C.Custo:"
+nLin := nLin + 1
+@ nLin,0 PSAY ( Chr(13) )
+nLin := nLin + 1
+@ nLin,0 PSAY ( Space(3) + SRA->RA_PIS + Space(19) + Iif(SRA->RA_CTDPFGTS=="999999999999",SRA->RA_NUMCP+SRA->RA_SERCP,SRA->RA_CTDPFGT) + Space(16) + DtoC(SRA->RA_NASC) + Space(11) + DtoC(SRA->RA_ADMISSA) + Space(11) + DtoC(SRA->RA_OPCAO) + Space(11) + DtoC(SRG->RG_DATADEM) )
+nLin := nLin + 1
+@ nLin,0 PSAY ( Chr(13) )
+nLin := nLin + 1
+
+If mv_par29 == 1
+	@ nLin,0 PSAY ( Space(3) + Transform(SRG->RG_SALMES,"@E 999,999,999.99") + Space(18) + DtoC(SRG->RG_DTAVISO) + Space(10) + Transform(nPerPensa,"@E 99.99") + Space(08) + cCausa + Space(30) + cCodSaq )
+Else
+	@ nLin,0 PSAY ( Space(3) + Transform(SRA->RA_SALARIO,"@E 999,999,999.99") + Space(18) + DtoC(SRG->RG_DTAVISO) + Space(10) + Transform(nPerPensa,"@E 99.99") + Space(08) + cCausa + Space(30) + cCodSaq )
+EndIf
+
+nLin := nLin + 1
+@ nLin,0 PSAY ( Chr(13) )
+nLin := nLin + 1
+@ nLin,0 PSAY ( Chr(13) )
+Contador := 1
+
+Return Nil
+
+//----------------
+Static Function fRodape()
+//----------------
+
+Contador := Contador - 1
+nLin := nlin + (17-Contador)
+nLin := nLin + 1
+@ nLin,0 PSAY ( Space(3) + STR0003+SPACE(1)+If(lNull,Space(14),Transform(nProv,"@E 999,999,999.99")) + Space(17) + STR0004+SPACE(1)+If(lNull,Space(14),Transform(nDesc,"@E 999,999,999.99")) + Space(14) + STR0005+SPACE(1)+If(lNull,Space(14),Transform(nProv - nDesc,"@E 999,999,999.99")) )	//"TOTAL PROVENTOS :"###"TOTAL DESCONTOS :"###"LIQUIDO A RECEBER :"
+nLin := nLin + 3
+@ nLin,3 PSAY If(mv_par14 == 1 .And. !lNull , Rtrim(aInfo[5]) + " - "+ Dtoc(SRG->RG_DATAHOM)  , "        " )
+nLin := nLin + 15
+@ nLin,0 PSAY ( Space(3) + If (cImpSac #"N" .And. !lNull ,SRA->RA_NOME," "))
+nLin := nLin + 12
+
+nLin := nLin + 8
+
+Return Nil

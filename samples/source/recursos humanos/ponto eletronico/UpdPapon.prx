@@ -1,0 +1,312 @@
+#INCLUDE "RWMAKE.CH"
+#INCLUDE "UPDPAPON.CH"
+/*
+зддддддддддбддддддддддбдддддддбдддддддддддддддддддддддбддддддбдддддддддд©
+ЁFun┤└o    ЁUPDPAPON  Ё Autor Ё Marinaldo de Jesus    Ё Data Ё02/09/2003Ё
+цддддддддддеддддддддддадддддддадддддддддддддддддддддддаддддддадддддддддд╢
+ЁDescri┤└o ЁAtualizar os campos P8_PAPONTA e PG_PAPONTA                 Ё
+цддддддддддедддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+ЁSintaxe   ЁU_UpdPApon()                                                Ё
+цддддддддддедддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+Ё Uso      Ё Gen┌rico                                                   Ё
+цддддддддддадддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+Ё          ATUALIZACOES SOFRIDAS DESDE A CONSTRU─AO INICIAL.		    Ё
+цддддддддддддбддддддддбддддддбдддддддддддддддддддддддддддддддддддддддддд╢
+ЁProgramador Ё Data   Ё BOPS Ё  Motivo da Alteracao                     Ё
+цддддддддддддеддддддддеддддддедддддддддддддддддддддддддддддддддддддддддд╢
+Ё            Ё  /  /  Ё      Ё                                   	  	Ё
+юддддддддддддаддддддддаддддддадддддддддддддддддддддддддддддддддддддддддды*/
+#DEFINE AMARC_PERAPONTA	15	//String de Data com o Periodo de Apontamento
+
+/*
+зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+ЁBegin Constantes Manifestas para aScop em CountScope()		  Ё
+юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+#DEFINE ASCOPE_FOR_COND      1
+#DEFINE ASCOPE_WHILE_COND    2
+#DEFINE ASCOPE_NEXT_SCOPE    3
+#DEFINE ASCOPE_REC_SCOPE     4
+#DEFINE ASCOPE_REST_SCOPE    5
+
+#COMMAND CREATE SCOPE <aScope> [FOR <for>] ;
+		[WHILE <while>] [NEXT <next>] [RECORD <rec>] ;
+		[<rest:REST>] [ALL];
+        =>;
+		<aScope> := { <{for}>, <{while}>, <next>, ;
+		<rec>, <.rest.> }
+/*
+зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+ЁEnd Constantes Manifestas para aScop em CountScope()		  Ё
+юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+
+User Function UpdPApon( lShowProc ) //Nao passar este parametro. Sera utilizado na chamada recursiva
+
+Local aArea			:= GetArea()
+Local aAreaSRA		:= SRA->( GetArea() )
+Local aMarcacoes	:= {}
+Local aTabCalend	:= {}
+Local aRecsBarG		:= {}
+Local aTabPadrao	:= {}
+Local aPeriodos		:= {}
+Local cPerAponta	:= ""
+Local cAlias		:= "SP8"
+Local cLastFil		:= "__cLastFil__"
+Local cFilTnoSeqOld	:= "__cFilTnoSeqOld__"
+Local cFilTnoOld	:= "__cFilTnoOld__"
+Local cMat			:= ""
+Local cCc			:= ""
+Local cFil			:= ""
+Local cTno			:= ""
+Local cSeq    		:= ""
+Local cTimeIni		:= Time()
+Local cMsgBarG1		:= ""
+Local cMsgBarG2		:= STR0010	//"Atualizando Periodo de Apontamento..."
+Local dPerIni		:= Ctod("//")
+Local dPerFim		:= Ctod("//")
+Local lSPOComp		:= Empty( xFilial( "SPO" ) )
+Local lSR6Comp		:= Empty( xFilial( "SR6" ) )
+Local lAcumulado	:= .F.
+Local lIncProcG1	:= .F.
+Local nRecsBarG		:= 0.00
+Local nIncPercG1	:= 1.00
+Local nIncPercG2	:= 0.00
+Local nOpc			:= 0.00
+Local nPeriodo		:= 0.00
+Local nPeriodos		:= 0.00
+
+lShowProc := IF( lShowProc == NIL , .T. , .F. )
+Begin Sequence
+	/*
+	здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Efetua a Chamada Real do programa                 		   Ё
+	юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	IF ( lShowProc )
+		Proc2BarGauge( { || U_UpdPApon( .F. ) } , OemToAnsi( STR0001 ), NIL , NIL , .T. , .T. , .T. ) //"Atualiza┤└o do Per║odo das Marca┤■es"
+		Break
+	EndIF
+	Private lAbortPrint := .F.
+	/*
+	здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Verifica se vai executar do Movimento ou do Acumulado		   Ё
+	юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	IF (;
+			( nOpc := Aviso(;
+									OemToAnsi( STR0001 )	,;	//"Atualiza┤└o do Per║odo das Marca┤■es"
+									OemToAnsi( STR0003 )	,;	//"Atualizar o Per║odo das Marca┤■es"
+									{ STR0004 , STR0005 }	,;	//"Mensal"###"Acumulado"
+									2,;
+									OemToAnsi( STR0006 )	 ;	//"Selecione a Op┤└o"
+							);
+			) == 2 ;
+		)
+		cAlias := "SPG"
+	ElseIF ( nOpc <> 1 )
+		Break
+	EndIF
+	/*
+	здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Obtem o Numero de Registros do SRA                		   Ё
+	юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	nLastRec := SRA->( RecCount() )
+	/*
+	здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Inicializa a Barra de Processamento do SRA        		   Ё
+	юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	BarGauge2Set( nLastRec )
+	/*
+	здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	Ё Processa para todos os Funcionarios               		   Ё
+	юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	SRA->( dbGotop() )
+	SRA->( dbSetOrder( RetOrdem( "SRA" , "RA_FILIAL+RA_TNOTRAB" ) ) )
+	While ( SRA->( !Eof() ) )
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Se usuario Cancelou o Processo                    		   Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		IF ( lAbortPrint )
+			Break
+		EndIF
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Atualiza as Variaveis do Funcionario              		   Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		cMat	:= SRA->RA_MAT
+		cCc		:= SRA->RA_CC	
+		cFil	:= SRA->RA_FILIAL
+		cTno	:= SRA->RA_TNOTRAB
+		cSeq    := SRA->RA_SEQTURN
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Atualiza a Mensagem para a IncProcG1() ( Turnos )			   Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		IF !( cFilTnoSeqOld == ( cFil + cTno + cSeq ) )
+			/*
+			здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+			Ё Atualiza o Filial/Turno/Sequencias Anteriores				   Ё
+			юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+			cFilTnoSeqOld := ( cFil + cTno + cSeq )
+			/*
+			здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+			Ё Atualiza a Mensagem para a BarGauge do Turno 				   Ё
+			юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+			//"Filial:"###"Turno:"###"Sequencia:"
+			cMsgBarG1 := ( STR0007 + " " + cFil + " - " + STR0008 + " " + cTno + " - " + AllTrim( fDesc( "SR6" , cTno , "R6_DESC" , NIL , cFil , 01 ) ) + " - " + STR0009 + " " + cSeq )
+			/*
+			здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+			Ё Verifica se Houve Troca de Filial para Verificacai dos TurnosЁ
+			юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+			IF !( cLastFil == cFil )
+				/*
+				здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Realimenta a Barra de Gauge para os Turnos de Trabalho       Ё
+				юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				IF ( !( lSR6Comp ) .or. ( nRecsBarG == 0.00 ) )
+					aRecsBarG := {}
+					CREATE SCOPE aRecsBarG FOR ( R6_FILIAL == cFil .or. Empty( R6_FILIAL ) )
+					nRecsBarG := SR6->( ScopeCount( aRecsBarG ) )
+				EndIF
+				/*
+				здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Define o Numero de Elementos da BarGauge                     Ё
+				юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				BarGauge1Set( nRecsBarG )
+				/*
+				здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Inicializa Mensagem na 1a BarGauge                           Ё
+				юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				IncProcG1( cMsgBarG1 , .F. )
+   				/*
+				здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Reinicializa a Filial/Turno Anterior                         Ё
+				юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				cFilTnoOld := "__cFilTnoOld__"
+            EndIF
+			/*
+			здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+			ЁVerifica se Deve Incrementar a Gauge ou Apenas Atualizar a MenЁ
+			Ёsagem														   Ё
+			юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+			IF ( lIncProcG1 := !( cFilTnoOld == ( cFil + cTno ) ) )
+				cFilTnoOld := ( cFil + cTno )
+			EndIF
+			/*
+			здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+			ЁIncrementa a Barra de Gauge referente ao Turno				   Ё
+			юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+			IncPrcG1Time( cMsgBarG1 , nRecsBarG , cTimeIni , .T. , 1 , nIncPercG1 , lIncProcG1 )
+		EndIF
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Movimenta a Regua de Processamento Principal            	   Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		IncPrcG2Time( cMsgBarG2 , nLastRec , cTimeIni , .T. , 2 , nIncPercG2 )
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Carrega Periodo de Apontamento                          	   Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		IF ( !( cLastFil == cFil ) .or. Empty( aPeriodos ) )
+			cLastFil 	:=	cFil
+			IF ( nOpc == 1 )
+				/*
+				здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Carrega Periodo de Apontamento Atual                    	   Ё
+				юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				IF !( CheckPonMes( @dPerIni , @dPerFim , .F. , .T. , .T. , cFil ) )
+					Break
+				EndIF
+				aPeriodos	:= {}
+				aAdd( aPeriodos , { dPerIni , dPerFim , 0 } )
+			ElseIF ( !( lSPOComp ) .or. Empty( aPeriodos ) )
+				/*
+				здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+				Ё Carrega o Periodo de Apontamento do SPO                 	   Ё
+				юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+				aPeriodos := {}
+				ValidPerSPO(	cFil		,;	//Filial de Referencia Para Pesquisa no SPO
+								NIL		 	,;	//Periodo Inicial para Valiadacao
+								NIL			,;	//Periodo Final Para Validacao
+								.T.			,;	//Quando Inclui nao Estiver Definido, qual sera o seu valor
+								.F.			,;	//Se deve Mostrar Help
+								@aPeriodos	,;	//Periodos que foram carregados
+								.F.			 ;	//Se deve validar os Periodos
+							)
+			EndIF
+		EndIF
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Se nao Existirem Marcacoes, despresa o Funcionario      	   Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		IF !( ( cAlias )->( dbSeek( ( cFil + cMat ) , .F. ) ) )
+			SRA->( dbSkip() )
+			Loop
+		EndIF
+		/*
+		здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+		Ё Percorre todos os periodos                              	   Ё
+		юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		nPeriodos := Len( aPeriodos )
+		For nPeriodo := 1 To nPeriodos
+			/*
+			здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+			Ё Se usuario Cancelou o Processo                    		   Ё
+			юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+			IF ( lAbortPrint )
+				Break
+			EndIF
+			/*
+			здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+			Ё Obtem o Periodo de Apontamento                          	   Ё
+			юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+			dPerIni 	:= aPeriodos[ nPeriodo , 01 ]
+			dPerFim 	:= aPeriodos[ nPeriodo , 02 ]
+			cPerAponta	:= ( Dtos( dPerIni ) + Dtos( dPerFim ) )
+			IncProcG2( cMsgBarG2 + " -> " + SRA->( RA_MAT + " " + Alltrim( RA_NOME ) ) + " - " + Dtoc( dPerIni ) + " / " + Dtoc( dPerFim ) , .F. )
+			/*
+			здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+			Ё Carrega as Marcacoes do Funcionarios conforme Periodo   	   Ё
+			юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+			aMarcacoes	:= {}
+			aTabCalend	:= {}
+			SRA->(;
+					GetMarcacoes(	@aMarcacoes 		,;	//01 -> Marcacoes dos Funcionarios
+									@aTabCalend			,;	//02 -> Calendario de Marcacoes
+									@aTabPadrao			,;	//03 -> Tabela Padrao
+									{}					,;	//04 -> Turnos de Trabalho
+									dPerIni				,;	//05 -> Periodo Inicial
+									dPerFim				,;	//06 -> Periodo Final
+									cFil				,;	//07 -> Filial
+									cMat				,;	//08 -> Matricula
+									cTno				,;	//09 -> Turno
+									cSeq				,;	//10 -> Sequencia de Turno
+									cCc					,;	//11 -> Centro de Custo
+									cAlias				,;	//12 -> Alias para Carga das Marcacoes
+									.T.					,;	//13 -> Se carrega Recno em aMarcacoes
+									.F.					,;	//14 -> Se considera Apenas Ordenadas
+									.F.					,;  //15 -> Verifica as Folgas Automaticas
+									.F.					,;  //16 -> Se Grava Evento de Folga Mes Anterior
+									.T.					,;	//17 -> Se Carrega as Marcacoes Automaticas
+									NIL					,;	//18 -> Registros de Marcacoes Automaticas que deverao ser Deletados
+									NIL					 ;	//19 -> Bloco para avaliar as Marcacoes Automaticas que deverao ser Desprezadas
+								 );
+					)
+			/*
+			здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+			Ё Atualiza o Periodo de Apontamento                       	   Ё
+			юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		    aEval( aMarcacoes , { |x,y| aMarcacoes[ y , AMARC_PERAPONTA ] := cPerAponta } )
+			/*
+			здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+			Ё Grava as Marcacoes com o Periodo ja Atualizado          	   Ё
+			юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+		    PutMarcacoes( aMarcacoes , cFil , cMat , cAlias , .F. , NIL , NIL , .T. )
+		Next nPeriodo
+		SRA->( dbSkip() )
+	End While
+
+End Sequence
+
+RestArea( aAreaSRA )
+RestArea( aArea )
+	
+Return( NIL )

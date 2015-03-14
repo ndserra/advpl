@@ -1,0 +1,433 @@
+#Include "rwmake.ch"        // incluido pelo assistente de conversao do AP5 IDE em 17/04/00
+#INCLUDE "REAEST.CH"
+#INCLUDE "protheus.CH"
+User Function REAEST()        // incluido pelo assistente de conversao do AP5 IDE em 17/04/00
+
+//зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+//Ё Declaracao de variaveis utilizadas no programa atraves da funcao    Ё
+//Ё SetPrvt, que criara somente as variaveis definidas pelo usuario,    Ё
+//Ё identificando as variaveis publicas do sistema utilizadas no codigo Ё
+//Ё Incluido pelo assistente de conversao do AP5 IDE                    Ё
+//юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+SetPrvt("CDESC1,CDESC2,CDESC3,CSTRING,AORD,ARETURN")
+SetPrvt("NOMEPROG,ALINHA,NLASTKEY,CPERG,NTAMANHO,LI")
+SetPrvt("NVEZES,AINFO,ADEPEND,LEND,CFILANTE,CTIT")
+SetPrvt("WNREL,NORDEM,CFILDE,CFILATE,CMATDE,CMATATE")
+SetPrvt("CCCDE,CCCATE,NVIAS,TITULO,CINICIO,CFIM")
+SetPrvt("CHAVE,CLCNASC,CCARTO,CNREGCAR,CNUMLIV")
+//SetPrvt("CNUMFOL,CNUMAT, CDTENT,CDTBAIXA,CLNOME,DNASC,CF_DEMISSA")
+//SetPrvt("CE_EMPRESA,CE_ENDERECO,CE_CIDADE,CE_UF,CE_CEP,CE_CGC")
+SetPrvt("CE_IE,CE_BAIRRO,CF_NOME,CF_ENDERECO,CF_BAIRRO,CF_CIDADE")
+SetPrvt("CF_UF,CF_CEP,CF_CTPS,CF_UFCTPS,CF_SERIE,CF_CIC")
+SetPrvt("CF_RG,CF_MAT,CF_FIL,CF_CC,CF_ADMISSA,CF_CGHOR")
+
+/*                                                                 
+эээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээ
+╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠
+╠╠зддддддддддбддддддддддбдддддддбдддддддддддддддддддддддддддддддддбддддддбдддддддддд©╠╠
+╠╠ЁPrograma  Ё REAEST   Ё Autor Ё R.H. - Luciana Silveira  Ё Data Ё 24.03.11        Ё╠╠
+╠╠цддддддддддеддддддддддадддддддаддддддддддддддддддддддддддддддддаддддддаддддддддддд╢╠╠
+╠╠ЁDescri┤┘o Ё Termo de Realizacao de Estagio                                       Ё╠╠
+╠╠цддддддддддедддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢╠╠
+╠╠ЁSintaxe   Ё REAEST                                                               Ё╠╠
+╠╠цддддддддддедддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢╠╠
+╠╠Ё Uso      Ё RdMake                                                               Ё╠╠
+╠╠цддддддддддадддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢╠╠
+╠╠Ё         ATUALIZACOES SOFRIDAS DESDE A CONSTRU─AO INICIAL.                       Ё╠╠
+╠╠цддддддддддддбддддддддбддддддддддддддддбдддддддддддддддддддддддддддддддддддддддддд╢╠╠
+╠╠ЁProgramador Ё Data   Ё FNC            Ё  Motivo da Alteracao                     Ё╠╠
+╠╠цддддддддддддеддддддддеддддддддддддддддедддддддддддддддддддддддддддддддддддддддддд╢╠╠
+╠╠Ё Luciana    Ё14/07/11Ё00000016887/2011Ё Desenvolvimento do Termo de Realizacao   Ё╠╠ 
+╠╠Ё            Ё        Ё                Ё de Estagio.                              Ё╠╠
+╠╠юддддддддддддаддддддддаддддддддддддддддадддддддддддддддддддддддддддддддддддддддддды╠╠
+╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠
+ъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъ*/
+
+cDesc1  := STR0001				//'TERMO DE REALIZAгцO DE ESTаGIO'
+cString := "SRA" 					//-- alias do arquivo principal (Base)
+aOrd    := {'Matricula','Centro de Custo'} 	//'Matricula'###'Centro de Custo'
+   
+//здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+//Ё Define Variaveis Private(Basicas)                            Ё
+//юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+aReturn  := { 'Zebrado',1,'Administracao',2,2,1,'',1 }	//'Zebrado'###'Administra┤└o'
+NomeProg := 'REAEST'
+aLinha   := {}
+nLastKey := 0
+cPerg    := 'REAEST'
+nTamanho := "M"
+   
+//здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+//Ё Variaveis Utilizadas na funcao Principal do Programa         Ё
+//юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+Li       := 0
+nVezes   := 0   
+aInfo    := {}
+lEnd     := .F.
+cFilAnte := Replicate("З", FWGETTAMFILIAL)
+
+AjustaSX1()
+
+/*
+здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+Ё Variaveis de Acesso do Usuario                               Ё
+юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+cAcessaSRA	:= &( " { || " + ChkRH( "REAEST" , "SRA" , "2" ) + " } " )
+
+
+//здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+//Ё Verifica as perguntas selecionadas                           Ё
+//юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+pergunte('REAEST',.F.)
+   
+//здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+//Ё Variaveis Utilizadas para parametros                         Ё
+//Ё MV_PAR01        //  FiLial De                                Ё
+//Ё MV_PAR02        //  FiLial Ate                               Ё
+//Ё MV_PAR03        //  Matricula De                             Ё
+//Ё MV_PAR04        //  Matricula Ate                            Ё
+//Ё MV_PAR05        //  Centro De Custo De                       Ё
+//Ё MV_PAR06        //  Centro De Custo Ate                      Ё
+//Ё MV_PAR07        //  N╖ de Vias                               Ё
+//Ё MV_PAR08        //  Situacoes                                Ё
+//Ё MV_PAR09        //  Categorias                               Ё
+//юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+cTit := STR0001		//' TERMO DE REALIZAгцO DE ESTаGIO '
+   
+//здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+//Ё Envia controle para a funcao SETPRINT                        Ё
+//юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+WnRel :='REAEST' 	//-- Nome Default do relatorio em Disco.
+WnRel :=SetPrint(cString,WnRel,cPerg,cTit,cDesc1,cDesc2,cDesc3,.F.,aOrd,,nTamanho)
+
+//здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+//Ё Carregando variaveis MV_PAR?? para Variaveis do Sistema.     Ё
+//юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+nOrdem  := aReturn[8]
+
+cFilDe	:= If(!Empty(MV_PAR01), MV_PAR01, Space(FWGETTAMFILIAL))
+cFilAte	:= If(!Empty(MV_PAR02), MV_PAR02, Replicate("Z", FWGETTAMFILIAL))
+cMatDe	:= If(!Empty(MV_PAR03), MV_PAR03, Space(GetSx3Cache("RA_MAT", "X3_TAMANHO")))
+cMatAte	:= If(!Empty(MV_PAR04), MV_PAR04, Replicate("Z", GetSx3Cache("RA_MAT", "X3_TAMANHO")) )
+cCCDe	:= If(!Empty(MV_PAR05), MV_PAR05, Space(GetSx3Cache("RA_CC", "X3_TAMANHO")))
+cCCAte	:= If(!Empty(MV_PAR06), MV_PAR06, Replicate("Z", GetSx3Cache("RA_CC", "X3_TAMANHO")) )
+nVias	:= If(!Empty(MV_PAR07), IIf(MV_PAR07 <= 0, 1, MV_PAR07), 1)
+cSituacao  := MV_PAR08	 	//Situacoes a Imprimir
+cCategoria := "EG" 		//Categorias a Imprimir 
+
+Titulo  := STR0001	//'TERMO DE REALIZAгцO DE ESTAGIO'
+   
+If nLastKey == 27
+	Return Nil
+Endif
+
+SetDefault(aReturn,cString)
+
+If nLastKey == 27
+	Return Nil
+Endif
+
+lEND	:= .F.
+WnRel	:= "REAEST"
+cSTRING := "SRA"
+
+RptStatus({|lEnd| fReaEst() })// Substituido pelo assistente de conversao do AP5 IDE em 17/04/00 ==>         RptStatus({|lEnd| Execute(fSalFam)},"Ficha de Salario Familia",lEnd)
+Return
+
+// Substituido pelo assistente de conversao do AP5 IDE em 17/04/00 ==> 	Function fSalFam
+Static Function fReaEst()
+
+Local nX
+Local nZ
+
+dbSelectArea('SRA')
+dbSetOrder(nOrdem)
+SetRegua(RecCount())
+dbGotop()
+
+If nOrdem == 1
+   dbSetOrder( 1 )
+   dbSeek(cFilDe + cMatDe,.T.)
+   cInicio  := "SRA->RA_FILIAL + SRA->RA_MAT"
+   cFim     := cFilAte + cMatAte
+ElseIf nOrdem == 2
+   dbSetOrder( 2 )
+   dbSeek(cFilDe + cCcDe + cMatDe,.T.)
+   cInicio  := "SRA->RA_FILIAL + SRA->RA_CC + SRA->RA_MAT"
+   cFim     := cFilAte + cCcAte + cMatAte
+Endif
+
+//--Setar impressora
+ 		@ Li,00 pSay AvalImp(132)
+
+While !Eof()
+	//здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	//Ё Incrementa Regua de Processamento.                           Ё
+	//юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	IncRegua()
+	//здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	//Ё Cancela Impresфo ao se pressionar <ALT> + <A>.               Ё
+	//юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	
+ 	If lEnd
+		@ Prow()+1, 0 PSAY STR0021		//"Cancelado pelo Operador"
+		Chave := 1
+		Exit
+	EndIF
+	
+	//здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	//Ё Processa Quebra de Filial.                                   Ё
+	//юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	If SRA->RA_FILIAL != cFilAnte
+		If	!fInfo(@aInfo,SRA->RA_FILIAL)
+			dbSelectArea('SRA')
+			dbSkip()
+			Loop
+		Endif		
+		cFilAnte := SRA->RA_FILIAL		
+	Endif	
+
+	//здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	//Ё Consiste Parametriza┤фo do Intervalo de Impressфo.           Ё
+	//юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	If  (SRA->RA_FILIAL < cFilDe) .Or. (SRA->RA_FILIAL > cFilAte) .Or. ;
+		(SRA->RA_MAT < cMatDe)    .Or. (SRA->RA_MAT > cMatAte) .Or. ;
+		(SRA->RA_CC < cCcDe)      .Or. (SRA->RA_CC > cCCAte) .Or.;
+		!( SRA->RA_SITFOLH $ cSituacao ) .OR.  ! ( SRA->RA_CATFUNC $ cCategoria ).Or. ;
+		 SRA->RA_SITFOLH $ "D" .And.  Mesano(SRA->RA_DEMISSA) != Mesano(dDataBase) //Imprime somente os Demitidos do mes Atual.//
+		
+		dbSelectArea('SRA')
+		dbSkip()
+		Loop
+	EndIf
+	
+   	/*
+	зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	ЁConsiste Filiais e Acessos                                             Ё
+	юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды*/
+	IF !( SRA->RA_FILIAL $ fValidFil() .and. Eval( cAcessaSRA ) )
+		dbSelectArea("SRA")
+   		dbSkip()
+   		Loop
+	EndIF
+
+
+//здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	//Ё Variaveis utilizadas na impressao.                           Ё
+	//юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	cE_Empresa  := Left(aInfo[3],40)
+    cE_Endereco := Left(aInfo[4],30)
+    cE_Cidade   := Left(aInfo[5],20)
+	cE_Uf       := Left(aInfo[6],2)
+	cE_Cep      := Transform(Left(aInfo[7],8),'@R #####-###')
+    cE_Cgc      := Transform(Left(aInfo[8],14),'@R ##.###.###/####-##')
+	cE_Telefone := Left( aInfo[10] + Space( 17 ), 17 )
+    cE_Bairro   := Left(aInfo[13],20)
+    cF_Nome     := Left(SRA->RA_Nome,30)
+	cF_Mat      := Left(SRA->RA_Mat,6)
+    cF_admissa  := DtoC(SRA->RA_Admissa)
+    cF_demissa  := DtoC(SRA->RA_Demissa)
+    cF_Cghor	:= Transform(Sra->Ra_HrsMes,'999') +  space(1) + 'horas/semanais'
+    
+   //здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+   //Ё Posicionamento das colunas do Termo de RealizaГЦo de EstАgio Ё
+   //юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+   //           1         2         3         4         5         6         7         8         9         0         1         2         3
+   // +---------------------------------------------------------------------------------------------------------------------------------+            
+   // |Nome da Empresa:                                                                                                                 |            
+   // |CNPJ:                                                                                                                            |          
+   // |EndereГo:                                                                                                                        |          
+   // |Telefone:                                                                                                                        |
+   // |Supervisor de Estagio:                                                                                                           |                    
+   // +---------------------------------------------------------------------------------------------------------------------------------+           
+   
+   
+   // +---------------------------------------------------------------------------------------------------------------------------------+            
+   // |Nome do Estagiario:                                                                                                              |            
+   // |Curso:                                                                                                                           |          
+   // |Matricula:                                                                                                                       |          
+   // +---------------------------------------------------------------------------------------------------------------------------------+           
+   //
+   //
+   // +---------------------------------------------------------------------------------------------------------------------------------+           
+   // |* Tarefas realizadas pelo estagiАrio:                                                                                            |            
+   // |                                                                                                                                 |          
+   // |                                                                                                                                 |          
+   // |                                                                                                                                 |          
+   // |                                                                                                                                 |          
+   // |                                                                                                                                 |          
+   // |                                                                                                                                 |          
+   // |                                                                                                                                 |          
+   // |                                                                                                                                 |          
+   // |                                                                                                                                 |          
+   // +---------------------------------------------------------------------------------------------------------------------------------+
+   //
+   //   
+   // +---------------------------------------------------------------------------------------------------------------------------------+
+   // |* AvaliaГЦo de Desempenho:                                                                                                       |            
+   // |                                                                                                                                 |          
+   // |                                                                                                                                 |          
+   // |                                                                                                                                 |          
+   // |                                                                                                                                 |          
+   // |                                                                                                                                 |          
+   // |                                                                                                                                 |          
+   // |                                                                                                                                 |          
+   // |                                                                                                                                 |          
+   // |                                                                                                                                 |          
+   // +---------------------------------------------------------------------------------------------------------------------------------+
+   //
+   // 
+   // +---------------------------------------------------------------------------------------------------------------------------------+            
+   // |PerМodo de EstАgio:              a                                                                                               |            
+   // |Carga HorАria:         horas/semanais                                                                                            |          
+   // +---------------------------------------------------------------------------------------------------------------------------------+             
+   // +---------------------------------------------------------------------------------------------------------------------------------+            
+   // |Declaro, para fins de comprovaГЦo junto a(o) Setor de EstАgios da(o) 
+   // |que o aluno acima indicado realizou seu EstАgio sob minha responsabilidade.
+   // +---------------------------------------------------------------------------------------------------------------------------------+              
+       //здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+       //Ё Impressao da Ficha de Salario-Famila                         Ё
+       //юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	If cPaisLoc == "BRA
+		For Nx := 1 to nVias
+	       @ Li, 50 PSAY STR0001		//	'TERMO DE REALIZAгцO DE ESTаGIO'
+	       Li := Li+2                                  
+	       @ Li, 00 PSAY '+' + Replicate('-',130) + '+'
+	       Li := Li+1
+	       @ Li, 00 PSAY STR0002 + cE_Empresa + Space(73) + '|' //'Nome da Empresa '
+	       Li := Li+1
+	       @ Li, 00 PSAY STR0003 + cE_Cgc + Space(106) + '|' //'CNPJ '
+	       Li := Li+1
+		   @ Li, 00 PSAY STR0004 + cE_Endereco+ space(3)+STR0017 + cE_Bairro + Space(3) + STR0020 + cE_Cep + Space(2) + STR0018 + cE_Cidade + Space(2) + STR0019 + cE_UF + '|'	//'Endereco: '###'  Bairro: '###'CEP: '###'  Cidade: '###'UF: '
+	       Li := Li+1
+	       @ Li, 00 PSAY STR0005 + cE_Telefone+ space(103) + '|' //Telefone
+	       Li := Li+1
+	       @ Li, 00 PSAY STR0006 +  space(107) +'|' //Supervisor do Estagio 
+	       Li := Li+1
+	       @ Li, 00 PSAY '+' + Replicate('-',130) + '+'
+			 Li := Li+2 
+		   @ Li, 00 PSAY '+' + Replicate('-',130) + '+'
+		   Li := Li+1 
+		   @ Li, 00 PSAY STR0007 + cF_Nome + Space(80) + '|' //'Nome do Estagiario: '
+		   Li := Li+1
+		   @ Li, 00 PSAY STR0008 + Space(123) + '|' //'Curso '
+		   Li := Li+1
+		   @ Li, 00 PSAY STR0009 + cF_Mat + Space(113) + '|' //'Matricula: '
+		   Li := Li+1 
+		   @ Li, 00 PSAY '+' + Replicate('-',130) + '+'
+			 Li := Li+2 
+		   @ Li, 00 PSAY '+' + Replicate('-',130) + '+'
+		   Li := Li+1 
+		   @ Li, 00 PSAY STR0010 + Space(92) + '|' //'Tarefas realizadas pelo estagiАrio: 
+		   Li := Li+1 
+	       For Nz:=1 to 15
+	       		@ Li, 00 PSAY '|' + Space(130)+ '|'
+	        	Li := Li+1
+	        Next
+	        @ Li, 00 PSAY '+' + Replicate('-',130) + '+'
+			 Li := Li+2 
+			 @ Li, 00 PSAY '+' + Replicate('-',130) + '+'
+			 Li := Li+1 
+			 @ Li, 00 PSAY STR0011 + Space(103) + '|' //'AvaliaГЦo de Desempenho: 
+		   Li := Li+1 
+	       For Nz:=1 to 10
+	       		@ Li, 00 PSAY '|' + Space(130)+ '|'
+	        	Li := Li+1
+	        Next
+	        @ Li, 00 PSAY '+' + Replicate('-',130) + '+'
+			 Li := Li+2
+			 
+			@ Li, 00 PSAY '+' + Replicate('-',130) + '+'
+		   	Li := Li+1 
+		   	@ Li, 00 PSAY STR0012 +  space(1) + cF_admissa + space(1) + 'a' + space(1) + cF_demissa + Space(87) + '|' //'Periodo de Estagio: 	 		
+		   	Li := Li+1
+		   	@ Li, 00 PSAY STR0013 +  cF_Cghor + Space(97) + '|' //'Carga HorАria: 	 		
+		   	Li := Li+1
+		   	@ Li, 00 PSAY '+' + Replicate('-',130) + '+'
+		   	Li := Li+2 
+		   	@ Li, 00 PSAY '+' + Replicate('-',130) + '+'
+		 	Li := Li+1           
+		 	@ Li, 00 PSAY STR0014 + Space(67) + '|'
+		 	Li := Li+1  
+		 	@ Li, 00 PSAY STR0015 + Space(55) + '|' 
+		 	Li := Li+1  
+		 	@ Li, 00 PSAY '+' + Replicate('-',130) + '+'
+		 	Li := Li+3   
+		 	@ Li, 00 PSAY AllTrim(cE_Cidade) + ',_____ de_____________________de______' 
+		 	Li := Li+3
+		 	@ Li, 00 PSAY '___________________________________________________'  
+		 	Li := Li+1
+		 	@ Li, 00 PSAY STR0016
+		Next Nx   
+	Endif
+	//здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+	//Ё Reinicializa Variaveis.                                      Ё
+	//юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+   	Li      := 0
+	dbSelectArea('SRA')
+	dbSkip()	
+	
+EndDo	
+
+//здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+//Ё Termino do Relatorio.                                        Ё
+//юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+dbSelectArea( 'SRA' )
+RetIndex('SRA')
+dbSetOrder(1)
+   
+Set Device To Screen
+If aReturn[5] == 1
+	Set Printer To
+	dbCommit()
+	OurSpool(WnRel)
+Endif
+MS_Flush()
+
+Return Nil
+
+
+/*
+эээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээээ
+╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠
+╠╠иммммммммммяммммммммммкмммммммяммммммммммммммммммммкммммммяммммммммммммм╩╠╠
+╠╠╨Programa  ЁAjustaSX1 ╨Autor  ЁLuciana Silveira    ╨ Data Ё  28/03/11   ╨╠╠
+╠╠лммммммммммьммммммммммймммммммоммммммммммммммммммммйммммммоммммммммммммм╧╠╠
+╠╠╨Desc.     ЁPara ajustes no dicionario de dados SX1                     ╨╠╠
+╠╠╨          Ё                                                            ╨╠╠
+╠╠лммммммммммьмммммммммммммммммммммммммммммммммммммммммммммммммммммммммммм╧╠╠
+╠╠╨Uso       Ё REAEST                                                    ╨╠╠
+╠╠хммммммммммомммммммммммммммммммммммммммммммммммммммммммммммммммммммммммм╪╠╠
+╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠╠
+ъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъъ
+*/
+Static Function AjustaSX1()
+
+
+	Local aAreaSX1	:= SX1->(GetArea())
+	Local aRegs		:= {}
+	Local aHelpPor	:= {}
+	Local aHelpEng	:= {}
+	Local aHelpSpa	:= {}
+
+ 
+	//          "X1_GRUPO"	,"X1_ORDEM"	,"X1_PERGUNT"			   			,"X1_PERSPA"				   		,"X1_PERENG"						,"X1_VARIAVL"	,"X1_TIPO"	,"X1_TAMANHO"	,"X1_DECIMAL"	,"X1_PRESEL"	,"X1_GSC"	,"X1_VALID"			,"X1_VAR01"	,"X1_DEF01"			,"X1_DEFSPA1"	,"X1_DEFENG1"	,"X1_CNT01"	,"X1_VAR02"	,"X1_DEF02"			,"X1_DEFSPA2"		,"X1_DEFENG2"   ,"X1_CNT02"	,"X1_VAR03"	,"X1_DEF03"			,"X1_DEFSPA3"		,"X1_DEFENG3"		,"X1_CNT03"	,"X1_VAR04"	,"X1_DEF04"	,"X1_DEFSPA4"	,"X1_DEFENG4"	,"X1_CNT04"	,"X1_VAR05"	,"X1_DEF05"	,"X1_DEFSPA5"	,"X1_DEFENG5"	,"X1_CNT05"	,"X1_F3"	,"X1_GRPSXG","X1_PYME"	AHELPPOR	,AHELPENG	,AHELPSPA	,"X1_HELP" }
+	aAdd(aRegs,{"REAEST"	,"01"		,"Filial De ?"  						,""									,""								,"mv_ch1"		,"C"		,2				,0				,0				,"G"		,""					,"mv_par01"	,""       			,""        		,""        		,""		   		,""			,""        			,""        			,""        		,""			,""			,""					,""					,""					,""			,""			,""			,""		   		,""				,""			,""			,""			,""				,""				,""			,"XM0"		,""			,"S"		,""			,""			,""			,".RHFILDE." })
+	aAdd(aRegs,{"REAEST"	,"02"		,"Filial Ate ?"							,""									,""								,"mv_ch2"		,"C"		,2				,0				,0				,"G"		,"naovazio"			,"mv_par02"	,""					,""				,""				,""   	 		,""      	,""					,""					,""				,""			,""			,""					,""					,""					,""			,""			,""			,""				,""				,""			,""			,""			,""				,""				,""			,"XM0"		,""			,"S"		,""			,""			,""			,".RHFILAT." })
+	aAdd(aRegs,{"REAEST"	,"03"		,"Matricula De ?"						,""									,""								,"mv_ch3"		,"C"		,6				,0				,1				,"G"		,""					,"mv_par03"	,""					,""				,""				,""   	   		,""      	,""					,""					,""				,""			,""			,""					,""					,""					,""			,""			,""			,""				,""				,""			,""			,""			,""				,""				,""			,"SRA"		,""			,"S"		,""			,""			,""			,".RHMATD." })
+	aAdd(aRegs,{"REAEST"	,"04"		,"Matricula Ate ?"						,""   								,"" 							,"mv_ch4"		,"C"		,6 				,0				,0				,"G"		,"naovazio"         ,"mv_par04"	,""					,""				,""				,""	 	   		,""			,""					,""					,""				,""			,""			,""					,""					,""					,""			,""			,""			,""				,""				,""			,""			,""			,""				,""				,""			,"SRA"		,""			,"S"		,aHelpPor	,aHelpEng	,aHelpSpa	,".RHMATA." })
+	aAdd(aRegs,{"REAEST"	,"05"		,"Centro de Custo De ?"					,""	   								,""	   							,"mv_ch5"		,"C"		,9				,0				,0				,"G"		,""					,"mv_par05"	," "				,""				,""				,""  	  		,""      	,""					,""					,""				,""			,""			,""					,""					,""			   		,""			,""			,""			,""				,""				,""			,""			,""			,""				,""				,""			,"CTT"	   	,""	   		,"S"		,aHelpPor	,aHelpEng	,aHelpSpa	,".RHCCDE." })
+	aAdd(aRegs,{"REAEST"	,"06"		,"Centro de Custo Ate ?"	   			,""	   	   							,""		   						,"mv_ch6"		,"C"		,9				,0				,0				,"G"		,"naovazio"		   	,"mv_par06"	,""					,""				,""				,""  			,""      	,""					,""					,""				,""			,""			,""					,""			   		,""			   		,""			,""			,""			,""				,""				,""			,""			,""			,""				,""				,""			,"CTT"		,""	 		,"S"		,""			,""			,""			,".RHCCAT."	  })
+	aAdd(aRegs,{"REAEST"	,"07"		,"Numero de Vias ?"						,""		   							,""			  					,"mv_ch7"		,"N"		,2				,0				,0				,"G"		,""		   			,"mv_par07"	,""					,""				,""				,"1"    		,""      	,""					,""					,""				,""			,""			,""					,""			   		,""			   		,""			,""			,""			,""				,""				,""			,""			,""			,""				,""				,""			,""	   		,""	  		,"S"		,""			,""			,""			,""	 		 })
+	aAdd(aRegs,{"REAEST"	,"08"		,"Situacoes ?"							,""									,""		  						,"mv_ch8"  		,"C"		,5				,0				,1				,"G"		,"fSituacao"	   	,"mv_par08"	,""					,""				,""				," ADFT"    	,""      	,""					,""					,""				,""			,""			,""					,""			   		,""			   		,""			,""			,""			,""				,""				,""			,""			,""			,""				,""				,""			,""			,"" 		,"S"		,""			,""			,""			,".RHSITUA." })
+	aAdd(aRegs,{"REAEST"	,"09"		,"Categoria ?"	   						,""		   							,""		  						,"mv_ch9"		,"C"		,15				,0				,2				,"G"		,"fCategoria"	   	,"mv_par09"	,""					,""				,""				,"EG" 			,""      	,""		   			,""					,""				,""			,""			,""					,""			   		,""			   		,""			,""			,""			,""				,""				,""			,""			,""			,""				,""				,""			,""			,""			,"S"		,""			,""			,""			,".RHCATEG." })
+
+	ValidPerg(aRegs,"REAEST",.F.)                                                                                                                                                                                				                               
+	
+
+		                                                                                                                                                                                                                                            
+	RestArea( aAreaSX1 )
+
+Return

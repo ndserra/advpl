@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="AdvPL.launchType">
+<stringAttribute key="ADVPLInternalServer" value="FALSE"/>
+<stringAttribute key="ADVPLLembranca" value="TRUE"/>
+<stringAttribute key="ADVPLParameters" value=""/>
+<stringAttribute key="ADVPLProfile" value="FALSE"/>
+<stringAttribute key="ADVPLRadio" value="TRUE"/>
+<stringAttribute key="ADVPLRemoteDirectory" value="C:\TOTVS 11\Microsiga\Protheus\bin\smartclient\Smartclient.exe"/>
+<stringAttribute key="ADVPLRemoteParameters" value="-M"/>
+<stringAttribute key="ADVPLStartProgram" value=""/>
+<booleanAttribute key="coverage.hascoverage" value="false"/>
+<listAttribute key="coverage.listsourcecoverage"/>
+</launchConfiguration>

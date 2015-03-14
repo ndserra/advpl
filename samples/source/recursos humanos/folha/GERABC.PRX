@@ -1,0 +1,103 @@
+#INCLUDE "PROTHEUS.CH"
+#include "rwmake.ch"        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+
+/*
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programador  ³ Data     ³ FNC            ³  Motivo da Alteracao                      ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³±±
+±±³Tatiane V. M.³25/08/2009³00000020388/2009³Compatibilizacao dos fontes para aumento do³±±
+±±³             ³          ³                ³campo filial e gestão corporativa.         ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+User Function Gerabc()        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Declaracao de variaveis utilizadas no programa atraves da funcao    ³
+//³ SetPrvt, que criara somente as variaveis definidas pelo usuario,    ³
+//³ identificando as variaveis publicas do sistema utilizadas no codigo ³
+//³ Incluido pelo assistente de conversao do AP5 IDE                    ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+SetPrvt("CALIAS,CTIPREG,CCGC,CCODENT,CCODDEP,CCODSET")
+SetPrvt("CMATRICULA,CNOMEFUN,CPRODUTO,CQUANT,CFACIAL,AINFO")
+SetPrvt("CDETALHE,LBREAK,CFILIALANT,")
+
+cAlias     := Alias( )
+cTipReg    := " "
+cCGC       := Space(18)
+cCodEnt    := Space(03)
+cCodDep    := Space(12)
+cCodSet    := Space(12)
+cMatricula := Space(10)
+cNomeFun   := Space(30)
+cProduto   := Space(05)
+cQuant     := Space(06)
+cFacial    := Space(16)
+aInfo      := {}
+
+dbSelectArea( "SR0" )
+If dbSeek( SRA->RA_FILIAL + SRA->RA_MAT )
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Define Registro C.G.C.                                       ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If cFilialAnt #SRA->RA_FILIAL
+		fInfo(@aInfo,SRA->RA_FILIAL)
+		cTipReg  := "@"
+		cCGC     :=  SubStr( aInfo[08],1,2 ) + "." + SubStr( aInfo[08],3,3 ) + "." + SubStr( aInfo[08],6,3 ) + "/" + SubStr( aInfo[08],9,4 ) + "-" + SubStr( aInfo[08],13,2 )
+		cDetalhe := cTipReg + cCGC
+		If !GPEGRV410( cDetalhe , 19 , "1" )
+			lBreak := .T.
+		Endif
+		cFilialAnt := SRA->RA_FILIAL
+	Endif		
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Define Registro Identifica‡„o do Funcionario                 ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	cTipReg    := "#"
+	cCodEnt    := StrZero(Val(SR0->R0_FILIAL),03)
+	cCodDep    := StrZero(Val(SR0->R0_CC),12)
+	cCodSet    := Replicate("0",12)
+	cMatricula := StrZero(Val(SR0->R0_MAT),10)
+	cNomeFun   := Left(SRA->RA_NOME,30)
+	cDetalhe := cTipReg + cCodEnt + cCodDep + cCodSet + cMatricula + cNomeFun
+	If !lBreak
+		If !GPEGRV410( cDetalhe , 68 , "1" )
+			lBreak := .T.
+		Endif
+	Endif
+Endif
+
+If !lBreak
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Define Registro Itens de Pedido do Funcionario               ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	dbSelectArea( "SR0" )
+	If dbSeek( SRA->RA_FILIAL + SRA->RA_MAT )
+		While !EOF() .And. ( SRA->RA_FILIAL + SRA->RA_MAT == SR0->R0_FILIAL + SR0->R0_MAT )
+			If SR0->R0_QDIACAL > 0
+				cTipReg    := "%"		
+				cQuant     := StrZero(SR0->R0_QDIACAL,06)
+				dbSelectArea( "SRN" )
+				If dbSeek( If(xFilial() == Space(FWGETTAMFILIAL),Space(FWGETTAMFILIAL),SR0->R0_FILIAL ) + SR0->R0_MEIO )
+					cProduto := SubStr(AllTrim(SRN->RN_ITEMPED),01,05)
+					cFacial  := StrZero((SRN->RN_VUNIATU * 100),16)
+				Endif
+				cDetalhe := cTipReg + cProduto + cQuant + cFacial
+				If !GPEGRV410( cDetalhe , 28  , "1" )
+					lBreak := .T.
+				Endif
+				If lBreak
+					Exit
+				Endif
+			Endif
+			dbSelectArea( "SR0" )							
+			dbSkip()
+		Enddo
+	Endif
+Endif
+dbSelectArea( cAlias )
+// Substituido pelo assistente de conversao do AP5 IDE em 05/07/00 ==> __Return( .T. )
+Return( .T. )        // incluido pelo assistente de conversao do AP5 IDE em 05/07/00

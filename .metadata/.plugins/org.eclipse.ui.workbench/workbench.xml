@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workbench progressCount="15" version="2.0">
+<workbenchAdvisor/>
+<window height="768" maximized="true" width="1024" x="150" y="79">
+<fastViewData fastViewLocation="1024"/>
+<perspectiveBar>
+<itemSize x="341"/>
+</perspectiveBar>
+<coolbarLayout>
+<coolItem id="group.file" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.ui.workbench.file" itemType="typeToolBarContribution" x="122" y="23"/>
+<coolItem id="additions" itemType="typeGroupMarker"/>
+<coolItem id="com.totvs.tds.compiler.actionSet1" itemType="typeToolBarContribution" x="38" y="23"/>
+<coolItem id="com.totvs.tds.core.actionButtonsAdvpl" itemType="typeToolBarContribution" x="107" y="23"/>
+<coolItem id="com.totvs.tds.core.actionSet2" itemType="typeToolBarContribution" x="74" y="23"/>
+<coolItem id="org.eclipse.debug.ui.launchActionSet" itemType="typeToolBarContribution" x="167" y="23"/>
+<coolItem id="org.eclipse.search.searchActionSet" itemType="typeToolBarContribution" x="53" y="23"/>
+<coolItem id="org.eclipse.team.ui.actionSet" itemType="typeToolBarContribution" x="53" y="23"/>
+<coolItem id="group.nav" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.ui.workbench.navigate" itemType="typeToolBarContribution" x="190" y="23"/>
+<coolItem id="group.editor" itemType="typeGroupMarker"/>
+<coolItem id="AdvPL.editor" itemType="typeToolBarContribution" x="38" y="23"/>
+<coolItem id="group.help" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.ui.workbench.help" itemType="typeToolBarContribution" x="-1" y="-1"/>
+</coolbarLayout>
+<page aggregateWorkingSetId="Aggregate for window 1425127854931" focus="true" label="Workspace - TOTVS Platform">
+<editors>
+<editorArea activeWorkbook="DefaultEditorWorkbook">
+<info part="DefaultEditorWorkbook">
+<folder appearance="1" expanded="2">
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+<part id="1"/>
+<part id="2"/>
+</presentation>
+</folder>
+</info>
+</editorArea>
+<editor id="AdvPL.editor" name="xTelinha1.prw" partName="xTelinha1.prw" path="C:/TOTVS 11/Microsiga/Protheus/my projects/ADVPL/resources/xTelinha1.prw" title="xTelinha1.prw" tooltip="ADVPL/resources/xTelinha1.prw" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/ADVPL/resources/xTelinha1.prw"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="0" selectionTopPixel="78"/>
+</editor>
+<editor id="AdvPL.editor" name="tFun.prw" partName="tFun.prw" path="C:/TOTVS 11/Microsiga/Protheus/my projects/ADVPL/resources/tFun.prw" title="tFun.prw" tooltip="ADVPL/resources/tFun.prw" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/ADVPL/resources/tFun.prw"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="0" selectionTopPixel="0"/>
+</editor>
+<editor activePart="true" focus="true" id="AdvPL.editor" name="fTelaCliente.prw" partName="fTelaCliente.prw" path="C:/TOTVS 11/Microsiga/Protheus/my projects/ADVPL/resources/fTelaCliente.prw" title="fTelaCliente.prw" tooltip="ADVPL/resources/fTelaCliente.prw" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/ADVPL/resources/fTelaCliente.prw"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="5004" selectionTopPixel="2255"/>
+</editor>
+</editors>
+<views>
+<view id="org.eclipse.ui.views.ProgressView" partName="Progress">
+<viewState/>
+</view>
+<view id="com.totvs.tds.core.server.ui.TotvsServersOutlineView" partName="TOTVS Server Outline">
+<viewState/>
+</view>
+<view id="org.eclipse.debug.ui.DebugView" partName="Debug">
+<viewState/>
+</view>
+<view id="com.totvs.tds.debug.TOTVSDebugComands" partName="AdvPL Comands">
+<viewState/>
+</view>
+<view id="com.totvs.tds.core.server.ui.TotvsServerMonitor" partName="TOTVS Application Monitor">
+<viewState>
+<ConfiguredColumns>
+<Servidor Visible="true" Width="150" WidthDefault="100"/>
+<Ambiente Visible="true" Width="150" WidthDefault="100"/>
+<Máquina Visible="true" Width="200" WidthDefault="100"/>
+<ThreadId Visible="true" Width="70" WidthDefault="100"/>
+<UserServer Visible="true" Width="80" WidthDefault="100"/>
+<Programa Visible="true" Width="80" WidthDefault="100"/>
+<Conexão Visible="true" Width="150" WidthDefault="100"/>
+<Tempodecorrido Visible="true" Width="130" WidthDefault="100"/>
+<Instrucoes Visible="true" Width="85" WidthDefault="100"/>
+<InstrucoesxSegundo Visible="true" Width="130" WidthDefault="100"/>
+<Observacoes Visible="true" Width="530" WidthDefault="100"/>
+<Memória Visible="true" Width="80" WidthDefault="100"/>
+<SID Visible="true" Width="80" WidthDefault="100"/>
+<RPO Visible="true" Width="80" WidthDefault="100"/>
+</ConfiguredColumns>
+<TotvsServerMonitorViewer viewOrder="0-1-2-3-4-5-6-7-8-9-10-11-12-13-"/>
+</viewState>
+</view>
+<view id="org.eclipse.ui.views.TaskList" partName="Tasks">
+<viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.completionField" categoryGroup="none" markerContentGenerator="org.eclipse.ui.ide.tasksGenerator" partName="Tasks">
+<columnWidths org.eclipse.ui.ide.completionField="40" org.eclipse.ui.ide.descriptionField="300" org.eclipse.ui.ide.locationField="90" org.eclipse.ui.ide.markerType="90" org.eclipse.ui.ide.pathField="120" org.eclipse.ui.ide.priorityField="30" org.eclipse.ui.ide.resourceField="90"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.completionField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.priorityField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.descriptionField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.resourceField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.pathField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.locationField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.markerType"/>
+</viewState>
+</view>
+<view id="org.eclipse.debug.ui.VariableView" partName="Variables">
+<viewState/>
+</view>
+<view id="org.eclipse.debug.ui.BreakpointView" partName="Breakpoints">
+<viewState/>
+</view>
+<view id="org.eclipse.ui.views.ContentOutline" partName="Outline">
+<viewState/>
+</view>
+<view id="org.eclipse.debug.ui.ExpressionView" partName="Expressions">
+<viewState/>
+</view>
+<view id="com.totvs.tds.editor.navigator.view" partName="TOTVS Explorer">
+<viewState CommonNavigator.LINKING_ENABLED="1" org.eclipse.ui.navigator.resources.workingSets.showTopLevelWorkingSets="0"/>
+</view>
+<view id="com.totvs.tds.core.server.ui.TotvsServersManagerViewExtension" partName="Servers Extension">
+<viewState/>
+</view>
+<view id="org.eclipse.ui.views.ProblemView" partName="Problems">
+<viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.severityAndDescriptionField" categoryGroup="org.eclipse.ui.ide.severity" markerContentGenerator="org.eclipse.ui.ide.problemsGenerator" partName="Problems">
+<expanded>
+<category IMemento.internal.id="Warnings (1 item)"/>
+</expanded>
+<columnWidths org.eclipse.ui.ide.locationField="90" org.eclipse.ui.ide.markerType="90" org.eclipse.ui.ide.pathField="120" org.eclipse.ui.ide.resourceField="90" org.eclipse.ui.ide.severityAndDescriptionField="300"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.severityAndDescriptionField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.resourceField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.pathField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.locationField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.markerType"/>
+</viewState>
+</view>
+<view id="org.eclipse.ui.console.ConsoleView" partName="Console">
+<viewState/>
+</view>
+</views>
+<perspectives activePart="AdvPL.editor" activePerspective="com.totvs.tds.sdk.perspective.TotvsPerspective">
+<perspective editorAreaTrimState="2" editorAreaVisible="1" fixed="0" version="0.016">
+<descriptor class="com.totvs.tds.core.perspective.TotvsPerspective" id="com.totvs.tds.sdk.perspective.TotvsPerspective" label="TOTVS Platform"/>
+<alwaysOnActionSet id="org.eclipse.ui.cheatsheets.actionSet"/>
+<alwaysOnActionSet id="org.eclipse.search.searchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.annotationNavigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.navigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.convertLineDelimitersTo"/>
+<alwaysOnActionSet id="org.eclipse.ui.externaltools.ExternalToolsSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.keyBindings"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.openFiles"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionButtonsAdvpl"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionSet2"/>
+<alwaysOnActionSet id="com.totvs.tds.compiler.actionSet1"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionSetToggleComment"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionSetBlockComment"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionQuickOutline"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionUpdateParse"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionSetCorrectIdent"/>
+<alwaysOnActionSet id="org.eclipse.rse.core.search.searchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.launchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.profileActionSet"/>
+<alwaysOnActionSet id="org.eclipse.jdt.debug.ui.JDTDebugActionSet"/>
+<alwaysOnActionSet id="org.eclipse.team.ui.actionSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.NavigateActionSet"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.debugActionSet"/>
+<perspective_action id="com.totvs.tds.core.perspectives.RelEngPerspective"/>
+<perspective_action id="com.totvs.tds.core.perspective.DeveloperPerspective"/>
+<perspective_action id="com.totvs.tds.sdk.perspective.TotvsPerspective"/>
+<hide_toolbar_item_id id="org.eclipse.jdt.ui.actions.OpenProjectWizard"/>
+<hide_toolbar_item_id id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"/>
+<view id="com.totvs.tds.editor.navigator.view"/>
+<view id="org.eclipse.ui.console.ConsoleView"/>
+<view id="org.eclipse.ui.views.ProblemView"/>
+<view id="org.eclipse.ui.views.ProgressView"/>
+<view id="com.totvs.tds.core.server.ui.TotvsServerMonitor"/>
+<view id="org.eclipse.debug.ui.DebugView"/>
+<view id="com.totvs.tds.core.server.ui.TotvsServersManagerViewExtension"/>
+<fastViewBars>
+<fastViewBar fastViewLocation="131072" id="folder_1" orientation="512" selectedTabId="org.eclipse.ui.views.ContentOutline" style="0">
+<fastViews>
+<view id="org.eclipse.ui.views.ContentOutline" ratio="0.3"/>
+<view id="com.totvs.tds.core.server.ui.TotvsServersOutlineView" ratio="0.3"/>
+</fastViews>
+</fastViewBar>
+</fastViewBars>
+<layout>
+<mainWindow>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@169f5d74">
+<folder activePageID="com.totvs.tds.editor.navigator.view" appearance="2" expanded="2">
+<page content="com.totvs.tds.editor.navigator.view" label="TOTVS Explorer"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="stickyFolderRight" ratio="0.75" ratioLeft="750" ratioRight="250" relationship="2" relative="org.eclipse.ui.internal.ViewStack@169f5d74">
+<folder appearance="2" expanded="2">
+<page content="org.eclipse.help.ui.HelpView" label="LabelNotFound"/>
+<page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
+<page content="org.eclipse.ui.cheatsheets.views.CheatSheetView" label="LabelNotFound"/>
+</folder>
+</info>
+<info part="org.eclipse.ui.editorss" ratio="0.20611916" ratioLeft="256" ratioRight="986" relationship="2" relative="org.eclipse.ui.internal.ViewStack@169f5d74"/>
+<info folder="true" part="folder" ratio="0.65971106" ratioLeft="411" ratioRight="212" relationship="4" relative="org.eclipse.ui.editorss">
+<folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
+<page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
+<page content="org.eclipse.ui.views.ProblemView" label="Problems"/>
+<page content="org.eclipse.ui.views.ProgressView" label="Progress"/>
+<page content="com.totvs.tds.core.server.ui.TotvsServerMonitor" label="TOTVS Application Monitor"/>
+<page content="org.eclipse.debug.ui.DebugView" label="Debug"/>
+<page content="com.totvs.tds.core.server.ui.TotvsDBAccessMonitor" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+<part id="1"/>
+<part id="2"/>
+<part id="3"/>
+<part id="4"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="folder_1" ratio="0.81226414" ratioLeft="861" ratioRight="199" relationship="2" relative="org.eclipse.ui.editorss">
+<folder appearance="2" expanded="2">
+<page content="org.eclipse.ui.views.ContentOutline" label="LabelNotFound"/>
+<page content="com.totvs.tds.core.server.ui.TotvsServersOutlineView" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
+</folder>
+</info>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@1ee423cf" ratio="0.65971106" ratioLeft="411" ratioRight="212" relationship="4" relative="org.eclipse.ui.internal.ViewStack@169f5d74">
+<folder activePageID="com.totvs.tds.core.server.ui.TotvsServersManagerViewExtension" appearance="2" expanded="2">
+<page content="com.totvs.tds.core.server.ui.TotvsServersManagerViewExtension" label="Servers Extension"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+</presentation>
+</folder>
+</info>
+</mainWindow>
+</layout>
+</perspective>
+<perspective editorAreaTrimState="2" editorAreaVisible="1" fixed="0" version="0.016">
+<descriptor class="org.eclipse.debug.internal.ui.DebugPerspectiveFactory" id="org.eclipse.debug.ui.DebugPerspective" label="Debug"/>
+<alwaysOnActionSet id="org.eclipse.ui.cheatsheets.actionSet"/>
+<alwaysOnActionSet id="org.eclipse.search.searchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.annotationNavigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.navigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.convertLineDelimitersTo"/>
+<alwaysOnActionSet id="org.eclipse.ui.externaltools.ExternalToolsSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.keyBindings"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.openFiles"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionButtonsAdvpl"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionSet2"/>
+<alwaysOnActionSet id="com.totvs.tds.compiler.actionSet1"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionSetToggleComment"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionSetBlockComment"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionQuickOutline"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionUpdateParse"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionSetCorrectIdent"/>
+<alwaysOnActionSet id="org.eclipse.rse.core.search.searchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.launchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.NavigateActionSet"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.breakpointActionSet"/>
+<alwaysOnActionSet id="org.eclipse.jdt.debug.ui.JDTDebugActionSet"/>
+<alwaysOnActionSet id="org.eclipse.jdt.ui.JavaActionSet"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.debugActionSet"/>
+<show_view_action id="org.eclipse.debug.ui.DebugView"/>
+<show_view_action id="org.eclipse.debug.ui.VariableView"/>
+<show_view_action id="org.eclipse.debug.ui.BreakpointView"/>
+<show_view_action id="org.eclipse.debug.ui.ExpressionView"/>
+<show_view_action id="org.eclipse.ui.views.ContentOutline"/>
+<show_view_action id="org.eclipse.ui.console.ConsoleView"/>
+<show_view_action id="org.eclipse.ui.views.TaskList"/>
+<show_view_action id="org.eclipse.pde.runtime.LogView"/>
+<show_view_action id="org.eclipse.jdt.debug.ui.DisplayView"/>
+<perspective_action id="org.eclipse.jdt.ui.JavaPerspective"/>
+<perspective_action id="org.eclipse.jdt.ui.JavaBrowsingPerspective"/>
+<hide_toolbar_item_id id="org.eclipse.jdt.ui.actions.OpenProjectWizard"/>
+<hide_toolbar_item_id id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"/>
+<view id="org.eclipse.ui.console.ConsoleView"/>
+<view id="org.eclipse.ui.views.TaskList"/>
+<view id="com.totvs.tds.debug.TOTVSDebugComands"/>
+<view id="org.eclipse.debug.ui.DebugView"/>
+<view id="org.eclipse.debug.ui.VariableView"/>
+<view id="org.eclipse.debug.ui.BreakpointView"/>
+<view id="org.eclipse.debug.ui.ExpressionView"/>
+<view id="org.eclipse.ui.views.ContentOutline"/>
+<fastViewBars/>
+<layout>&#x0A;<mainWindow>&#x0A;<info folder="true" part="org.eclipse.debug.internal.ui.NavigatorFolderView">&#x0A;<folder activePageID="org.eclipse.debug.ui.DebugView" appearance="2" expanded="2">&#x0A;<page content="org.eclipse.debug.ui.DebugView" label="Debug"/>
+<page content="org.eclipse.ui.views.ResourceNavigator" label="LabelNotFound"/>
+<page content="org.eclipse.jdt.ui.PackageExplorer" label="LabelNotFound"/>
+<page content="org.eclipse.jdt.ui.TypeHierarchy" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">&#x0A;<part id="0"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="stickyFolderRight" ratio="0.75" ratioLeft="954" ratioRight="318" relationship="2" relative="org.eclipse.debug.internal.ui.NavigatorFolderView">&#x0A;<folder appearance="2" expanded="2">&#x0A;<page content="org.eclipse.help.ui.HelpView" label="LabelNotFound"/>
+<page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
+<page content="org.eclipse.ui.cheatsheets.views.CheatSheetView" label="LabelNotFound"/>
+</folder>
+</info>
+<info folder="true" part="org.eclipse.debug.internal.ui.ConsoleFolderView" ratio="0.74943054" ratioLeft="658" ratioRight="220" relationship="4" relative="org.eclipse.debug.internal.ui.NavigatorFolderView">&#x0A;<folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">&#x0A;<page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
+<page content="org.eclipse.ui.views.TaskList" label="Tasks"/>
+<page content="com.totvs.tds.debug.TOTVSDebugComands" label="AdvPL Comands"/>
+<page content="org.eclipse.ui.views.BookmarkView" label="LabelNotFound"/>
+<page content="org.eclipse.ui.views.PropertySheet" label="LabelNotFound"/>
+<page content="org.eclipse.jdt.debug.ui.DisplayView" label="LabelNotFound"/>
+<page content="org.eclipse.search.SearchResultView" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">&#x0A;<part id="0"/>
+<part id="1"/>
+<part id="2"/>
+</presentation>
+</folder>
+</info>
+<info part="org.eclipse.ui.editorss" ratio="0.44984803" ratioLeft="296" ratioRight="362" relationship="4" relative="org.eclipse.debug.internal.ui.NavigatorFolderView"/>
+<info folder="true" part="org.eclipse.debug.internal.ui.OutlineFolderView" ratio="0.75" ratioLeft="954" ratioRight="318" relationship="2" relative="org.eclipse.ui.editorss">&#x0A;<folder activePageID="org.eclipse.ui.views.ContentOutline" appearance="2" expanded="2">&#x0A;<page content="org.eclipse.ui.views.ContentOutline" label="Outline"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">&#x0A;<part id="0"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="org.eclipse.debug.internal.ui.ToolsFolderView" ratio="0.5" ratioLeft="636" ratioRight="636" relationship="2" relative="org.eclipse.debug.internal.ui.NavigatorFolderView">&#x0A;<folder activePageID="org.eclipse.debug.ui.ExpressionView" appearance="2" expanded="2">&#x0A;<page content="org.eclipse.debug.ui.VariableView" label="Variables"/>
+<page content="org.eclipse.debug.ui.BreakpointView" label="Breakpoints"/>
+<page content="org.eclipse.debug.ui.ExpressionView" label="Expressions"/>
+<page content="org.eclipse.debug.ui.RegisterView" label="LabelNotFound"/>
+<page content="AdvPL.variableView" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">&#x0A;<part id="0"/>
+<part id="1"/>
+<part id="2"/>
+</presentation>
+</folder>
+</info>
+</mainWindow>
+</layout>
+</perspective>
+<perspective editorAreaTrimState="2" editorAreaVisible="1" fixed="0" version="0.016">
+<descriptor class="com.totvs.tds.core.perspective.DeveloperPerspective" id="com.totvs.tds.core.perspective.DeveloperPerspective" label="TOTVS Developer"/>
+<alwaysOnActionSet id="org.eclipse.ui.cheatsheets.actionSet"/>
+<alwaysOnActionSet id="org.eclipse.search.searchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.annotationNavigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.navigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.convertLineDelimitersTo"/>
+<alwaysOnActionSet id="org.eclipse.ui.externaltools.ExternalToolsSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.keyBindings"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.openFiles"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionButtonsAdvpl"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionSet2"/>
+<alwaysOnActionSet id="com.totvs.tds.compiler.actionSet1"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionSetToggleComment"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionSetBlockComment"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionQuickOutline"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionUpdateParse"/>
+<alwaysOnActionSet id="com.totvs.tds.core.actionSetCorrectIdent"/>
+<alwaysOnActionSet id="org.eclipse.rse.core.search.searchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.launchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.debugActionSet"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.profileActionSet"/>
+<alwaysOnActionSet id="org.eclipse.jdt.debug.ui.JDTDebugActionSet"/>
+<alwaysOnActionSet id="org.eclipse.team.ui.actionSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.NavigateActionSet"/>
+<show_view_action id="org.eclipse.team.ccvs.ui.AnnotateView"/>
+<show_view_action id="org.eclipse.pde.ui.DependenciesView"/>
+<show_view_action id="org.eclipse.team.ui.GenericHistoryView"/>
+<show_view_action id="org.eclipse.ui.console.ConsoleView"/>
+<show_view_action id="org.eclipse.ui.views.ResourceNavigator"/>
+<show_view_action id="org.eclipse.ui.views.ProblemView"/>
+<show_view_action id="org.eclipse.ui.views.ContentOutline"/>
+<new_wizard_action id="com.totvs.tds.sdk.advpl.ui.TotvsProjectWizard"/>
+<new_wizard_action id="TOTVS.projectWizard.ABL"/>
+<new_wizard_action id="com.totvs.tds.sdk.advpl.ui.TotvsImportProject"/>
+<new_wizard_action id="com.totvs.tds.sdk.advpl.ui.TotvsAdvplNewClassWizard"/>
+<new_wizard_action id="com.totvs.tds.sdk.advpl.ui.TotvsAdvplNewFileWizard"/>
+<new_wizard_action id="com.totvs.tds.sdk.advpl.AssistenteCodigo"/>
+<perspective_action id="com.totvs.tds.core.perspectives.RelEngPerspective"/>
+<hide_toolbar_item_id id="org.eclipse.jdt.ui.actions.OpenProjectWizard"/>
+<hide_toolbar_item_id id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"/>
+<view id="org.eclipse.ui.console.ConsoleView"/>
+<view id="org.eclipse.ui.views.ProblemView"/>
+<view id="org.eclipse.ui.views.ProgressView"/>
+<view id="org.eclipse.ui.views.ContentOutline"/>
+<view id="com.totvs.tds.editor.navigator.view"/>
+<fastViewBars/>
+<layout>&#x0A;<mainWindow>&#x0A;<info folder="true" part="topLeft">&#x0A;<folder activePageID="com.totvs.tds.editor.navigator.view" appearance="2" expanded="2">&#x0A;<page content="com.totvs.tds.editor.navigator.view" label="TOTVS Explorer"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">&#x0A;<part id="0"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="stickyFolderRight" ratio="0.75" ratioLeft="954" ratioRight="318" relationship="2" relative="topLeft">&#x0A;<folder appearance="2" expanded="2">&#x0A;<page content="org.eclipse.help.ui.HelpView" label="LabelNotFound"/>
+<page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
+<page content="org.eclipse.ui.cheatsheets.views.CheatSheetView" label="LabelNotFound"/>
+</folder>
+</info>
+<info part="org.eclipse.ui.editorss" ratio="0.13317573" ratioLeft="169" ratioRight="1100" relationship="2" relative="topLeft"/>
+<info folder="true" part="bottomRight" ratio="0.74943054" ratioLeft="658" ratioRight="220" relationship="4" relative="org.eclipse.ui.editorss">&#x0A;<folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">&#x0A;<page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
+<page content="org.eclipse.ui.views.ProblemView" label="Problems"/>
+<page content="org.eclipse.ui.views.ProgressView" label="Progress"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">&#x0A;<part id="0"/>
+<part id="1"/>
+<part id="2"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="Right" ratio="0.7494759" ratioLeft="715" ratioRight="239" relationship="2" relative="org.eclipse.ui.editorss">&#x0A;<folder activePageID="org.eclipse.ui.views.ContentOutline" appearance="2" expanded="2">&#x0A;<page content="org.eclipse.ui.views.ContentOutline" label="Outline"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">&#x0A;<part id="0"/>
+</presentation>
+</folder>
+</info>
+</mainWindow>
+</layout>
+</perspective>
+</perspectives>
+<workingSets/>
+<navigationHistory>
+<editors>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" path="/ADVPL/resources/xTelinha1.prw"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" path="/ADVPL/resources/tFun.prw"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" path="/ADVPL/resources/fTelaCliente.prw"/>
+</editors>
+<item historyLabel="xTelinha1.prw" index="0">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="tFun.prw" index="1">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item active="true" historyLabel="fTelaCliente.prw" index="2">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+</navigationHistory>
+<input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
+</page>
+<workbenchWindowAdvisor/>
+<actionBarAdvisor/>
+<trimLayout>
+<trimArea IMemento.internal.id="131072">
+<trimItem IMemento.internal.id="folder_1"/>
+</trimArea>
+<trimArea IMemento.internal.id="128">
+<trimItem IMemento.internal.id="org.eclipse.ui.internal.WorkbenchWindow.topBar"/>
+</trimArea>
+<trimArea IMemento.internal.id="1024">
+<trimItem IMemento.internal.id="org.eclise.ui.internal.FastViewBar"/>
+<trimItem IMemento.internal.id="org.eclipse.jface.action.StatusLineManager"/>
+<trimItem IMemento.internal.id="org.eclipse.ui.internal.progress.ProgressRegion"/>
+<trimItem IMemento.internal.id="com.totvs.tds.core.ui.view.selectedServerAndEnvironment"/>
+</trimArea>
+</trimLayout>
+</window>
+<mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="fTelaCliente.prw" tooltip="ADVPL/resources/fTelaCliente.prw">
+<persistable path="/ADVPL/resources/fTelaCliente.prw"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="tFun.prw" tooltip="ADVPL/resources/tFun.prw">
+<persistable path="/ADVPL/resources/tFun.prw"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="xTelinha1.prw" tooltip="ADVPL/resources/xTelinha1.prw">
+<persistable path="/ADVPL/resources/xTelinha1.prw"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="fTelaClientes.prw" tooltip="ADVPL/resources/fTelaClientes.prw">
+<persistable path="/ADVPL/resources/fTelaClientes.prw"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="fTelaCli.prw" tooltip="ADVPL/resources/fTelaCli.prw">
+<persistable path="/ADVPL/resources/fTelaCli.prw"/>
+</file>
+<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="AdvPL.editor" name="fTelaCli.prw" tooltip="\\172.16.99.78\c$\TOTVS 11\Microsiga\Protheus\my projects\FORMACAO\resources\fTelaCli.prw">
+<persistable uri="file:////172.16.99.78/c$/TOTVS%2011/Microsiga/Protheus/my%20projects/FORMACAO/resources/fTelaCli.prw"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="xTela.prw" tooltip="ADVPL/resources/xTela.prw">
+<persistable path="/ADVPL/resources/xTela.prw"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="ADVPL.prw" tooltip="ADVPL/resources/ADVPL.prw">
+<persistable path="/ADVPL/resources/ADVPL.prw"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="xTelinha.prw" tooltip="ADVPL/resources/xTelinha.prw">
+<persistable path="/ADVPL/resources/xTelinha.prw"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="new_advpl_function.prw" tooltip="ADVPL/resources/new_advpl_function.prw">
+<persistable path="/ADVPL/resources/new_advpl_function.prw"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="ADVPL.prw" tooltip="Formacao/resources/ADVPL.prw">
+<persistable path="/Formacao/resources/ADVPL.prw"/>
+</file>
+</mruList>
+</workbench>
