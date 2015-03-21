@@ -4845,3 +4845,15 @@ Command-line arguments:  -os win32 -ws win32 -arch x86_64
 
 !ENTRY org.eclipse.osgi 2 1 2015-03-21 14:07:40.891
 !MESSAGE NLS missing message: TOTVSCompilaVersaoPageProjects_btnSalvarConfigurao_text in: com.totvs.tds.core.patch.CompilaVersao.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-03-21 16:26:31.148
+!MESSAGE NLS missing message: TOTVSCompareWithEditorAction_1 in: com.totvs.tds.editor.compare.action.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-03-21 16:26:31.148
+!MESSAGE NLS missing message: TOTVSCompareWithEditorAction_2 in: com.totvs.tds.editor.compare.action.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-03-21 16:26:31.148
+!MESSAGE NLS missing message: TOTVSCompareWithEditorAction_4 in: com.totvs.tds.editor.compare.action.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-03-21 16:26:31.148
+!MESSAGE NLS missing message: TOTVSCompareWithEditorAction_5 in: com.totvs.tds.editor.compare.action.messages
