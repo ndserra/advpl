@@ -17,31 +17,30 @@ User Function ListBox()
 	 
 	oDlg := MsDialog():New(000,000,550,950,"Exemplo de LisBox",,,.F.,,,,,,.T.,,,.T.) 
 	
-	// PARA CRIAÇÃO DAS ABAS (FOLDERS)
+	// Criando abas 
 	oFld := tFolder():New(025,005,aTitles,{},oDlg,,,,.T.,.F.,468,228)
 	
 	fCarregaDados() // Chamando a rotina para alimentar as array. 
 	
-	// Folder 1 - Cliente ---------
-	// Estrutura do listBox com campos
+	//===================================================================== Folder 1 - Cliente ======================================================================
+	//Estrutura do listBox com campos
 	@ 005,005 LISTBOX oLbx1 FIELDS HEADER "Cod.Cliente","Loja","Nome ","Estado","Ultima Compra","Bloqueado" SIZE 456,205 PIXEL OF oFld:aDialogs[1]
 	oLbx1:SetArray(aCliente)
-	oLbx1:bLine := { || { aCliente[oLbx1:nAt,01],	aCliente[oLbx1:nAt,02],	aCliente[oLbx1:nAt,03],;
-							 aCliente[oLbx1:nAt,04],	aCliente[oLbx1:nAt,05],	aCliente[oLbx1:nAt,06] } }  
-	// Duplo clique no listBix
+	oLbx1:bLine := { || {	aCliente[oLbx1:nAt,01],	aCliente[oLbx1:nAt,02],	aCliente[oLbx1:nAt,03],	aCliente[oLbx1:nAt,04],;
+									aCliente[oLbx1:nAt,05],	aCliente[oLbx1:nAt,06]}}  
+	// Metodo de clique duplo no listBix
 	oLbx1:bLDblClick := {|| Alert('DblClick Cliente') }
 	
-					
-	// Folder 2 - aFornece ---------
+									
+	//===================================================================== Folder 2 - aFornece ======================================================================
 	@ 005,005 LISTBOX oLbx2 FIELDS HEADER 	"Cod.Forne","Loja","Nome"," UF ","Bloqueado" SIZE 456,205 PIXEL OF oFld:aDialogs[2]
 	oLbx2:SetArray(aFornece)
-	oLbx2:bLine := { || { aFornece[oLbx2:nAt,01],	aFornece[oLbx2:nAt,02],	aFornece[oLbx2:nAt,03],;
-							 aFornece[oLbx2:nAt,04],	aFornece[oLbx2:nAt,05]}} 							
+	oLbx2:bLine := { || {aFornece[oLbx2:nAt,01],	aFornece[oLbx2:nAt,02],	aFornece[oLbx2:nAt,03],	aFornece[oLbx2:nAt,04],	aFornece[oLbx2:nAt,05]}} 							
+	
 	// Metodo de clique duplo no listBix
 	oLbx2:bLDblClick := {|| Alert('DblClick Fornecedor') }  
 								
-								
-	//--------- Folder 3 - aProdutos ---------
+	//===================================================================== Folder 3 - aProdutos ======================================================================
 	@ 005,005 LISTBOX oLbx3 FIELDS HEADER 	"Produto ","Descriçao ", "Tipo ","Bloqueado" colsizes 35,25,50,20, SIZE 456,205 PIXEL OF oFld:aDialogs[3]
 	oLbx3:SetArray(aProdutos)
 	oLbx3:bLine := { || {	aProdutos[oLbx3:nAt,01],aProdutos[oLbx3:nAt,02],aProdutos[oLbx3:nAt,03],aProdutos[oLbx3:nAt,04] } } 							

@@ -17,7 +17,7 @@ User Function ListBox()
 	 
 	oDlg := MsDialog():New(000,000,550,950,"Exemplo de LisBox",,,.F.,,,,,,.T.,,,.T.) 
 	
-	// PARA CRIAÇÃO DAS ABAS (FOLDERS)
+	// PARA CRIAÃ‡ÃƒO DAS ABAS (FOLDERS)
 	oFld := tFolder():New(025,005,aTitles,{},oDlg,,,,.T.,.F.,468,228)
 	
 	fCarregaDados() // Chamando a rotina para alimentar as array. 
@@ -42,7 +42,7 @@ User Function ListBox()
 								
 								
 	//--------- Folder 3 - aProdutos ---------
-	@ 005,005 LISTBOX oLbx3 FIELDS HEADER 	"Produto ","Descriçao ", "Tipo ","Bloqueado" colsizes 35,25,50,20, SIZE 456,205 PIXEL OF oFld:aDialogs[3]
+	@ 005,005 LISTBOX oLbx3 FIELDS HEADER 	"Produto ","DescriÃ§ao ", "Tipo ","Bloqueado" colsizes 35,25,50,20, SIZE 456,205 PIXEL OF oFld:aDialogs[3]
 	oLbx3:SetArray(aProdutos)
 	oLbx3:bLine := { || {	aProdutos[oLbx3:nAt,01],aProdutos[oLbx3:nAt,02],aProdutos[oLbx3:nAt,03],aProdutos[oLbx3:nAt,04] } } 							
 	
@@ -63,7 +63,7 @@ Static Function fCarregaDados()
 	Local cAliasProd := GetNextAlias() //Criando um alias de memoria                                     
 	Local cSql      := ""
 	                                                
-	// 1º  Folder Cliente
+	// 1Âº  Folder Cliente
 	dbSelectArea("SA1")
 	SA1->( dbSetOrder(1) )
 	SA1->( dbGoTop())
@@ -74,7 +74,7 @@ Static Function fCarregaDados()
 		aAdd ( ;
 			aCliente, {;
 				SA1->A1_COD, SA1->A1_LOJA, SA1->A1_NREDUZ, SA1->A1_EST, SA1->A1_ULTCOM,;
-	  			IIF( SA1->A1_MSBLQL <> "1" , "Não","Sim" );
+	  			IIF( SA1->A1_MSBLQL <> "1" , "NÃ£o","Sim" );
 	  		};
 	  	)             
 	
@@ -85,7 +85,7 @@ Static Function fCarregaDados()
 		aCliente	:=	{{"","","","","","//"}}
 	EndIf	            
 	
-	//************ 2ºFolder Fornecedor (aba de dados na tela) *************
+	//************ 2ÂºFolder Fornecedor (aba de dados na tela) *************
 	cSql :=" SELECT A2_COD, A2_LOJA, A2_NREDUZ, A2_EST, A2_MSBLQL"
 	cSql +=" FROM " + RetSQLName("SA2") 
 	cSql +=" WHERE A2_FILIAL = '" + xFilial("SA2") + "'"
@@ -112,7 +112,7 @@ Static Function fCarregaDados()
 	    			(cAliasFor)->A2_LOJA,;
 	    			(cAliasFor)->A2_NREDUZ,;
 	    	   		(cAliasFor)->A2_EST,;
-	    	   		IIF( (cAliasFor)->A2_MSBLQL <> "1" , "Não","Sim" );
+	    	   		IIF( (cAliasFor)->A2_MSBLQL <> "1" , "NÃ£o","Sim" );
 	    	    	};
 	    	   )             
 	   (cAliasFor)->(dbSkip())
@@ -123,7 +123,7 @@ Static Function fCarregaDados()
 	 EndIf	            
 	
 	
-	//*************** 3ºFolder Produto (aba de dados) *****************
+	//*************** 3ÂºFolder Produto (aba de dados) *****************
 	
 	////Criando um alias virtual com os dados do SQL
 	BeginSql Alias cAliasProd
@@ -136,7 +136,7 @@ Static Function fCarregaDados()
 	EndSQL        
 	
 	If Select( cAliasProd ) == 0
-		//Ao criar o alias virtual na memoria necessairo fechar, pois o sistema não reconhece como tabela padrão
+		//Ao criar o alias virtual na memoria necessairo fechar, pois o sistema nÃ£o reconhece como tabela padrÃ£o
 		//ficando aberta ate fechar a thread
 		(cAliasFor)->( dbCloseArea() )	
 	EndIf	     
@@ -152,7 +152,7 @@ Static Function fCarregaDados()
 					(cAliasProd)->B1_COD,;
 		 			(cAliasProd)->B1_DESC   ,;
 					(cAliasProd)->B1_TIPO   ,;
-					IIF((cAliasProd)->B1_MSBLQL <> "1" , "Não","Sim" );
+					IIF((cAliasProd)->B1_MSBLQL <> "1" , "NÃ£o","Sim" );
 					};
 			  )  
 		(cAliasProd)->( dbSkip() )

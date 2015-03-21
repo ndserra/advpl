@@ -1,0 +1,7 @@
+SELECT ah_unimed, 
+       ah_umres, 
+       ah_descpo, 
+       ah_descin 
+FROM   sah990 
+WHERE  ah_filial = ' ' 
+       AND d_e_l_e_t_  = ' '
