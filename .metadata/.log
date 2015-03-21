@@ -4857,3 +4857,61 @@ Command-line arguments:  -os win32 -ws win32 -arch x86_64
 
 !ENTRY org.eclipse.osgi 2 1 2015-03-21 16:26:31.148
 !MESSAGE NLS missing message: TOTVSCompareWithEditorAction_5 in: com.totvs.tds.editor.compare.action.messages
+
+!ENTRY org.eclipse.core.resources 4 1 2015-03-21 16:43:25.230
+!MESSAGE Internal Error
+!STACK 0
+java.lang.IllegalArgumentException: Attempted to beginRule: F/ADVPL/resources, does not match outer scope rule: com.totvs.tds.core.job.TOTVSMutexRule@42af9f32
+	at org.eclipse.core.runtime.Assert.isLegal(Assert.java:63)
+	at org.eclipse.core.internal.jobs.ThreadJob.illegalPush(ThreadJob.java:136)
+	at org.eclipse.core.internal.jobs.ThreadJob.push(ThreadJob.java:335)
+	at org.eclipse.core.internal.jobs.ImplicitJobs.begin(ImplicitJobs.java:63)
+	at org.eclipse.core.internal.jobs.JobManager.beginRule(JobManager.java:286)
+	at org.eclipse.core.internal.resources.WorkManager.checkIn(WorkManager.java:118)
+	at org.eclipse.core.internal.resources.Workspace.prepareOperation(Workspace.java:2282)
+	at org.eclipse.core.internal.resources.Resource.refreshLocal(Resource.java:1655)
+	at org.eclipse.core.internal.resources.File.refreshLocal(File.java:333)
+	at com.totvs.tds.core.extensions.servers.ADVPLCompilerUtils.deleteMarkesExceptProtheusDoc(ADVPLCompilerUtils.java:236)
+	at com.totvs.tds.core.job.TOTVSCompileJob.checkFileLimits(TOTVSCompileJob.java:167)
+	at com.totvs.tds.core.job.TOTVSCompileJob$1.execute(TOTVSCompileJob.java:107)
+	at org.eclipse.ui.actions.WorkspaceModifyOperation$1.run(WorkspaceModifyOperation.java:106)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2344)
+	at org.eclipse.ui.actions.WorkspaceModifyOperation.run(WorkspaceModifyOperation.java:118)
+	at com.totvs.tds.core.job.TOTVSCompileJob.run(TOTVSCompileJob.java:131)
+	at com.totvs.tds.core.job.TOTVSCompileModifiedJob.run(TOTVSCompileModifiedJob.java:28)
+	at com.totvs.tds.debug.launcher.AdvPLLaunchDelegate.perguntarSeDesejaCompilar(AdvPLLaunchDelegate.java:229)
+	at com.totvs.tds.debug.launcher.AdvPLLaunchDelegate.launch(AdvPLLaunchDelegate.java:79)
+	at org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:854)
+	at org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:703)
+	at org.eclipse.debug.internal.ui.DebugUIPlugin.buildAndLaunch(DebugUIPlugin.java:937)
+	at org.eclipse.debug.internal.ui.DebugUIPlugin$8.run(DebugUIPlugin.java:1141)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+!ENTRY org.eclipse.core.jobs 4 2 2015-03-21 16:43:25.230
+!MESSAGE An internal error occurred during: "Launching New_configuration".
+!STACK 0
+java.lang.IllegalArgumentException: Attempted to beginRule: F/ADVPL/resources, does not match outer scope rule: com.totvs.tds.core.job.TOTVSMutexRule@42af9f32
+	at org.eclipse.core.runtime.Assert.isLegal(Assert.java:63)
+	at org.eclipse.core.internal.jobs.ThreadJob.illegalPush(ThreadJob.java:136)
+	at org.eclipse.core.internal.jobs.ThreadJob.push(ThreadJob.java:335)
+	at org.eclipse.core.internal.jobs.ImplicitJobs.begin(ImplicitJobs.java:63)
+	at org.eclipse.core.internal.jobs.JobManager.beginRule(JobManager.java:286)
+	at org.eclipse.core.internal.resources.WorkManager.checkIn(WorkManager.java:118)
+	at org.eclipse.core.internal.resources.Workspace.prepareOperation(Workspace.java:2282)
+	at org.eclipse.core.internal.resources.Resource.refreshLocal(Resource.java:1655)
+	at org.eclipse.core.internal.resources.File.refreshLocal(File.java:333)
+	at com.totvs.tds.core.extensions.servers.ADVPLCompilerUtils.deleteMarkesExceptProtheusDoc(ADVPLCompilerUtils.java:236)
+	at com.totvs.tds.core.job.TOTVSCompileJob.checkFileLimits(TOTVSCompileJob.java:167)
+	at com.totvs.tds.core.job.TOTVSCompileJob$1.execute(TOTVSCompileJob.java:107)
+	at org.eclipse.ui.actions.WorkspaceModifyOperation$1.run(WorkspaceModifyOperation.java:106)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2344)
+	at org.eclipse.ui.actions.WorkspaceModifyOperation.run(WorkspaceModifyOperation.java:118)
+	at com.totvs.tds.core.job.TOTVSCompileJob.run(TOTVSCompileJob.java:131)
+	at com.totvs.tds.core.job.TOTVSCompileModifiedJob.run(TOTVSCompileModifiedJob.java:28)
+	at com.totvs.tds.debug.launcher.AdvPLLaunchDelegate.perguntarSeDesejaCompilar(AdvPLLaunchDelegate.java:229)
+	at com.totvs.tds.debug.launcher.AdvPLLaunchDelegate.launch(AdvPLLaunchDelegate.java:79)
+	at org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:854)
+	at org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:703)
+	at org.eclipse.debug.internal.ui.DebugUIPlugin.buildAndLaunch(DebugUIPlugin.java:937)
+	at org.eclipse.debug.internal.ui.DebugUIPlugin$8.run(DebugUIPlugin.java:1141)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)

@@ -1,7 +1,7 @@
 #INCLUDE "TOTVS.CH"
 #INCLUDE "TOPCONN.CH"
 
-User Function ListBox()
+User Function ListBox1()
 
 Private oDlg
 Private oLbx1,oLbx2,oLbx3,oLbx4
@@ -243,7 +243,7 @@ Static Function Sair()
 Return( NIL )
 
 User Function posic()
-MsgInfo("estou na posicao " + aUn[oLbx4:nAt,01])
+	MsgInfo("estou na posicao " + aUn[oLbx4:nAt,02])
 Return (nil)
 
 //******************************************************************************************************
