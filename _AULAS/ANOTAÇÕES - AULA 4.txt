@@ -1,0 +1,101 @@
+﻿ANOTAÇÕES DA AULA 3,4,5,6 - ADVPL (07.03.15)
+
+- NO CONFIGURADOR É POSSIVEL DEFINIR NOVOS PARAMETROS CUSTOMIZADOS (siga_cfg)
+
+- AMBIENTE / CADASTROS / PARAMETROS
+
+
+- CONSTRUÇÃO DE UMA TELA/JANELA PARA INTERAÇÃO DO USUÁRIO
+
+
+
+
+ANOTAÇÕES AULA 7 ()
+
+
+-CONFIGURAÇÃO DO SRV DE EMAIL:
+
+smtp: mail.totvs.com.br
+email: cttsp@totvs.com.br
+pwd: totvs@123
+
+para configurar email de envio:
+
+colocar a porta no final do email:
+
+exemplo@dominio.com:porta
+
+
+
+CONFIGURAÇÃO DE MENUS (SIGACFG)
+
+- LINKAR as funções criadas em um nopvo menu utilziando o menus do sigacfg
+
+- utilizar
+
+exercicio 1 (criar novo menu)
+exercicio 2 ()
+exercicio 2 (criar eBrowser e posicionamento de itens de menus)
+exercicio 3 (deletar):
+
+- verificar se possui algum titulo na tabela SE1
+- Se tiver não pode deletar
+- Se cliente não tiver  registro, perguntar para usuário se deseja ver seus dados
+	sim: tarzer os dados da tela com a função AxDeleta
+	não: trabalhar com a função AdbDelete
+
+	
+	
+- LEMBRAR QUE É NECESSÁRIO ENTRAR NO SIGACFG/ BANCO DE DADOS / DICIONARIO DE DADOS ESCOLHER O DICIONARIO EX. "SE1" | CHECAR QUAL O NUMERO DO INDICE QUE SE DESEJA UTILIZAR NA REFERENCIA OU PESQUISA:
+
+EXEMPLO:
+
+	dbSelectArea("SE1") // Abre a area da tabela
+	// FOI ESCOLHIDO O INDICE 2 DA TABELA SE1 IDENTIFICADO PELO PROCEDIMENTO ACIMA POIS SÓ TINHAMOS AS INFORMAÇÕES DE FILIAL, CLIENTE E LOJA
+	SE1->(dbSetOrder(2))
+	
+	// INDICES 2:   ( E1_FILIAL     + E1_CLIENTE  + E1_LOJA) )
+	If SE1->( dbSeek(xFilial("SE1") + SA1->A1_COD + SA1->A1_LOJA) )
+	
+	NO EXEMPLO O IF VERIFICA COM A FUNÇÃOM DBSEEK SE ENCONTRAMOS ALGUM REGISTRO NA TABELA SE1 ASSOCIADO AO REGISTRO ATUAL DE "SA1" 
+	PASSANDO OS DADOS DE FILIAL + CODIGO + LOJA PARA O DBSEEK
+FIM
+
+
+
+PARA DESCOBRIR O NOME DA ROTINA, DENTROM DA TELA DE UTILIZAÇÃO DIGITE <SHIFT> + <F6>
+
+ESSE NOME DE ROTINA É UTILZIADO PARA DESCOBRIR SE EXISTEM PONTOS DE ENTRADA DISPONIVEIS PARA INTEGRAR NOVAS FUNÇÕES
+
+
+UTIULIZANDO OS PONTOS DE ENTRADA:
+
+- O PONTO DE ENTRADA DEVE RECEBER O FLUXO DE EXECUÇÃO DO PROHGRAMA PADRÃO
+- NO PONTO DE ENTRADA DEVEM ESTAR CONTIDAS AS INFORMAÇÕES NECESSÁRIAS DE RETORNO SE ESPECIFICADAS NA DOCUMENTAÇÃO DO PONRTO DE ENTRADA
+- O NOME DA FUNCTION CRIADA PARA RESPONDER NO PONTO DE ENTRADA DESEJADO DEVE NECESSARIAMENTE CONTER O EXATO NOME DO MESMO (EX. ABAIXO)
+
+User Function MT010INC()
+
+	// Através do Get Area
+	Local aAreaSB1 := SB1->( GetArea() )
+	
+	MsgInfo("PONTO DE ENTRADA MT010INC")
+	
+	MsgInfo(SB1->B1_COD + chr(13) + SB1->B1_DESC)
+	
+	RestArea(aAreaSB1)
+
+Return()
+
+
+
+
+exercicio 6:
+
+- Acionar a rotina do Schedule.prw para enviar emails dentro do criterio abaixo:
+
+	XX_ENG("ndserra@gmail.com")
+	
+
+O GETAREA() DEVE SER UTILIZADO 
+	

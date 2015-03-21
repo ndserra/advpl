@@ -1,0 +1,339 @@
+//----------------------------------------------------------------------------------------------------------------//
+// Modelo 2.
+//----------------------------------------------------------------------------------------------------------------//
+
+User Function Mod2Manut(cAlias, nReg, nOpc)
+
+Local cChave := ""
+Local nCols  := 0
+Local i      := 0
+Local lRet   := .F.
+
+// Parametros da funcao Modelo2().
+Private cTitulo  := cCadastro
+
+Private aC       := {}                 // Campos do Enchoice.
+Private aR		  := {}                 // Campos do rodape.
+Private aCGD     := {}                 // Coordenadas do objeto GetDados.
+Private cLinOK   := "u_ValSZ1CMP()"    // Validacao na mudanca de linha e quando clicar no botao OK.
+Private cAllOK   := "u_Md2TudOK()"     // Funcao para validacao de tudo.
+
+Private cIniCpos := "+Z1_ITEM"         // String com o nome dos campos que devem inicializados ao pressionar
+                                       // a seta para baixo. "+Z1_ITEM
+Private nMax     := 99                 // Nr. maximo de linhas na GetDados.
+
+Private aHeader  := {}                 // Cabecalho de cada coluna da GetDados.
+Private aCols    := {}                 // Colunas da GetDados.
+Private nCount   := 0
+
+Private bCampo   := {|nField| FieldName(nField)}
+Private dData    := CtoD("  /  /  ")
+Private cNumero  := Space(6)
+Private aAlt     := {}    
+
+Private cSolicita := ""
+
+// Cria variaveis de memoria: para cada campo da tabela, cria uma variavel de memoria com o mesmo nome.
+dbSelectArea(cAlias)
+
+For i := 1 To FCount() // FCount() retorna a quantidade de campos da SZ1  
+    
+    M->&(Eval(bCampo, i)) := CriaVar(FieldName(i), .T.)
+    // Assim tambem funciona: M->&(FieldName(i)) := CriaVar(FieldName(i), .T.)
+Next
+
+/////////////////////////////////////////////////////////////////////
+// Cria vetor aHeader.                                             //
+/////////////////////////////////////////////////////////////////////
+
+dbSelectArea("SX3")
+
+SX3->( dbSetOrder(1) )
+SX3->( dbSeek(cAlias) )
+
+While ! SX3->(EOF()) .And. SX3->X3_Arquivo == cAlias
+
+   If X3Uso(SX3->X3_Usado)    .And.;                  // O Campo é usado.
+      cNivel >= SX3->X3_Nivel .And.;                  // Nivel do Usuario é maior que o Nivel do Campo.
+      !Trim(SX3->X3_Campo) $ "Z1_COD|Z1_DATA|Z1_NOME"   // Campos que ficarao na parte da Enchoice?.
+
+      AAdd(aHeader, {Trim(SX3->X3_Titulo),;
+                     SX3->X3_Campo       ,;
+                     SX3->X3_Picture     ,;
+                     SX3->X3_Tamanho     ,;
+                     SX3->X3_Decimal     ,;
+                     SX3->X3_Valid       ,;
+                     SX3->X3_Usado       ,;
+                     SX3->X3_Tipo        ,;
+                     SX3->X3_Arquivo     ,;
+                     SX3->X3_Context})
+
+   EndIf
+
+   SX3->(dbSkip())
+
+EndDo
+
+/////////////////////////////////////////////////////////////////////
+// Cria o vetor aCols: contem os dados dos campos da tabela.       //
+// Cada linha de aCols é uma linha da GetDados e as colunas sao as //
+// colunas da GetDados.                                            //
+/////////////////////////////////////////////////////////////////////
+
+// Se a opcao nao for INCLUIR, atribui os dados ao vetor aCols.
+// Caso contrario, cria o vetor aCols com as caracteristicas de cada campo.
+
+dbSelectArea(cAlias)
+( cAlias )->( dbSetOrder(1) )
+
+If nOpc <> 3       // A opcao selecionada nao é INCLUIR.
+
+   cNumero   := (cAlias)->Z1_COD
+   cSolicita := (cAlias)->Z1_NOME
+   dData     := (cAlias)->Z1_DATA
+   
+   
+   If (cAlias)->( dbSeek(xFilial(cAlias) + cNumero) )
+   
+	   While ! EOF() .And. (cAlias)->(Z1_Filial+Z1_COD) == xFilial(cAlias)+cNumero
+	   
+	       AAdd(aCols, Array(Len(aHeader)+1))   // Cria uma linha vazia em aCols.
+	       nCols++
+	
+	       // Preenche a linha que foi criada com os dados contidos na tabela.       
+	       For i := 1 To Len(aHeader)
+	           If aHeader[i][10] <> "V"    // Campo nao é virtual.
+	              aCols[nCols][i] := FieldGet(FieldPos(aHeader[i][2]))   // Carrega o conteudo do campo.
+	            Else
+	              // A funcao CriaVar() le as definicoes do campo no dic.dados e carrega a variavel de acordo com
+	              // o Inicializador-Padrao, que, se nao foi definido, assume conteudo vazio.
+	              aCols[nCols][i] := CriaVar(aHeader[i][2], .T.)
+	           EndIf
+	       Next
+	       
+	       // Cria a ultima coluna para o controle da GetDados: deletado ou nao.
+	       aCols[nCols][Len(aHeader)+1] := .F.
+	       
+	       // Atribui o numero do registro neste vetor para o controle na gravacao.
+	       AAdd(aAlt, (cAlias)->(Recno()))
+	       
+	       (cAlias)->( dbSkip() )
+	   EndDo
+	   
+	EndIf
+ Else              // Opcao INCLUIR.
+ 
+   // Atribui à variavel o inicializador padrao do campo.
+   
+   cNumero := GetSXENum("SZ1", "Z1_COD")
+   dData 	:= M->Z1_DATA
+
+   // Cria uma linha em branco 
+   AAdd(aCols, Array(Len(aHeader)+1))
+   
+   // Criando a estrutura do aCols com informações do inicio padrão do campo 
+   For i := 1 To Len(aHeader)
+       aCols[1][i] := CriaVar(aHeader[i][2])
+   Next
+   
+   // Cria a ultima coluna para o controle da GetDados: deletado ou nao.
+   aCols[1][Len(aHeader)+1] := .F.
+   
+   // Atribui 01 para a primeira linha da GetDados.
+   aCols[1][AScan(aHeader,{|x| Trim(x[2])=="Z1_ITEM"})] := "01"
+   
+EndIf
+
+/////////////////////////////////////////////////////////////////////
+// Cria o vetor Enchoice.                                          //
+/////////////////////////////////////////////////////////////////////
+
+// aC[n][1] = Nome da variavel. Ex.: "cCliente"
+// aC[n][2] = Array com as coordenadas do Get [x,y], em Pixel.
+// aC[n][3] = Titulo do campo
+// aC[n][4] = Picture
+// aC[n][5] = Validacao
+// aC[n][6] = F3
+// aC[n][7] = Se o campo é editavel, .T., senao .F.
+
+AAdd(aC, {"cNumero"  , {15,010}, "Numero"           , "@!"      , , , .F.      })
+AAdd(aC, {"cSolicita", {15,070}, "Solicitante"      , "@!"      , , , (nOpc==3)})
+AAdd(aC, {"dData"    , {15,280}, "Data de Emissao"  , "99/99/99", , , (nOpc==3)})
+
+// Coordenadas do objeto GetDados.
+aCGD := {34,5,128,315}
+
+// Executa a funcao Modelo2().
+lRet := Modelo2(cTitulo, aC, aR, aCGD, nOpc, cLinOK, cAllOK, , , cIniCpos, nMax)
+
+If lRet  // Confirmou.
+
+   If      nOpc == 3  // Inclusao
+           If MsgYesNo("Confirma a gravacao dos dados?", cTitulo)
+              // Cria um dialogo com uma regua de progressao.
+              Processa({||Md2Inclu(cAlias)}, cTitulo, "Gravando os dados, aguarde...")
+           EndIf
+    ElseIf nOpc == 4  // Alteracao
+           If MsgYesNo("Confirma a alteracao dos dados?", cTitulo)
+              // Cria um dialogo com uma regua de progressao.
+              Processa({||Md2Alter(cAlias)}, cTitulo, "Alterando os dados, aguarde...")
+           EndIf
+    ElseIf nOpc == 5  // Exclusao
+           If MsgYesNo("Confirma a exclusao dos dados?", cTitulo)
+              // Cria um dialogo com uma regua de progressao.
+              Processa({||Md2Exclu(cAlias)}, cTitulo, "Excluindo os dados, aguarde...")
+           EndIf
+   EndIf
+   
+	 
+ Else
+
+   RollBackSX8()
+
+EndIf
+
+Return Nil
+
+//----------------------------------------------------------------------------------------------------------------//
+Static Function Md2Inclu(cAlias)
+
+Local i := 0
+Local y := 0
+
+ProcRegua(Len(aCols)) // Cria o tamanho da regua para processamento
+
+dbSelectArea(cAlias)
+dbSetOrder(1)
+
+For i := 1 To Len(aCols)
+
+    IncProc() // Inclementa a regua de processamento
+
+    If !aCols[i][Len(aHeader)+1]  // A linha nao esta deletada, logo, deve ser gravada.
+
+       RecLock(cAlias, .T.)
+		
+		//Gravando as informações do Acosl
+		 
+       For y := 1 To Len(aHeader)
+           FieldPut(FieldPos(Trim(aHeader[y][2])), aCols[i][y])
+           //FIELDPUT(Ordem do campo no SX3, Valor ) //   
+           //FIELDPOS("Nome do campo SX3") Retorna a posição do campo no SX3
+           
+       Next
+		
+		//Gravando as informações do cabeçario
+		 
+       (cAlias)->Z1_FILIAL 	:= xFilial(cAlias)
+       (cAlias)->Z1_COD		:= cNumero
+       (cAlias)->Z1_DATA	    := dData
+
+
+       MSUnlock()
+
+    EndIf
+
+Next
+
+Return Nil
+
+//----------------------------------------------------------------------------------------------------------------//
+Static Function Md2Alter(cAlias)
+
+Local i := 0
+Local y := 0
+
+ProcRegua(Len(aCols)) // Cria o tamanho da regua para processamento
+
+dbSelectArea(cAlias)
+dbSetOrder(1)
+
+For i := 1 To Len(aCols)
+
+    If i <= Len(aAlt)
+
+       // aAlt contem os Recno() dos registros originais.
+       // O usuario pode ter incluido mais registros na GetDados (aCols).
+
+       dbGoTo(aAlt[i])                 // Posiciona no registro.
+       RecLock(cAlias, .F.)
+       If aCols[i][Len(aHeader)+1]     // A linha esta deletada.
+          dbDelete()                   // Deleta o registro correspondente.
+        Else
+          // Regrava os dados.
+          For y := 1 To Len(aHeader)
+              FieldPut(FieldPos(Trim(aHeader[y][2])), aCols[i][y])
+          Next
+       EndIf
+       MSUnlock()
+
+     Else     // Foram incluidas mais linhas na GetDados (aCols), logo, precisam ser incluidas.
+
+       If !aCols[i][Len(aHeader)+1]
+          RecLock(cAlias, .T.)
+          For y := 1 To Len(aHeader)
+              FieldPut(FieldPos(Trim(aHeader[y][2])), aCols[i][y])
+          Next
+          (cAlias)->Z1_Filial := xFilial(cAlias)
+          (cAlias)->Z1_COD := cNumero
+          (cAlias)->Z1_DATA := dData 
+          MSUnlock()
+       EndIf
+
+    EndIf
+
+Next
+
+Return Nil
+
+//----------------------------------------------------------------------------------------------------------------//
+Static Function Md2Exclu(cAlias)
+
+ProcRegua(Len(aCols))
+
+dbSelectArea(cAlias)
+dbSetOrder(1)
+dbSeek(xFilial(cAlias) + cNumero)
+
+While !EOF() .And. (cAlias)->Z1_Filial == xFilial(cAlias) .And. (cAlias)->Z1_COD == cNumero
+   IncProc()
+   RecLock(cAlias, .F.)
+   dbDelete()
+   MSUnlock()
+   dbSkip()
+EndDo
+
+Return Nil
+
+//----------------------------------------------------------------------------------------------------------------//
+User Function Md2TudOK()
+
+Local lRet := .T.
+Local i    := 0
+Local nDel := 0
+
+For i := 1 To Len(aCols)
+    If aCols[i][Len(aHeader)+1]
+       nDel++
+    EndIf
+Next
+
+If nDel == Len(aCols)
+   MsgInfo("Para excluir todos os itens, utilize a opção EXCLUIR", cTitulo)
+   lRet := .F.
+EndIf
+
+Return lRet
+
+//----------------------------------------------------------------------------------------------------------------//
+User Function ValSZ1CMP()
+
+Local lRet := .T.
+
+If aCols[1][AScan(aHeader,{|x| Trim(x[2])=="Z1_QTS"})] == 0
+   MsgAlert("Qt. nao pode ser zero.", "Atençao!")
+   lRet := .F.
+EndIf
+
+Return lRet
+    

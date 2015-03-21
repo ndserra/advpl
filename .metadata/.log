@@ -4785,3 +4785,33 @@ Command-line arguments:  -os win32 -ws win32 -arch x86_64
 
 !ENTRY org.eclipse.osgi 2 1 2015-03-14 14:22:07.496
 !MESSAGE NLS missing message: TOTVSCompareWithEditorAction_5 in: com.totvs.tds.editor.compare.action.messages
+!SESSION 2015-03-21 09:11:21.974 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.7.0
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=pt_BR
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.totvs.tds.dds 4 0 2015-03-21 09:11:22.942
+!MESSAGE [SCR] Component definition XMLs not found in bundle com.totvs.tds.dds. The component header value is OSGI-INF/component.xml
+
+!ENTRY com.totvs.tds.dds 4 0 2015-03-21 09:11:22.942
+!MESSAGE [SCR] Component definition XMLs not found in bundle com.totvs.tds.dds. The component header value is OSGI-INF/component.xml
+
+!ENTRY org.eclipse.ui 4 4 2015-03-21 09:11:41.365
+!MESSAGE Unable to create menu item "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection", command "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection" not defined
+
+!ENTRY com.totvs.tds.dds 4 0 2015-03-21 09:11:41.475
+!MESSAGE [SCR] Component definition XMLs not found in bundle com.totvs.tds.dds. The component header value is OSGI-INF/component.xml
+
+!ENTRY com.totvs.tds.dds 4 0 2015-03-21 09:11:41.475
+!MESSAGE [SCR] Component definition XMLs not found in bundle com.totvs.tds.dds. The component header value is OSGI-INF/component.xml
+
+!ENTRY org.eclipse.ui 4 4 2015-03-21 09:11:44.615
+!MESSAGE Unable to create menu item "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection", command "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection" not defined
+
+!ENTRY org.eclipse.osgi 2 1 2015-03-21 09:13:59.491
+!MESSAGE NLS unused message: LocalAppServer_23 in: com.totvs.tds.core.extensions.servers.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-03-21 10:24:55.197
+!MESSAGE NLS missing message: AdvPLLaunchTab_group_text in: com.totvs.tds.debug.ui.launcher.messages
