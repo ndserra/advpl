@@ -231,7 +231,7 @@ For i := 1 To Len(aCols)
 
        RecLock(cAlias, .T.)
 		
-		//Gravando as informações do Acols
+		//Gravando as informações do Acosl
 		 
        For y := 1 To Len(aHeader)
            FieldPut(FieldPos(Trim(aHeader[y][2])), aCols[i][y])

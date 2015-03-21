@@ -15,7 +15,6 @@ AAdd(aRotina, {"Alterar"   , "u_Mod2Manut", 0, 4})
 AAdd(aRotina, {"Excluir"   , "u_Mod2Manut", 0, 5})
 AAdd(aRotina, {"Legenda"   , "u_LegSZ1"	, 0, 6})
 AAdd(aRotina, {"Baixar"    , "u_BaixaSZ1"	, 0, 7})
-AAdd(aRotina, {"ListBox"   , "u_ListBox()", 0, 8})
 
 
 AAdd(aLegenda, {"Z1_LEGENDA = 1", "BR_VERDE"})
@@ -55,13 +54,13 @@ User Function BaixaSZ1(cAlias,nReg,nOpc)
 
 Local cPedido	:= SZ1->Z1_COD
 
-If MsgYesNo("Deseja dar baixa TODO o pedido? " + (cAlias)->Z1_COD )
+If MsgYesNo("Deseja dar baixa em todos os pedidos? " + (cAlias)->Z1_COD )
 	
 	(cAlias)->(dbSetOrder(1))
 	
 	If MsSeek( xFilial(cAlias) + SZ1->Z1_COD )
 		
-		While ! SZ1->( EOF() ) .AND. SZ1->Z1_COD == cPedido
+		While : SZ1->( EOF() ) .AND. SZ1->Z1_COD == cPedido
 			RecLock(cAlias, .F.)
 			(cAlias)->Z1_LEGENDA := 2
 			//SZ1->Z1-LEGENDA := 2

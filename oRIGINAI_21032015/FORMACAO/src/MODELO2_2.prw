@@ -1,8 +1,5 @@
 //----------------------------------------------------------------------------------------------------------------//
 // Modelo 2.
-// Capitem
-// recebe os dados do mBrowser qdo é chamado da modelo 2_1
-//
 //----------------------------------------------------------------------------------------------------------------//
 
 User Function Mod2Manut(cAlias, nReg, nOpc)
@@ -13,21 +10,19 @@ Local i      := 0
 Local lRet   := .F.
 
 // Parametros da funcao Modelo2().
-// Utiliza as funcs de validação nativas do Grid
-
 Private cTitulo  := cCadastro
 
-Private aC       := {}                 // Campos do Enchoice. || cabeçalho do mBrowser!!!
-Private aR		  := {}                  // Campos do rodape.
+Private aC       := {}                 // Campos do Enchoice.
+Private aR		  := {}                 // Campos do rodape.
 Private aCGD     := {}                 // Coordenadas do objeto GetDados.
 Private cLinOK   := "u_ValSZ1CMP()"    // Validacao na mudanca de linha e quando clicar no botao OK.
 Private cAllOK   := "u_Md2TudOK()"     // Funcao para validacao de tudo.
-// Incrementa o indice da grid para o proximo registro
+
 Private cIniCpos := "+Z1_ITEM"         // String com o nome dos campos que devem inicializados ao pressionar
                                        // a seta para baixo. "+Z1_ITEM
-Private nMax     := 99                 // Nr. maximo de linhas na GetDados. | GRID de dados
+Private nMax     := 99                 // Nr. maximo de linhas na GetDados.
 
-Private aHeader  := {}                 // Cabecalho de cada coluna da GetDados. || cabeçalho da GRID
+Private aHeader  := {}                 // Cabecalho de cada coluna da GetDados.
 Private aCols    := {}                 // Colunas da GetDados.
 Private nCount   := 0
 
@@ -43,7 +38,7 @@ dbSelectArea(cAlias)
 
 For i := 1 To FCount() // FCount() retorna a quantidade de campos da SZ1  
     
-    M->&(Eval(bCampo, i)) := CriaVar(FieldName(i), .T.) // CRIAR VARIAVEIS COM OS NOMES DOS CAMPOS 
+    M->&(Eval(bCampo, i)) := CriaVar(FieldName(i), .T.)
     // Assim tambem funciona: M->&(FieldName(i)) := CriaVar(FieldName(i), .T.)
 Next
 
@@ -60,10 +55,8 @@ While ! SX3->(EOF()) .And. SX3->X3_Arquivo == cAlias
 
    If X3Uso(SX3->X3_Usado)    .And.;                  // O Campo é usado.
       cNivel >= SX3->X3_Nivel .And.;                  // Nivel do Usuario é maior que o Nivel do Campo.
-      !Trim(SX3->X3_Campo) $ "Z1_COD|Z1_DATA|Z1_NOME"   // Campos que ficarao na parte da Enchoice?.
-   /* VERIFICA SE O NIVEL DE PERMISSAO DO USUÁRIO PERMITE QUE VISUALIZE O CAMPO */   
-      // A ORDEM DEVE SER SEMPRE A SUGERIDA ABAIXO POR PADRÃO. NÃO DEVE SER MUDADA
-      
+      ! ALLTrim(SX3->X3_Campo) $ "Z1_COD|Z1_DATA|Z1_NOME"   // Campos que ficarao na parte da Enchoice?.
+
       AAdd(aHeader, {Trim(SX3->X3_Titulo),;
                      SX3->X3_Campo       ,;
                      SX3->X3_Picture     ,;
@@ -92,8 +85,6 @@ EndDo
 
 dbSelectArea(cAlias)
 ( cAlias )->( dbSetOrder(1) )
-
-// NOPC -- RETORNO DO QUE OM USUÁRIO INTERAGIU
 
 If nOpc <> 3       // A opcao selecionada nao é INCLUIR.
 
@@ -134,16 +125,17 @@ If nOpc <> 3       // A opcao selecionada nao é INCLUIR.
  
    // Atribui à variavel o inicializador padrao do campo.
    
-  
-   	cNumero 	:= GetSXENum("SZ1", "Z1_COD") // PEGA O VALOR DO CAMPO Z1_COD
-   	dData 		:= M->Z1_DATA //
-   	cSolicita	:= cUsername // Utilzia o nome do usuário logado na sessão
-   	//cSolicita	:= M->Z1_NOME
-	//cSolicita	:= CriaVar("Z1_NOME",.T.)
-	
-	
-	
-   // Cria uma linha em branco 
+   cNumero := GetSXENum("SZ1", "Z1_COD")
+      
+   dData 	:= M->Z1_DATA // DdATABASE()
+      
+   cSolicita := cUsername
+      
+   //cSolicita := M->Z1_NOME
+   //cSolicita := CriaVar("Z1_NOME",.T.)
+	                                                                                                                       
+
+   // Cria uma linha em branco
    AAdd(aCols, Array(Len(aHeader)+1))
    
    // Criando a estrutura do aCols com informações do inicio padrão do campo 
@@ -155,7 +147,7 @@ If nOpc <> 3       // A opcao selecionada nao é INCLUIR.
    aCols[1][Len(aHeader)+1] := .F.
    
    // Atribui 01 para a primeira linha da GetDados.
-   aCols[1][AScan(aHeader,{|x| Trim(x[2])=="Z1_ITEM"})] := "01"
+   aCols[1][AScan(aHeader,{|x| Trim(x[2])=="Z1_ITEM"})] := "001"
    
 EndIf
 
@@ -172,7 +164,7 @@ EndIf
 // aC[n][7] = Se o campo é editavel, .T., senao .F.
 
 AAdd(aC, {"cNumero"  , {15,010}, "Numero"           , "@!"      , , , .F.      })
-AAdd(aC, {"cSolicita", {15,070}, "Solicitante"      , "@!"      , , , (nOpc==3)})
+AAdd(aC, {"cSolicita", {15,070}, "Solicitante"      , "@!"      , , , .f.      })
 AAdd(aC, {"dData"    , {15,280}, "Data de Emissao"  , "99/99/99", , , (nOpc==3)})
 
 // Coordenadas do objeto GetDados.
@@ -187,9 +179,9 @@ If lRet  // Confirmou.
            If MsgYesNo("Confirma a gravacao dos dados?", cTitulo)
               // Cria um dialogo com uma regua de progressao.
               Processa({||Md2Inclu(cAlias)}, cTitulo, "Gravando os dados, aguarde...")
-              ConfirmSX8()// Confirma a reserva de numeração do SX8
-           Else
-           	RollBackSX8()// Libera a numeração provisoriamente reservada pelo GetSXENum()
+          		ConfirmSx8()
+          	ELse	
+              RollBackSX8()
            EndIf
     ElseIf nOpc == 4  // Alteracao
            If MsgYesNo("Confirma a alteracao dos dados?", cTitulo)
@@ -231,23 +223,21 @@ For i := 1 To Len(aCols)
 
        RecLock(cAlias, .T.)
 		
-		//Gravando as informações do Acols
+		//Gravando as informações do Acosl
 		 
        For y := 1 To Len(aHeader)
-           FieldPut(FieldPos(Trim(aHeader[y][2])), aCols[i][y])
+       		 FieldPut(FieldPos(Trim(aHeader[y][2])), aCols[i][y])
            //FIELDPUT(Ordem do campo no SX3, Valor ) //   
            //FIELDPOS("Nome do campo SX3") Retorna a posição do campo no SX3
-           
        Next
 		
 		//Gravando as informações do cabeçario
 		 
        (cAlias)->Z1_FILIAL 	:= xFilial(cAlias)
        (cAlias)->Z1_COD		:= cNumero
-       (cAlias)->Z1_DATA	   	:= dData
-       (cAlias)->Z1_NOME		:= cSolicita     
-       (cAlias)->Z1_LEGENDA	:= 1      
-
+       (cAlias)->Z1_DATA	    := dData
+		(cAlias)->Z1_NOME     := cSolicita
+		(cAlias)->Z1_LEGENDA  := 1
 
        MSUnlock()
 
@@ -297,6 +287,10 @@ For i := 1 To Len(aCols)
           (cAlias)->Z1_Filial := xFilial(cAlias)
           (cAlias)->Z1_COD := cNumero
           (cAlias)->Z1_DATA := dData 
+          
+          (cAlias)->Z1_NOME     := cSolicita
+          (cAlias)->Z1_LEGENDA  := 1
+          
           MSUnlock()
        EndIf
 
@@ -350,10 +344,24 @@ User Function ValSZ1CMP()
 
 Local lRet := .T.
 
-If aCols[1][AScan(aHeader,{|x| Trim(x[2])=="Z1_QTD"})] == 0
+
+If aCols[1][AScan(aHeader,{|CAMPO| Trim(CAMPO[2])=="Z1_QTD"})] == 0
    MsgAlert("Qt. nao pode ser zero.", "Atençao!")
    lRet := .F.
 EndIf
 
 Return lRet
+
+
+
+
+
+
+
+
+
+
+
+
+
     
