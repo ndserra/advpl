@@ -14,11 +14,9 @@ AAdd(aRotina, {"Incluir"   , "u_Mod2Manut", 0, 3})
 AAdd(aRotina, {"Alterar"   , "u_Mod2Manut", 0, 4})
 AAdd(aRotina, {"Excluir"   , "u_Mod2Manut", 0, 5})
 AAdd(aRotina, {"Legenda"   , "u_LegSZ1"	, 0, 6})
-AAdd(aRotina, {"Baixar"    , "u_BaixaSZ1"	, 0, 7})
 
-
-AAdd(aLegenda, {"Z1_LEGENDA = 1", "BR_VERDE"})
-AAdd(aLegenda, {"Z1_LEGENDA = 2", "BR_VERMELHO"})
+AAdd(aLegenda, {"Z1_LEGENDA = 1", "BRANCO"})
+AAdd(aLegenda, {"Z1_LEGENDA = 2", "BR_BRANCO"})
                                                
 dbSelectArea("SZ1")
 dbSetOrder(1)
@@ -40,27 +38,8 @@ User Function LegSZ1()
 	Local cQualquer := "Legenda"
 	Local aCor := {}
 
-	brwlegenda(cCadastro,cQualquer,aCor)
+	brwlegenda(cCadastro,cQualquer)
 	
-	AAdd(aLegenda, {"VERDE", "Em Aberto"})
-	AAdd(aLegenda, {"VERMELHO", "Fianlizado"})
-	
-	
-Return ( NIL)
-
-// ----------------------------------------------------------------------
-
-User Function BaixaSZ1(cAlias)
-	
-	dbSelectArea(cAlias)
-	dbSetOrder(1)
-	
-	RecLock(cAlias, .F.)
-	
-	(cAlias)->Z1_LEGENDA := 2
-	
-	MSUnlock() 
-	
-
-Return( NIL )
+	AAdd(aLegenda, {"BRANCO", "Em Aberto"})
+	AAdd(aLegenda, {"BR_BRANCO", "Fianlizado"})
 	

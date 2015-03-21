@@ -4815,3 +4815,33 @@ Command-line arguments:  -os win32 -ws win32 -arch x86_64
 
 !ENTRY org.eclipse.osgi 2 1 2015-03-21 10:24:55.197
 !MESSAGE NLS missing message: AdvPLLaunchTab_group_text in: com.totvs.tds.debug.ui.launcher.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-03-21 14:07:40.891
+!MESSAGE NLS unused message: dw_lblSelecionaODestino_text in: com.totvs.tds.core.patch.CompilaVersao.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-03-21 14:07:40.891
+!MESSAGE NLS unused message: dw_SelecionarDiretorioPacote_text in: com.totvs.tds.core.patch.CompilaVersao.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-03-21 14:07:40.891
+!MESSAGE NLS unused message: dw_btnNewButton_text in: com.totvs.tds.core.patch.CompilaVersao.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-03-21 14:07:40.891
+!MESSAGE NLS unused message: dw_lblNewLabel_text in: com.totvs.tds.core.patch.CompilaVersao.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-03-21 14:07:40.891
+!MESSAGE NLS unused message: dw_lblSelecionaODestino_text_1 in: com.totvs.tds.core.patch.CompilaVersao.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-03-21 14:07:40.891
+!MESSAGE NLS unused message: dw_button_text in: com.totvs.tds.core.patch.CompilaVersao.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-03-21 14:07:40.891
+!MESSAGE NLS missing message: TOTVSCompilaVersaoPageProjects_lblSeleopodeseUtilizar_text in: com.totvs.tds.core.patch.CompilaVersao.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-03-21 14:07:40.891
+!MESSAGE NLS missing message: TOTVSCompilaVersaoPageProjects_btApplySelection_text in: com.totvs.tds.core.patch.CompilaVersao.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-03-21 14:07:40.891
+!MESSAGE NLS missing message: TOTVSCompilaVersaoPageEnvironment_btnLoadCfg_text in: com.totvs.tds.core.patch.CompilaVersao.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-03-21 14:07:40.891
+!MESSAGE NLS missing message: TOTVSCompilaVersaoPageProjects_btnSalvarConfigurao_text in: com.totvs.tds.core.patch.CompilaVersao.messages
