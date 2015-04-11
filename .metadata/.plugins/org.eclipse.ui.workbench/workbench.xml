@@ -4,7 +4,7 @@
 <window height="984" maximized="true" width="1230" x="15" y="650">
 <fastViewData fastViewLocation="1024"/>
 <perspectiveBar>
-<itemSize x="341"/>
+<itemSize x="336"/>
 </perspectiveBar>
 <coolbarLayout>
 <coolItem id="group.file" itemType="typeGroupMarker"/>
@@ -37,21 +37,21 @@
 </folder>
 </info>
 </editorArea>
-<editor id="AdvPL.editor" name="MODELO2_1.prw" partName="MODELO2_1.prw" path="C:/TOTVS 11/Microsiga/Protheus/my projects/ADVPL/resources/MODELO2_1.prw" title="MODELO2_1.prw" tooltip="ADVPL/resources/MODELO2_1.prw" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/ADVPL/resources/MODELO2_1.prw"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="676" selectionTopPixel="0"/>
+<editor activePart="true" focus="true" id="AdvPL.editor" name="WebData.prw" partName="WebData.prw" path="C:/TOTVS 11/Microsiga/Protheus/my projects/ADVPL/src/WS_HOMOLOGACAO/WebData.prw" title="WebData.prw" tooltip="ADVPL/src/WS_HOMOLOGACAO/WebData.prw" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/ADVPL/src/WS_HOMOLOGACAO/WebData.prw"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="87" selectionTopPixel="0"/>
 </editor>
-<editor id="AdvPL.editor" name="MODELO2_2.prw" partName="MODELO2_2.prw" path="C:/TOTVS 11/Microsiga/Protheus/my projects/ADVPL/resources/MODELO2_2.prw" title="MODELO2_2.prw" tooltip="ADVPL/resources/MODELO2_2.prw" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/ADVPL/resources/MODELO2_2.prw"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="8742" selectionTopPixel="4418"/>
+<editor id="AdvPL.editor" name="SaldoB2.prw" partName="SaldoB2.prw" path="C:/TOTVS 11/Microsiga/Protheus/my projects/ADVPL/src/WS_HOMOLOGACAO/SaldoB2.prw" title="SaldoB2.prw" tooltip="ADVPL/src/WS_HOMOLOGACAO/SaldoB2.prw" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/ADVPL/src/WS_HOMOLOGACAO/SaldoB2.prw"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="591" selectionTopPixel="0"/>
 </editor>
-<editor id="AdvPL.editor" name="xModelo3.prw" partName="xModelo3.prw" path="C:/TOTVS 11/Microsiga/Protheus/my projects/ADVPL/resources/xModelo3.prw" title="xModelo3.prw" tooltip="ADVPL/resources/xModelo3.prw" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/ADVPL/resources/xModelo3.prw"/>
+<editor id="AdvPL.editor" name="Client_xMostraSaldo.prw" partName="Client_xMostraSaldo.prw" path="C:/TOTVS 11/Microsiga/Protheus/my projects/ADVPL/src/WS_HOMOLOGACAO/Client_xMostraSaldo.prw" title="Client_xMostraSaldo.prw" tooltip="ADVPL/src/WS_HOMOLOGACAO/Client_xMostraSaldo.prw" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/ADVPL/src/WS_HOMOLOGACAO/Client_xMostraSaldo.prw"/>
 <editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="0" selectionTopPixel="0"/>
 </editor>
-<editor activePart="true" focus="true" id="AdvPL.editor" name="ListBox.prw" partName="ListBox.prw" path="C:/TOTVS 11/Microsiga/Protheus/my projects/ADVPL/resources/ListBox.prw" title="ListBox.prw" tooltip="ADVPL/resources/ListBox.prw" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/ADVPL/resources/ListBox.prw"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="7337" selectionTopPixel="3323"/>
+<editor id="AdvPL.editor" name="CEP.prw" partName="CEP.prw" path="C:/TOTVS 11/Microsiga/Protheus/my projects/ADVPL/src/WS_HOMOLOGACAO/CEP.prw" title="CEP.prw" tooltip="ADVPL/src/WS_HOMOLOGACAO/CEP.prw" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/ADVPL/src/WS_HOMOLOGACAO/CEP.prw"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="327" selectionTopPixel="0"/>
 </editor>
 </editors>
 <views>
@@ -120,9 +120,6 @@
 </view>
 <view id="org.eclipse.ui.views.ProblemView" partName="Problems">
 <viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.severityAndDescriptionField" categoryGroup="org.eclipse.ui.ide.severity" markerContentGenerator="org.eclipse.ui.ide.problemsGenerator" partName="Problems">
-<expanded>
-<category IMemento.internal.id="Warnings (1 item)"/>
-</expanded>
 <columnWidths org.eclipse.ui.ide.locationField="90" org.eclipse.ui.ide.markerType="90" org.eclipse.ui.ide.pathField="120" org.eclipse.ui.ide.resourceField="90" org.eclipse.ui.ide.severityAndDescriptionField="300"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.severityAndDescriptionField"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.resourceField"/>
@@ -302,7 +299,7 @@
 </folder>
 </info>
 <info folder="true" part="org.eclipse.debug.internal.ui.ConsoleFolderView" ratio="0.74943054" ratioLeft="658" ratioRight="220" relationship="4" relative="org.eclipse.debug.internal.ui.NavigatorFolderView">
-<folder activePageID="com.totvs.tds.debug.TOTVSDebugComands" appearance="2" expanded="2">
+<folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
 <page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <page content="org.eclipse.ui.views.TaskList" label="Tasks"/>
 <page content="com.totvs.tds.debug.TOTVSDebugComands" label="AdvPL Comands"/>
@@ -435,162 +432,167 @@
 <workingSets/>
 <navigationHistory>
 <editors>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" path="/ADVPL/resources/MODELO2_1.prw"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" path="/ADVPL/resources/MODELO2_2.prw"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" path="/ADVPL/resources/xModelo3.prw"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" path="/ADVPL/resources/LisBox.prw"/>
-<editor factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="AdvPL.editor" uri="file:/C:/TOTVS%2011/Microsiga/Protheus/my%20projects/ADVPL/resources/ListBox.prw"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" path="/ADVPL/resources/ListBox.prw"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" path="/ADVPL/src/WS_HOMOLOGACAO/ListaData.prw"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" path="/ADVPL/resources/RELSB1X.prw"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" path="/ADVPL/src/WS_HOMOLOGACAO/Client_MostraData.prw"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" path="/ADVPL/src/WS_HOMOLOGACAO/Client_MostraHora.prw"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" path="/ADVPL/src/WS_HOMOLOGACAO/WebData.prw"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" path="/ADVPL/src/WS_HOMOLOGACAO/Client_MostraHora.prw"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" path="/ADVPL/src/WS_HOMOLOGACAO/Client_MostraHora.prw"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" path="/ADVPL/src/WS_HOMOLOGACAO/ListaData.prw"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" path="/ADVPL/src/WS_HOMOLOGACAO/SaldoB2.prw"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" path="/ADVPL/src/WS_HOMOLOGACAO/Client_xMostraSaldo.prw"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" path="/ADVPL/src/WS_HOMOLOGACAO/CEP.prw"/>
 </editors>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position info="not_deleted" x="346" y="12"/>
+<item historyLabel="ListaData.prw" index="0">
+<position info="not_deleted" x="46" y="0"/>
 </item>
-<item historyLabel="MODELO2_2.prw" index="1">
-<position info="not_deleted" x="743" y="0"/>
+<item historyLabel="RELSB1X.prw" index="1">
+<position info="not_deleted" x="2205" y="0"/>
 </item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position info="not_deleted" x="346" y="12"/>
+<item historyLabel="ListaData.prw" index="0">
+<position info="not_deleted" x="46" y="0"/>
 </item>
-<item historyLabel="MODELO2_2.prw" index="1">
-<position info="not_deleted" x="7565" y="2"/>
+<item historyLabel="Client_MostraData.prw" index="2">
+<position/>
 </item>
-<item historyLabel="xModelo3.prw" index="2">
+<item historyLabel="ListaData.prw" index="0">
+<position info="not_deleted" x="46" y="0"/>
+</item>
+<item historyLabel="Client_MostraData.prw" index="2">
+<position/>
+</item>
+<item historyLabel="ListaData.prw" index="0">
+<position info="not_deleted" x="163" y="0"/>
+</item>
+<item historyLabel="Client_MostraData.prw" index="2">
+<position info="not_deleted" x="2296" y="0"/>
+</item>
+<item historyLabel="ListaData.prw" index="0">
+<position info="not_deleted" x="163" y="0"/>
+</item>
+<item historyLabel="Client_MostraData.prw" index="2">
+<position info="not_deleted" x="2296" y="0"/>
+</item>
+<item historyLabel="ListaData.prw" index="0">
+<position info="not_deleted" x="163" y="0"/>
+</item>
+<item historyLabel="Client_MostraData.prw" index="2">
+<position info="not_deleted" x="1817" y="0"/>
+</item>
+<item historyLabel="ListaData.prw" index="0">
+<position info="not_deleted" x="532" y="0"/>
+</item>
+<item historyLabel="Client_MostraData.prw" index="2">
+<position info="not_deleted" x="2436" y="0"/>
+</item>
+<item historyLabel="ListaData.prw" index="0">
+<position info="not_deleted" x="532" y="0"/>
+</item>
+<item historyLabel="Client_MostraData.prw" index="2">
+<position info="not_deleted" x="2436" y="0"/>
+</item>
+<item historyLabel="Client_MostraHora.prw" index="3">
+<position info="not_deleted" x="1251" y="0"/>
+</item>
+<item historyLabel="Client_MostraData.prw" index="2">
+<position info="not_deleted" x="2436" y="0"/>
+</item>
+<item historyLabel="Client_MostraHora.prw" index="3">
+<position info="not_deleted" x="1251" y="0"/>
+</item>
+<item historyLabel="Client_MostraData.prw" index="2">
+<position info="not_deleted" x="2436" y="0"/>
+</item>
+<item historyLabel="Client_MostraHora.prw" index="3">
+<position info="not_deleted" x="1251" y="0"/>
+</item>
+<item historyLabel="Client_MostraData.prw" index="2">
+<position info="not_deleted" x="2436" y="0"/>
+</item>
+<item historyLabel="Client_MostraHora.prw" index="3">
+<position info="not_deleted" x="1251" y="0"/>
+</item>
+<item historyLabel="ListaData.prw" index="0">
+<position info="not_deleted" x="532" y="0"/>
+</item>
+<item historyLabel="WebData.prw" index="4">
 <position info="not_deleted" x="0" y="0"/>
 </item>
-<item historyLabel="MODELO2_2.prw" index="1">
-<position info="not_deleted" x="7565" y="2"/>
+<item historyLabel="Client_MostraHora.prw" index="5">
+<position info="not_deleted" x="881" y="22"/>
 </item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position/>
-</item>
-<item historyLabel="xModelo3.prw" index="2">
+<item historyLabel="WebData.prw" index="4">
 <position info="not_deleted" x="0" y="0"/>
 </item>
-<item historyLabel="MODELO2_2.prw" index="1">
-<position info="not_deleted" x="2292" y="70"/>
+<item historyLabel="WebData.prw" index="4">
+<position info="not_deleted" x="123" y="0"/>
 </item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position/>
+<item historyLabel="Client_MostraHora.prw" index="6">
+<position info="not_deleted" x="881" y="22"/>
 </item>
-<item historyLabel="MODELO2_2.prw" index="1">
-<position info="not_deleted" x="3279" y="0"/>
+<item historyLabel="WebData.prw" index="4">
+<position info="not_deleted" x="200" y="0"/>
 </item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position/>
+<item historyLabel="Client_MostraHora.prw" index="6">
+<position info="not_deleted" x="881" y="22"/>
 </item>
-<item historyLabel="xModelo3.prw" index="2">
+<item historyLabel="ListaData.prw" index="7">
+<position info="not_deleted" x="425" y="0"/>
+</item>
+<item historyLabel="SaldoB2.prw" index="8">
+<position info="not_deleted" x="613" y="0"/>
+</item>
+<item historyLabel="ListaData.prw" index="7">
+<position info="not_deleted" x="48" y="484"/>
+</item>
+<item historyLabel="SaldoB2.prw" index="8">
+<position info="not_deleted" x="597" y="0"/>
+</item>
+<item historyLabel="Client_xMostraSaldo.prw" index="9">
 <position info="not_deleted" x="0" y="0"/>
 </item>
-<item historyLabel="MODELO2_2.prw" index="1">
-<position info="not_deleted" x="3279" y="0"/>
+<item historyLabel="SaldoB2.prw" index="8">
+<position info="not_deleted" x="591" y="0"/>
 </item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position info="not_deleted" x="1782" y="0"/>
+<item historyLabel="CEP.prw" index="10">
+<position info="not_deleted" x="233" y="0"/>
 </item>
-<item historyLabel="MODELO2_2.prw" index="1">
-<position info="not_deleted" x="9451" y="1293"/>
+<item historyLabel="ListaData.prw" index="7">
+<position info="not_deleted" x="48" y="484"/>
 </item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position/>
+<item historyLabel="CEP.prw" index="10">
+<position info="not_deleted" x="233" y="0"/>
 </item>
-<item historyLabel="MODELO2_2.prw" index="1">
-<position info="not_deleted" x="10387" y="0"/>
+<item historyLabel="Client_MostraHora.prw" index="6">
+<position info="not_deleted" x="881" y="22"/>
 </item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position/>
+<item historyLabel="CEP.prw" index="10">
+<position info="not_deleted" x="233" y="0"/>
 </item>
-<item historyLabel="MODELO2_2.prw" index="1">
-<position info="not_deleted" x="10387" y="0"/>
+<item historyLabel="WebData.prw" index="4">
+<position info="not_deleted" x="200" y="0"/>
 </item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position/>
+<item historyLabel="CEP.prw" index="10">
+<position info="not_deleted" x="327" y="0"/>
 </item>
-<item historyLabel="MODELO2_2.prw" index="1">
-<position info="not_deleted" x="10423" y="0"/>
-</item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position info="not_deleted" x="2122" y="0"/>
-</item>
-<item historyLabel="MODELO2_2.prw" index="1">
-<position info="not_deleted" x="9882" y="27"/>
-</item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position info="not_deleted" x="2029" y="0"/>
-</item>
-<item historyLabel="MODELO2_2.prw" index="1">
-<position info="not_deleted" x="10636" y="37"/>
-</item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position info="not_deleted" x="2121" y="0"/>
-</item>
-<item historyLabel="MODELO2_2.prw" index="1">
-<position info="not_deleted" x="10675" y="20"/>
-</item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position info="not_deleted" x="2111" y="0"/>
-</item>
-<item historyLabel="MODELO2_2.prw" index="1">
-<position info="not_deleted" x="9902" y="0"/>
-</item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position info="not_deleted" x="2106" y="0"/>
-</item>
-<item historyLabel="MODELO2_2.prw" index="1">
-<position info="not_deleted" x="8742" y="0"/>
-</item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position info="not_deleted" x="2151" y="0"/>
-</item>
-<item historyLabel="MODELO2_2.prw" index="1">
-<position info="not_deleted" x="8742" y="0"/>
-</item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position info="not_deleted" x="688" y="0"/>
-</item>
-<item historyLabel="LisBox.prw" index="3">
-<position/>
-</item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position info="not_deleted" x="686" y="0"/>
-</item>
-<item historyLabel="LisBox.prw" index="3">
-<position/>
-</item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position info="not_deleted" x="731" y="0"/>
-</item>
-<item historyLabel="LisBox.prw" index="3">
-<position/>
-</item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position info="not_deleted" x="600" y="0"/>
-</item>
-<item historyLabel="LisBox.prw" index="3">
-<position info="not_deleted" x="4578" y="0"/>
-</item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position info="not_deleted" x="600" y="0"/>
-</item>
-<item historyLabel="ListBox.prw" index="4">
+<item historyLabel="Client_xMostraSaldo.prw" index="9">
 <position info="not_deleted" x="0" y="0"/>
 </item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position info="not_deleted" x="600" y="0"/>
+<item historyLabel="SaldoB2.prw" index="8">
+<position info="not_deleted" x="591" y="0"/>
 </item>
-<item historyLabel="ListBox.prw" index="5">
-<position info="not_deleted" x="183" y="0"/>
+<item historyLabel="WebData.prw" index="4">
+<position info="not_deleted" x="200" y="0"/>
 </item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position info="not_deleted" x="658" y="0"/>
+<item historyLabel="Client_xMostraSaldo.prw" index="9">
+<position info="not_deleted" x="0" y="0"/>
 </item>
-<item historyLabel="ListBox.prw" index="5">
-<position info="not_deleted" x="7114" y="0"/>
+<item historyLabel="SaldoB2.prw" index="8">
+<position info="not_deleted" x="591" y="0"/>
 </item>
-<item historyLabel="MODELO2_1.prw" index="0">
-<position info="not_deleted" x="676" y="0"/>
-</item>
-<item active="true" historyLabel="ListBox.prw" index="5">
-<position info="not_deleted" x="7114" y="0"/>
+<item active="true" historyLabel="WebData.prw" index="4">
+<position info="not_deleted" x="200" y="0"/>
 </item>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
@@ -613,6 +615,39 @@
 </trimLayout>
 </window>
 <mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="CEP.prw" tooltip="ADVPL/src/WS_HOMOLOGACAO/CEP.prw">
+<persistable path="/ADVPL/src/WS_HOMOLOGACAO/CEP.prw"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="Client_xMostraSaldo.prw" tooltip="ADVPL/src/WS_HOMOLOGACAO/Client_xMostraSaldo.prw">
+<persistable path="/ADVPL/src/WS_HOMOLOGACAO/Client_xMostraSaldo.prw"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="SaldoB2.prw" tooltip="ADVPL/src/WS_HOMOLOGACAO/SaldoB2.prw">
+<persistable path="/ADVPL/src/WS_HOMOLOGACAO/SaldoB2.prw"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="WebData.prw" tooltip="ADVPL/src/WS_HOMOLOGACAO/WebData.prw">
+<persistable path="/ADVPL/src/WS_HOMOLOGACAO/WebData.prw"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="Client_MostraHora.prw" tooltip="ADVPL/src/WS_HOMOLOGACAO/Client_MostraHora.prw">
+<persistable path="/ADVPL/src/WS_HOMOLOGACAO/Client_MostraHora.prw"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="Client_MostraData.prw" tooltip="ADVPL/src/WS_HOMOLOGACAO/Client_MostraData.prw">
+<persistable path="/ADVPL/src/WS_HOMOLOGACAO/Client_MostraData.prw"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="ListaData.prw" tooltip="ADVPL/src/WS_HOMOLOGACAO/ListaData.prw">
+<persistable path="/ADVPL/src/WS_HOMOLOGACAO/ListaData.prw"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="REL_TREPORT_2 SECAO.PRW" tooltip="ADVPL/resources/tReport/REL_TREPORT_2 SECAO.PRW">
+<persistable path="/ADVPL/resources/tReport/REL_TREPORT_2 SECAO.PRW"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="REL_tReport_BeginQuery.prw" tooltip="ADVPL/resources/tReport/REL_tReport_BeginQuery.prw">
+<persistable path="/ADVPL/resources/tReport/REL_tReport_BeginQuery.prw"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="Treport_Simples.prw" tooltip="ADVPL/resources/tReport/Treport_Simples.prw">
+<persistable path="/ADVPL/resources/tReport/Treport_Simples.prw"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="RELSB1X.prw" tooltip="ADVPL/resources/RELSB1X.prw">
+<persistable path="/ADVPL/resources/RELSB1X.prw"/>
+</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="ListBox.prw" tooltip="ADVPL/resources/ListBox.prw">
 <persistable path="/ADVPL/resources/ListBox.prw"/>
 </file>
@@ -624,39 +659,6 @@
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="LisBox.prw" tooltip="ADVPL/resources/LisBox.prw">
 <persistable path="/ADVPL/resources/LisBox.prw"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="xModelo3.prw" tooltip="ADVPL/resources/xModelo3.prw">
-<persistable path="/ADVPL/resources/xModelo3.prw"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="MODELO2_2.prw" tooltip="ADVPL/resources/MODELO2_2.prw">
-<persistable path="/ADVPL/resources/MODELO2_2.prw"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="MODELO2_1.prw" tooltip="ADVPL/resources/MODELO2_1.prw">
-<persistable path="/ADVPL/resources/MODELO2_1.prw"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="ADVPL.prw" tooltip="ADVPL/resources/ADVPL.prw">
-<persistable path="/ADVPL/resources/ADVPL.prw"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="Schedule.prw" tooltip="ADVPL/resources/Schedule.prw">
-<persistable path="/ADVPL/resources/Schedule.prw"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="xTelinha1.prw" tooltip="ADVPL/resources/xTelinha1.prw">
-<persistable path="/ADVPL/resources/xTelinha1.prw"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="xTela.prw" tooltip="ADVPL/resources/xTela.prw">
-<persistable path="/ADVPL/resources/xTela.prw"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="MT010INC.prw" tooltip="ADVPL/resources/MT010INC.prw">
-<persistable path="/ADVPL/resources/MT010INC.prw"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="CADSA1.prw" tooltip="ADVPL/resources/CADSA1.prw">
-<persistable path="/ADVPL/resources/CADSA1.prw"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="ESPNOME.prw" tooltip="ADVPL/resources/ESPNOME.prw">
-<persistable path="/ADVPL/resources/ESPNOME.prw"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="AdvPL.editor" name="fTelaCliente.prw" tooltip="ADVPL/resources/fTelaCliente.prw">
-<persistable path="/ADVPL/resources/fTelaCliente.prw"/>
 </file>
 </mruList>
 </workbench>

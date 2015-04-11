@@ -1,0 +1,22 @@
+#Include 'Protheus.ch'
+
+User Function WebData()
+
+Local oXML := NIL
+Local xData
+Local xH
+
+
+oXML := WSLISTA_DATA():NEW()
+
+oXML:MOSTRAHORA("  ")
+oXML:MOSTRADATA("  ")
+
+MsgInfo( oXML:MOSTRADATARESULT )
+
+MsgInfo( oXML:MOSTRAHORARESULT )
+
+MsgInfo("x")
+
+Return
+

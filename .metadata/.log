@@ -4951,3 +4951,117 @@ Command-line arguments:  -os win32 -ws win32 -arch x86_64
 
 !ENTRY org.eclipse.ui 4 4 2015-04-11 11:59:10.729
 !MESSAGE Unable to create menu item "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection", command "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection" not defined
+!SESSION 2015-04-11 13:46:01.994 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.7.0
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=pt_BR
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.totvs.tds.dds 4 0 2015-04-11 13:46:02.806
+!MESSAGE [SCR] Component definition XMLs not found in bundle com.totvs.tds.dds. The component header value is OSGI-INF/component.xml
+
+!ENTRY com.totvs.tds.dds 4 0 2015-04-11 13:46:02.806
+!MESSAGE [SCR] Component definition XMLs not found in bundle com.totvs.tds.dds. The component header value is OSGI-INF/component.xml
+
+!ENTRY org.eclipse.ui 4 4 2015-04-11 13:46:07.697
+!MESSAGE Unable to create menu item "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection", command "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection" not defined
+
+!ENTRY com.totvs.tds.dds 4 0 2015-04-11 13:46:07.728
+!MESSAGE [SCR] Component definition XMLs not found in bundle com.totvs.tds.dds. The component header value is OSGI-INF/component.xml
+
+!ENTRY com.totvs.tds.dds 4 0 2015-04-11 13:46:07.728
+!MESSAGE [SCR] Component definition XMLs not found in bundle com.totvs.tds.dds. The component header value is OSGI-INF/component.xml
+
+!ENTRY org.eclipse.ui 4 4 2015-04-11 13:46:09.697
+!MESSAGE Unable to create menu item "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection", command "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection" not defined
+
+!ENTRY org.eclipse.ui 4 4 2015-04-11 13:46:10.979
+!MESSAGE Unable to create menu item "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection", command "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection" not defined
+
+!ENTRY org.eclipse.osgi 2 1 2015-04-11 13:56:03.156
+!MESSAGE NLS unused message: LocalAppServer_23 in: com.totvs.tds.core.extensions.servers.messages
+!SESSION 2015-04-11 14:42:49.980 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.7.0
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=pt_BR
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.totvs.tds.dds 4 0 2015-04-11 14:42:50.776
+!MESSAGE [SCR] Component definition XMLs not found in bundle com.totvs.tds.dds. The component header value is OSGI-INF/component.xml
+
+!ENTRY com.totvs.tds.dds 4 0 2015-04-11 14:42:50.777
+!MESSAGE [SCR] Component definition XMLs not found in bundle com.totvs.tds.dds. The component header value is OSGI-INF/component.xml
+
+!ENTRY org.eclipse.ui 4 4 2015-04-11 14:42:54.070
+!MESSAGE Unable to create menu item "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection", command "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection" not defined
+
+!ENTRY com.totvs.tds.dds 4 0 2015-04-11 14:42:54.090
+!MESSAGE [SCR] Component definition XMLs not found in bundle com.totvs.tds.dds. The component header value is OSGI-INF/component.xml
+
+!ENTRY com.totvs.tds.dds 4 0 2015-04-11 14:42:54.090
+!MESSAGE [SCR] Component definition XMLs not found in bundle com.totvs.tds.dds. The component header value is OSGI-INF/component.xml
+
+!ENTRY org.eclipse.ui 4 4 2015-04-11 14:42:56.155
+!MESSAGE Unable to create menu item "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection", command "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection" not defined
+
+!ENTRY org.eclipse.osgi 2 1 2015-04-11 14:46:54.252
+!MESSAGE NLS unused message: LocalAppServer_23 in: com.totvs.tds.core.extensions.servers.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-04-11 15:04:03.549
+!MESSAGE NLS unused message: dw_lblSelecionaODestino_text in: com.totvs.tds.core.patch.CompilaVersao.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-04-11 15:04:03.550
+!MESSAGE NLS unused message: dw_SelecionarDiretorioPacote_text in: com.totvs.tds.core.patch.CompilaVersao.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-04-11 15:04:03.550
+!MESSAGE NLS unused message: dw_btnNewButton_text in: com.totvs.tds.core.patch.CompilaVersao.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-04-11 15:04:03.550
+!MESSAGE NLS unused message: dw_lblNewLabel_text in: com.totvs.tds.core.patch.CompilaVersao.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-04-11 15:04:03.551
+!MESSAGE NLS unused message: dw_lblSelecionaODestino_text_1 in: com.totvs.tds.core.patch.CompilaVersao.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-04-11 15:04:03.551
+!MESSAGE NLS unused message: dw_button_text in: com.totvs.tds.core.patch.CompilaVersao.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-04-11 15:04:03.552
+!MESSAGE NLS missing message: TOTVSCompilaVersaoPageProjects_lblSeleopodeseUtilizar_text in: com.totvs.tds.core.patch.CompilaVersao.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-04-11 15:04:03.553
+!MESSAGE NLS missing message: TOTVSCompilaVersaoPageProjects_btApplySelection_text in: com.totvs.tds.core.patch.CompilaVersao.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-04-11 15:04:03.553
+!MESSAGE NLS missing message: TOTVSCompilaVersaoPageEnvironment_btnLoadCfg_text in: com.totvs.tds.core.patch.CompilaVersao.messages
+
+!ENTRY org.eclipse.osgi 2 1 2015-04-11 15:04:03.553
+!MESSAGE NLS missing message: TOTVSCompilaVersaoPageProjects_btnSalvarConfigurao_text in: com.totvs.tds.core.patch.CompilaVersao.messages
+!SESSION 2015-04-11 15:05:32.389 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.7.0
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=pt_BR
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.totvs.tds.dds 4 0 2015-04-11 15:05:33.155
+!MESSAGE [SCR] Component definition XMLs not found in bundle com.totvs.tds.dds. The component header value is OSGI-INF/component.xml
+
+!ENTRY com.totvs.tds.dds 4 0 2015-04-11 15:05:33.155
+!MESSAGE [SCR] Component definition XMLs not found in bundle com.totvs.tds.dds. The component header value is OSGI-INF/component.xml
+
+!ENTRY org.eclipse.ui 4 4 2015-04-11 15:05:39.640
+!MESSAGE Unable to create menu item "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection", command "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection" not defined
+
+!ENTRY com.totvs.tds.dds 4 0 2015-04-11 15:05:39.655
+!MESSAGE [SCR] Component definition XMLs not found in bundle com.totvs.tds.dds. The component header value is OSGI-INF/component.xml
+
+!ENTRY com.totvs.tds.dds 4 0 2015-04-11 15:05:39.655
+!MESSAGE [SCR] Component definition XMLs not found in bundle com.totvs.tds.dds. The component header value is OSGI-INF/component.xml
+
+!ENTRY org.eclipse.ui 4 4 2015-04-11 15:05:41.468
+!MESSAGE Unable to create menu item "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection", command "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection" not defined
+
+!ENTRY org.eclipse.osgi 2 1 2015-04-11 15:07:01.365
+!MESSAGE NLS unused message: LocalAppServer_23 in: com.totvs.tds.core.extensions.servers.messages

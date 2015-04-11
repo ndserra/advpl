@@ -49,3 +49,48 @@
 		
 		
 		VARIAVEIS DO mBrowse: cAlias,nReg,nOpc
+		
+		
+		
+		
+LISTBOX: Utilziando código exemplo lisBox.prw
+	Criar uma listbox com capacidade para exibit dados coletados por MSSQL através de 02 metodos diferente
+	
+	
+	codigo mcn: 0102.90.90
+	
+	
+	WEBSERVICES
+	- criar através do wizzard, após criar uma cópia dos bbinarios do appserver só para esse fim (para não misturar as coisas)
+	- checar no arq de configuração do appserver.ini
+	- UtilizaR A MESMA PORTA DO http 
+	- aDICIONAR UMA PASTA (/WS) PARA DIFERENCIAR DOS DEMAIS SERVIÇOS
+	- Verificar a pasta /Protheus+_data/Web (Uma pasta com o mesmo nome do webservice deverá ter sido criada aqui dentro)
+	- Criar pelo TDS uma function WS usandop:
+	
+	#Include 'Protheus.ch'
+#Include 'apWebSRV.ch'
+
+
+WSService LISTA_DATA Description "Mostra a data de Hoje."
+		
+	WsData dData as String
+	WsData Parametro as String
+	
+	WsMethod MostraData Description "Informa a data"
+	
+EndWSService	
+
+
+WsMethod MostraData WsReceive Parametro WsSend dData WsService LISTA_DATA 
+
+::dData := Dtos ( date() )
+
+Return .T.
+
+- criar um client usando o TDS:
+
+Novo Fonte WSDLAdvpl
+
+- acessar pelo navegador IE/Chrome para testar:
+http://localhost:5580/w

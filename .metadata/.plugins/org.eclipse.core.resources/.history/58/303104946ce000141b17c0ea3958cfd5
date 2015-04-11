@@ -1,0 +1,12 @@
+#include 'totvs.ch'
+
+CLASS Client_MostraData
+
+	METHOD New() CONSTRUCTOR
+
+ENDCLASS
+
+//-----------------------------------------------------------------
+METHOD New() CLASS Client_MostraData
+
+Return

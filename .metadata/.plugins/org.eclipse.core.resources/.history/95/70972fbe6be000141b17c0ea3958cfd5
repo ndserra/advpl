@@ -1,0 +1,16 @@
+#Include 'Protheus.ch'
+
+WSService LISTA_DATA Description "Mostra a data de Hoje."
+		
+	WsData dData as String
+	
+	WsMethod MostraData Description "Informa a data"
+	
+EndWSService	
+
+
+WsMethod MostraData WsReceive Parametro WsSend dData WsService LISTA_DATA 
+
+::dData := Dtos ( date() )
+
+Return .T.

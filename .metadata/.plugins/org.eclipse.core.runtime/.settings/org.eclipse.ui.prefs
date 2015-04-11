@@ -1,3 +1,4 @@
+DOCK_PERSPECTIVE_BAR=topRight
 SHOW_TRADITIONAL_STYLE_TABS=false
 eclipse.preferences.version=1
 presentationFactoryId=org.eclipse.ui.presentations.default
