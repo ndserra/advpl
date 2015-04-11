@@ -94,3 +94,4 @@ Novo Fonte WSDLAdvpl
 
 - acessar pelo navegador IE/Chrome para testar:
 http://localhost:5580/w
+http://localhost:5580/ws/WSINDEX.apw?cOp=02&WSVCNAME=LISTA_DATA
