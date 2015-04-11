@@ -88,10 +88,19 @@ WsMethod MostraData WsReceive Parametro WsSend dData WsService LISTA_DATA
 
 Return .T.
 
-- criar um client usando o TDS:
+- criar um client usando o TDS sempre que criar ou atualizar um Webservice:
 
 Novo Fonte WSDLAdvpl
 
 - acessar pelo navegador IE/Chrome para testar:
 http://localhost:5580/w
 http://localhost:5580/ws/WSINDEX.apw?cOp=02&WSVCNAME=LISTA_DATA
+
+
+
+COISA IMPORTANTES DA AULA DE HOJE:
+
+- LEMBRAR COMO ACESSAR O SIGACFG PARA MANIPULAr os indices e parametros de banco de dados
+- lembrar como acessar o SIGAWIZERD PARA CRIAR INSTANCIAS DO SERVIDOR, WEBSERVICES, ETC.
+- 
+
