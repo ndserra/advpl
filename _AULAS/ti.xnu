@@ -1,0 +1,191 @@
+<ApMenu>
+	<DocumentProperties>
+		<Module></Module>
+		<Version>10.1</Version>
+	</DocumentProperties>
+	<Menu Status="Enable">
+		<Title lang="pt">&Atualizações</Title>
+		<Title lang="es">&Actualizaciones</Title>
+		<Title lang="en">&Updates</Title>
+		<Menu Status="Enable">
+			<Title lang="pt">Cadastro</Title>
+			<Title lang="es">Cadastro</Title>
+			<Title lang="en">Cadastro</Title>
+			<MenuItem Status="Enable">
+				<Title lang="pt">Parametro</Title>
+				<Title lang="es">Parametro</Title>
+				<Title lang="en">Parametro</Title>
+				<Function>XTELA</Function>
+				<Type>03</Type>
+				<Access>xxxxxxxxxx</Access>
+				<Module>97</Module>
+				<Owner>0</Owner>
+				<KeyWord>
+					<KeyWord lang="pt">                         </KeyWord>
+					<KeyWord lang="es">                         </KeyWord>
+					<KeyWord lang="en">                         </KeyWord>
+				</KeyWord>
+			</MenuItem>
+			<MenuItem Status="Enable">
+				<Title lang="pt">Cliente</Title>
+				<Title lang="es">Cliente</Title>
+				<Title lang="en">Cliente</Title>
+				<Function>FTELACLI</Function>
+				<Type>03</Type>
+				<Access>xxxxxxxxxx</Access>
+				<Module>97</Module>
+				<Owner>0</Owner>
+				<KeyWord>
+					<KeyWord lang="pt">                         </KeyWord>
+					<KeyWord lang="es">                         </KeyWord>
+					<KeyWord lang="en">                         </KeyWord>
+				</KeyWord>
+			</MenuItem>
+			<MenuItem Status="Enable">
+				<Title lang="pt">mBrowse Cliente</Title>
+				<Title lang="es">mBrowse Cliente</Title>
+				<Title lang="en">mBrowse Cliente</Title>
+				<Function>CADSA1</Function>
+				<Type>03</Type>
+				<Access>xxxxxxxxxx</Access>
+				<Module>97</Module>
+				<Owner>0</Owner>
+				<KeyWord>
+					<KeyWord lang="pt">                         </KeyWord>
+					<KeyWord lang="es">                         </KeyWord>
+					<KeyWord lang="en">                         </KeyWord>
+				</KeyWord>
+			</MenuItem>
+			
+			<MenuItem Status="Enable">
+				<Title lang="pt">Modelo 02</Title>
+				<Title lang="es">Modelo 02</Title>
+				<Title lang="en">Modelo 02</Title>
+				<Function>Modelo2_1</Function>
+				<Type>03</Type>
+				<Access>xxxxxxxxxx</Access>
+				<Module>97</Module>
+				<Owner>0</Owner>
+				<KeyWord>
+					<KeyWord lang="pt">                         </KeyWord>
+					<KeyWord lang="es">                         </KeyWord>
+					<KeyWord lang="en">                         </KeyWord>
+				</KeyWord>
+			</MenuItem>
+			<MenuItem Status="Enable">
+				<Title lang="pt">Modelo 03</Title>
+				<Title lang="es">Modelo 03</Title>
+				<Title lang="en">Modelo 03</Title>
+				<Function>xModelo3</Function>
+				<Type>03</Type>
+				<Access>xxxxxxxxxx</Access>
+				<Module>97</Module>
+				<Owner>0</Owner>
+				<KeyWord>
+					<KeyWord lang="pt">                         </KeyWord>
+					<KeyWord lang="es">                         </KeyWord>
+					<KeyWord lang="en">                         </KeyWord>
+				</KeyWord>
+			</MenuItem>
+	
+			<MenuItem Status="Enable">
+				<Title lang="pt">List Box</Title>
+				<Title lang="es">Modelo 03</Title>
+				<Title lang="en">Modelo 03</Title>
+				<Function>ListBox</Function>
+				<Type>03</Type>
+				<Access>xxxxxxxxxx</Access>
+				<Module>97</Module>
+				<Owner>0</Owner>
+				<KeyWord>
+					<KeyWord lang="pt">                         </KeyWord>
+					<KeyWord lang="es">                         </KeyWord>
+					<KeyWord lang="en">                         </KeyWord>
+				</KeyWord>
+			</MenuItem>
+			
+						
+		</Menu>
+	</Menu>
+	<Menu Status="Enable">
+		<Title lang="pt">&Consultas</Title>
+		<Title lang="es">&Consultas</Title>
+		<Title lang="en">&Searches</Title>
+	</Menu>
+	<Menu Status="Enable">
+		<Title lang="pt">&Relatorios</Title>
+		<Title lang="es">&Informes</Title>
+		<Title lang="en">&Reports</Title>
+		
+			<MenuItem Status="Enable">
+				<Title lang="pt">RELSB1X</Title>
+				<Title lang="es">RELSB1X</Title>
+				<Title lang="en">RELSB1X</Title>
+				<Function>RELSB1X</Function>
+				<Type>03</Type>
+				<Access>xxxxxxxxxx</Access>
+				<Module>97</Module>
+				<Owner>0</Owner>
+				<KeyWord>
+					<KeyWord lang="pt">                         </KeyWord>
+					<KeyWord lang="es">                         </KeyWord>
+					<KeyWord lang="en">                         </KeyWord>
+				</KeyWord>
+			</MenuItem>
+			
+			
+			<MenuItem Status="Enable">
+				<Title lang="pt">tReport_SQL</Title>
+				<Title lang="es">tReport_SQL</Title>
+				<Title lang="en">tReport_SQL</Title>
+				<Function>tReport_SQL</Function>
+				<Type>03</Type>
+				<Access>xxxxxxxxxx</Access>
+				<Module>97</Module>
+				<Owner>0</Owner>
+				<KeyWord>
+					<KeyWord lang="pt">                         </KeyWord>
+					<KeyWord lang="es">                         </KeyWord>
+					<KeyWord lang="en">                         </KeyWord>
+				</KeyWord>
+			</MenuItem>
+		
+			<MenuItem Status="Enable">
+				<Title lang="pt">Simples_Treport</Title>
+				<Title lang="es">Simples_Treport</Title>
+				<Title lang="en">Simples_Treport</Title>
+				<Function>Simples_Treport</Function>
+				<Type>03</Type>
+				<Access>xxxxxxxxxx</Access>
+				<Module>97</Module>
+				<Owner>0</Owner>
+				<KeyWord>
+					<KeyWord lang="pt">                         </KeyWord>
+					<KeyWord lang="es">                         </KeyWord>
+					<KeyWord lang="en">                         </KeyWord>
+				</KeyWord>
+			</MenuItem>
+		
+			<MenuItem Status="Enable">
+				<Title lang="pt">tReport2_secao</Title>
+				<Title lang="es">tReport2_secao</Title>
+				<Title lang="en">tReport2_secao</Title>
+				<Function>tReport2_secao</Function>
+				<Type>03</Type>
+				<Access>xxxxxxxxxx</Access>
+				<Module>97</Module>
+				<Owner>0</Owner>
+				<KeyWord>
+					<KeyWord lang="pt">                         </KeyWord>
+					<KeyWord lang="es">                         </KeyWord>
+					<KeyWord lang="en">                         </KeyWord>
+				</KeyWord>
+			</MenuItem>
+		
+	</Menu>
+	<Menu Status="Enable">
+		<Title lang="pt">&Miscelanea</Title>
+		<Title lang="es">&Miscelanea</Title>
+		<Title lang="en">&Miscellaneous</Title>
+	</Menu>
+</ApMenu>

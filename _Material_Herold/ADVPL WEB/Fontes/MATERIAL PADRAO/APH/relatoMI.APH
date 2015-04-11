@@ -1,0 +1,68 @@
+<HTML>
+
+<HEAD>
+<TITLE>
+		<% IF SELECT("TRBSA1")>0 %>
+			RELATORIO
+		<% ELSE%>
+			PARAMETROS
+		<%ENDIF%>
+</TITLE>
+<META NAME="LEANDRO_DUARTE" CONTENT="ADVPL-WEB">
+</HEAD>
+<BODY onunload="window.opener.location.reload()">
+	<% IF SELECT("TRBSA1")>0 %>
+		<TABLE BORDER="1" WIDTH="100%" CELLPADDING="0" CELLSPACING="0">
+		<TR>
+			<TD>Codigo      </TD>
+			<TD>Nome        </TD>
+			<TD>N Fantasia  </TD>
+			<TD>Endereco    </TD>
+			<TD>Estado      </TD>
+			<TD>Nome Estado </TD>
+		</TR>
+		<% WHILE TRBSA1->(!EOF())%>
+			<TR>
+				<TD><%= TRBSA1->A1_COD %></TD>
+				<TD><%= TRBSA1->A1_NOME %></TD>
+				<TD><%= TRBSA1->A1_NREDUZ %></TD>
+				<TD><%= TRBSA1->A1_END %></TD>
+				<TD><%= TRBSA1->A1_EST %></TD>
+				<TD><%= TRBSA1->A1_ESTADO %></TD>
+			</TR>
+		<% 		TRBSA1->(DBSKIP())
+			END
+		%>
+		<TR>
+			<TD COLSPAN="3" ALIGN="CENTER"><INPUT TYPE="submit" VALUE="IMPRIMIR" NAME="IMPRIMIR"  onclick="javascript:window.print();"></TD>
+			<TD COLSPAN="3" ALIGN="CENTER"><INPUT TYPE="submit" VALUE="FECHAR" NAME="FECHAR"  onclick="javascript:window.close();"></TD>
+		</TR>
+	</TABLE>
+	<% ELSE%>
+		<FORM ACTION="U_relatoMI.APW" METHOD="GET" TITLE="PARAMETROS" NAME="PARAMETROS" ID="PARAMETROS" >
+		<TABLE BORDER="1" WIDTH="40%" CELLPADDING="0" CELLSPACING="0">
+			<TR>
+				<TD>CLIENTE DE</TD>
+				<TD><INPUT TYPE="text" VALUE="      " NAME="MV_PAR01" SIZE="6" MAXLENGTH="7"></TD>
+			</TR>
+			<TR>
+				<TD>CLIENTE ATÉ</TD>
+				<TD><INPUT TYPE="text" VALUE="ZZZZZZ" NAME="MV_PAR02" SIZE="6" MAXLENGTH="7"></TD>
+			</TR>
+			<TR>
+				<TD>ESTADO DE</TD>
+				<TD><INPUT TYPE="text" VALUE="  " NAME="MV_PAR03" SIZE="2" MAXLENGTH="2"></TD>
+			</TR>
+			<TR>
+				<TD>ESTADO ATÉ</TD>
+				<TD><INPUT TYPE="text" VALUE="ZZ" NAME="MV_PAR04" SIZE="2" MAXLENGTH="2"></TD>
+			</TR>
+			<TR>
+				<TD><INPUT TYPE="submit" VALUE="OK" NAME="OK" ></TD>
+				<TD><INPUT TYPE="submit" VALUE="CANCELAR" NAME="CANCELAR" onclick="opener.location.reload();window.close()"></TD>
+			</TR>
+		</TABLE>
+		</FORM>
+	<%ENDIF%>
+</BODY>
+</HTML>

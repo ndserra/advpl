@@ -1,0 +1,76 @@
+<HTML>
+	<HEAD>
+		<TITLE>Pagina Inicial - ADVPL-WEB</TITLE>
+		<META NAME="Exercicio 1" CONTENT="advpl-web">
+	</HEAD>
+<script language="JavaScript">
+function cancelar(){
+	document.login.action = "u_EXERCICIO1.apw"; 
+	document.login.submit() 
+}
+function ok(){
+var ok = true;
+missinginfo = '';
+ if ( document.login.cNome.value == '' ) {
+     ok = false;
+     missinginfo = '\n     -  Nome';
+ }   
+if ( document.login.cSenha.value == '' ) {
+   ok = false;
+   missinginfo += '\n     -  Senha';
+ }
+if ( ok ){
+  document.login.cNome.value=this.value.toUpperCase();
+  document.login.submit()
+}
+else{
+     missinginfo ='_____________________________\n' +
+     " Não preenchido corretamente:\n" +
+     missinginfo + '\n_____________________________' +  
+     '\n Tente novamente!';
+     alert(missinginfo)
+}
+
+}
+</script>   
+
+<BODY BACKGROUND="../AULA/imagens-for-01/login_body-fundo.gif">
+<FORM name="login" id="login" action="u_TlIniWB2.apw" METHOD="POST" >
+<TABLE style="HEIGHT:100%;WIDTH:100%;">
+	<tr align="center" bottom="middle">
+		<td> 
+		<TABLE>
+		<TR>
+			<TD><FONT COLOR="#FFFFFF">Nome</font></TD>
+			<TD><INPUT TYPE="text" NAME="cNome" SIZE="30" MAXLENGTH="30" style="text-transform:uppercase;" on keyup="javascript:this.value=this.value.toUpperCase();"></TD>
+		</TR>
+		<TR>
+			<TD><FONT COLOR="#FFFFFF">Senha</font></TD>
+			<TD><INPUT TYPE="password" NAME="cSenha" style="text-transform:uppercase;" on keyup="javascript:this.value=this.value.toUpperCase();"></TD>
+		</TR>
+		
+		<TR>
+			<TD><FONT COLOR="#FFFFFF">Empresa/Filial</font></TD>
+			<TD><SELECT NAME="Selecao" SIZE="1">
+				<% for nfor:= 1 to len(aDados) %>
+					<option value=<%=aDados[nFor][1]%>  selected> <%=aDados[nFor][2]%></option>
+				<% Next nFor%>
+				</SELECT>
+			</TD>
+		</TR> 
+		
+		<TR> 		
+			<TD><INPUT TYPE="submit" NAME="Cancelar" VALUE="Cancelar" onClick=javascript:cancelar()></TD>
+			<TD><input TYPE="submit" NAME="Entrar" VALUE="Entrar" onClick=javascript:ok()></TD>
+		</TR>
+		<TR>
+			<TD><FONT COLOR="#FFFFFF"><%= cMensagem %></font></TD>
+		</TR>
+		</TABLE> 
+		</TD>
+	</TR>
+</TABLE>
+
+</FORM>
+</BODY>
+</HTML>

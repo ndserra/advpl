@@ -1,0 +1,11 @@
+<html>
+<head>
+<title>Dados SX5</title>
+</head>
+<body>
+<p></p>
+<p> <%=HttpSession->cDados%>
+</p>
+                                  	
+</body>
+</html>      

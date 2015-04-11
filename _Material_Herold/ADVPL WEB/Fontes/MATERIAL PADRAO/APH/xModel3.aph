@@ -1,0 +1,18 @@
+<HTML>
+
+<HEAD>
+<TITLE>modelo 3</TITLE>
+<META NAME="LEANDRO_DUARTE" CONTENT="ADVPL-WEB">
+</HEAD>
+<frameset rows="7%,40%,*" border=0>
+  <frame name="top"    src="u_xTelaG0.APW" marginwidth="10" marginheight="10" scrolling="No"   frameborder="no" noresize>
+  <frame name="middle" src="U_xTelaG1.APW" marginwidth="10" marginheight="10" scrolling="Auto" frameborder="no" noresize>
+  <frame name="bottom" src="U_xTelaG2.apw" marginwidth="10" marginheight="10" scrolling="Auto" frameborder="no" noresize>
+  <noframes>
+  <body>
+  </body>
+  </noframes>
+</frameset>
+
+</BODY>
+</HTML>

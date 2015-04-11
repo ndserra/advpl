@@ -1,0 +1,98 @@
+#include "Protheus.ch"
+#include "apwebex.ch"
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³GRAVAR3   ºAutor  ³Leandro Duarte      º Data ³  06/07/12   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³ grava os dados do cadastro                                 º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ P10 e P11                                                  º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+user function gravar3()
+Local cHtml	:= ""
+Local aDados := {}
+Local aDados1 := {}
+Local aParms := {}
+Local xRecno := HttpSession->xRecno
+Local xTabS	 := HttpSession->cTabS
+Local xTabI	 := HttpSession->cTabI
+WEB EXTENDED INIT cHtml
+
+// a linha abaixo monta um array com os parametros recebidos via post
+// no formato  ( [1] = nome / [2] conteudo )
+aEval( HttpPost->aPost 	, {|x| iif(alltrim(x)=='SALVAR' .AND. EMPTY(&("HttpPost->"+x)) ,NIL,aadd(aParms,{ x , &("HttpPost->"+x)} ) ) })
+// TRATAMENTO DOS CAMPOS VIRTUAIS
+varinfo('aParms',aParms)
+
+DBSELECTAREA("SX3")
+SX3->(dbsetorder(1))
+SX3->(DBSEEK(xTabS))
+While SX3->X3_ARQUIVO ==(xTabS)
+	IF EMPTY(X3_CONTEXT) .OR. X3_CONTEXT == 'R'
+		AADD(aDados,alltrim(SX3->X3_CAMPO))
+		AADD(aDados1,SX3->X3_TIPO)
+	endif
+	SX3->(dbskip())
+end
+SX3->(DBSEEK(xTabI))
+While SX3->X3_ARQUIVO ==(xTabI)
+	IF EMPTY(X3_CONTEXT) .OR. X3_CONTEXT == 'R'
+		AADD(aDados,alltrim(SX3->X3_CAMPO))
+		AADD(aDados1,SX3->X3_TIPO)
+	endif
+	SX3->(dbskip())
+end
+//rotina de gravação
+For nFor := 1 to len(aParms)
+	IF !EMPTY(aParms[nFor][2]) .AND. aParms[nFor][1] != 'SALVAR' .and. !('DELETAR' $ aParms[nFor][1])
+		aParms[nFor][1] := substr(aParms[nFor][1],at("_",aParms[nFor][1])+1)
+		xTab := substr(aParms[nFor][1],1,at("_",aParms[nFor][1])-1)
+		aParms[nFor][1] := substr(aParms[nFor][1],at("_",aParms[nFor][1])+1)
+		nRec := val(substr(aParms[nFor][1],1,at("_",aParms[nFor][1])-1))
+		aParms[nFor][1] := substr(aParms[nFor][1],at("_",aParms[nFor][1])+1)
+		cCpo := alltrim(aParms[nFor][1])
+		xValor := aParms[nFor][2]
+		NN := aScan(aDados,cCpo)
+		if NN>0
+			xValor := IIF(aDados1[NN]=='N',VAL(xValor),IIF(aDados1[NN]=='D',CTOD(xValor),xValor))
+			(xTab)->(dbgoto(nRec))
+			Reclock((xTab),.f.)
+			&((xTab)+'->'+cCpo) := xValor
+			Msunlock()
+		ENDIF
+	elseIF ('DELETAR' $ aParms[nFor][1])
+		aParms[nFor][1] := substr(aParms[nFor][1],at("_",aParms[nFor][1])+1)
+		xTab := substr(aParms[nFor][1],1,at("_",aParms[nFor][1])-1)
+		aParms[nFor][1] := substr(aParms[nFor][1],at("_",aParms[nFor][1])+1)
+		nRec := val(substr(aParms[nFor][1],1,at("_",aParms[nFor][1])-1))
+		(xTab)->(dbgoto(nRec))
+		xValor := aParms[nFor][2]
+		IF ALLTRIM(xValor)=='1'
+			CONOUT('ENTREI')
+			Reclock((xTab),.f.)
+			DBDELETE()
+			Msunlock()
+		ENDIF
+	ENDIF
+Next nFor
+
+cHtml := " <html> "
+cHtml += " <body> "
+cHtml += " <form name='login' method='post'  action='u_TlIniWB3.apw'> "
+cHtml += " <script language='JavaScript'><INPUT TYPE='hidden' VALUE=xRecno NAME='xRecnos'></script> "
+cHtml += " </form> "
+cHtml += " </body> "
+cHtml += " </html> "
+cHtml += " <script language='JavaScript'> "
+//cHtml += " window.opener.parent.direita.location.reload();javascript:parent.window.close(); "
+cHtml += " javascript:parent.window.close(); "
+cHtml += " </script> "
+WEB EXTENDED END
+Return(cHtml)

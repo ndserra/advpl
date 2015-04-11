@@ -1,0 +1,62 @@
+User Function RO_IMAGEM()
+	Local oDlg, _cFileImg, oBmp
+	Local aAreaSB1 := SB1->( GetArea() )
+
+	SB1->( DbSetOrder( 1 ) )
+	If SB1->( DbSeek( xFilial("SB1") + ZAI->ZAI_IMAGEM ) )
+		_cFileImg := U_FGetImagem( ZAI->ZAI_IMAGEM, SB1->B1_X_PRINC, .F. )
+	Else
+		_cFileImg := U_FGetImagem( ZAI->ZAI_IMAGEM, "", .F. )
+   EndIf
+
+			
+	DEFINE MSDIALOG oDlg FROM 0,0 TO 340,280 PIXEL TITLE "Imagem" OF oMainWnd
+	oBmp := TBitMap():New( 057, 020, 200, 200,,_cFileImg , .t., , , , , , , , , , .t.) // objeto para carrehar a IMAGEM
+	@ 005,015 Say "Imagem   : " + Transform(ZAI->ZAI_IMAGEM,PesqPict("ZAI","ZAI_IMAGEM")) // Mascara do codigo
+	@ 015,015 Say "Descricao: " + ZAI->ZAI_DESC
+	@ 025,015 Say "Modelo: " + ZAI->ZAI_MODELO
+	@ 035,015 Say "Grupo: " + ZAI->ZAI_GRUPO
+	@ 045,015 Say "Figura: " + ZAI->ZAI_FIGURA		
+	@ 055,010 to 160,135
+	oBmp:Refresh()                    //Força atualização do Obj para carregar a imagem
+	ACTIVATE MSDIALOG oDlg CENTERED
+		
+	SB1->( RestArea( aAreaSB1 ) )
+
+	
+Return( NIL )
+
+User Function FGetImagem( pProd, pPrinc, lBMP )
+	Local cImagem  := cCodigo := ""
+	Local cCaminho := AllTrim( GetSrvProfString( "ImgPath", "" ) ) //Vai no appServer.ini a pega o endereço do campo "ImgPath"
+
+	If ! Empty( pPrinc )
+   	cCodigo := AllTrim( StrTran( pPrinc, "-", "" ) )
+   Else	
+		cCodigo := AllTrim( StrTran( pProd , "-", "" ) )
+	EndIf
+		
+		
+	If ! lBMP
+		cImagem := cCaminho+Transform( cCodigo, "@R 999999-9" )+".JPG"
+		
+		If ! File( cImagem )
+			cImagem := cCaminho+Transform( cCodigo, "@R 999999-9" )+".BMP"
+			If ! File( cImagem )
+				cImagem := cCaminho+"NOIMAGE.JPG"
+				If ! File( cImagem )
+					cImagem := cCaminho+"NOIMAGE.BMP"
+				EndIf
+			EndIf
+		EndIf
+	Else	
+		cImagem := cCaminho+"BMP\"+Transform( cCodigo, "@R 999999-9" )+".BMP"
+		If ! File( cImagem )
+			cImagem := cCaminho+"BMP\"+"NOIMAGE.BMP"
+		EndIf
+	EndIf	
+Return( cImagem )
+
+
+
+

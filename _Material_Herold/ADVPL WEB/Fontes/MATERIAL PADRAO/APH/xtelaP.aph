@@ -1,0 +1,28 @@
+<HTML>
+
+<HEAD>
+<TITLE>Pesquisa</TITLE>
+<META NAME="Pesquisa" CONTENT="Leandro Duarte">
+</HEAD>
+
+<BODY>
+<FORM ACTION="u_xtelap1.apw" METHOD="POST" TITLE="Pesquisa"> 
+Informe a Chave de Pesquisa!
+<br>
+<INPUT TYPE="text" VALUE="" NAME="PPesq" SIZE="150" MAXLENGTH="300" ID="PPesq">
+<br>
+<% For nFor := 1 to len(aChave)%>
+	<% IF nFor = 1 %>
+		<INPUT TYPE="radio" CHECKED VALUE="<%= aChave[nfor][2] %>" NAME="indexs" id="indexs"><%=aChave[nFor][1]%>
+	<% else %>
+		<INPUT TYPE="radio" VALUE="<%= aChave[nfor][2] %>" NAME="indexs" id="indexs"><%=aChave[nFor][1]%>
+	<% endif %>
+	<br>
+<% next nFor %>
+<br>
+<INPUT TYPE="submit" VALUE="ok" NAME="Pesquisar" >
+<INPUT TYPE="submit" VALUE="sair" NAME="Cancelar" onClick="javascript:parent.window.close();"> 
+
+</FORM>
+</BODY>
+</HTML>

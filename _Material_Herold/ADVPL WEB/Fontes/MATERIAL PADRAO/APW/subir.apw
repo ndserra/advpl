@@ -1,0 +1,160 @@
+#INCLUDE "APWEBEX.CH"
+#INCLUDE 'PROTHEUS.CH'
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³SUBIR     ºAutor  ³Microsiga           º Data ³  06/10/12   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³                                                            º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ AP                                                        º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+User Function subir()
+
+Local cHtml        := ""
+Local cDiretorio   := ""
+Local cDir1        := ""
+Local cArquivo     := ""
+Local cNickArq     := ""
+Local cNickArqDest := ""
+Local cRootWeb     := GetSrvProfString("RootWeb","\web")
+Local lUnix        := IsSrvUnix()
+Local cCaracter    := ""
+
+
+Local lStatus      := 0
+Local nRetorno     := 0
+Local i            := 0
+Local nTamRoot     := 0
+
+
+Private aDir       := {}
+Private nTotal     := 0
+Private cMsg       := ""
+
+
+WEB EXTENDED INIT cHtml
+conout('cRootWeb')
+conout(cRootWeb)	
+	nTamRoot := len(alltrim(cRootWeb))        
+	cCaracter := iif(lUnix,"/","\")
+	                                            
+	// funcao para descobrir se o ambiente eh linux - IsSrvUnix()
+	
+	// retirar barra sobressalente
+	if substr(cRootWeb,nTamRoot,1) == "/" .OR. substr(cRootWeb,nTamRoot,1) == "\"
+		cRootWeb := substr(cRootWeb,1,nTamRoot-1)
+	endif
+	
+	//colocar o parametro no mesma situacao do que a do windows...
+	if ! lUnix
+		cRootWeb := STRTRAN(cRootWeb,"/","\")
+	else
+		cRootWeb := STRTRAN(cRootWeb,"\","/")
+	endif
+	
+	// se nao existir diretorios, cria!
+	nRetorno := MAKEDIR( cRootWeb+"\arquivos", 1)
+	conout('nRetorno')
+	conout(nRetorno)
+	cDiretorio := cRootWeb+"\arquivos"
+	nRetorno := MAKEDIR( cDiretorio , 1 )
+	
+	cDiretorio := cDiretorio+"\"
+	
+	if lUnix
+		cDiretorio := Strtran(cDiretorio,"\","/")
+	endif
+	
+	// :: EXCLUSAO
+	if HttpPOST->EXCLUIR == "1" // solicitacao de exclusao
+		cNickArq := HttpGet->cArq
+		fErase(cDiretorio+cNickArq,1)
+	endif
+	                    	
+	if Httppost->arq != nil
+		cArquivo := Httppost->arq
+		
+		//colocar o parametro no mesma situacao do que a do windows...
+		if ! lUnix
+			cArquivo := STRTRAN(cArquivo,"/","\")
+		else
+			cArquivo := STRTRAN(cArquivo,"\","/")
+		endif
+		
+		CONOUT("*** FILE TO UPLOAD ***")
+		CONOUT(cArquivo)
+		
+		i := Len(cArquivo)
+		While Substr(cArquivo,i,1) != cCaracter // achar a barra de diretorio - ultima
+			cNickArq  := Substr(cArquivo,i,1)+cNickArq
+			i := i - 1
+			if i <= 0
+				exit
+			endif
+		End
+
+    	cNickArqDest := Renomeia(cNickArq)
+
+			
+			conout("*** UPLOAD FILES ***")
+			conout(cArquivo)
+			conout(cDiretorio + cNickArqDest)
+			conout("********************")
+			
+			lStatus := __COPYFILE( cArquivo , cDiretorio + cNickArqDest, 1 )
+			
+			
+		
+		if lStatus
+			fErase(cArquivo,1)
+		endif
+		
+	
+	cDiretorio := cRootWeb+"\arquivos\*.*"
+	aDir := DIRECTORY(cDiretorio, "D", 1 )
+	
+	i := 0
+	nTotal := 0
+	
+	for i := 1 to len(aDir)
+		nTotal += aDir[i][2]
+	next i
+	
+	cHtml := H_upload()
+
+endif
+
+WEB EXTENDED END
+Return cHtml
+           
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³Renomeia  ºAutor  ³Microsiga           º Data ³  06/10/12   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Renomeia os arquivos para subir no servidor                 º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ P10 e P11                                                  º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+
+Static Function Renomeia(cCampo)
+Local cAcentos 	:= "áàãââÁÀÃÂéêÉÊíÍóõôÓÔÕúüÚÜçÇabcdefghijklmnopqrstuvxwyz ªº"
+Local cTraducao := "AAAAAAAAAEEEEIIOOOOOOUUUUCCABCDEFGHIJKLMNOPQRSTUVXWYZ_AO"
+Local i			:= 0		
+	for i := 0 to Len(cAcentos) 
+		cCampo := STRTRAN(cCampo, Substr(cAcentos, i, 1), Substr(cTraducao, i, 1))
+	Next i
+Return cCampo          

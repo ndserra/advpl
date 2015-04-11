@@ -1,0 +1,73 @@
+#INCLUDE "TOTVS.CH"
+#INCLUDE "TBICONN.CH"
+
+
+User Function xCadCli()
+                                            
+Local cHTML   := ""         
+
+cHTML += "<html>"
+cHTML += "<head>"
+cHTML += "<title>AdvPL/ASP</title>"
+cHTML += "<body>"
+cHTML += "Grava Cliente"
+cHTML += "<form name='form1' action='u_GravaDados.apw' method='POST'>" 
+cHTML += "  <p> Codigo: <input name='cCodigo' type='text' id='Codigo'></p>"
+cHTML += "  <p> Loja: <input name='cloja' type='text' id='loja'></p>"
+cHTML += "  <p> Nome: <input name='cNome' type='text' id='Nome'></p>"
+cHTML += "  <p> Nome Reduzido: <input name='cNomeFan' type='text' id='NomeFan'></p>"
+cHTML += "  <p> Endereco: <input name='cend' type='text' id='end'></p>"
+cHTML += "  <p> Tipo: <input name='ctipo' type='text' id='tipo'></p>"
+cHTML += "  <p> Estado: <input name='cUF' type='text' id='UFt'></p>"
+cHTML += "  <p> Municipio: <input name='cmunic' type='text' id='cmunic'></p>"
+cHTML += "  <p> <br><input type='submit' value='Enviar'></p>"
+cHTML += "</form>"
+cHTML += "</body>"
+cHTML += "</html>"
+
+Return( cHTML )                                                                                                                
+
+//*****************************************************************************************************************************
+
+User Function GravaDados()   
+
+Private aGet := HTTPPOST->aPOST
+Private lMsHelpAuto := .T.	
+Private lMsErroAuto := .F.                       
+Private nOpc        := 3
+Private cErro       := ""
+
+If Select("SX2") == 0
+  Prepare Environment Empresa '99' Filial '01' Tables 'SA1'
+EndIf                                                                          
+ 
+aExecItens := {}
+
+aAdd( aExecItens, { "A1_COD"    , IIF( Empty( aGet[01] ),GETSXENUM('SA1','A1_COD') , Alltrim( HTTPPOST->CCODIGO  ), Nil } )    //Codigo do Cliente
+aAdd( aExecItens, { "A1_LOJA"   ,                                                    Alltrim( HTTPPOST->CLOJA    ), Nil } )    //Codigo da Loja
+aAdd( aExecItens, { "A1_NOME"   ,                                                    Alltrim( HTTPPOST->CNOME    ), Nil } )    //Nome do Cliente
+aAdd( aExecItens, { "A1_NREDUZ" ,                                                    Alltrim( HTTPPOST->CNOMEFAN ), Nil } )    //Nome Fantazia
+aAdd( aExecItens, { "A1_END"    ,                                                    Alltrim( HTTPPOST->CEND     ), Nil } )    //Endereço
+aAdd( aExecItens, { "A1_TIPO"   ,                                                    Alltrim( HTTPPOST->CTIPO    ), Nil } )    //TIPO
+aAdd( aExecItens, { "A1_EST"    ,                                                    Alltrim( HTTPPOST->CUF      ), Nil } )    //Estado
+aAdd( aExecItens, { "A1_MUN"    ,                                                    Alltrim( HTTPPOST->CMUNIC   ), Nil } )    //NOME DO MUNICIPIO
+                         
+MSExecAuto( { | x, y |Mata030(x, y) },aExecItens,nOpc)
+
+If lMsErroAuto
+	DisarmTransaction() // Libera sequencial
+	RollBackSx8()    
+
+    cHtml += STRTRAN(mostraerro(),CRLF, '<br>')                  
+    
+	MostraErro("\spool\","erro.asp")   
+	
+	cErro := memoread("\spool\erro.asp")
+	Return( cErro )
+EndIf
+               
+cErro := "Gravado com Sucesso"
+
+RESET ENVIRONMENT	
+
+Return(cErro)

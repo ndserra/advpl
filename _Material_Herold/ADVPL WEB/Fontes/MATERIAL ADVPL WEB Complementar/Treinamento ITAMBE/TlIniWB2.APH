@@ -1,0 +1,12 @@
+<HTML>
+
+<HEAD>
+<TITLE>TELA PRINCIPAL</TITLE>
+<META NAME="Treinamento ADVPL-WEB" CONTENT="ADVPL-WEB">
+</HEAD>
+
+<BODY>
+<A HREF="U_UPLOAD.APW">Upload/download de Arquivos</A><BR>
+<A HREF="U_TlIniWB3.APW">Abrir Cadastro de Cliente</A><BR>
+</BODY>
+</HTML>

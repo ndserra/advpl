@@ -1,0 +1,31 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Acessando Sistema</title>
+</head>
+
+<body>
+       
+<h1 align="center">Acesso ao sistema</h1>
+
+<form id="login" name="login" method="post" action="U_ValUserId.prw">
+  <p>
+    <label>
+      <div align="center">Usuario:
+        <input type="text" name="usuario" id="usuario" value=""/>
+      </div>
+    </label>
+  </p>
+  <p align="center">
+    <label>Senha:
+       <input type="PASSWORD" name="senha" id="senha" />
+    </label>
+  </p>
+  <p align="center">
+     <input type="submit" value="Enviar">
+	  <input type="Reset" value="Limpar">
+  </p>
+</form>
+</body>
+</html>

@@ -1,0 +1,70 @@
+#INCLUDE "PROTHEUS.CH"
+#INCLUDE "APWEBEX.CH"
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
+ฑฑบPrograma  ณUPLOAD    บAutor  ณLeandro Duarte      บ Data ณ  06/10/12   บฑฑ
+ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
+ฑฑบDesc.     ณAbre a pagina para fazer o Upload/Download de arquivos      บฑฑ
+ฑฑบ          ณ                                                            บฑฑ
+ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
+ฑฑบUso       ณ P10 e p11                                                  บฑฑ
+ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿
+*/
+
+USER FUNCTION UPLOAD()
+Local cHtml := ""
+Local cRootWeb     := GetSrvProfString("RootWeb","\web")
+Local lUnix        := IsSrvUnix()
+Private aDir := {}
+WEB EXTENDED INIT cHtml
+nTamRoot := len(alltrim(cRootWeb))        
+cCaracter := iif(lUnix,"/","\")
+
+// funcao para descobrir se o ambiente eh linux - IsSrvUnix()
+
+// retirar barra sobressalente
+if substr(cRootWeb,nTamRoot,1) == "/" .OR. substr(cRootWeb,nTamRoot,1) == "\"
+	cRootWeb := substr(cRootWeb,1,nTamRoot-1)
+endif
+
+//colocar o parametro no mesma situacao do que a do windows...
+if ! lUnix
+	cRootWeb := STRTRAN(cRootWeb,"/","\")
+else
+	cRootWeb := STRTRAN(cRootWeb,"\","/")
+endif
+
+// se nao existir diretorios, cria!
+nRetorno := MAKEDIR( cRootWeb+"\arquivos", 1)
+
+cDiretorio := cRootWeb+"\arquivos"
+nRetorno := MAKEDIR( cDiretorio , 1 )
+
+cDiretorio := cDiretorio+"\"
+
+if lUnix
+	cDiretorio := Strtran(cDiretorio,"\","/")
+endif
+cDiretorio := cRootWeb+"\arquivos\*.*"
+conout(cDiretorio)
+aDire := DIRECTORY(cDiretorio, "D", 1 )
+
+For nFor := 1 to len(aDire)
+
+	IF aDire[nFor][2] != 0
+		AADD(aDir,{aDire[nFor][1],aDire[nFor][2],"http://localhost:90/aula/arquivos/"+aDire[nFor][1]})
+	ENDIF
+	
+Next nFor
+
+varinfo('aDir',aDir )	// Print d Array no Console
+cHtml := h_UPLOAD()                               
+
+WEB EXTENDED END
+
+RETURN(cHtml)

@@ -1,0 +1,17 @@
+<html>
+<head>
+<title>Login Teste</title>
+<body>
+
+Exemplo Login Usuario POST
+
+<form name="form1" action="u_login.apw" method="POST">
+Usuario: <input type="text" name="usuario"><br>
+Senha: <input type="password" name="pass"><br> 
+<input type="reset" value="Cancelar">&nbsp;&nbsp;&nbsp;
+<input type="SUBMIT" value="Entrar">
+
+</form>
+
+</body>
+</html>

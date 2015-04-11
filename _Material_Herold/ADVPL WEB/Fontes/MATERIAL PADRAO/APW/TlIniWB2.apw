@@ -1,0 +1,97 @@
+#include "Protheus.ch"
+#INCLUDE 'APWEBEX.CH' 
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+ฑฑษออออออออออัออออออออออหอออออออัออออออออออออออออออออหออออออัอออออออออออออปฑฑ
+ฑฑบPrograma  ณTLINIWB2  บAutor  ณLeandro Duarte      บ Data ณ  05/31/12   บฑฑ
+ฑฑฬออออออออออุออออออออออสอออออออฯออออออออออออออออออออสออออออฯอออออออออออออนฑฑ
+ฑฑบDesc.     ณTela de receber os dados do login e abrir a tabela conforme บฑฑ
+ฑฑบ          ณa ewmpresa enviada e cria o menu para o usuario como Frames บฑฑ
+ฑฑฬออออออออออุออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออนฑฑ
+ฑฑบUso       ณ P10 e P11                                                  บฑฑ
+ฑฑศออออออออออฯออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผฑฑ
+ฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑฑ
+฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿
+*/
+
+user function TlIniWB2()
+Local cHtml 	:= ""
+Local _cEmp_	:= ""
+Local _cFil_	:= ""
+Local cEmpcFil  := httppost->Selecao
+Local cLogin	:= httppost->cNome
+Local cPass		:= httppost->cSenha
+Local aTabs		:={"SA1","SA2","SE1","SE2","SE5","SA6","SAE","ZZ0"}
+Local lEntra	 := .F.   
+
+Default cEmpcFil := "99-01"
+Default cEmpcFil	:= httpSession->Selecao
+Default cLogin		:= httpSession->cNome
+Default cPass		:= httpSession->cSenha 
+
+WEB EXTENDED INIT cHtml
+
+//PROCESSO PARA DEFINIR A MENSAGEM QUANDO OCORRER ERRO DE ACESSO
+// grava็ใo de sessใo
+HttpSession->cMensagem 	:= ""
+httpSession->Selecao 	:= cEmpcFil
+httpSession->cNome		:= cLogin
+httpSession->cSenha 	:= cPass
+
+
+CONOUT('httppost->Selecao')
+CONOUT(httppost->Selecao)
+CONOUT('httppost->cNome')
+CONOUT(httppost->cNome)
+CONOUT('httppost->cSenha')
+CONOUT(httppost->cSenha)
+
+_cEmp_ := substr(cEmpcFil,1,at("-",cEmpcFil)-1)
+_cFil_ := substr(cEmpcFil,at("-",cEmpcFil)+1)
+
+//seta o ambiente com a empresa 99 filial 01 com os direitos do usuario administrador, m๓dulo Financeiro
+RpcSetEnv( _cEmp_,_cFil_,,, "FIN", "TlIniWB2", aTabs,,,,)
+
+httpSession->_cEmp_		:= _cEmp_
+httpSession->_cFil_		:= _cFil_
+httpSession->aTabs		:= aTabs
+
+/****** COMANDOS *************/
+dbselectarea("ZZ0")
+ZZ0->(DbSetorder(1))
+if ZZ0->(Dbseek(xFilial("ZZ0")+cLogin))
+	IF ALLTRIM(ZZ0->ZZ0_SENHA) == ALLTRIM(cPass)
+		lEntra := .T.
+	ENDIF
+ELSE
+	lEntra := .F.
+	HttpSession->cMensagem	:= "Usuario ou Senha Invalido"
+ENDIF
+
+if lEntra
+	//ฺฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฟ
+	//ณCRIAR NA WEB O CADASTRO DE CLIENTESณ
+	//ภฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤู
+	// Chamar a pagina
+	cHtml := h_TlIniWB2()	
+Else
+	// Chamar a pagina
+	cHtml += " <html> "
+	cHtml += " <head> "
+	cHtml += " </head> "
+	cHtml += " <body> "
+	cHtml += " <form name='voltar' method='post'  action='U_TLINIWB.APW'> "
+	cHtml += " </form> "
+	cHtml += " </body> "
+	cHtml += " </html> "
+	cHtml += " <script language='JavaScript'> "
+	cHtml += " document.voltar.submit(); "
+	cHtml += " </script> "
+	cHtml += " </body> "
+	cHtml += " </html>"
+endif
+
+WEB EXTENDED END
+return(cHtml)

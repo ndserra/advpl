@@ -1,0 +1,39 @@
+#Include "TOTVS.CH"
+#Include "PROTHEUS.CH"
+#Include "APWEBEX.CH"
+
+//----------------------------------------------------------------------------//
+// Uso de variaveis SESSION. Comandos AdvPL dentro do HTML.
+//----------------------------------------------------------------------------//
+User Function Caddet()
+Local cHtml := ""
+Local aTabs	:= {"SA1"}
+
+WEB EXTENDED INIT cHtml
+
+RPCSETENV("99","01",,,"FAT","Caddet",aTabs)
+
+cHtml := "<html>"
+cHtml += "<head></head>"
+cHtml += "<body>"
+codcli := HttpPost->cod
+checkc := HttpPost->checkc
+dbselectarea("SA1")
+dbsetorder(1)
+if dbseek(xfilial("SA1")+checkc)
+	cHtml += "<P>"+SA1->A1_COD+"<br>"
+	cHtml += SA1->A1_NOME+"<br>"
+	cHtml += SA1->A1_END+"<br>"
+	cHtml += SA1->A1_EST+"<br>"
+	cHtml += "</P>"
+	cHtml += "</body>"
+	cHtml += "</html>"
+else
+	cHtml += "<p> Não Achei o Cliente "+checkc+"</p>"
+endif
+cHtml += H_caddet()
+
+RPCCLEARENV()	
+WEB EXTENDED END
+
+Return( cHtml )

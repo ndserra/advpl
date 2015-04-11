@@ -1,0 +1,95 @@
+<HTML>
+
+	<HEAD>
+		<TITLE>Projeto Formação</title>
+	</HEAD>	
+	<BODY>
+
+
+		<form name='form1' action='U_GravaCurriculo.apw' method='POST'>
+
+		<TABLE BORDER=0>
+
+		 <tr>
+		   <td>
+			<label>CPF:</label>
+		   </td>
+		   <td align="left">
+			<input type="text" name="cpf" size="9" maxlength="9"> - <input type="text" name="cpf2" size="2" maxlength="2">
+		   </td>
+		  </tr>
+		 <TR>
+		   <TD>Nome Candidato</TD>
+			<TD>
+			<INPUT type=text name="Nome">
+			</TD>
+		 </TR>
+		 <TR>
+			<TD>Endereço</TD>
+			<TD>
+			<INPUT type=text name="Endereco">
+			</TD>
+		 </TR>
+		 <TR>
+			<TD>Telefone</TD>
+			<TD>
+			<INPUT type=text name="Tel">
+			</TD>
+		 </TR>
+		 <TR>
+			<TD>E-Mail</TD>
+			<TD>
+			<INPUT type=text name="mail">
+			</TD>
+		 </TR>
+
+		 <tr>
+		  <td>
+			<label>Nascimento: </label>
+		  </td>
+		 <td align="left">
+			<input type="text" name="dia" size="2" maxlength="2" value="dd"> 
+		   <input type="text" name="mes" size="2" maxlength="2" value="mm"> 
+		   <input type="text" name="ano" size="4" maxlength="4" value="aaaa">
+		   </td>
+		  </tr>
+
+		<TR>
+			<TD>Sexo</TD>
+			<TD>
+				 <INPUT type=radio name="sexe" value="M"> Homem 
+			<br> <INPUT type=radio name="sexe" value="F"> Mulher
+			</TD>
+		</TR>
+
+		<TR>
+			<TD>Vaga</TD>
+			<TD>
+			<SELECT name="fonction">
+				<OPTION VALUE="Estagio">Estagio</OPTION>
+				<OPTION VALUE="Analista">Analista</OPTION>
+				<OPTION VALUE="auxiliar">Auxiliar</OPTION>
+				<OPTION VALUE="Gerente">Operador</OPTION>
+				<OPTION VALUE="Outros">Outros</OPTION>
+			</SELECT>
+			</TD>
+		</TR>
+		<TR>
+			<TD>Comentario</TD>
+			<TD>
+			<TEXTAREA rows="4" name="commentaires" colos = 20 >
+			</TEXTAREA>
+			</TD>
+		</TR>
+
+		<TR>
+			<TD COLSPAN=2>
+			<INPUT type="submit" value="Enviar">
+			<input type="reset" name="Limpar" value="Limpar"/>
+			</TD>
+			
+		</TR>
+		</TABLE>
+		</FORM>
+</BODY>
+</HTML>		

@@ -1,0 +1,1 @@
+Getsxenum('SZ1',"Z1_COD")

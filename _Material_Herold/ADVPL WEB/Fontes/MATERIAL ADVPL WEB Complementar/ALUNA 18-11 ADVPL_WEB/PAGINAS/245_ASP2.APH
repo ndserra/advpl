@@ -1,0 +1,14 @@
+<html>
+<head>
+<title>AdvPL/ASP</title>
+<body>
+
+Exemplo AdvPL/ASP - metodo POST
+
+<form name="form1" action="u_ASP2.apw" method="POST">
+Campo 1: <input type="text" name="Campo1"><br>
+<input type="SUBMIT" value="Enviar">
+</form>
+
+</body>
+</html>

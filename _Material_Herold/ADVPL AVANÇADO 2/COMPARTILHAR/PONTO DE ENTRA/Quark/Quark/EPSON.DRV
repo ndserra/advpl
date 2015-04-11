@@ -1,0 +1,15 @@
+[Driver de Impressora]
+
+PrinterName=Epson FX/LX/LQ
+
+[C¢digos de Controle]
+
+Print_ACO=""
+Print_DCO=""
+Print_ANO=""
+Print_DNO=""
+Print_AEX=""
+Print_DEX=""
+Print_ANE="E"
+Print_DNE="F"
+ 

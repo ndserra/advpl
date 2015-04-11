@@ -1,0 +1,10 @@
+<html>
+<head>
+<title>AdvPL/ASP</title>
+<body>
+
+<p>Exemplo AdvPL/ASP - metodo GET</p>
+<p><a href="u_ASP3.apw?Campo1=Teste_do_metodo_GET&outra=ExemploGet">Teste metodo GET</a></p>
+
+</body>
+</html>

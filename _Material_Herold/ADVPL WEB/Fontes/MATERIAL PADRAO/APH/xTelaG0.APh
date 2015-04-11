@@ -1,0 +1,32 @@
+<HTML>
+	<HEAD>
+		<TITLE>GETDADOS</TITLE>
+		<META NAME="LEANDRO_DUARTE" CONTENT="ADVPL-WEB">
+	</HEAD>
+	<script language="JavaScript"> 
+ 
+var aRoda =new Array();
+function ok(){
+	document.modx31.action = "u_gravar3.apw"; 
+	document.modx31.submit() 
+}
+
+function recebi(cCpo,cValor){
+	document.getElementById(cCpo).value = cValor;
+}
+
+ </script>
+	<BODY BGCOLOR="#E6EEED">
+	<FORM ACTION="#" METHOD="POST" TITLE="mod3" name="modx31">
+		<% for nFor := 1 to len(aFrame1) %>
+			<%= aFrame1[nFor]%>
+		<% next nFor%>
+		<TABLE BORDER="0" WIDTH="50%" CELLPADDING="0" CELLSPACING="0">
+		<TR>
+			<TD><INPUT TYPE="submit" VALUE="Salvar" NAME="Salvar" onClick=javascript:ok()></TD>
+			<TD><INPUT TYPE="submit" VALUE="Cancelar" NAME="Cancelar" onClick="javascript:parent.window.close();"></TD>
+		</TR>
+		</TABLE>
+		</FORM>
+	</BODY>
+</HTML>

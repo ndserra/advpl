@@ -1,0 +1,74 @@
+
+Workflow via Http
+
+Para as empresas onde os protocolos IMAP e POP não estejam ativados, o Workflow através de envio e respostas via email não pode ser usado, pois é imprescindível que um destes protocolos de leitura da caixa postal esteja ativo (o protocolo MAPI não é suportado pelo Microsiga Protheus®).
+
+Caso o protocolo SMTP esteja ativo, pode-se usar o Workflow através da resposta via HTTP do Microsiga Protheus®, usando a tecnologia ADVPLASP. Um email é enviado via SMTP com um link no seu corpo. Este link aponta para um HTML visível pelo HTTP do Microsiga Protheus® e gerado pelo Workflow automaticamente através de um processo padrão. Este link então abre este HTML dentro do Browser Internet Explorer® para ser respondido.
+
+Exemplo de Código:
+
+//Trecho de criação de um processo padrão do Workflow, só que na informação cTo informo um usuário do Microsiga Protheus®
+
+:
+
+oProcess:cTo := 'siga'
+
+:
+
+// fim do Trecho de criação do processo padrão
+
+cMailID := oProcess:Start()    //Inicio o Processo e guardo o ID do processo
+
+oProcess:newtask('Link', '\workflow\wflink.htm')  //Inicio uma nova Task com um HTML Simples
+
+oProcess:ohtml:valbyname('usuario', SA2->A2_NOME)
+
+oProcess:ohtml:valbyname('proc_link', 'http://127.0.0.1/messenger/emp' + cEmpAnt + '/siga/' + cMailId + '.htm' ) //Defino o Link onde foi gravado o HTML pelo Workflow,abaixo do diretório do usuário definido em cTo do processo acima.
+
+oProcess:ohtml:valbyname('titulo', 'Cotação de Preços - Microsiga' )
+
+oProcess:ohtml:valbyname('referencia', 'Cotação de Preços - Microsiga' )
+
+oProcess:cto := email@dot.com
+
+oProcess:csubject := 'Cotação de Preços - Microsiga'
+
+oProcess:Start()
+
+Endif  
+
+ 
+
+//Código do HTML wfLink.htm
+
+<html>
+
+<head>
+
+<title>Untitled Document</title>
+
+<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>
+
+</head>
+
+<body bgcolor='#FFFFFF' bgproperties='fixed' background='C:/mp8/workflow/fundo8.JPG'>
+
+<body>
+
+<form name='form1' method='post' action=''>
+
+ <p>&nbsp;</p>
+
+ <p>&nbsp;</p>
+
+ <p>&nbsp;</p>
+
+ <p>Sr. !usuario! </p>
+
+ <p>Favor queira acessar o <a href='!proc_link!' title='!titulo!'>processo</a> de workflow referente à !referencia!</p>
+
+</form>
+
+</body>
+
+</html>

@@ -1,0 +1,15 @@
+<HTML>
+	<HEAD>
+		<TITLE>Tela de Login</TITLE>
+		<META NAME="LEANDRO_DUARTE" CONTENT="ADVPL-WEB">
+	</HEAD>
+	<frameset border="0" borderCOLOR="ffffff" cols="15%,*" frameborder="0">
+	<frame NAME="esquerda" src="U_MENU.APW" borderCOLOR="ffffff" target="main" NORESIZE>
+	<frame NAME="direita" src="U_BROWSES.APW" borderCOLOR="ffffff" target="direita" NORESIZE>
+	<noframes>
+<body>
+</body>
+</noframes>
+</frameset>
+</BODY>
+</HTML>

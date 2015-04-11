@@ -1,0 +1,16 @@
+<HTML>
+	<HEAD>
+		<TITLE>
+			<%= cTitulo %>
+		</TITLE>	
+	</HEAD>		
+	<BOAD>      
+		<TR>
+			<% For n := 1 To Len(aDados) %>
+				<Td> <%= aDados[n,1] %> </Td> 
+				<Td> <%= aDados[n,2] %> </Td> 
+				<Td> <%= aDados[n,3] %> </Td> <BR>
+			<% Next n %>	
+		</TR>
+	</BOAD>      	
+	</HTML>

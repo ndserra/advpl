@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Lista de Produto</title>
+</head>
+
+<body>
+
+<form name="form1" action="u_PosCliente.apw" method="POST">
+
+
+		<TABLE  style="width:100%" BORDER="1"  CELLPADDING="0" CELLSPACING="0">
+			<TR>
+			
+			<% For x:= 1 To Len(HTTPSESSION->aHeader) %>	
+					
+					<TH> <%= HTTPSESSION->aHeader[x][1] %> </TH>
+				
+			<% Next x %>
+			
+			</TR>	
+			
+		<% For Y:= 1 To Len(HTTPSESSION->aCliente) %>	
+		
+			<TR>
+				
+				<% For x := 1 To Len(HTTPSESSION->aHeader) %>	
+					
+					<% If x == 1 %>
+						<TD> <input type="radio" name="cCodigo" value =  <%= HTTPSESSION->aCliente[Y][X] %>  checked> <%= HTTPSESSION->aCliente[Y][X] %> </TD>
+					<% Else %>
+						<TD> <%= HTTPSESSION->aCliente[Y][X] %> </TD>
+					<% EndIf %>
+					
+				<% Next x %>
+					
+			</TR>
+			
+		<% Next Y %>	
+
+</TABLE>
+<br><br>
+
+<input type="submit">
+</form> 

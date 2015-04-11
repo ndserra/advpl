@@ -1,0 +1,17 @@
+#Include 'Protheus.ch'
+
+User Function CEP()
+
+Local cCep := "08410420"
+Local  url := "viacep.com.br/ws/"+cCep+"/xml/"
+Local cRetorno   
+Local oXml := Nil 
+
+ 
+cRetorno := HTTPGET(url)
+
+MsgInfo(cRetorno)
+
+
+Return( NIL ) 
+

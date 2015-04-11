@@ -1,0 +1,26 @@
+#INCLUDE "TOTVS.CH"
+#INCLUDE "TBICONN.CH"
+
+
+User Function GravaCurriculo()   
+
+Private aGet := HTTPPOST->aPOST 
+Private cErro       := ""
+
+If Select("SX2") == 0
+  Prepare Environment Empresa '99' Filial '01' Tables 'SA1'
+EndIf                                                                          
+
+
+
+
+cErro := memoread("\spool\erro.asp")
+
+cErro := "ponto de para não funciona"
+
+RESET ENVIRONMENT	
+
+Return(cErro)
+
+	
+	

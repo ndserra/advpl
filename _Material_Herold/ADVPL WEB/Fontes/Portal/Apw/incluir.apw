@@ -1,0 +1,64 @@
+#include "Protheus.ch"
+#include "apwebex.ch"
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³incluir   ºAutor  ³Leandro Duarte      º Data ³  06/07/12   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³ grava os dados do cadastro                                 º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ P10 e P11                                                  º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+user function incluir()
+Local cHtml	:= ""
+Local aDados := {}
+Local aDados1 := {}
+Local aParms := {}
+Local xTab	 := HttpSession->cTab
+WEB EXTENDED INIT cHtml
+// a linha abaixo monta um array com os parametros recebidos via post
+// no formato  ( [1] = nome / [2] conteudo )
+aEval( HttpPost->aPost 	, {|x| iif(x=='SALVAR',NIL,aadd(aParms,{ x , &("HttpPost->"+x)} ) ) })
+// TRATAMENTO DOS CAMPOS VIRTUAIS
+DBSELECTAREA("SX3")
+SX3->(dbsetorder(1))
+SX3->(DBSEEK(xTab))
+While SX3->X3_ARQUIVO ==(xTab)
+	CONOUT('ENTREI')
+	CONOUT('SX3->X3_CAMPO')
+	CONOUT(SX3->X3_CAMPO)
+	CONOUT('SX3->X3_CONTEXT')
+	CONOUT(SX3->X3_CONTEXT)	
+	IF EMPTY(X3_CONTEXT) .OR. X3_CONTEXT == 'R'
+		AADD(aDados,SX3->X3_CAMPO)
+		AADD(aDados1,SX3->X3_TIPO)
+	endif
+	SX3->(dbskip())
+end
+
+//Varinfo('aParms',aParms)
+//Varinfo('aDados',aDados)
+conout(xTab)
+// agora gravar os dados
+Reclock((xTab),.T.)
+aEval(aParms,{|x| (NN := aScan(aDados,x[1]), IIF(NN=0,nil,(&(((xTab)+'->'+x[1])) := IIF(aDados1[NN]=='N',VAL(x[2]),IIF(aDados1[NN]=='D',CTOD(x[2]),x[2])))))})
+Msunlock()
+
+cHtml := " <html> "
+cHtml += " <body> "
+cHtml += " <form name='login' method='post'  action='u_TlIniWB3.apw'> "
+cHtml += " <script language='JavaScript'><INPUT TYPE='hidden' VALUE=xRecno NAME='xRecnos'></script> "
+cHtml += " </form> "
+cHtml += " </body> "
+cHtml += " </html> "
+cHtml += " <script language='JavaScript'> "
+cHtml += " window.opener.parent.direita.location.reload();window.close() "
+cHtml += " </script> "
+WEB EXTENDED END
+Return(cHtml)

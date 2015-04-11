@@ -1,0 +1,43 @@
+1 CONFIGURAÇÕES DO WORKFLOW CONTA E PARAMETROS 
+	Dicas problema com spam 
+	Problema com muito envio de email
+
+2 configirar o appserver tecnologia webex
+	[HTTP]
+	ENABLE=1
+	PATH=C:\Protheus1180\PROTHEUS_DATA\workflow
+	ENVIRONMENT=PROTHEUS1180
+	PORT=9090
+
+	[OnStart]
+	jobs=JOB_WF
+	RefreshRate=60
+
+	[JOB_WF]
+	TYPE=WEBEX
+	ENVIRONMENT=PROTHEUS1180
+	INSTANCES=1,10
+	SIGAWEB=WFW
+	INSTANCENAME=WFW
+	ONSTART=SIGAWFSTART
+	ONCONNECT=SIGAWFCONNECT
+	ONEXIT=SIGAWFWFINISH
+	WEBHOST=Localhost:9090/wf
+	PREPAREIN=99,01
+
+	[Localhost:9090/wf]    
+	ENABLE=1
+	PATH=C:\Protheus1180\PROTHEUS_DATA\workflow
+	ENVIRONMENT=PROTHEUS1180
+	INSTANCENAME=wf
+	RESPONSEJOB=JOB_WF
+
+3 Mostrar o fonte estrutura padrão
+Processo office 2003 Fonte 1 wfxxx1 html:WFCLIENTE1
+Com link: Fonte 1 wfxxx2 html:WFCLIENTE1
+	Mostra o Debug
+	Mostrar o html 
+
+Mostrar o fonte funcionando
+wfxxxx
+html:WFCLIENTE

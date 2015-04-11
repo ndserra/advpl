@@ -1,0 +1,56 @@
+#include "Protheus.ch"
+#include "apwebex.ch"
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³excluir   ºAutor  ³Leandro Duarte      º Data ³  06/07/12   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³ excluios dados do cadastro                                 º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ P10 e P11                                                  º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+user function excluir()
+Local cHtml	:= ""
+Local aDados := {}
+Local aDados1 := {}
+Local aParms := {}
+Local xRecno := HttpSession->xRecno
+Local xTab	 := HttpSession->cTab
+WEB EXTENDED INIT cHtml
+// a linha abaixo monta um array com os parametros recebidos via post
+// no formato  ( [1] = nome / [2] conteudo )
+aEval( HttpPost->aPost 	, {|x| iif(x=='SALVAR',NIL,aadd(aParms,{ x , &("HttpPost->"+x)} ) ) })
+// TRATAMENTO DOS CAMPOS VIRTUAIS
+conout('tabela')
+conout(xTab)
+conout('registro')
+conout(xRecno)
+// agora gravar os dados
+(xTab)->(dbgoto(xRecno))
+Reclock((xTab),.f.)
+(xTab)->(dbdelete())
+Msunlock()
+          
+xRecno := 0
+
+cHtml := " <html> "
+cHtml += " <head> <title>Browse</title> "
+cHtml += ' <META HTTP-EQUIV="REFRESH" CONTENT="5;URL=u_TlIniWB3.apw"> '
+cHtml += " </head> "
+cHtml += " <body> "
+cHtml += " <form name='login' method='post'  action='u_TlIniWB3.apw'> "
+cHtml += " <script language='JavaScript'><INPUT TYPE='hidden' VALUE=<%= xRecno %> NAME='xRecnos'></script> "
+cHtml += " </form> "
+cHtml += " </body> "
+cHtml += " </html> "
+cHtml += " <script language='JavaScript'> "
+cHtml += " window.opener.parent.direita.location.reload();window.close() "
+cHtml += " </script> "
+WEB EXTENDED END
+Return(cHtml)

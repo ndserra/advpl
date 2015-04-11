@@ -1,0 +1,82 @@
+<HTML>
+
+<HEAD>
+<TITLE></TITLE>
+<META NAME="ADVPL-WEB" CONTENT="ADVPL-WEB">
+</HEAD>
+<script language="JavaScript"> 
+
+function SomenteNumero(e){
+     var tecla=(window.event)?event.keyCode:e.which;
+     if((tecla > 47 && tecla < 58) || tecla == 46 || tecla == 44) 
+     {
+     	return true;
+     }
+     else
+     {
+     	if (tecla != 8 ) 
+     		{
+     		return false;
+     		}
+     	else 
+     	{
+     		return true;
+     	}
+     }
+}
+
+function upperCase(campo,valor){
+     campo.value = valor.toUpperCase()	
+}
+
+function validaDat(campo,valor) {
+	var date=valor;
+	var ardt=new Array;
+	var ExpReg=new RegExp("(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/[12][0-9]{3}");
+	ardt=date.split("/");
+	erro=false;
+	if ( date.search(ExpReg)==-1){
+		erro = true;
+		}
+	else if (((ardt[1]==4)||(ardt[1]==6)||(ardt[1]==9)||(ardt[1]==11))&&(ardt[0]>30))
+		erro = true;
+	else if ( ardt[1]==2) {
+		if ((ardt[0]>28)&&((ardt[2]%4)!=0))
+			erro = true;
+		if ((ardt[0]>29)&&((ardt[2]%4)==0))
+			erro = true;
+	}
+	if (erro) {
+		alert("\"" + valor + "\" não é uma data válida!!! utilize dd/mm/aaaa");
+		campo.focus();
+		campo.value = "  /  /    ";
+		return false;
+	}
+	return true;
+}
+
+function cancelar(){
+	javascript:window.close(); 
+}
+
+function ok(){
+	document.alterar.action = "u_incluir.apw"; 
+	document.alterar.submit() 
+}
+ 
+</script>
+<BODY  BGCOLOR="#E6EEED">
+	<FORM ACTION="" METHOD="POST" TITLE="alterar" name="alterar"  id="alterar"  >
+		<TABLE BORDER="0" WIDTH="100%" CELLPADDING="0" CELLSPACING="0">
+		<% For nFor := 1 to len(aDados2) %> 
+			<%= aDados2[nFor] %>
+		<% next nFor %>
+		<% For nFor := 1 to len(aDados1) %> 
+			<%= aDados1[nFor] %>
+		<% next nFor %>
+		</TABLE>
+		<INPUT TYPE="submit" VALUE="GRAVAR" NAME="SALVAR" onclick="javascript:ok()">
+		<INPUT TYPE="submit" VALUE="CANCELAR" NAME="SAIR" onClick="javascript:cancelar()">
+	</FORM>
+</BODY>
+</HTML>

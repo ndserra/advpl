@@ -1,0 +1,21 @@
+/*
+<%
+#INCLUDE "PROTHEUS.CH"
+Local nFor := 0
+%>
+
+<HTML>
+	<HEAD>
+		<TITLE>
+			<%= cTitulo % >
+		</TITLE>
+	</HEAD>   
+  	<BODY>  	
+	 BOM DIA HOJE E <%= date() % >	 
+	 <% For nFor := 1 to 25 %>
+	 	O tempo e : <%= Time() %> <br>
+	 <% Next nFor %>	
+	 
+	</BODY>
+
+</HTML>                           

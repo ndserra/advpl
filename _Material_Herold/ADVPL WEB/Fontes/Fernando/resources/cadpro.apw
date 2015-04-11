@@ -1,0 +1,63 @@
+#Include "TOTVS.CH"
+#Include "PROTHEUS.CH"
+#Include "APWEBEX.CH"
+
+//----------------------------------------------------------------------------//
+// Uso de variaveis SESSION. Comandos AdvPL dentro do HTML.
+//----------------------------------------------------------------------------//
+User Function cadpro()
+Local cHtml := ""
+Local aTabs	:= {"SB1"}
+
+WEB EXTENDED INIT cHtml
+
+RPCSETENV("99","01",,,"COM","CadPro",aTabs)
+
+If !Empty(HttpPost->cod) .AND. !Empty(HttpPost->descr) .AND. !Empty(HttpPost->tipo) .AND. !Empty(HttpPost->unid) .AND. !Empty(HttpPost->grupo) 
+	if GravaPro(HttpPost->cod, HttpPost->descr, HttpPost->tipo, HttpPost->unid, HttpPost->locp, HttpPost->grupo)
+		cHtml += "<html>"
+		cHtml += "<head></head>"
+		cHtml += "<body>"
+		cHtml += "<p> Gravado Com Sucesso </p>"
+		cHtml += "</body>"
+		cHtml += "</html>"
+	ELSE
+		cHtml += "<html>"
+		cHtml += "<head></head>"
+		cHtml += "<body>"
+		cHtml += "<p> ERRO NA GRAVACAO </p>"
+		cHtml += "</body>"
+		cHtml += "</html>"	
+	endif
+endif	
+	
+	cHtml += H_produto()
+
+RPCCLEARENV()	
+WEB EXTENDED END
+
+Return( cHtml )
+
+Static Function GravaPro(cd, de, tp, un, lp, gr) 
+    Local aRotAuto := {}
+    Local nOpc := 3 //3=Inclusão; 4=Alteração; 5=Exclusão
+    Local lRet := .T.
+    
+    Private lMsErroAuto := .F.
+    Private lMsHelpAuto := .T.
+    
+    aRotAuto:= {{'B1_COD' , cd , Nil},;
+    {'B1_DESC' , de , Nil},;
+    {'B1_TIPO' , tp , Nil},;
+    {'B1_UM' , un , Nil},;
+    {'B1_LOCPAD' , lp , Nil},;
+    {'B1_GRUPO' , gr , Nil}} 
+    
+    dbSelectArea("SB1")
+    MSExecAuto({|x,y| MATA010(x,y)},aRotAuto,nOpc)
+    If lMsErroAuto
+    MOSTRAERRO()
+    EndIf 
+    lRet:= !lMsErroAuto
+    
+Return lRet

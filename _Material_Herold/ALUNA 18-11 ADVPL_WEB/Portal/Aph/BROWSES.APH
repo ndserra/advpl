@@ -1,0 +1,91 @@
+<HTML>
+<HEAD>
+<TITLE>BROWSE</TITLE>
+<META HTTP-EQUIV="REFRESH" CONTENT="15;URL=u_BROWSES.apw"> 
+</HEAD>
+
+<script language='Javascript'>
+var xRecno;
+function openBrWindow(theURL,winName,features) { //v2.0     
+alert(theURL);
+alert(winName);
+alert(xRecno);
+if (winName=='Sair')
+	{
+	alert('trocou');
+	document.CADASTRO.submit();
+	}
+else 
+	{
+	alert(theURL+'?xRecnos='+xRecno);
+	window.open(theURL+'?xRecnos='+xRecno,winName,features);
+	}
+}
+function rodar(xx){
+parent.frames['esquerda'].setvari( xx );
+}
+function rodarr(sRecno) {
+  xRecno = sRecno;
+}
+function subtrai(){
+	var cod = document.getElementById('npagina2').value;
+	if (cod  == '30' )
+	{
+		alert("Atenção Voce ja esta no inicio da pagina");
+	}
+	else {
+	cod = document.getElementById('npagina1').value;
+	cod = parseInt(cod)-30;
+	document.getElementById('npagina1').value=cod;
+	cod = document.getElementById('npagina2').value;
+	cod = parseInt(cod)-30;
+	document.getElementById('npagina2').value=cod;
+	document.browse.value="u_tliniwb3.apw";
+	document.browse.submit() 
+ 	}
+}
+
+function soma(){
+	var cod = document.getElementById('npagina1').value;
+	cod = parseInt(cod)+30;
+	document.getElementById('npagina1').value=cod;
+	cod = document.getElementById('npagina2').value;
+	cod = parseInt(cod)+30;
+	document.getElementById('npagina2').value=cod;
+	document.browse.value="u_tliniwb3.apw";
+	document.browse.submit() 
+}
+
+</script>
+
+<BODY  ALINK="#000000" TEXT="#000000" VLINK="#000000" LINK="#000000">
+<form title="browse" id="browse"  name="browse" method="post" action="" >
+<input type="hidden" name="npagina1" value='<%=nPg1%>' id="npagina1" >
+<input type="hidden" name="npagina2" value='<%=nPg2%>' id="npagina2" >
+<TABLE BORDER="1" WIDTH="250%" CELLPADDING="1" CELLSPACING="0" >
+<TR>
+	<td width="2" BGCOLOR="c0c0c0"></td>
+	<% For nFor := 1 to len(aHeader)%>
+	<TD BGCOLOR="c0c0c0"><%=aHeader[nFor][1] %></TD>
+	<% Next nFor %>
+</TR>
+<% FOR nFor := 1 to len(aCols) %>
+<TR BGCOLOR=<%= iif(Mod(nfor,2)==1,"#4682B4","#FFFFFF")%>>
+	<td  width="25">
+	<INPUT TYPE="radio" VALUE=<%= aCols[nfor][LEN(aCols[nfor])]%> NAME="RECNO" onClick="javascript:rodar(<%= aCols[nfor][LEN(aCols[nfor])] %>)" ></td>
+	<% For nFor1 := 1 to len(aCols[nfor])-1 %>
+		<TD ><A HREF="u_xtelaV.apw" target="_blank" onClick="javascript:rodarr(<%= aCols[nfor][LEN(aCols[nfor])] %>);openBrWindow('u_xtelaV.apw', 'visualisar', 'width=1200,height=1150,STATUS=NO, TOOLBAR=NO, LOCATION=NO, DIRECTORIES=NO, RESISABLE=NO, SCROLLBARS=YES'); return false;" style="text-decoration:none"> <%= aCols[nfor][nFor1]%></A></TD>
+	<% Next nFor1 %>
+</TR>
+<% iif(nFor==30,(nFor:= len(aCols)),nil) %>
+<% Next nFor %>
+</TABLE>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="0" CELLSPACING="0">
+<TR>
+	<TD><input type="image" SRC="../PP/imagens-for-01/anterior.gif" ALT="30 Anterior" onClick="javascript:subtrai();"></TD>
+	<TD><input type="image" src="../PP/imagens-for-01/proximo.gif" ALT="Proximos 30" onClick="javascript:soma();"></TD>
+</TR>
+</TABLE>
+</FORM>
+</BODY>
+</HTML>

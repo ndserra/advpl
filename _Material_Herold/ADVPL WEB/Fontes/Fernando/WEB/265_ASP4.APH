@@ -1,0 +1,19 @@
+<html>
+<head>
+<title>AdvPL/ASP</title>
+<body>
+
+<p>Data: <%=HttpSession->dData%></p>
+<p>Hora: <%=HttpSession->cHora%></p>
+<p></p>
+
+<% For i:=1 To Len(HttpSession->aSemana)%>
+	<p> <%=HttpSession->aSemana[I]%>
+ 	<% If I == dow(HttpSession->dData) %>
+       <===== Hoje
+     <%Endif%>
+	</p>
+<%Next%>
+
+</body>
+</html>        

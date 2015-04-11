@@ -1,0 +1,23 @@
+#INCLUDE "PROTHEUS.CH"
+#INCLUDE "APWEBEX.CH"      
+
+User Function Exemplo1()
+
+Local   cret := ""
+Private cTitulo := "Pagina 01"
+Private aDados  := {}
+
+Web Extended Init cRet // Estritura de função para Web
+
+   For i := 1 to 10
+   	aadd( aDados, { "Nome", Date(), Time() } )
+   Next i	
+	
+cRet := H_Exemplo1()    // Chamada da funcao do APH	
+	
+Web Extended End                           
+
+Return(cRet)
+
+
+

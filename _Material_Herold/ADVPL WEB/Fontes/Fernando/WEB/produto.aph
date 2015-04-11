@@ -1,0 +1,21 @@
+<html>
+<head>
+<title>Produto</title>
+<body>
+
+Exemplo Cadastro Produto
+
+<form name="form1" action="u_cadpro.apw" method="POST">
+Codigo: <input type="text" name="cod"><br>
+Descrição: <input type="text" name="descr"><br>
+Tipo: <input type="text" name="tipo"><br> 
+Unidade: <input type="text" name="unid"><br>
+Local: <input type="text" name=""><br>
+Grupo: <input type="text" name="grupo"><br>
+<input type="reset" value="Cancelar">&nbsp;&nbsp;&nbsp;
+<input type="submit" value="Gravar">
+
+</form>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+<html>
+  <head>
+    <title> Dados do Cliente </title>
+  </head>
+  <body>
+
+  		<% For x := 1 To Len(HTTPSESSION->aHeader) %>
+  		  <TR>
+			    <TD> <%= HTTPSESSION->aHeader[ x , 1 ] %> : </TD> 
+	  
+			    <TD> <input name= <%= HTTPSESSION->aHeader[ x , 2 ] %> type='text' value=<%= HTTPSESSION->aCliente[ HTTPSESSION->cPos , x ] %>> </TD> <br>
+			 	</TR>  
+	  	<% Next x %>
+	 
+  </body>
+</html>

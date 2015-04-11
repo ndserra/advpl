@@ -1,0 +1,42 @@
+#include "Protheus.ch"
+#INCLUDE 'APWEBEX.CH' 
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³TlIniWB   ºAutor  ³Leandro Duarte      º Data ³  05/28/12   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Tela inicial para a selecao de empresa/Filial               º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ P10 e P11                                                  º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+User function TlIniWB(_cEmp_,_cFil_)
+Local aTabs		:={"SA1","SA2","SE1","SE2","SE5","SA6","SAE","ZZ0"}
+Local cHtml		:= ""
+Private aDados    := {}
+Private cMensagem	:= 	HttpSession->cMensagem
+default _cEmp_	:= "99"
+default _cFil_	:= "01"
+default cMensagem	:= ""
+
+WEB EXTENDED INIT cHtml
+//seta o ambiente com a empresa 99 filial 01 com os direitos do usuario administrador, módulo Financeiro
+RpcSetEnv( _cEmp_,_cFil_,,, "FIN", "TlIniWB", aTabs,,,,)
+
+/****** COMANDOS *************/
+SM0->(DBGOTOP())
+WHILE SM0->(!EOF())
+	AADD(aDados,{'"'+SM0->M0_CODIGO+'-'+SM0->M0_CODFIL+'"',SM0->M0_FILIAL})
+	SM0->(DBSKIP())
+END
+
+// Chamar a pagina
+cHtml := h_TlIniWB()
+
+RpcClearEnv() //Limpa o ambiente, liberando a licença e fechando as conexões
+WEB EXTENDED END
+Return(cHtml)

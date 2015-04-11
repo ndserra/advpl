@@ -1,0 +1,55 @@
+#Include "TOTVS.CH"
+#Include "PROTHEUS.CH"
+#Include "APWEBEX.CH"
+
+//----------------------------------------------------------------------------//
+// Uso de variaveis SESSION. Comandos AdvPL dentro do HTML.
+//----------------------------------------------------------------------------//
+User Function LOGIN()
+Local cHtml := ""
+Local aTabs	:= {"ZZ0"}
+
+WEB EXTENDED INIT cHtml
+
+HttpSession->cMensagem := ""
+
+RPCSETENV("99","01",,,"COM","LOGIN",aTabs)
+
+If !Empty(HttpPost->usuario) .OR. !Empty(HttpPost->pass)
+	usua := HttpPost->usuario
+	senh := HttpPost->pass
+	dbselectarea("ZZ0")
+	dbsetorder(1)
+	if dbseek(xfilial("ZZ0")+usua)
+		IF ZZ0->ZZ0_SENHA = senh
+			cHtml += "<html>"
+			cHtml += "<head></head>"
+			cHtml += "<body>"
+			cHtml += "<p> Dados Validos </p>"
+			cHtml += "</body>"
+			cHtml += "</html>"
+		else
+			cHtml += "<html>"
+			cHtml += "<head></head>"
+			cHtml += "<body>"
+			cHtml += "<p> Dados Invalidos </p>"
+			cHtml += "</body>"
+			cHtml += "</html>"
+		endif
+	else
+		cHtml += "<html>"
+		cHtml += "<head></head>"
+		cHtml += "<body>"
+		cHtml += "<p> Dados Invalidos </p>"
+		cHtml += "</body>"
+		cHtml += "</html>"
+	endif
+ELSE
+	cHtml += ""
+endif	
+	
+	cHtml += H_LogWeb()
+RPCCLEARENV()
+WEB EXTENDED END
+
+Return( cHtml )

@@ -1,0 +1,189 @@
+#include "Protheus.ch"
+#include "ApWebex.ch"
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³XMODEL3   ºAutor  ³Leandro Duarte      º Data ³  06/08/12   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Cria o moledo 3 usando dois frames                          º±±
+±±º          ³Frame de cima dados do Clientes e o frame de baixo titulos  º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ p10 e p11                                                  º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+
+User function xModel3()
+Local cHtml := ""
+Local xRecno 	:= HTTPGET->xRecnos
+Local cNome		:= ""
+Local nVolta	:= 0
+Local cFolder	:= ""
+Local cQuery	:= ""
+Local nVolta	:= 0
+Local cTabS		:= "SA1"
+Local cTabI		:= "SE1"
+Private aDados0	:= {}
+Private aDados1 := {}
+Private aDados2	:= {}
+Private aFrame1 := {}	
+pRIVATE INCLUI := .F.
+pRIVATE ALTERA := .T.
+pRIVATE DELETA := .F.
+Private xTab	:= "SA1"
+Default xRecno 	:= ""
+
+HttpSession->cTabS := "SA1"
+HttpSession->cTabI := "SE1"
+HttpSession->xRecno := val(xRecno)
+xRecno := ALLTRIM(xRecno)
+WEB EXTENDED INIT cHtml
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³processo para pegar o registro³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+SX3->(DBSETORDER(4))
+SX3->(DBSEEK(xTab))
+(xTab)->(dbgoto(val(xRecno)))
+cFolder := "x"
+// alimenta o Enchoice
+While SX3->X3_ARQUIVO ==(xTab)
+	nVolta++
+	IF EMPTY(SX3->X3_FOLDER)
+		if !(SX3->X3_FOLDER $ cFolder)
+			IF SXA->(DBSEEK(SX3->X3_ARQUIVO+SX3->X3_FOLDER))
+				cNomFolder	:= alltrim(SXA->XA_DESCRIC)
+			ELSE
+				cNomFolder	:= "Outros"
+			ENDIF
+			aadd(aDados1,'<TR><TD COLSPAN="4" BGCOLOR="#A9C6CF">'+cNomFolder+'<HR WIDTH="100%" SIZE="10" ALIGN="Center" COLOR="#a8d1f2"></TD>	</TR>')
+			cFolder += SX3->X3_FOLDER
+		endif
+		if nVolta = 1
+			aadd(aDados1,'<TR>')
+		endif
+		
+		IF EMPTY(SX3->X3_VISUAL) .OR. SX3->X3_VISUAL != 'V' .OR. SX3->X3_CONTEXT != 'V'
+			aadd(aDados1,'<TD>'+SX3->X3_TITULO+'</TD>')
+			xVar := IIF(VALTYPE(&((xTab)+'->'+SX3->X3_CAMPO))=="N",cValtoChar(&((xTab)+'->'+SX3->X3_CAMPO)),IIF(VALTYPE(&((xTab)+'->'+SX3->X3_CAMPO))=="D",DTOC(&((xTab)+'->'+SX3->X3_CAMPO)),IIF(VALTYPE(&((xTab)+'->'+SX3->X3_CAMPO))=="U"," ",&((xTab)+'->'+SX3->X3_CAMPO))))
+			if VALTYPE(&((xTab)+'->'+SX3->X3_CAMPO)) == "N"
+				aadd(aDados1,'<TD><INPUT TYPE="text" VALUE="'+xVar+'" NAME="_'+cTabS+'_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'" id="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'" SIZE="'+cValtoChar(SX3->X3_TAMANHO)+'" MAXLENGTH="'+cValtoChar(SX3->X3_TAMANHO)+'"'+" onkeypress='return SomenteNumero(event);' onchange='passar(this)'></TD>")
+			elseif VALTYPE(&((xTab)+'->'+SX3->X3_CAMPO)) == "D"
+				aadd(aDados1,'<TD><INPUT TYPE="text" VALUE="'+xVar+'" NAME="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'" id="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'"  SIZE="'+cValtoChar(SX3->X3_TAMANHO+2)+'" MAXLENGTH="'+cValtoChar(SX3->X3_TAMANHO+2)+'" onchange="validaDat(this,this.value);passar(this)" ></TD>')
+			else
+				aadd(aDados1,'<TD><INPUT TYPE="text" VALUE="'+xVar+'" NAME="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'" id="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'"  SIZE="'+cValtoChar(SX3->X3_TAMANHO)+'" MAXLENGTH="'+cValtoChar(SX3->X3_TAMANHO)+'" onchange="upperCase(this,this.value);passar(this)" ></TD>')
+			endif
+		ELSE
+			aadd(aDados1,'<TD>'+SX3->X3_TITULO+'</TD>')
+			xVar := IIF(VALTYPE(&(SX3->X3_RELACAO))=='N',cValtoChar(&(SX3->X3_RELACAO)),IIF(VALTYPE(&(SX3->X3_RELACAO))=='D',dtoc(&(SX3->X3_RELACAO)),IIF(VALTYPE(&(SX3->X3_RELACAO))=='U'," ",&(SX3->X3_RELACAO))))
+			if VALTYPE(&(SX3->X3_RELACAO))=='N'
+				aadd(aDados1,'<TD><INPUT TYPE="text" VALUE="'+xVar+'" NAME="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'" id="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'"  SIZE="'+cValtoChar(SX3->X3_TAMANHO)+'" MAXLENGTH="'+cValtoChar(SX3->X3_TAMANHO)+'"'+" onkeypress='return SomenteNumero(event);' onchange='passar(this)' READONLY DISABLED ></TD>")
+			elseif VALTYPE(&(SX3->X3_RELACAO))=='D'
+				aadd(aDados1,'<TD><INPUT TYPE="text" VALUE="'+xVar+'" NAME="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'" id="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'"  SIZE="'+cValtoChar(SX3->X3_TAMANHO+2)+'" MAXLENGTH="'+cValtoChar(SX3->X3_TAMANHO+2)+'"  onchange="validaDat(this,this.value);passar(this)" READONLY DISABLED ></TD>')
+			else
+				aadd(aDados1,'<TD><INPUT TYPE="text" VALUE="'+xVar+'" NAME="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'" id="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'"  SIZE="'+cValtoChar(SX3->X3_TAMANHO)+'" MAXLENGTH="'+cValtoChar(SX3->X3_TAMANHO)+'" onchange="upperCase(this,this.value);passar(this)"  READONLY DISABLED ></TD>')
+			endif
+		ENDIF
+		if nVolta = 2
+			aadd(aDados1,'</TR>')
+			nVolta := 0
+		endif
+	ELSE
+		if !(SX3->X3_FOLDER $ cFolder)
+			IF SXA->(DBSEEK(SX3->X3_ARQUIVO+SX3->X3_FOLDER))
+				cNomFolder	:= alltrim(SXA->XA_DESCRIC)
+			ELSE
+				cNomFolder	:= "Outros"
+			ENDIF
+			aadd(aDados2,'<TR><TD COLSPAN="4" BGCOLOR="#A9C6CF">'+cNomFolder+'<HR WIDTH="100%" SIZE="10" ALIGN="Center" COLOR="#a8d1f2"></TD>	</TR>')
+			cFolder += SX3->X3_FOLDER
+		endif
+		if nVolta = 1
+			aadd(aDados2,'<TR>')
+		endif
+		onblur="ValIntegerCHR(this.value,this)"
+		IF EMPTY(SX3->X3_VISUAL) .OR. SX3->X3_VISUAL != 'V' .OR. SX3->X3_CONTEXT != 'V'
+			aadd(aDados2,'<TD>'+SX3->X3_TITULO+'</TD>')
+			xVar := IIF(VALTYPE(&((xTab)+'->'+SX3->X3_CAMPO))=="N",cValtoChar(&((xTab)+'->'+SX3->X3_CAMPO)),IIF(VALTYPE(&((xTab)+'->'+SX3->X3_CAMPO))=="D",DTOC(&((xTab)+'->'+SX3->X3_CAMPO)),IIF(VALTYPE(&((xTab)+'->'+SX3->X3_CAMPO))=="U"," ",&((xTab)+'->'+SX3->X3_CAMPO))))
+			if valtype(&((xTab)+'->'+SX3->X3_CAMPO)) == "N"
+				aadd(aDados2,'<TD><INPUT TYPE="text" VALUE="'+xVar+'" NAME="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'" id="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'"  SIZE="'+cValtoChar(SX3->X3_TAMANHO)+'" MAXLENGTH="'+cValtoChar(SX3->X3_TAMANHO)+'"'+" onkeypress='return SomenteNumero(event);' onchange='passar(this)'></TD>")
+			elseif valtype(&((xTab)+'->'+SX3->X3_CAMPO)) == "D"
+				aadd(aDados2,'<TD><INPUT TYPE="text" VALUE="'+xVar+'" NAME="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'" id="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'"  SIZE="'+cValtoChar(SX3->X3_TAMANHO+2)+'" MAXLENGTH="'+cValtoChar(SX3->X3_TAMANHO+2)+'" onchange="validaDat(this,this.value);passar(this)" ></TD>')
+			else
+				aadd(aDados2,'<TD><INPUT TYPE="text" VALUE="'+xVar+'" NAME="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'" id="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'"  SIZE="'+cValtoChar(SX3->X3_TAMANHO)+'" MAXLENGTH="'+cValtoChar(SX3->X3_TAMANHO)+'" onchange="upperCase(this,this.value);passar(this)" ></TD>')
+			endif
+		ELSE
+			aadd(aDados2,'<TD>'+SX3->X3_TITULO+'</TD>')
+			xVar := IIF(VALTYPE(&(SX3->X3_RELACAO))=='N',cValtoChar(&(SX3->X3_RELACAO)),IIF(VALTYPE(&(SX3->X3_RELACAO))=='D',dtoc(&(SX3->X3_RELACAO)),IIF(VALTYPE(&(SX3->X3_RELACAO))=='U'," ",&(SX3->X3_RELACAO))))
+			if VALTYPE(xVar) == "N"
+				aadd(aDados2,'<TD><INPUT TYPE="text" VALUE="'+xVar+'" NAME="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'" id="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'"  SIZE="'+cValtoChar(SX3->X3_TAMANHO)+'" MAXLENGTH="'+cValtoChar(SX3->X3_TAMANHO)+'"'+" onkeypress='return SomenteNumero(event);' onchange='passar(this)' READONLY DISABLED ></TD>")
+			elseif VALTYPE(xVar) == "D"
+				aadd(aDados2,'<TD><INPUT TYPE="text" VALUE="'+xVar+'" NAME="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'" id="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'"  SIZE="'+cValtoChar(SX3->X3_TAMANHO+2)+'" MAXLENGTH="'+cValtoChar(SX3->X3_TAMANHO+2)+'" onchange="validaDat(this,this.value);passar(this)"  READONLY DISABLED ></TD>')
+			else
+				aadd(aDados2,'<TD><INPUT TYPE="text" VALUE="'+xVar+'" NAME="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'" id="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'"  SIZE="'+cValtoChar(SX3->X3_TAMANHO)+'" MAXLENGTH="'+cValtoChar(SX3->X3_TAMANHO)+'" onchange="upperCase(this,this.value);passar(this)"  READONLY DISABLED ></TD>')
+			endif
+		ENDIF
+		if nVolta = 2
+			aadd(aDados2,'</TR>')
+			nVolta := 0
+		endif
+	ENDIF
+	aadd(aFrame1,'<INPUT TYPE="hidden" VALUE=" " NAME="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'" id="_'+cTabS+'_'+xRecno+'_'+alltrim(SX3->X3_CAMPO)+'" >')
+	SX3->(dbskip())
+END
+aadd(aDados0,aDados2)
+aadd(aDados0,aDados1)
+HttpSession->xTelaE := aDados0
+// alimenta a getdados 
+aDados0 := {}
+aDados1 := {}
+aDados2 := {}
+cQuery	:= "SELECT E1_PREFIXO, E1_NUM, E1_PARCELA, E1_TIPO, E1_VALOR, E1_VENCTO, E1_HIST, R_E_C_N_O_ AS REC FROM "+RETSQLNAME("SE1")+" A WHERE A.E1_FILIAL = '"+xFilial("SE1")+"' AND E1_CLIENTE = '"+SA1->A1_COD+"' AND E1_LOJA = '"+SA1->A1_LOJA+"' AND D_E_L_E_T_ = ' ' "
+dbUseArea( .T., "TOPCONN", TcGenQry(,,cQuery), "TRBSE1", .T., .F. )
+TCSetField( "TRBSE1",'E1_PREFIXO','C',3,0)
+TCSetField( "TRBSE1",'E1_NUM','C',8,0)
+TCSetField( "TRBSE1",'E1_PARCELA','C',2,0)
+TCSetField( "TRBSE1",'E1_TIPO','C',3,0)
+TCSetField( "TRBSE1",'E1_VALOR','N',14,2)
+TCSetField( "TRBSE1",'E1_VENCTO','D',8,0)
+
+aDados3 := TRBSE1->(DBSTRUCT())
+aadd(aDados1,'<TR>')
+SX3->(DBSETORDER(2))
+aadd(aDados1,'<TD BGCOLOR="#BBBBBB" >DELETAR?</TD>')
+aadd(aDados1,'<TD BGCOLOR="#BBBBBB">Prefixo</TD>')
+aadd(aDados1,'<TD BGCOLOR="#BBBBBB">No. Titulo</TD>')
+aadd(aDados1,'<TD BGCOLOR="#BBBBBB">Parcela</TD>')
+aadd(aDados1,'<TD BGCOLOR="#BBBBBB">Tipo</TD>')
+aadd(aDados1,'<TD BGCOLOR="#BBBBBB">Vlr.Titulo</TD>')
+aadd(aDados1,'<TD BGCOLOR="#BBBBBB">Vencimento</TD>')
+aadd(aDados1,'<TD BGCOLOR="#BBBBBB">HISTORICO</TD>')
+aadd(aDados1,'</TR>')
+WHILE TRBSE1->(!EOF())
+	aadd(aDados1,'<TR>')
+	aadd(aDados1,'<TD><INPUT TYPE="checkbox" VALUE="0" NAME="_'+cTabI+'_'+cValtoChar(TRBSE1->REC)+'_DELETAR" onClick="delet(this,this.value);passar(this)"></TD>')
+	aadd(aFrame1,'<TD><INPUT TYPE="hidden" VALUE="0" NAME="_'+cTabI+'_'+cValtoChar(TRBSE1->REC)+'_DELETAR" ID="_'+cTabI+'_'+cValtoChar(TRBSE1->REC)+'_DELETAR"></TD>')
+	for nFor := 1 to len(aDados3)-1
+		xVar := IIF(VALTYPE(&('TRBSE1->'+aDados3[nFor][1]))=="N",cValtoChar(&('TRBSE1->'+aDados3[nFor][1])),IIF(VALTYPE(&('TRBSE1->'+aDados3[nFor][1]))=="D",DTOC(&('TRBSE1->'+aDados3[nFor][1])),IIF(VALTYPE(&('TRBSE1->'+aDados3[nFor][1]))=="U"," ",&('TRBSE1->'+aDados3[nFor][1]) )))
+		if VALTYPE(&('TRBSE1->'+aDados3[nFor][1])) == "N"
+			aadd(aDados1,'<TD><INPUT TYPE="text" VALUE="'+xVar+'" NAME="_'+cTabI+'_'+cValtoChar(TRBSE1->REC)+'_'+alltrim(aDados3[nFor][1])+'" id="_'+cTabI+'_'+cValtoChar(TRBSE1->REC)+'_'+alltrim(aDados3[nFor][1])+'" SIZE="'+cValtoChar(aDados3[nFor][3])+'" MAXLENGTH="'+cValtoChar(aDados3[nFor][3])+'"'+" onkeypress='return SomenteNumero(event);' onchange='passar(this)'></TD>")
+		elseif VALTYPE(&('TRBSE1->'+aDados3[nFor][1])) == "D"
+			aadd(aDados1,'<TD><INPUT TYPE="text" VALUE="'+xVar+'" NAME="_'+cTabI+'_'+cValtoChar(TRBSE1->REC)+'_'+alltrim(aDados3[nFor][1])+'" id="_'+cTabI+'_'+cValtoChar(TRBSE1->REC)+'_'+alltrim(aDados3[nFor][1])+'"  SIZE="'+cValtoChar(aDados3[nFor][3]+2)+'" MAXLENGTH="'+cValtoChar(aDados3[nFor][3]+2)+'" onchange="validaDat(this,this.value);passar(this)" ></TD>')
+		else
+			aadd(aDados1,'<TD><INPUT TYPE="text" VALUE="'+xVar+'" NAME="_'+cTabI+'_'+cValtoChar(TRBSE1->REC)+'_'+alltrim(aDados3[nFor][1])+'" id="_'+cTabI+'_'+cValtoChar(TRBSE1->REC)+'_'+alltrim(aDados3[nFor][1])+'"  SIZE="'+cValtoChar(aDados3[nFor][3])+'" MAXLENGTH="'+cValtoChar(aDados3[nFor][3])+'" onchange="upperCase(this,this.value);passar(this)" ></TD>')
+		endif
+		aadd(aFrame1,'<INPUT TYPE="hidden" VALUE=" " NAME="_'+cTabI+'_'+cValtoChar(TRBSE1->REC)+'_'+alltrim(aDados3[nFor][1])+'" id="_'+cTabI+'_'+cValtoChar(TRBSE1->REC)+'_'+alltrim(aDados3[nFor][1])+'"  >')
+	next nfor
+	aadd(aDados1,'</TR>')
+	
+	TRBSE1->(DBSKIP())
+END
+HttpSession->xTelaG := aDados1
+httpSession->aFrame1 := aFrame1
+cHtml := h_xModel3()
+TRBSE1->(dbclosearea())
+WEB EXTENDED end
+Return(cHtml)

@@ -1,0 +1,52 @@
+#Include "TOTVS.CH"
+#Include "PROTHEUS.CH"
+#Include "APWEBEX.CH"
+
+//----------------------------------------------------------------------------//
+// Uso de variaveis SESSION. Comandos AdvPL dentro do HTML.
+//----------------------------------------------------------------------------//
+User Function MostraCli()
+Local cHtml := ""
+Local aTabs	:= {"SA1"}
+
+WEB EXTENDED INIT cHtml
+
+RPCSETENV("99","01",,,"FAT","MostraCli",aTabs)
+
+cHtml := "<html>"
+cHtml += "<head></head>"
+cHtml += "<body>"
+cHtml += "<form name='form1' action='u_caddet.apw' method='POST'>"
+cHtml += "<table>"
+dbselectarea("SA1")
+dbsetorder(2)
+dbGotop()
+Do while !SA1->(eof())
+	if SA1->A1_MSBLQL = "2"
+		cHtml += "<tr>"
+		cHtml += "<td><input type='radio' name='checkc' value='"+SA1->A1_COD+"'></td>"
+		cHtml += "<td>"+SA1->A1_COD+"</td>"
+		cHtml += "<td>"+SA1->A1_NOME+"</td>"
+		cHtml += "<td>"+SA1->A1_END+"</td>"
+		cHtml += "<td>"+SA1->A1_EST+"</td>"
+		cHtml += "<input type='hidden' name='cod' value='"+SA1->A1_COD+"'>"
+		cHtml += "<input type='hidden' name='nome' value='"+SA1->A1_NOME+"'>"
+		cHtml += "<input type='hidden' name='end' value='"+SA1->A1_END+"'>"
+		cHtml += "<input type='hidden' name='est' value='"+SA1->A1_EST+"'>"
+		cHtml += "</tr>"
+	endif
+	SA1->(DBSKIP())
+enddo
+
+cHtml += "</table>"
+cHtml += "<input type='submit' value='Mostrar'>"
+cHtml += "</body>"
+cHtml += "</html>"
+
+	
+	cHtml += H_mostracli()
+
+RPCCLEARENV()	
+WEB EXTENDED END
+
+Return( cHtml )

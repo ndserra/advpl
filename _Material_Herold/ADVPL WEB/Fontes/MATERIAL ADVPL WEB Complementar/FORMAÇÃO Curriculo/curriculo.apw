@@ -1,0 +1,15 @@
+#INCLUDE "TOTVS.CH"
+#INCLUDE "TopConn.CH"
+#INCLUDE "APWEBEX.CH"
+
+User Function curriculo()
+
+Local cHtml := ""
+
+WEB EXTENDED INIT cHtml
+
+cHtml := H_curriculo()
+
+WEB EXTENDED END
+
+Return( cHtml )

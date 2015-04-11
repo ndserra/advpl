@@ -1,0 +1,15 @@
+[Driver de Impressora]
+
+PrinterName=HP DeskJet
+
+[C¢digos de Controle]
+
+Print_ACO="&l70P(12U(s15H"
+Print_DCO="(10U(s10H "
+Print_ANO="&l70P(12U(s10H"
+Print_DNO="(10U(s10H "
+Print_AEX=""
+Print_DEX=""
+Print_ANE=""
+Print_DNE=""
+

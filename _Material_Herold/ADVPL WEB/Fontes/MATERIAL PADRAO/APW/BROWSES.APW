@@ -1,0 +1,116 @@
+#include "Protheus.ch"
+#include "Apwebex.ch"
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÉÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ»±±
+±±ºPrograma  ³MENU      ºAutor  ³Leandro Duarte      º Data ³  05/31/12   º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÊÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºDesc.     ³Cadastro do menu                                            º±±
+±±º          ³                                                            º±±
+±±ÌÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¹±±
+±±ºUso       ³ P10 e P11                                                  º±±
+±±ÈÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+user function BROWSES()
+Local cTab 		:= HttpSession->cTab
+Local cHtml	    := ""
+Local cKey1		:= alltrim(HttpSession->cKey1)
+Local cKey2		:= HttpSession->cKey2
+local nPag1		:= HttpPost->npagina1
+local nPag2		:= HttpPost->npagina2
+Local aDados	:= {}
+Private aHeader := {}
+Private aCols   := {}
+Default nPag1		:= HttpSession->nPag1
+default nPag2		:= HttpSession->nPag2
+Default cKey1		:= ""
+Default cKey2		:= ""
+Private nPg1		:= nPag1
+Private nPg2		:= nPag2
+WEB EXTENDED INIT cHtml
+conout("browse")
+conout('nPag1')
+conout(nPag1)
+conout('nPag2')
+conout(nPag2)
+conout('cKey1')
+conout(cKey1)
+conout('cKey2')
+conout(cKey2)
+_cEmp_		:= httpSession->_cEmp_
+_cFil_		:= httpSession->_cFil_		
+aTabs		:= httpSession->aTabs
+RpcSetEnv( _cEmp_,_cFil_,,, "FIN", "TlIniWB3", aTabs,,,,)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³LER A ESTRUTURA DO SX3 DA TABELA RECEBIDA³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+DBSELECTAREA("SX3")
+SX3->(DBSETORDER(1))
+SX3->(DBSEEK(cTab))
+WHILE SX3->(!EOF()) .and. SX3->X3_ARQUIVO == cTab
+	if SX3->X3_BROWSE == 'S'
+		AADD( aHeader, { Trim( X3Titulo() ),;
+		X3_CAMPO,;
+		X3_PICTURE,;
+		X3_TAMANHO,;
+		X3_DECIMAL,;
+		X3_VALID,;
+		X3_USADO,;
+		X3_TIPO,;
+		X3_ARQUIVO,;
+		X3_CONTEXT})
+		conout(X3_CAMPO)
+	endif
+	SX3->(DBSKIP())
+END
+// gravando os dados na sessão para pegar depois
+HttpSession->aHeader := aHeader
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³abrindo a tabela e capturando os registros³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+DBSELECTAREA(cTab)
+//CONOUT("ABRI A TABELA")
+//CONOUT(SELECT(cTab))
+IF !EMPTY(cKey1)
+	(cTab)->(dbsetorder(val(cKey2)))
+	if !(cTab)->(dbseek(xFilial(cTab)+cKey1,.t.))
+		(cTab)->(dbsetorder(1))
+		(cTab)->(DBGOTOP())
+	endif
+else
+	(cTab)->(dbsetorder(1))
+	(cTab)->(DBGOTOP())
+endif
+nVolt := 1
+conout('xfilial()')
+conout(xfilial(cTab))
+conout((cTab)+"->"+substr(cTab,2)+"_FILIAL")
+conout(&((cTab)+"->"+substr(cTab,2)+"_FILIAL"))
+While (cTab)->(!eof())
+	if xfilial(cTab) == &((cTab)+"->"+substr(cTab,2)+"_FILIAL")
+		if nVolt >= val(nPag1) .and. nVolt <= val(nPag2) 
+			//CONOUT('ENTREI')
+			aEval(aHeader,{|x| aadd(aDados,&((cTab)+"->"+x[2])) })
+			//VARINFO('',aDados)
+			AADD(ADADOS,&((cTab)+"->(RECNO())"))
+			aadd(aCols,aDados)
+			aDados := {}
+		endif
+		nVolt++
+	endif
+	(cTab)->(dbskip())
+End
+//VARINFO('ACOLS',aCols)
+cHtml	    := h_BROWSES()
+HttpSession->cKey1 := ""
+HttpSession->cKey2 := ""
+HttpSession->nPag1 := nPag1
+HttpSession->nPag2 := nPag2
+WEB EXTENDED END
+Return(cHtml)

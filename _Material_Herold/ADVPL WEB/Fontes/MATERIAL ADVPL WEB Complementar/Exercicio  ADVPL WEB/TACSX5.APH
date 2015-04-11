@@ -1,0 +1,11 @@
+<HTML>
+<HEAD>
+<TITLE>Informar SX5</title>
+<BODY>
+<form name="ExecSX5" action="u_SX5DADOS.apw" method="POST">
+Tabela: <input type="text" name="cTab"><br>
+Chave:  <input type="text" name="cChave"><br>
+<input type="submit" value="Enviar">
+</FORM>
+</BODY>
+</HTML>

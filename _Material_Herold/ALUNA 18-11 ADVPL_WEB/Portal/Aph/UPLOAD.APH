@@ -1,0 +1,67 @@
+<HTML>
+<HEAD>
+<TITLE>UPLOAD DE ARQUIVO</TITLE>
+<META name=LEANDRO_DUARTE content=ADVPL-WEB>
+</HEAD> 
+<script language="JavaScript">
+function delet(campo,valor){
+
+if (campo.value!=0){
+valor=0;
+}
+
+campo.value=valor;
+}
+function OK(){
+	document.form.action = "u_subir.apw"; 
+	document.form.submit() 
+}
+function SAIR(){
+	document.form.action = "u_TlIniWB2.apw"; 
+	document.form.submit() 
+}
+</script>
+<BODY BGCOLOR="#C0EDC7">
+<FORM title=UPLOAD NAME="form" method="GET" action="u_subir.apw"  ENCTYPE="multipart/form-data">
+<TABLE border=0 cellSpacing=0 cellPadding=0 width="100%">
+  <TBODY>
+  <TR>
+    <TD>EXCLUIR?</TD>
+    <TD>NOME</TD>
+    <TD>TAMANHO</TD>
+  </TR>
+  <% For nFor := 1 to len(aDir) %>
+  <TR>
+    <TD><INPUT TYPE="checkbox" VALUE="0" NAME="EXCLUIR" onclick=javascript:delet(this,'<%= aDir[nFor][1] %>')></TD>
+    <TD><a href="<%= aDir[nFor][3] %>"><%= aDir[nFor][1] %></a></TD>
+    <TD><a href="<%= aDir[nFor][3] %>"><%= aDir[nFor][2] %></a></TD>
+  </TR>
+  <% Next nFor %>
+  </TBODY>
+</TABLE>
+<TABLE border=0>
+  <TR>
+    <TD><BR><BR></TD>
+  </TR>
+  <TR>
+    <TD><BR><BR></TD>
+  </TR>
+    <TR>
+    <TD><BR><BR></TD>
+  </TR>
+</TABLE>
+<TABLE border=1 cellSpacing=0 cellPadding=0 width="100%">
+  <TBODY>
+  <TR>
+    <TD>INFORME O ARQUIVO PARA FAZER O UPLOAD</TD>
+    <TD>
+    <INPUT style="WIDTH: 892px; HEIGHT: 22px" name="file"  value=" " size=120>
+    </TD>
+  </TR>
+</TBODY>
+</TABLE>
+<INPUT TYPE="submit" VALUE="ATUALIZAR" NAME="Atualizar" onclick="JAVASCRIPT:OK()">
+<INPUT TYPE="submit" VALUE="Sair" NAME="Sair" onclick="JAVASCRIPT:SAIR()">
+</FORM>
+</BODY>
+</HTML>

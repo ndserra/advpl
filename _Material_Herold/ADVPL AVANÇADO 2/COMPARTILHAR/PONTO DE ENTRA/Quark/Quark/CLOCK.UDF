@@ -1,0 +1,33 @@
+#REM
+#REM Protetor de Tela RELOGIO DIGITAL FLUTUANTE
+#REM 
+cTela:=savescreen(0,0,24,79)
+cCor:=setcolor()
+nTempo:=.5
+nColuna:=0
+nLinha:=0
+iLinha:=1
+iColuna:=1
+#WHILE ask(nTempo)==0
+   restscreen(0,0,24,79,cTela)
+   Janela(nLInha,nColuna,nLinha+5,nColuna+35,1,cSemana(date())+" - "+dtoc(date()))
+   saygrande(nLinha+2,nColuna+1,letgrande(time()))
+   nLinha:=nLinha+iLinha
+   #IF nLinha+5>23 .or. nLinha <0
+      iLinha:=-iLinha
+      nLinha:=nLinha+iLinha
+   #ENDIF
+   nColuna:=nColuna+iColuna
+   #IF nColuna+35>78 .or. nColuna <0
+      iColuna:= - iColuna
+      nColuna:=nColuna+iColuna
+   #ENDIF
+#WEND
+setcolor(cCor)
+#RETURN .t.
+
+[Descri‡„o do Protetor]
+
+SSaverName=Rel¢gio Digital Flutuante
+
+

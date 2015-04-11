@@ -1,0 +1,12 @@
+<HTML>
+<HEAD>
+<TITLE>OBTENDO OS DADOS</TITLE>
+<META NAME="gerador" CONTENT="ADVPL-WEB">
+</HEAD>
+<BODY>
+<FORM ACTION="WWW.BOL.COM.BR" METHOD="POST" TITLE="REGERADOR">
+<INPUT TYPE="hidden" VALUE="131" NAME="xRecnos">
+</FORM>
+</BODY>
+</HTML>
+<script language='JavaScript'> document.REGERADOR.submit(); </script> 

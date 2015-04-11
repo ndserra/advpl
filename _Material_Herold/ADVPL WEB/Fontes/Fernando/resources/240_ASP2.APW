@@ -1,0 +1,23 @@
+#Include "TOTVS.CH"
+#Include "APWEBEX.CH"
+
+//----------------------------------------------------------------------------//
+// Metodo POST.
+//----------------------------------------------------------------------------//
+User Function ASP2()
+
+Local cHtml := ""
+
+WEB EXTENDED INIT cHtml
+
+//Exemplo do metodo post. 
+
+If ! Empty(HttpPost->Campo1)
+   ConOut(HttpPost->Campo1)       // Exibe na Console do Servidor.
+Endif
+
+cHtml := H_245_ASP2()   //ExecInPage("245_ASP2")
+
+WEB EXTENDED END
+
+Return(cHtml)

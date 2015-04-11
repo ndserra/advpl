@@ -1,0 +1,12 @@
+#INCLUDE "TOTVS.CH"
+#INCLUDE "APWEBEX.CH"
+         
+
+User Function aula
+            
+Local cHTML := ""
+Private cTitulo := " Aula Web Service "
+
+cHTML := h_aula1()
+
+Return( cHTML )

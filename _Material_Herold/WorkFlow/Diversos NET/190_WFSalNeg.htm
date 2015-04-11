@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Untitled Document</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<p><font size="2" face="Verdana, Arial">Prezado Aprovador!</font></p>
+<p><font size="2" face="Verdana, Arial">Ap&oacute;s o lan&ccedil;amento abaixo, 
+  o saldo de <strong>!NOME!</strong> ficou negativo em <strong>R$ !SALDO!</strong> 
+  .</font></p>
+<font size="2" face="Verdana, Arial">Nr. Transa&ccedil;&atilde;o: <strong>!NUMERO!</strong></font>
+<br><font size="2" face="Verdana, Arial">Item: <strong>!ITEM!</strong></font> 
+<br><font size="2" face="Verdana, Arial">Data: <strong>!DATA!</strong></font> 
+<br><font size="2" face="Verdana, Arial">Hist&oacute;rico: <strong>!HIST!</strong></font>
+<br><font size="2" face="Verdana, Arial">Valor: <strong>!VALOR!</strong></font> 
+<form name="form1" method="post" action="WFHTTPRET.APL"> |WFQTH|
+  <p><font size="2" face="Verdana, Arial"><input type="radio" name="%APROVA%" value="Sim">Aprova este lan&ccedil;amento</font></p>
+  <p><font size="2" face="Verdana, Arial"><input type="radio" name="%APROVA%" value="Nao">N&atilde;o aprova</font></p>
+	<p>Observacoes <input name="%OBSERV%" type="text" id="observ"></p>
+    <p><font size="2" face="Verdana, Arial"><input type="submit" name="Submit" value="Enviar"></font> </p>
+</form>
+</body>
+</html>

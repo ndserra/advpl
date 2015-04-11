@@ -1,0 +1,47 @@
+<HTML>
+
+<HEAD>
+<TITLE>menu</TITLE>
+<META NAME="LEANDRO_DUARTE" CONTENT="ADVPL-WEB">
+</HEAD> 
+<script language="JavaScript">
+var xRecno;
+function openBrWindow(theURL,winName,features) { //v2.0     
+alert(theURL);
+alert(winName);
+alert(xRecno);
+if (winName=='Sair')
+	{
+	alert('trocou');
+	document.CADASTRO.submit();
+	}
+else 
+	{
+	alert(theURL+'?xRecnos='+xRecno);
+	window.open(theURL+'?xRecnos='+xRecno,winName,features);
+	}
+}
+function setvari(sRecno) {
+  xRecno = sRecno;
+}
+</script>
+<BODY  ALINK="#FFFFFF" TEXT="#FFFFFF" VLINK="#FFFFFF" LINK="#FFFFFF" BACKGROUND="../PP/imagens-for-01/botao.gif">
+<FORM ACTION="u_TlIniWb2.apw" METHOD="POST" TITLE="CADASTRO" target="_top" name="CADASTRO" id="CADASTRO">
+<TABLE BORDER="0"  CELLPADDING="0" CELLSPACING="0">
+<TR>
+	<TD><P>&nbsp; </P></TD>
+</TR>
+<% For nFor := 1 to len(aMenu) %>
+<TR>
+	<TD ALIGN="LEFT" WIDTH="20%" >
+	<FONT COLOR="#FFFFFF">
+	<INPUT TYPE="hidden" VALUE="" NAME="recnos">
+	<A HREF="u_menu.apw" onclick="openBrWindow('<%= aMenu[nFor][2]%>','<%= aMenu[nFor][1]%>','width=1200,height=1150,STATUS=NO, TOOLBAR=NO, LOCATION=NO, DIRECTORIES=NO, RESISABLE=NO, SCROLLBARS=YES')" style="text-decoration:none"><%= padr(aMenu[nFor][1],15)%></A>
+	</FONT>
+	</TD>
+</TR>
+<% Next nFor %>
+</TABLE>
+</BODY>
+</FORM>
+</HTML>

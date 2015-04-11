@@ -1,0 +1,125 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Solicitação de Compras </title>
+</head>
+
+<script>
+//----------------------------------------------
+
+
+function handleEnter (field, event) {
+		var keyCode = event.keyCode ? event.keyCode : event.which ? event.which : event.charCode;
+		if (keyCode == 13) {
+			var i;
+			for (i = 0; i < field.form.elements.length; i++)
+				if (field == field.form.elements[i])
+					break;
+			i = (i + 1) % field.form.elements.length;
+			field.form.elements[i].focus();
+			return false;
+		} 
+		else
+		return true;
+	}      
+
+
+
+function commaToNumber(cNumber) {
+	return parseFloat(cNumber.replace(",", "."));
+}
+
+function formatZeros(nNumber) {
+
+   var cNumber = nNumber.toString().replace(".", ",");
+   var nPos = cNumber.search(',');
+   var nDif = cNumber.length - nPos;
+
+   if(nPos == -1)
+      cNumber = cNumber+",00";
+   else if( nDif == 2 )
+      cNumber = cNumber+"0";
+   else if( nDif >= 4 )
+      cNumber = cNumber.substr(0, cNumber.length - nDif + 3);
+   
+   return cNumber;
+}
+
+
+
+
+</script>
+
+ <font color="#0099CC"face="Arial"> <span style="font-weight: bold;">!NOME!,</span><font size="-1"><br>
+      <br>
+      </font>
+      <br>
+      <font size="-1"></font>
+
+      <table style="text-align: left; width: 100%; height: 20%;" border="0" cellpadding="0" cellspacing="0">
+        <tbody>
+         <tr>
+           <td style="vertical-align: top; width: 203px;"><span style="font-weight: bold;">Código:</span><br>
+            </td>
+            <td style="vertical-align: top; width: 751px;">!NUMERO!<br>
+            </td>
+			</tr>
+			<tr>
+		    <td style="vertical-align: top; width: 203px;"><span style="font-weight: bold;">Email:</span>
+            </td>
+            <td style="vertical-align: top; width: 751px;">!EMAIL!<br>
+            </td>
+	    </table>
+
+   <table border="3" width="100%" bordercolor="#DFEFFF"
+    bordercolordark="#DFEFFF" bordercolorlight="#DFEFFF">
+        <tr>
+            <td width="100%"><table border="0" width="100%">
+                <tr>
+                    <td width="22%"><font color="#0099CC"
+                    face="Arial"><strong><b><i><blink>APROVAÇÃO:</blink></i></b></strong></font></td>
+                    <td width="78%"><font face="Arial"><input
+                    type="radio" checked name="Aprovacao"
+                    value="%APROVACAO%S" >Sim.</font></td>
+                </tr>
+                <tr>
+                    <td width="22%">&nbsp;</td>
+                    <td width="78%"><font face="Arial"><input
+                    type="radio" name="Aprovacao"
+                    value="%APROVACAO%N" >Não. (Favor especificar
+                    motivo)</font></td>
+                </tr>
+                <tr>
+                    <td width="22%">&nbsp;</td>
+                    <td width="78%"><font size="2"><textarea
+                    name="S1" rows="4" cols="67">%C8_OBS%
+               </textarea> </font></td>
+		
+				</tr>
+                <tr>
+                    <td width="22%">&nbsp;</td>
+                    <input value="%IDWF%" name="IDWF" type="hidden">
+                    <input value="%WFFILIAL%" name="WFFILIAL" type="hidden">
+                    <input value="%C8_FORNECE%" name="C8_FORNECE" type="hidden">
+                    <input value="%C8_LOJA%" name="C8_LOJA" type="hidden">
+                    <input value="%C8_NUM%" name="C8_NUM" type="hidden">
+
+                    <input value="%CFILANT%" name="CFILANT" type="hidden">
+                    <input value="%CEMPANT%" name="CEMPANT" type="hidden">
+				
+
+					<td width="78%"><font face="Arial">
+					<input type="submit" name="B1" value="Enviar" > 
+					<input type="reset" name="B2" value="Limpar"> </font></td>
+                </tr>
+            </td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>

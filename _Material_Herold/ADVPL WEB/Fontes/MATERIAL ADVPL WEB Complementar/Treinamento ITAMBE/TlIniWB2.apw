@@ -1,0 +1,96 @@
+#INCLUDE "Protheus.ch"
+#INCLUDE 'APWEBEX.CH'
+
+//  Tela de receber os dados do login e abrir a tabela conforme
+//  a ewmpresa enviada e cria o menu para o usuario como Frames
+
+User Function TlIniWB2()
+	Local cHtml 	:= ""
+	Local _cEmp_	:= ""
+	Local _cFil_	:= ""
+	Local cEmpcFil  := httppost->Selecao
+	Local cLogin	:= httppost->cNome
+	Local cPass		:= httppost->cSenha
+	Local aTabs		:={"SA1","SA2","SE1","SE2","SE5","SA6","SAE","ZZ0"}
+	Local lEntra	:= .F.
+	default cEmpcFil := "99-01"
+	default cEmpcFil	:= httpSession->Selecao
+	default cLogin		:= httpSession->cNome
+	default cPass		:= httpSession->cSenha
+
+	WEB EXTENDED INIT cHtml
+
+		//PROCESSO PARA DEFINIR A MENSAGEM QUANDO OCORRER ERRO DE ACESSO
+		// gravação de sessão
+		
+		HttpSession->cMensagem 	:= ""
+		httpSession->Selecao 	:= cEmpcFil
+		httpSession->cNome		:= cLogin
+		httpSession->cSenha 	:= cPass
+
+
+		Conout('httppost->Selecao')
+		Conout(httppost->Selecao)
+		Conout('httppost->cNome')
+		Conout(httppost->cNome)
+		Conout('httppost->cSenha')
+		Conout(httppost->cSenha)
+
+		_cEmp_ := substr(cEmpcFil,1,at("-",cEmpcFil)-1)
+		_cFil_ := substr(cEmpcFil,at("-",cEmpcFil)+1)
+
+		//seta o ambiente com a empresa 99 filial 01 com os direitos do usuario administrador, módulo Financeiro
+		RpcSetEnv( _cEmp_,_cFil_,,, "FIN", "TlIniWB2", aTabs,,,,)
+		httpSession->_cEmp_		:= _cEmp_
+		httpSession->_cFil_		:= _cFil_
+		httpSession->aTabs		:= aTabs
+		
+		/****** COMANDOS *************/
+		
+		SX2->(dbsetorder(1))
+		If SX2->(DBSEEK("ZZ0"))
+			dbselectarea("ZZ0")
+			ZZ0->(DbSetorder(1))
+			If ZZ0->(Dbseek(xFilial("ZZ0")+cLogin))
+				If ALLTRIM(ZZ0->ZZ0_SENHA) == ALLTRIM(cPass)
+					lEntra := .T.
+				else
+					lEntra := .F.
+					HttpSession->cMensagem	:= "Senha Invalido"
+				EndIf
+			ELSE
+				lEntra := .F.
+				HttpSession->cMensagem	:= "Usuario ou Senha Invalido"
+			EndIf
+		ELSE
+			lEntra := .F.
+			HttpSession->cMensagem	:= "TABELA DE USUARIO E SENHA NÃO ESTA CRIADA"
+		EndIf
+
+		If lEntra
+
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³CRIAR NA WEB O CADASTRO DE CLIENTES³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+			// Chamar a pagina
+			cHtml := h_TlIniWB2()
+		Else
+			// Chamar a pagina
+			cHtml += " <html> "
+			cHtml += " <head> "
+			cHtml += " </head> "
+			cHtml += " <body> "
+			cHtml += " <form name='voltar' method='post'  action='U_TLINIWB.APW'> "
+			cHtml += " </form> "
+			cHtml += " </body> "
+			cHtml += " </html> "
+			cHtml += " <script language='JavaScript'> "
+			cHtml += " document.voltar.submit(); "
+			cHtml += " </script> "
+			cHtml += " </body> "
+			cHtml += " </html>"
+		EndIf
+
+	WEB EXTENDED END
+
+Return(cHtml)

@@ -1,0 +1,66 @@
+#INCLUDE "PROTHEUS.CH"
+#INCLUDE "APWEBEX.CH"
+
+
+// Abre a pagina para fazer o Upload/Download de arquivos      
+
+User Function UPLOAD()
+
+	Local cHtml := ""
+	Local cRootWeb     := GetSrvProfString("RootWeb","\web")
+	Local lUnix        := IsSrvUnix()
+	
+	Private aDir := {}
+
+	WEB EXTENDED INIT cHtml
+
+		nTamRoot := len(alltrim(cRootWeb))        
+		cCaracter := iIf(lUnix,"/","\")
+
+		// funcao para descobrir se o ambiente eh linux - IsSrvUnix()
+
+		// retirar barra sobressalente	
+		If substr(cRootWeb,nTamRoot,1) == "/" .OR. substr(cRootWeb,nTamRoot,1) == "\"
+			cRootWeb := substr(cRootWeb,1,nTamRoot-1)
+		EndIf
+
+		//colocar o parametro no mesma situacao do que a do windows...
+		If ! lUnix
+			cRootWeb := StrTran(cRootWeb,"/","\")
+		else
+			cRootWeb := StrTran(cRootWeb,"\","/")
+		EndIf
+
+		// se nao existir diretorios, cria!
+		nRetorno := Makedir( cRootWeb+cCaracter+"arquivos", 1)
+
+		cDiretorio := cRootWeb+cCaracter+"arquivos"
+		nRetorno := Makedir( cDiretorio , 1 )
+
+		cDiretorio := cDiretorio+cCaracter
+
+		If lUnix
+			cDiretorio := Strtran(cDiretorio,"\","/")
+		EndIf
+		
+		cDiretorio := cRootWeb+cCaracter+"arquivos"+cCaracter+"*.*"
+		
+		//Conout(cDiretorio)
+
+		aDire := Directory(cDiretorio, "D", 1 )
+
+		For nFor := 1 to len(aDire)
+
+			If aDire[nFor][2] != 0
+				aAdd(aDir,{aDire[nFor][1],aDire[nFor][2],"http://localhost:90/WEB/arquivos/"+aDire[nFor][1]})
+			EndIf
+		
+		Next nFor
+		
+		varinfo('aDir',aDir )	
+		
+		cHtml := H_UPLOAD()
+	
+	WEB EXTENDED END
+
+Return(cHtml)
