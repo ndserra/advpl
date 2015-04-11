@@ -129,8 +129,6 @@ Static Function ReportPrint(oReport)
 			oSection2:Cell("B1_DESC"):SetValue(TRBNCM->B1_DESC)
 			oSection2:Cell("B1_LOCPAD"):SetValue(TRBNCM->B1_LOCPAD)			
 			oSection2:Cell("B1_POSIPI"):SetValue(TRBNCM->B1_POSIPI)			
-			
-			oSection2:Printline()
 				
  			TRBNCM->(dbSkip())
  			

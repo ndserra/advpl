@@ -4942,3 +4942,12 @@ Command-line arguments:  -os win32 -ws win32 -arch x86_64
 
 !ENTRY org.eclipse.osgi 2 1 2015-04-11 09:27:47.026
 !MESSAGE NLS unused message: LocalAppServer_23 in: com.totvs.tds.core.extensions.servers.messages
+
+!ENTRY org.eclipse.ui 4 4 2015-04-11 11:58:59.556
+!MESSAGE Unable to create menu item "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection", command "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection" not defined
+
+!ENTRY org.eclipse.ui 4 4 2015-04-11 11:59:04.322
+!MESSAGE Unable to create menu item "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection", command "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection" not defined
+
+!ENTRY org.eclipse.ui 4 4 2015-04-11 11:59:10.729
+!MESSAGE Unable to create menu item "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection", command "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection" not defined
