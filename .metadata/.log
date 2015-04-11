@@ -4915,3 +4915,30 @@ java.lang.IllegalArgumentException: Attempted to beginRule: F/ADVPL/resources, d
 	at org.eclipse.debug.internal.ui.DebugUIPlugin.buildAndLaunch(DebugUIPlugin.java:937)
 	at org.eclipse.debug.internal.ui.DebugUIPlugin$8.run(DebugUIPlugin.java:1141)
 	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+!SESSION 2015-04-11 09:24:41.832 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.7.0
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=pt_BR
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.totvs.tds.dds 4 0 2015-04-11 09:24:42.566
+!MESSAGE [SCR] Component definition XMLs not found in bundle com.totvs.tds.dds. The component header value is OSGI-INF/component.xml
+
+!ENTRY com.totvs.tds.dds 4 0 2015-04-11 09:24:42.566
+!MESSAGE [SCR] Component definition XMLs not found in bundle com.totvs.tds.dds. The component header value is OSGI-INF/component.xml
+
+!ENTRY org.eclipse.ui 4 4 2015-04-11 09:24:49.723
+!MESSAGE Unable to create menu item "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection", command "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection" not defined
+
+!ENTRY com.totvs.tds.dds 4 0 2015-04-11 09:24:49.879
+!MESSAGE [SCR] Component definition XMLs not found in bundle com.totvs.tds.dds. The component header value is OSGI-INF/component.xml
+
+!ENTRY com.totvs.tds.dds 4 0 2015-04-11 09:24:49.879
+!MESSAGE [SCR] Component definition XMLs not found in bundle com.totvs.tds.dds. The component header value is OSGI-INF/component.xml
+
+!ENTRY org.eclipse.ui 4 4 2015-04-11 09:24:52.254
+!MESSAGE Unable to create menu item "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection", command "com.totvs.tds.core.ui.view.serverServerEnvironmentSelection" not defined
+
+!ENTRY org.eclipse.osgi 2 1 2015-04-11 09:27:47.026
+!MESSAGE NLS unused message: LocalAppServer_23 in: com.totvs.tds.core.extensions.servers.messages

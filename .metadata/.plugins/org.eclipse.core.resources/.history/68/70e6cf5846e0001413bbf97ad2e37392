@@ -1,0 +1,134 @@
+#INCLUDE "rwmake.ch"
+
+
+User Function RELSB1X
+
+
+// -----------------------------------------------------------------------
+// Declaracao de Variaveis
+// -----------------------------------------------------------------------
+
+Local cDesc1         := "Este programa tem como objetivo imprimir relatorio "
+Local cDesc2         := "de acordo com os parametros informados pelo usuario."
+Local cDesc3         := "Cadastro de Produto"
+Local cPict          := ""
+Local titulo         := "Cadastro de Produto"
+Local nLin           := 80
+
+Local Cabec1         := ""
+Local Cabec2         := ""
+Local imprime        := .T.
+Local aOrd := {}
+Private lEnd         := .F.
+Private lAbortPrint  := .F.
+Private CbTxt        := ""
+Private limite           := 132
+Private tamanho          := "M"
+Private nomeprog         := "RELSB1X" // Coloque aqui o nome do programa para impressao no cabecalho
+Private nTipo            := 18
+Private aReturn          := { "Zebrado", 1, "Administracao", 2, 2, 1, "", 1}
+Private nLastKey        := 0
+Private cPerg       := "RELSB1X"
+Private cbtxt      := Space(10)
+Private cbcont     := 00
+Private CONTFL     := 01
+Private m_pag      := 01
+Private wnrel      := "RELSB1X" // Coloque aqui o nome do arquivo usado para impressao em disco
+
+Private cString := "SB1"
+
+dbSelectArea("SB1")
+dbSetOrder(1)
+
+
+pergunte(cPerg,.F.)
+
+// -----------------------------------------------------------------------
+//Ё Monta a interface padrao com o usuario...                           Ё
+// -----------------------------------------------------------------------
+
+wnrel := SetPrint(cString,NomeProg,cPerg,@titulo,cDesc1,cDesc2,cDesc3,.T.,aOrd,.T.,Tamanho,,.T.)
+
+If nLastKey == 27
+	Return
+Endif
+
+SetDefault(aReturn,cString)
+
+If nLastKey == 27
+   Return
+Endif
+
+nTipo := If(aReturn[4]==1,15,18)
+
+//зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+//Ё Processamento. RPTSTATUS monta janela com a regua de processamento. Ё
+//юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+RptStatus({|| RunReport(Cabec1,Cabec2,Titulo,nLin) },Titulo)
+Return
+
+
+Static Function RunReport(Cabec1,Cabec2,Titulo,nLin)
+
+Local nOrdem
+
+dbSelectArea(cString)
+dbSetOrder(1)
+
+//зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+//Ё SETREGUA -> Indica quantos registros serao processados para a regua Ё
+//юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+SetRegua(RecCount())
+
+dbGoTop()
+While !EOF()
+
+   //зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+   //Ё Verifica o cancelamento pelo usuario...                             Ё
+   //юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+   If lAbortPrint
+      @nLin,00 PSAY "*** CANCELADO PELO OPERADOR ***"
+      Exit
+   Endif
+
+   //зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+   //Ё Impressao do cabecalho do relatorio. . .                            Ё
+   //юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+   If nLin > 55 // Salto de PАgina. Neste caso o formulario tem 55 linhas...
+      Cabec(Titulo,Cabec1,Cabec2,NomeProg,Tamanho,nTipo)
+      nLin := 8
+   Endif
+
+   // Coloque aqui a logica da impressao do seu programa...
+   // Utilize PSAY para saida na impressora. Por exemplo:
+   @nLin,00 PSAY SB1->B1_COD
+   @nLin,07 PSAY SB1->B1_DESC
+
+   nLin := nLin + 1 // Avanca a linha de impressao
+
+   dbSkip() // Avanca o ponteiro do registro no arquivo
+EndDo
+
+//зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+//Ё Finaliza a execucao do relatorio...                                 Ё
+//юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+SET DEVICE TO SCREEN
+
+//зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+//Ё Se impressao em disco, chama o gerenciador de impressao...          Ё
+//юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+If aReturn[5]==1
+   dbCommitAll()
+   SET PRINTER TO
+   OurSpool(wnrel)
+Endif
+
+MS_FLUSH()
+
+Return
